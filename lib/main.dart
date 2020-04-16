@@ -14,7 +14,6 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Container (
         decoration: BoxDecoration(
-          color: Colors.white
           ),
         child: Transform.scale(
           scale: 1.5,  
@@ -27,13 +26,16 @@ class HomePage extends StatelessWidget {
                 width: 2000,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.topRight,
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
                     colors: [ 
+                      Color(0xFFAC0D57),
                       Color(0xFFFC4A1F),
-                      Color(0xFFAC0D57)
                     ]
-                  )
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage("asset/image/Chat.png")
+                    ),
                 ),
               ),
             ),
