@@ -49,6 +49,7 @@ flutter:
    - asset/image/icon.png
    - asset/image/check.png
    - asset/image/envelope.png
+   - asset/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
