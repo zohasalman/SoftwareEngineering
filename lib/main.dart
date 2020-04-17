@@ -89,6 +89,7 @@ class FirstScreen extends StatelessWidget {
                     )
               
                 ),
+                ),
                 SizedBox(height: 7),
                 Container(
                   alignment: Alignment(1,0),
