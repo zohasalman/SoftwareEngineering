@@ -87,7 +87,7 @@ class FirstScreen extends StatelessWidget {
                       color: Colors.grey[600],
                       fontSize: 19
                     )
-                  ),
+              
                 ),
                 SizedBox(height: 7),
                 Container(

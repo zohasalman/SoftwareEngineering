@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "530004526519",
+    "firebase_url": "https://seproject-rateit.firebaseio.com",
+    "project_id": "seproject-rateit",
+    "storage_bucket": "seproject-rateit.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530004526519:android:3c3ddce52fea8e38221432",
+        "android_client_info": {
+          "package_name": "com.example.rateit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530004526519-e9m1oa9mcoetnd0kqj6q0vmffu7fa04n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkwb9mBiMfC7g9inScj26NrkbbFORtgrk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "530004526519-e9m1oa9mcoetnd0kqj6q0vmffu7fa04n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
