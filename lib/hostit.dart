@@ -80,15 +80,15 @@ class ScreenQRselect extends StatelessWidget {
                     height: 30,
                     width: 50,
                     child: new IconButton(icon: new Image.asset("asset/image/arrow.png",
-                    fit: BoxFit.scaleDown,
-                    height: 25,
+                    //fit: BoxFit.scaleDown,
+                    //height: 25,
                     ),
                     onPressed:()=>Navigator.pop(context) ),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(50),
+                padding: EdgeInsets.all(15),
               ),
               Center(
                 child: 
@@ -96,7 +96,7 @@ class ScreenQRselect extends StatelessWidget {
                     mainAxisAlignment:  MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.all(50.0),
+                        padding: EdgeInsets.all(25.0),
                         child: 
                           Container(
                             child: GestureDetector(
@@ -104,7 +104,7 @@ class ScreenQRselect extends StatelessWidget {
         
                               },
                               child: Container(
-                                width: 280.0,
+                                width: 250.0,
                                 height: 120.0,
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -133,15 +133,15 @@ class ScreenQRselect extends StatelessWidget {
                           ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(50.0),
+                        padding: EdgeInsets.all(25.0),
                         child: 
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                main();
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
                               },
                               child: Container(
-                                width: 280.0,
+                                width: 250.0,
                                 height: 120.0,
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
