@@ -159,52 +159,56 @@ class FirstScreen extends State<LoginScreen> {
 
                 ),
 
-                Container(
-                child: Transform.translate(
-                offset: Offset(0,0),
-                child: InkWell(
-                  onTap: (){
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),);  
-                  },
-                  child: Container(
+                       Container(
+                  child: Transform.translate(
+                  offset: Offset(0,0),
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),);  
+                    },
+                    child: Container(
 
-                    height: 50,
-                    width: 250,
-              
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
+                      height: 50,
+                      width: 250,
+                      
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [ 
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]
+                        ),
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      borderRadius: BorderRadius.circular(30),
+                      padding: EdgeInsets.only(top: 15, left: 85), 
+                      child: Text("Sign In",style: TextStyle(color: Colors.white, fontSize: 22 ))
                     ),
-                    padding: EdgeInsets.only(top: 15, left: 85), 
-                    child: Text("Sign In",style: TextStyle(color: Colors.white, fontSize: 22 ))
+
                   ),
                 ),
-                ),),
+              ),
 
-
-
-                InkWell(
+              Container(
+              child: Transform.translate(
+                offset: Offset(0,12),
+                child: InkWell(
                   onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
-                  },
-                  child: new Container(
-                  padding: EdgeInsets.only(top: 15, left: 20), 
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
+                },
+                child: new Container(
+                  //padding: EdgeInsets.only(top: 130, left: 20), 
                   child: RichText(
-                    text: TextSpan(children: <TextSpan>[
-                      TextSpan(text: "Don't have an account?",style: TextStyle(color: Colors.grey[600])),
-                      TextSpan(text: " Sign Up     ",style: TextStyle(color: Colors.black))
-                    ]
-                    )),
-
+                  text: TextSpan(children: <TextSpan>[
+                    TextSpan(text: "Don't have an account?",style: TextStyle(color: Colors.grey[600])),
+                    TextSpan(text: " Sign Up     ",style: TextStyle(color: Colors.black))
+                  ]
+                  )),
                 ),
                 ),
+                ),
+              ),
 
               
 
