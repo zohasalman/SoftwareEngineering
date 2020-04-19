@@ -203,7 +203,7 @@ class MapsFunc extends State<Maps> {
       home: Scaffold(
         appBar: AppBar(
           title: Text('Maps Sample App'),
-          backgroundColor: Colors.green[700],
+          backgroundColor: Colors.red[700],
         ),
         body: GoogleMap(
           onMapCreated: _onMapCreated,

@@ -99,7 +99,7 @@ captures/
 # Google Services (e.g. APIs or Firebase)
 # google-services.json
 google-services.json
-key.xml
+
 
 # Freeline
 freeline.py
@@ -115,6 +115,7 @@ fastlane/readme.md
 
 # Version control
 vcs.xml
+key.xml
 
 # lint
 lint/intermediates/
