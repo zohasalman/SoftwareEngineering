@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="maps_apikey">[productionApiKey]</string>
+    <string name="maps_apikey">"AIzaSyA9Ll3sa9klJ1yPE8ZfGH7qcCdZHmp3B5Q"</string>
 </resources>

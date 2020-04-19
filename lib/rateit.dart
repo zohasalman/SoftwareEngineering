@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-void main() => runApp(
+void main3() => runApp(
   MaterialApp(
     debugShowCheckedModeBanner:  false,
     home: EditScreen()
@@ -418,3 +418,4 @@ class _EditScreen extends State<EditScreen> {
 
       ),
     );
+  }}
