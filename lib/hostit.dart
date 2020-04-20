@@ -3260,7 +3260,16 @@ class MapsFunc extends State<Maps> {
                     )
                   ),
                   actions: <Widget>[
-                    
+                                  
+                  child: Container(
+                    height: 30,
+                    width: 50,
+                    child: new IconButton(icon: new Image.asset("asset/image/arrow.png",
+                    //fit: BoxFit.scaleDown,
+                    //height: 25,
+                    ),
+                    onPressed:()=>Navigator.pop(context) ,
+              ),
                   ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
