@@ -3056,22 +3056,7 @@ class _ViewVendor2 extends State<ViewVendor2> {
 
 
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('HostIt'),
-        ),
-        body: Center(
-          child: Text('Remove this screen'),
-        ),
-      ),
-    );
-  }
-}
+
 
 class QRselection extends StatefulWidget {
   @override
@@ -3274,6 +3259,9 @@ class MapsFunc extends State<Maps> {
                         ),
                     )
                   ),
+                  actions: <Widget>[
+                    
+                  ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
