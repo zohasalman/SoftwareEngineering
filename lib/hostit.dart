@@ -25,7 +25,7 @@ class App extends StatelessWidget{
   Widget build(BuildContext context){
     return MaterialApp(
     debugShowCheckedModeBanner:  false,
-    home: ViewVendor2(),
+    home: Maps(),
     );
   }
 }
@@ -3073,8 +3073,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class QRselection extends StatefulWidget {
+  @override
+  ScreenQRselect createState() => new ScreenQRselect();
+}
 
-class ScreenQRselect extends StatelessWidget {
+class ScreenQRselect extends State<QRselection> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -3238,13 +3242,14 @@ class Maps extends StatefulWidget {
 
 class MapsFunc extends State<Maps> {
   Completer<GoogleMapController> _controller = Completer();
-
-  static const LatLng _center = const LatLng(45.521563, -122.677433);
-
+  Marker marker=Marker(
+    markerId: MarkerId("1"),
+    draggable: true
+  ); //storing position coordinates in the variable
+  Set<Marker> markerSet={};
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -3253,12 +3258,31 @@ class MapsFunc extends State<Maps> {
           title: Text('Maps Sample App'),
           backgroundColor: Colors.red[700],
         ),
-        body: GoogleMap(
+        body: 
+        GoogleMap(
+          onTap: (LatLng coordinates){
+                final Marker marker1 = Marker(
+                  markerId: MarkerId('1'),
+                  draggable: true,
+                  position: coordinates,
+                );
+                setState(() {
+                  markerSet.clear();
+                  markerSet.add(marker1);
+                  marker=marker1;
+                });
+          },
+          markers: markerSet,
           onMapCreated: _onMapCreated,
           initialCameraPosition: CameraPosition(
-            target: _center,
-            zoom: 11.0,
+            target: LatLng(30, 68),
+            zoom: 5,
           ),
+          mapType: MapType.hybrid,
+          rotateGesturesEnabled: true,
+          scrollGesturesEnabled: true,
+          tiltGesturesEnabled: true,
+          myLocationEnabled: true,          
         ),
       ),
     );
