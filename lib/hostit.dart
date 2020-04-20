@@ -3254,9 +3254,48 @@ class MapsFunc extends State<Maps> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('Maps Sample App'),
-          backgroundColor: Colors.red[700],
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                        child: Text('Location',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                        ),
+                    )
+                  ),
+                  flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/images/frame1.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                    ),
+                  )
+                ),
+                )
+              ],
+            ),
+            clipper: clipshape(),
+          )
         ),
         body: 
         GoogleMap(
@@ -3286,5 +3325,20 @@ class MapsFunc extends State<Maps> {
         ),
       ),
     );
+  }
+}
+
+class clipshape extends CustomClipper<Path>{
+  @override
+  Path getClip(Size size) {
+    var clipline= new Path();
+    clipline.lineTo(0, size.height-0);
+    clipline.lineTo(size.width, size.height-100);
+    clipline.lineTo(size.width, 0);
+    return clipline;
+  }
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
   }
 }
