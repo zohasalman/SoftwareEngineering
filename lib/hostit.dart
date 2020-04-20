@@ -19,13 +19,26 @@ List<int> no=[2,3,4,5,6,7,8,9];
 
 
 
-
+class ClipShape extends CustomClipper<Path>{
+  @override
+  Path getClip(Size size) {
+    var clipline= new Path();
+    clipline.lineTo(0, size.height-0);
+    clipline.lineTo(size.width, size.height-100);
+    clipline.lineTo(size.width, 0);
+    return clipline;
+  }
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+}
 class App extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return MaterialApp(
     debugShowCheckedModeBanner:  false,
-    home: Maps(),
+    home:  Maps(),
     );
   }
 }
@@ -2729,14 +2742,107 @@ class _ViewVendor extends State<ViewVendor> {
     VendorList(vendorname: 'Meet the Cheese', flag: 'meetthecheese.png'),
     
   ];
+   var scaffoldKey=GlobalKey<ScaffoldState>();
 
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  
   @override 
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-      key: _formKey,
-        child: Column(children: <Widget>[
+     return Scaffold(
+      key: scaffoldKey,
+      drawer: new Drawer(
+        child: new ListView(
+          children: <Widget>[
+          new UserAccountsDrawerHeader(
+            accountName: new Container(
+              child: Transform.translate(
+              offset: Offset(70,170),
+                child:new Text('Aladin', style: TextStyle(fontSize: 30, color: Colors.black)),
+              
+            ),),
+            accountEmail: new Container(
+              child: Transform.translate(
+              offset: Offset(20,170),
+                child:new Text('Aladin@hotmail.com', style: TextStyle(fontSize: 22, color: Colors.black)),
+              
+            ),),
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            currentAccountPicture: new Container(
+              child: Transform.translate(
+              offset: Offset(80,60),
+              child: Transform.scale(
+              scale: 2.5,  
+                child:CircleAvatar(radius:100, child: new Image.asset("asset/image/user.png")),
+              ),
+            ),),),
+
+             Container(
+              child: Transform.translate(
+              offset: Offset(0,170),
+              child: InkWell(
+                onTap: (){
+                  
+                },
+                child: Container(
+                  height: 50,
+                  width: 250,
+                  
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.only(top: 15, left: 105), 
+                  child: Text("Edit Profile",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                ),
+
+              ),
+            ),),
+
+              Container(
+              child: Transform.translate(
+              offset: Offset(0,190),
+              child: InkWell(
+                onTap: (){
+                  
+                },
+                child: Container(
+                  height: 50,
+                  width: 250,
+                  
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.only(top: 15, left: 105), 
+                  child: Text("Sign out",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                ),
+
+              ),
+            ),
+        
+            
+
+          ),
+          ],
+        ),
+      ),
+      body: Stack(
+        children: <Widget>[
           Container(
             child: Transform.scale(
             scale: 1.5,  
@@ -2761,7 +2867,7 @@ class _ViewVendor extends State<ViewVendor> {
                         ),
                     ),
                     child: Transform.translate(
-                      offset: Offset(10,70),
+                      offset: Offset(0,65),
                       child: Transform.rotate(
                         angle: math.pi/18,
                           child: Stack(children: <Widget>[
@@ -2781,7 +2887,7 @@ class _ViewVendor extends State<ViewVendor> {
           ),
           Container (
             child: Transform.translate(
-            offset: Offset(-180,-140),
+            offset: Offset(-90,30),
               child: Container(
                 height: 50,
                 width: 250,
@@ -2793,18 +2899,16 @@ class _ViewVendor extends State<ViewVendor> {
 
           Container(
             child: Transform.translate(
-            offset: Offset(170,-220),
+            offset: Offset(320,10),
             child: Container(
                 height: 100,
                 width: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("asset/image/menu.png"),
-                    ),
+                child: new IconButton(icon: new Image.asset("asset/image/menu.png"),onPressed:()=>scaffoldKey.currentState.openDrawer(), ),
                 ),
           ), 
               ),
-          ),
+
+          
           
 
           Container(
@@ -2825,7 +2929,7 @@ class _ViewVendor extends State<ViewVendor> {
 
       Container(
         child: Transform.translate(
-        offset: Offset(0,-278),
+        offset: Offset(0,140),
       
       child: ListView.builder(
         shrinkWrap: true,
@@ -2851,7 +2955,7 @@ class _ViewVendor extends State<ViewVendor> {
 
       ],
       ),
-    ));
+    );
   }
 }
 
@@ -2865,6 +2969,9 @@ class ViewVendor2 extends StatefulWidget {
 }
 
 class _ViewVendor2 extends State<ViewVendor2> {
+
+  var scaffoldKey=GlobalKey<ScaffoldState>();
+
   List<VendorList> vendors = [
     VendorList(vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
     VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
@@ -2878,13 +2985,105 @@ class _ViewVendor2 extends State<ViewVendor2> {
     
   ];
 
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  
   @override 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-      key: _formKey,
-        child: Column(children: <Widget>[
+      key: scaffoldKey,
+      drawer: new Drawer(
+        child: new ListView(
+          children: <Widget>[
+          new UserAccountsDrawerHeader(
+            accountName: new Container(
+              child: Transform.translate(
+              offset: Offset(70,170),
+                child:new Text('Aladin', style: TextStyle(fontSize: 30, color: Colors.black)),
+              
+            ),),
+            accountEmail: new Container(
+              child: Transform.translate(
+              offset: Offset(20,170),
+                child:new Text('Aladin@hotmail.com', style: TextStyle(fontSize: 22, color: Colors.black)),
+              
+            ),),
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            currentAccountPicture: new Container(
+              child: Transform.translate(
+              offset: Offset(80,60),
+              child: Transform.scale(
+              scale: 2.5,  
+                child:CircleAvatar(radius:100, child: new Image.asset("asset/image/user.png")),
+              ),
+            ),),),
+
+             Container(
+              child: Transform.translate(
+              offset: Offset(0,170),
+              child: InkWell(
+                onTap: (){
+                  
+                },
+                child: Container(
+                  height: 50,
+                  width: 250,
+                  
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.only(top: 15, left: 105), 
+                  child: Text("Edit Profile",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                ),
+
+              ),
+            ),),
+
+              Container(
+              child: Transform.translate(
+              offset: Offset(0,190),
+              child: InkWell(
+                onTap: (){
+                  
+                },
+                child: Container(
+                  height: 50,
+                  width: 250,
+                  
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.only(top: 15, left: 105), 
+                  child: Text("Sign out",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                ),
+
+              ),
+            ),
+        
+            
+
+          ),
+          ],
+        ),
+      ),
+      body: Stack(
+        children: <Widget>[
           Container(
             child: Transform.scale(
             scale: 1.5,  
@@ -2909,7 +3108,7 @@ class _ViewVendor2 extends State<ViewVendor2> {
                         ),
                     ),
                     child: Transform.translate(
-                      offset: Offset(10,70),
+                      offset: Offset(0,65),
                       child: Transform.rotate(
                         angle: math.pi/18,
                           child: Stack(children: <Widget>[
@@ -2929,7 +3128,7 @@ class _ViewVendor2 extends State<ViewVendor2> {
           ),
           Container (
             child: Transform.translate(
-            offset: Offset(-180,-140),
+            offset: Offset(-90,30),
               child: Container(
                 height: 50,
                 width: 250,
@@ -2941,23 +3140,21 @@ class _ViewVendor2 extends State<ViewVendor2> {
 
           Container(
             child: Transform.translate(
-            offset: Offset(170,-220),
+            offset: Offset(320,10),
             child: Container(
                 height: 100,
                 width: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("asset/image/menu.png"),
-                    ),
+                child: new IconButton(icon: new Image.asset("asset/image/menu.png"),onPressed:()=>scaffoldKey.currentState.openDrawer(), ),
                 ),
           ), 
               ),
-          ),
+        
+        
           
 
           Container(
             child: Transform.translate(
-            offset: Offset(170,-278),
+            offset: Offset(320,58),
             child: Container(
                 height: 100,
                 width: 100,
@@ -2972,7 +3169,7 @@ class _ViewVendor2 extends State<ViewVendor2> {
 
           Container(
             child: Transform.translate(
-            offset: Offset(-30,-270),
+            offset: Offset(120,170),
               child: Container(
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
@@ -2989,7 +3186,7 @@ class _ViewVendor2 extends State<ViewVendor2> {
 
       Container(
         child: Transform.translate(
-        offset: Offset(0,-278),
+        offset: Offset(0,190),
       
       child: ListView.builder(
         shrinkWrap: true,
@@ -3049,14 +3246,29 @@ class _ViewVendor2 extends State<ViewVendor2> {
 
       ],
       ),
-    ));
+    );
   }
 }
 
 
 
 
-
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Welcome to Flutter',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('HostIt'),
+        ),
+        body: Center(
+          child: Text('Remove this screen'),
+        ),
+      ),
+    );
+  }
+}
 
 class QRselection extends StatefulWidget {
   @override
@@ -3260,15 +3472,14 @@ class MapsFunc extends State<Maps> {
                     )
                   ),
                   actions: <Widget>[
-                                  
-                  child: Container(
+                               Container (
                     height: 30,
                     width: 50,
                     child: new IconButton(icon: new Image.asset("asset/image/arrow.png",
                     //fit: BoxFit.scaleDown,
                     //height: 25,
                     ),
-                    onPressed:()=>Navigator.pop(context) ,
+                    onPressed:()=>Navigator.pop(context) ),
               ),
                   ],
                   flexibleSpace: Container(
@@ -3283,7 +3494,7 @@ class MapsFunc extends State<Maps> {
                       ),
                       image: DecorationImage(
                         image: AssetImage(
-                          "asset/images/frame1.png",
+                          "asset/image/Chat.png",
                         ),
                         fit: BoxFit.fitWidth,
                     ),
@@ -3292,7 +3503,7 @@ class MapsFunc extends State<Maps> {
                 )
               ],
             ),
-            clipper: clipshape(),
+            clipper: ClipShape(),
           )
         ),
         body: 
@@ -3326,17 +3537,3 @@ class MapsFunc extends State<Maps> {
   }
 }
 
-class clipshape extends CustomClipper<Path>{
-  @override
-  Path getClip(Size size) {
-    var clipline= new Path();
-    clipline.lineTo(0, size.height-0);
-    clipline.lineTo(size.width, size.height-100);
-    clipline.lineTo(size.width, 0);
-    return clipline;
-  }
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}
