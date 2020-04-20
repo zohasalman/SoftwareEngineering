@@ -7,9 +7,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'login.dart';
 import 'main.dart';
 
-
-import 'package:firebase_database/firebase_database.dart';
-
 import 'VendorList.dart';
 
 void main2() => runApp(App());

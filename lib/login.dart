@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rateit/login_backend.dart';
+import 'package:rateit/rateit.dart';
+import 'VendorList.dart';
 
 void main1() => runApp(App());
 
@@ -20,10 +22,26 @@ class LoginScreen extends StatefulWidget {
   FirstScreen createState()=> new FirstScreen(); 
 }
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class FirstScreen extends State<LoginScreen> {
-  String email, password; 
+  String _email, _password; 
+  bool rememberme=false;
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-  bool rememberme=false; 
+
+  void submit(){
+    _formKey.currentState.save();
+    dynamic userId = "";
+    try{
+      userId = signIn(_email, _password);
+      print("User Signed In: $userId");
+      Navigator.push(context,MaterialPageRoute(builder: (context)=> EditScreen()),); 
+    }catch(e){
+      print("Error: $e");
+      _formKey.currentState.reset();
+    }
+
+  }
 
   void remembermeChange(bool value)=> setState((){
     rememberme=value; 
@@ -95,7 +113,7 @@ class FirstScreen extends State<LoginScreen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input.isEmpty? 'Please enter an email': null,
-                  onSaved: (input)=> email=input,
+                  onSaved: (input)=> _email = input.trim(),
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(
@@ -114,7 +132,7 @@ class FirstScreen extends State<LoginScreen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
-                  onSaved: (input)=>password=input,
+                  onSaved: (input)=> _password = input.trim(),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     labelStyle: TextStyle(
@@ -159,18 +177,14 @@ class FirstScreen extends State<LoginScreen> {
 
                 ),
 
-                       Container(
+                  Container(
                   child: Transform.translate(
                   offset: Offset(0,0),
                   child: InkWell(
-                    onTap: (){
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),);  
-                    },
+                    onTap: submit,
                     child: Container(
-
                       height: 50,
                       width: 250,
-                      
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topRight,
