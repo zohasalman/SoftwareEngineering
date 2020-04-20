@@ -3471,16 +3471,35 @@ class MapsFunc extends State<Maps> {
                         ),
                     )
                   ),
+                  leading: GestureDetector(
+                    onTap: () {
+                      child: Icon(
+                        Icons.arrow_back,
+                        size:30,
+                      );
+                    },
+                  ),
                   actions: <Widget>[
-                               Container (
-                    height: 30,
-                    width: 50,
-                    child: new IconButton(icon: new Image.asset("asset/image/arrow.png",
-                    //fit: BoxFit.scaleDown,
-                    //height: 25,
+                    Padding(
+                      padding: EdgeInsets.only(top: 100,right: 60.0),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Image.asset("asset/image/Chat.png",
+                          fit: BoxFit.scaleDown,
+                          height: 30,
+                        ),
+                      ),
                     ),
-                    onPressed:()=>Navigator.pop(context) ),
-              ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20.0),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Icon(
+                            Icons.menu,
+                            size: 30,
+                        ),
+                      )
+                    ),
                   ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
