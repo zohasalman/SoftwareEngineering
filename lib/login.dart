@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rateit/login_backend.dart';
+import 'package:rateit/auth.dart';
 import 'package:rateit/rateit.dart';
 import 'VendorList.dart';
 
@@ -18,29 +18,31 @@ class App extends StatelessWidget{
 }
 
 class LoginScreen extends StatefulWidget {
+  final Function toggleView;
+  LoginScreen({this.toggleView});
   @override 
   FirstScreen createState()=> new FirstScreen(); 
 }
 
-final FirebaseAuth auth = FirebaseAuth.instance;
+final AuthService _auth = AuthService();
 
 class FirstScreen extends State<LoginScreen> {
-  String _email, _password; 
+
+  String _email = '';
+  String _password = '';
+  String _errorMessage = ''; 
   bool rememberme=false;
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
-  void submit(){
+  final _formKey= GlobalKey<FormState>(); 
+
+  void submit() async {
     _formKey.currentState.save();
-    dynamic userId = "";
-    try{
-      userId = signIn(_email, _password);
-      print("User Signed In: $userId");
-      Navigator.push(context,MaterialPageRoute(builder: (context)=> EditScreen()),); 
-    }catch(e){
-      print("Error: $e");
-      _formKey.currentState.reset();
+    dynamic result = await _auth.signInEmailAndPassword(_email, _password); 
+    if (result == null){
+      setState(() => _errorMessage = 'Invalid email or password combination.');
+    }else{
+      print(result);
     }
-
   }
 
   void remembermeChange(bool value)=> setState((){
@@ -209,7 +211,7 @@ class FirstScreen extends State<LoginScreen> {
                 offset: Offset(0,12),
                 child: InkWell(
                   onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
+                  widget.toggleView();
                 },
                 child: new Container(
                   //padding: EdgeInsets.only(top: 130, left: 20), 
@@ -277,15 +279,20 @@ class FirstScreen extends State<LoginScreen> {
 }
 
 class SignScreen extends StatefulWidget {
+  
+  final Function toggleView;
+  SignScreen({this.toggleView});
+
   @override 
   SecondScreen createState()=> new SecondScreen(); 
 }
 
 
 class SecondScreen extends State<SignScreen> {
-  String firstname, lastname, gender, month, day,year ; 
+  String firstname, lastname, gender, month, day, year; 
   
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  final _formKey= GlobalKey<FormState>(); 
+
   List<DropdownMenuItem<String>> m=[];
   List<DropdownMenuItem<String>> d=[];
   List<DropdownMenuItem<String>> y=[];
@@ -846,7 +853,7 @@ class SecondScreen extends State<SignScreen> {
               children: <Widget>[
                  TextFormField(
                   validator: (input)=> input.isEmpty? 'Please enter a valid last name': null, 
-                  onSaved: (input)=> firstname=input,
+                  onSaved: (input)=> lastname=input,
                   decoration: InputDecoration(
                     labelText: 'Last Name',
                     labelStyle: TextStyle(
@@ -866,7 +873,7 @@ class SecondScreen extends State<SignScreen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input.isEmpty? 'Please enter a valid gender' : null, 
-                  onSaved: (input)=> firstname=input,
+                  onSaved: (input)=> gender = input,
                   decoration: InputDecoration(
                     labelText: 'Gender',
                     labelStyle: TextStyle(

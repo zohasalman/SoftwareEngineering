@@ -1,13 +1,9 @@
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'login.dart';
-import 'main.dart';
-
-
+import 'package:rateit/login.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'VendorList.dart';
@@ -16,7 +12,6 @@ void main2() => runApp(App());
 
 String number="8"; 
 List<int> no=[2,3,4,5,6,7,8,9]; 
-
 
 
 class ClipShape extends CustomClipper<Path>{
