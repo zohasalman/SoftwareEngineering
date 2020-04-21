@@ -3569,23 +3569,25 @@ class MapsFunc extends State<Maps> {
                       size:30,
                       ), 
                     onPressed: (){
-                      Navigator.of(context).pop();
+                      Navigator.pop(context);
                       }),
                   actions: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top:0 ,right: 20.0),
-                      //child: GestureDetector(
-                        //onTap: () {},
-                        //child: new RawMaterialButton(
-                      child: GestureDetector(
-                        onTap: () {Navigator.pop(context);},
-                        child: Icon(
-                            Icons.search,
-                            size: 30,
-                        ),
+                    //Padding(
+                      //padding: EdgeInsets.only(top:0 ,right: 20.0),
+                       IconButton(
+                        onPressed: () {
+                          showSearch(
+                            context: context,
+                            delegate: MapSearchBar(),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.search,
+                          size: 30,
+                        )
                       ),
                       
-                    ),
+                    //),
                     //),
                     Padding(
                       padding: EdgeInsets.only(right: 20.0),
@@ -3607,7 +3609,7 @@ class MapsFunc extends State<Maps> {
                           Color(0xFFAC0D57),
                           Color(0xFFFC4A1F),
                         ]
-                      ),
+                    ),
                       image: DecorationImage(
                         image: AssetImage(
                           "asset/image/Chat.png",
@@ -3658,5 +3660,56 @@ class MapsFunc extends State<Maps> {
   }
 }
 
+class MapSearchBar extends SearchDelegate<String> {
+  @override
+  String get searchFieldLabel => super.searchFieldLabel;
+  @override
+  ThemeData appBarTheme(BuildContext context){
+    assert(context != null);
+    final ThemeData theme = Theme.of(context);
+    assert(theme != null);
+    return theme.copyWith(
+      primaryColor: Colors.white,
+      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
+      primaryColorBrightness: Brightness.light,
+      primaryTextTheme: theme.textTheme,
+    );
+  }
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      GestureDetector(
+        onTap: () {query='';},
+        child: Padding(
+        padding: EdgeInsets.only(right: 20.0),
+        child:  Icon(
+            Icons.clear,
+            size: 20,
+          ),
+        ),
+    ),
+    ];
+  }
 
+  @override
+  Widget buildLeading(BuildContext context) {
+    // TODO: implement buildLeading
+    return IconButton(
+      icon: new Icon(Icons.arrow_back_ios),
+      onPressed:()=>Navigator.pop(context),
+    );
+      
+  }
 
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    return Text("Hi");
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // TODO: implement buildSuggestions
+    return Text(query);
+  }
+}
