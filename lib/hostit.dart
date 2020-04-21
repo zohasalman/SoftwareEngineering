@@ -3455,91 +3455,7 @@ class MapsFunc extends State<Maps> {
     return MaterialApp(
       home: Scaffold(
       key: scaffoldKey,
-      drawer: new DrawerHeader(
-        child: new ListView(
-          children: <Widget>[
-          new UserAccountsDrawerHeader(
-            accountName: new Container(
-              child: Transform.translate(
-              offset: Offset(70,170),
-                child:new Text('Aladin', style: TextStyle(fontSize: 30, color: Colors.black)),
-              
-            ),),
-            accountEmail: new Container(
-              child: Transform.translate(
-              offset: Offset(20,170),
-                child:new Text('Aladin@hotmail.com', style: TextStyle(fontSize: 22, color: Colors.black)),
-              
-            ),),
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            currentAccountPicture: new Container(
-              child: Transform.translate(
-              offset: Offset(80,60),
-              child: Transform.scale(
-              scale: 2.5,  
-                child:CircleAvatar(radius:100, child: new Image.asset("asset/image/user.png")),
-              ),
-            ),),),
-            
-             Container(
-              child: Transform.translate(
-              offset: Offset(0,170),
-              child: InkWell(
-                onTap: (){
-                  
-                },
-                child: Container(
-                  height: 50,
-                  width: 250,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.only(top: 15, left: 105), 
-                  child: Text("Edit Profile",style: TextStyle(color: Colors.white, fontSize: 22 ))
-                ),
-
-              ),
-            ),),
-
-              Container(
-              child: Transform.translate(
-              offset: Offset(0,190),
-              child: InkWell(
-                onTap: (){
-                  
-                },
-                child: Container(
-                  height: 50,
-                  width: 250,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.only(top: 15, left: 105), 
-                  child: Text("Sign out",style: TextStyle(color: Colors.white, fontSize: 22 ))
-                ),
-
-              ),
-            ),)])),
+      drawer: SideBar(),
         extendBodyBehindAppBar: true,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
@@ -3623,12 +3539,8 @@ class MapsFunc extends State<Maps> {
             ),
             clipper: ClipShape(),
           )
-          
         ),
 
-      
-        
-      
         body:     
         GoogleMap(
           onTap: (LatLng coordinates){
@@ -3669,7 +3581,8 @@ class MapSearchBar extends SearchDelegate<String> {
     final ThemeData theme = Theme.of(context);
     assert(theme != null);
     return theme.copyWith(
-      primaryColor: Colors.white,
+      //primaryColor: Decoration(),
+      
       primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
       primaryColorBrightness: Brightness.light,
       primaryTextTheme: theme.textTheme,
@@ -3713,3 +3626,183 @@ class MapSearchBar extends SearchDelegate<String> {
     return Text(query);
   }
 }
+
+class SideBar extends DrawerHeader{
+  Widget thedrawer(){
+  return  DrawerHeader(
+        child: new ListView(
+          children: <Widget>[
+          new UserAccountsDrawerHeader(
+            accountName: new Container(
+              child: Transform.translate(
+              offset: Offset(70,170),
+                child:new Text('Aladin', style: TextStyle(fontSize: 30, color: Colors.black)),
+              
+            ),),
+            accountEmail: new Container(
+              child: Transform.translate(
+              offset: Offset(20,170),
+                child:new Text('Aladin@hotmail.com', style: TextStyle(fontSize: 22, color: Colors.black)),
+              
+            ),),
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            currentAccountPicture: new Container(
+              child: Transform.translate(
+              offset: Offset(80,60),
+              child: Transform.scale(
+              scale: 2.5,  
+                child:CircleAvatar(radius:100, child: new Image.asset("asset/image/user.png")),
+              ),
+            ),),),
+            
+             Container(
+              child: Transform.translate(
+              offset: Offset(0,170),
+              child: InkWell(
+                onTap: (){
+                  
+                },
+                child: Container(
+                  height: 50,
+                  width: 250,
+                  
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.only(top: 15, left: 105), 
+                  child: Text("Edit Profile",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                ),
+
+              ),
+            ),),
+
+              Container(
+              child: Transform.translate(
+              offset: Offset(0,190),
+              child: InkWell(
+                onTap: (){
+                  
+                },
+                child: Container(
+                  height: 50,
+                  width: 250,
+                  
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: EdgeInsets.only(top: 15, left: 105), 
+                  child: Text("Sign out",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                ),
+
+              ),
+            ),)]
+        ),);
+  }
+}
+
+
+
+
+      // drawer: new DrawerHeader(
+      //   child: new ListView(
+      //     children: <Widget>[
+      //     new UserAccountsDrawerHeader(
+      //       accountName: new Container(
+      //         child: Transform.translate(
+      //         offset: Offset(70,170),
+      //           child:new Text('Aladin', style: TextStyle(fontSize: 30, color: Colors.black)),
+              
+      //       ),),
+      //       accountEmail: new Container(
+      //         child: Transform.translate(
+      //         offset: Offset(20,170),
+      //           child:new Text('Aladin@hotmail.com', style: TextStyle(fontSize: 22, color: Colors.black)),
+              
+      //       ),),
+      //       decoration: BoxDecoration(
+      //         color: Colors.white,
+      //       ),
+      //       currentAccountPicture: new Container(
+      //         child: Transform.translate(
+      //         offset: Offset(80,60),
+      //         child: Transform.scale(
+      //         scale: 2.5,  
+      //           child:CircleAvatar(radius:100, child: new Image.asset("asset/image/user.png")),
+      //         ),
+      //       ),),),
+            
+      //        Container(
+      //         child: Transform.translate(
+      //         offset: Offset(0,170),
+      //         child: InkWell(
+      //           onTap: (){
+                  
+      //           },
+      //           child: Container(
+      //             height: 50,
+      //             width: 250,
+                  
+      //             decoration: BoxDecoration(
+      //               gradient: LinearGradient(
+      //                 begin: Alignment.topRight,
+      //                 end: Alignment.topLeft,
+      //                 colors: [ 
+      //                   Color(0xFFAC0D57),
+      //                   Color(0xFFFC4A1F),
+      //                 ]
+      //               ),
+      //               borderRadius: BorderRadius.circular(30),
+      //             ),
+      //             padding: EdgeInsets.only(top: 15, left: 105), 
+      //             child: Text("Edit Profile",style: TextStyle(color: Colors.white, fontSize: 22 ))
+      //           ),
+
+      //         ),
+      //       ),),
+
+      //         Container(
+      //         child: Transform.translate(
+      //         offset: Offset(0,190),
+      //         child: InkWell(
+      //           onTap: (){
+                  
+      //           },
+      //           child: Container(
+      //             height: 50,
+      //             width: 250,
+                  
+      //             decoration: BoxDecoration(
+      //               gradient: LinearGradient(
+      //                 begin: Alignment.topRight,
+      //                 end: Alignment.topLeft,
+      //                 colors: [ 
+      //                   Color(0xFFAC0D57),
+      //                   Color(0xFFFC4A1F),
+      //                 ]
+      //               ),
+      //               borderRadius: BorderRadius.circular(30),
+      //             ),
+      //             padding: EdgeInsets.only(top: 15, left: 105), 
+      //             child: Text("Sign out",style: TextStyle(color: Colors.white, fontSize: 22 ))
+      //           ),
+
+      //         ),
+      //       ),)])),
