@@ -369,7 +369,7 @@ class Screen39 extends State<EventMenu> {
                         },
                         child: Icon(
                             Icons.menu,
-                            size: 30,
+                            
                         ),
                       )
                     ),
@@ -1470,7 +1470,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         },
                         icon: Icon(
                           Icons.search,
-                          size: 30,
+                          
                         )
                       ),
                     Padding(
@@ -1481,7 +1481,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           },
                         child: Icon(
                             Icons.menu,
-                            size: 30,
+                            
                         ),
                       )
                     ),
@@ -1617,7 +1617,7 @@ class Screen46 extends State<EditVen> {
                       },
                       icon: Icon(
                         Icons.search,
-                        size: 30,
+                        
                       )
                     ),
                 ],
@@ -2526,7 +2526,7 @@ class SuccessScreen extends State<Screen> {
                         },
                         icon: Icon(
                           Icons.search,
-                          size: 30,
+                        
                         )
                       ),
                     Padding(
@@ -2537,7 +2537,7 @@ class SuccessScreen extends State<Screen> {
                           },
                         child: Icon(
                             Icons.menu,
-                            size: 30,
+                           
                         ),
                       )
                     ),
@@ -2849,7 +2849,7 @@ class _ViewVendor extends State<ViewVendor> {
                         },
                         icon: Icon(
                           Icons.search,
-                          size: 30,
+                        
                         )
                       ),
                     Padding(
@@ -2860,7 +2860,7 @@ class _ViewVendor extends State<ViewVendor> {
                           },
                         child: Icon(
                             Icons.menu,
-                            size: 30,
+                          
                         ),
                       )
                     ),
@@ -2992,7 +2992,7 @@ class _ViewVendor2 extends State<ViewVendor2> {
                         },
                         icon: Icon(
                           Icons.search,
-                          size: 30,
+                          
                         )
                       ),
                     Padding(
@@ -3003,7 +3003,7 @@ class _ViewVendor2 extends State<ViewVendor2> {
                           },
                         child: Icon(
                             Icons.menu,
-                            size: 30,
+                            
                         ),
                       )
                     ),
@@ -3314,6 +3314,7 @@ class MapsFunc extends State<Maps> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        key: scaffoldKey,
         extendBodyBehindAppBar: true,
         endDrawer:  SideBar(),
         appBar: PreferredSize(
@@ -3343,18 +3344,30 @@ class MapsFunc extends State<Maps> {
                       Navigator.pop(context);
                       }),
                   actions: <Widget>[
-                       IconButton(
-                        onPressed: () {                          
-                          showSearch(
+                    IconButton(
+                      onPressed: () {                          
+                        showSearch(
                             context: context,
                             delegate: MapSearchBar(),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          size: 30,
-                        )
+                        );
+                      },
+                      icon: Icon(
+                        Icons.search,
+                      
+                      )
                       ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          scaffoldKey.currentState.openEndDrawer();
+                          },
+                        child: Icon(
+                            Icons.menu,
+                          
+                        ),
+                      )
+                    ),
                   ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
@@ -3550,6 +3563,7 @@ class SideBarProperties extends State<SideBar>{
               ),
             )
           ),
+          Padding( padding: EdgeInsets.all(20),),
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
