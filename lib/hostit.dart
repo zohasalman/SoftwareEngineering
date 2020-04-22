@@ -58,62 +58,61 @@ class Screen36 extends State<AddEvent> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: SingleChildScrollView(
-        key: _formKey,
-        child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
+        //key: scaffoldKey,
+        endDrawer:  SideBar(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                        child: Text('Add Event',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                        ),
+                    )
+                  ),
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      size:30,
+                      ), 
+                    onPressed: (){
+                      Navigator.pop(context);
+                      }),
+                  flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.topLeft,
                         colors: [ 
                           Color(0xFFAC0D57),
                           Color(0xFFFC4A1F),
                         ]
-                      ),
+                    ),
                       image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
+                        image: AssetImage(
+                          "asset/image/Chat.png",
                         ),
+                        fit: BoxFit.fitWidth,
                     ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 88, left: 80, right: 80),
-                                child:Text("Add Event",style: TextStyle(color: Colors.white, fontSize: 22 )) ,))
-                            )
-                          ] ,)
-                      ),
-                    ),
-                  ),
+                  )
                 ),
-              ),
+                )
+              ],
             ),
-          ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(-180,-140),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/arrow.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
-          ),
-
+            clipper: ClipShape(),
+          )
+        ),
+      body: SingleChildScrollView(
+        key: _formKey,
+        child: Column(children: <Widget>[
           Container (
             child: Transform.translate(
             offset: Offset(0,-40),
@@ -161,10 +160,7 @@ class Screen36 extends State<AddEvent> {
               ),
             ),
           ),
-          
-
-          
-
+        
           Container (
             child: Transform.translate(
             offset: Offset(160,-90),
@@ -339,64 +335,79 @@ class Screen39 extends State<EventMenu> {
   @override 
   Widget build(BuildContext context){
     return Scaffold(
-    
       resizeToAvoidBottomPadding: false,
+      //key: scaffoldKey,
+      endDrawer:  SideBar(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                  )
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    size:30,
+                    ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                    }),
+                actions: <Widget>[
+                  //Padding(
+                    //padding: EdgeInsets.only(top:0 ,right: 20.0),
+                      IconButton(
+                      onPressed: () {                          
+                        showSearch(
+                          context: context,
+                          delegate: MapSearchBar(),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.search,
+                        size: 30,
+                      )
+                    ),
+                ],
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                  ),
+                )
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
       body: Form(
         key: _formKey,
         child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
-                        ),
-                    ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 88, left: 80, right: 80),
-                                child:Text(eventName,style: TextStyle(color: Colors.white, fontSize: 22 )) ,))
-                            )
-                          ] ,)
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(-180,-140),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/arrow.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
-          ),
-
            Container(
             child: Transform.translate(
             offset: Offset(0,-60),
@@ -635,9 +646,6 @@ class Screen41 extends State<AddVendor> {
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   List<DropdownMenuItem<String>> n=[];
-  
-  
-
   void loadData(){
     n=[];
     n.add(new DropdownMenuItem(
@@ -3281,67 +3289,62 @@ class ScreenQRselect extends State<QRselection> {
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomPadding: false,
+        //key: scaffoldKey,
+        endDrawer:  SideBar(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                        child: Text('QR Code',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                        ),
+                    )
+                  ),
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      size:30,
+                      ), 
+                    onPressed: (){
+                      Navigator.pop(context);
+                      }),
+                  flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                    ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                    ),
+                  )
+                ),
+                )
+              ],
+            ),
+            clipper: ClipShape(),
+          )
+        ),
         body: Container(
           child: Column(
             children: <Widget>[
-              Container(
-                child: Transform.scale(
-                scale: 1.5,  
-                  child: Transform.rotate(
-                    angle: -math.pi/18,
-                    child: Transform.translate(
-                      offset: Offset(0,-60),
-                      child: Container (
-                        height: 175,
-                        width: 2000,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft,
-                            colors: [ 
-                              Color(0xFFAC0D57),
-                              Color(0xFFFC4A1F),
-                            ]
-                          ),
-                          image: DecorationImage(
-                            image: AssetImage("asset/image/Chat.png")
-                            ),
-                        ),
-                        child: Transform.translate(
-                          offset: Offset(0,75),
-                          child: Transform.rotate(
-                            angle: math.pi/18,
-                              child: Stack(children: <Widget>[
-                                Positioned(
-                                  child: Container(child: Padding( 
-                                    padding: EdgeInsets.only(bottom: 50, top: 78, left: 80, right: 80),
-                                    child:Text("QR Codes",style: TextStyle(color: Colors.white, fontSize: 22 )))), 
-                                ),
-                              ] ,)
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container (
-                child: Transform.translate(
-                offset: Offset(-180,-140),
-                  child: Container(
-                    height: 30,
-                    width: 50,
-                    child: new IconButton(icon: new Image.asset("asset/image/arrow.png",
-                    //fit: BoxFit.scaleDown,
-                    //height: 25,
-                    ),
-                    onPressed:()=>Navigator.pop(context) ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(15),
-              ),
               Center(
                 child: 
                   Column(
@@ -3454,9 +3457,9 @@ class MapsFunc extends State<Maps> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-      key: scaffoldKey,
-      drawer: SideBar(),
         extendBodyBehindAppBar: true,
+        key: scaffoldKey,
+        endDrawer:  SideBar(),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -3476,9 +3479,6 @@ class MapsFunc extends State<Maps> {
                         ),
                     )
                   ),
-                  
-
-            
                   leading: IconButton(
                     icon: Icon(
                       Icons.arrow_back,
@@ -3491,7 +3491,7 @@ class MapsFunc extends State<Maps> {
                     //Padding(
                       //padding: EdgeInsets.only(top:0 ,right: 20.0),
                        IconButton(
-                        onPressed: () {
+                        onPressed: () {                          
                           showSearch(
                             context: context,
                             delegate: MapSearchBar(),
@@ -3502,13 +3502,10 @@ class MapsFunc extends State<Maps> {
                           size: 30,
                         )
                       ),
-                      
-                    //),
-                    //),
                     Padding(
                       padding: EdgeInsets.only(right: 20.0),
                       child: GestureDetector(
-                        onTap: () {scaffoldKey.currentState.openDrawer();},
+                        onTap: () {scaffoldKey.currentState.openEndDrawer();},
                         child: Icon(
                             Icons.menu,
                             size: 30,
@@ -3572,7 +3569,22 @@ class MapsFunc extends State<Maps> {
   }
 }
 
-class MapSearchBar extends SearchDelegate<String> {
+
+
+class MapSearchBar extends SearchDelegate<String>  {
+
+   List<String> _list = const [
+      'Igor Minar',
+      'Brad Green',
+      'Dave Geddes',
+      'Naomi Black',
+      'Greg Weber',
+      'Dean Sofer',
+      'Wes Alvaro',
+      'John Scott',
+      'Daniel Nadasi',
+  ];
+
   @override
   String get searchFieldLabel => super.searchFieldLabel;
   @override
@@ -3581,8 +3593,7 @@ class MapSearchBar extends SearchDelegate<String> {
     final ThemeData theme = Theme.of(context);
     assert(theme != null);
     return theme.copyWith(
-      //primaryColor: Decoration(),
-      
+      primaryColorDark: Colors.white,
       primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
       primaryColorBrightness: Brightness.light,
       primaryTextTheme: theme.textTheme,
@@ -3623,186 +3634,115 @@ class MapSearchBar extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     // TODO: implement buildSuggestions
-    return Text(query);
+    return ListView.builder(
+      padding: EdgeInsets.all(10),
+      itemCount: 5,
+      itemBuilder: (context,index) {
+        return ListTile(
+            title: Text(_list[index]),
+        );
+      },
+    );
   }
 }
 
-class SideBar extends DrawerHeader{
-  Widget thedrawer(){
-  return  DrawerHeader(
-        child: new ListView(
-          children: <Widget>[
-          new UserAccountsDrawerHeader(
-            accountName: new Container(
-              child: Transform.translate(
-              offset: Offset(70,170),
-                child:new Text('Aladin', style: TextStyle(fontSize: 30, color: Colors.black)),
-              
-            ),),
-            accountEmail: new Container(
-              child: Transform.translate(
-              offset: Offset(20,170),
-                child:new Text('Aladin@hotmail.com', style: TextStyle(fontSize: 22, color: Colors.black)),
-              
-            ),),
-            decoration: BoxDecoration(
-              color: Colors.white,
+class SideBar extends StatefulWidget {
+  @override
+  SideBarProperties createState() => new SideBarProperties();
+}
+
+class SideBarProperties extends State<SideBar>{
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: new Column(
+        
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+            Padding( padding: EdgeInsets.all(30),),
+            CircleAvatar(
+              radius:70, 
+              backgroundImage: AssetImage("asset/image/user.png"),
             ),
-            currentAccountPicture: new Container(
-              child: Transform.translate(
-              offset: Offset(80,60),
-              child: Transform.scale(
-              scale: 2.5,  
-                child:CircleAvatar(radius:100, child: new Image.asset("asset/image/user.png")),
-              ),
-            ),),),
-            
-             Container(
-              child: Transform.translate(
-              offset: Offset(0,170),
-              child: InkWell(
-                onTap: (){
-                  
-                },
-                child: Container(
-                  height: 50,
-                  width: 250,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
-                    ),
-                    borderRadius: BorderRadius.circular(30),
+            Text(
+              'Aladin', 
+              style: TextStyle(fontSize: 30, color: Colors.black)
+            ),
+            Text(
+              'Aladin@hotmail.com', 
+              style: TextStyle(fontSize: 22, color: Colors.black)
+            ),
+          Padding( padding: EdgeInsets.all(30),),
+          Container(
+            child: GestureDetector(
+              onTap: () { //Change on Integration
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
                   ),
-                  padding: EdgeInsets.only(top: 15, left: 105), 
-                  child: Text("Edit Profile",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
-
-              ),
-            ),),
-
-              Container(
-              child: Transform.translate(
-              offset: Offset(0,190),
-              child: InkWell(
-                onTap: (){
-                  
-                },
-                child: Container(
-                  height: 50,
-                  width: 250,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Edit Profile',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
                     ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.only(top: 15, left: 105), 
-                  child: Text("Sign out",style: TextStyle(color: Colors.white, fontSize: 22 ))
                 ),
-
               ),
-            ),)]
-        ),);
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Sign Out',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+        ]
+      ),
+    );
   }
 }
-
-
-
-
-      // drawer: new DrawerHeader(
-      //   child: new ListView(
-      //     children: <Widget>[
-      //     new UserAccountsDrawerHeader(
-      //       accountName: new Container(
-      //         child: Transform.translate(
-      //         offset: Offset(70,170),
-      //           child:new Text('Aladin', style: TextStyle(fontSize: 30, color: Colors.black)),
-              
-      //       ),),
-      //       accountEmail: new Container(
-      //         child: Transform.translate(
-      //         offset: Offset(20,170),
-      //           child:new Text('Aladin@hotmail.com', style: TextStyle(fontSize: 22, color: Colors.black)),
-              
-      //       ),),
-      //       decoration: BoxDecoration(
-      //         color: Colors.white,
-      //       ),
-      //       currentAccountPicture: new Container(
-      //         child: Transform.translate(
-      //         offset: Offset(80,60),
-      //         child: Transform.scale(
-      //         scale: 2.5,  
-      //           child:CircleAvatar(radius:100, child: new Image.asset("asset/image/user.png")),
-      //         ),
-      //       ),),),
-            
-      //        Container(
-      //         child: Transform.translate(
-      //         offset: Offset(0,170),
-      //         child: InkWell(
-      //           onTap: (){
-                  
-      //           },
-      //           child: Container(
-      //             height: 50,
-      //             width: 250,
-                  
-      //             decoration: BoxDecoration(
-      //               gradient: LinearGradient(
-      //                 begin: Alignment.topRight,
-      //                 end: Alignment.topLeft,
-      //                 colors: [ 
-      //                   Color(0xFFAC0D57),
-      //                   Color(0xFFFC4A1F),
-      //                 ]
-      //               ),
-      //               borderRadius: BorderRadius.circular(30),
-      //             ),
-      //             padding: EdgeInsets.only(top: 15, left: 105), 
-      //             child: Text("Edit Profile",style: TextStyle(color: Colors.white, fontSize: 22 ))
-      //           ),
-
-      //         ),
-      //       ),),
-
-      //         Container(
-      //         child: Transform.translate(
-      //         offset: Offset(0,190),
-      //         child: InkWell(
-      //           onTap: (){
-                  
-      //           },
-      //           child: Container(
-      //             height: 50,
-      //             width: 250,
-                  
-      //             decoration: BoxDecoration(
-      //               gradient: LinearGradient(
-      //                 begin: Alignment.topRight,
-      //                 end: Alignment.topLeft,
-      //                 colors: [ 
-      //                   Color(0xFFAC0D57),
-      //                   Color(0xFFFC4A1F),
-      //                 ]
-      //               ),
-      //               borderRadius: BorderRadius.circular(30),
-      //             ),
-      //             padding: EdgeInsets.only(top: 15, left: 105), 
-      //             child: Text("Sign out",style: TextStyle(color: Colors.white, fontSize: 22 ))
-      //           ),
-
-      //         ),
-      //       ),)])),

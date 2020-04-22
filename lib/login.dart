@@ -35,7 +35,7 @@ class FirstScreen extends State<LoginScreen> {
     try{
       userId = signIn(_email, _password);
       print("User Signed In: $userId");
-      Navigator.push(context,MaterialPageRoute(builder: (context)=> EditScreen()),); 
+      //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditScreen()),); 
     }catch(e){
       print("Error: $e");
       _formKey.currentState.reset();
