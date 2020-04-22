@@ -34,22 +34,11 @@ class FirstScreen extends State<LoginScreen> {
 
   void submit() async {
     _formKey.currentState.save();
-<<<<<<< HEAD
-    dynamic userId = "";
-    try{
-      userId = signIn(_email, _password);
-      print("User Signed In: $userId");
-      //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditScreen()),); 
-    }catch(e){
-      print("Error: $e");
-      _formKey.currentState.reset();
-=======
     dynamic result = await _auth.signInEmailAndPassword(_email, _password); 
     if (result == null){
       setState(() => _errorMessage = 'Invalid email or password combination.');
     }else{
       print(result);
->>>>>>> 6d4e59efef40a468dd838295120e51f6e18e7d08
     }
   }
 
