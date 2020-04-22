@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rateit/user.dart';
 
+import 'user.dart';
+
 class FirestoreService{
+
+  final String uid;
+  FirestoreService({this.uid});
 
   final CollectionReference _usersCollectionReference = Firestore.instance.collection('users');
 
@@ -11,6 +16,34 @@ class FirestoreService{
     } catch (e) {
       return e.message;
     }
+  }
+
+  Future<String> getUserRole(String uid) async {
+    try{
+      String userRole = '';
+      await _usersCollectionReference.document(uid).get().then((value) => userRole = value.data['userRole']);
+      return userRole;
+    }catch(e){
+      return e.toString();
+    }
+  }
+
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
+    return UserData(
+      uid : snapshot.data['uid'],  
+      firstName : snapshot.data['firstName'], 
+      lastName : snapshot.data['lastName'], 
+      gender : snapshot.data['gender'], 
+      dateOfBirth : snapshot.data['dateOfBirth'], 
+      email : snapshot.data['email'], 
+      password : snapshot.data['password'], 
+      userRole : snapshot.data['userRole'],
+    );
+  }
+
+  Stream<UserData> get userData {
+    return _usersCollectionReference.document(uid).snapshots()
+    .map(_userDataFromSnapshot);
   }
 
 }
