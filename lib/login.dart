@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:rateit/auth.dart';
+import 'VendorList.dart';
+import 'userRedirection.dart';
 
 void main1() => runApp(App());
 
@@ -38,7 +40,7 @@ class FirstScreen extends State<LoginScreen> {
     if (result == null){
       setState(() => _errorMessage = 'Invalid email or password combination.');
     }else{
-      print(result);
+      LoadingScreen();
     }
   }
 
