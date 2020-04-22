@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:rateit/hostit.dart';
 import 'package:rateit/rateit.dart';
@@ -66,35 +68,33 @@ class LoadingScreen extends StatefulWidget{
 
 class LoadingScreenFunc extends State<LoadingScreen> {
 
-  // startTime() async {
-  //     var _duration = new Duration(seconds: 5);
-  //     return new Timer(_duration, navigationPage);
-  // }
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   startTime();
-  // }
+  startTime() async {
+      return new Timer(Duration(seconds: 5), routing);
+  }
+  @override
+  void initState() {
+    super.initState();
+    startTime();
+  }
 
-  // @override 
-  // void routing(){
-  //   User user = Provider.of<User>(context);
-  //   StreamBuilder<UserData>(
-  //     stream: FirestoreService(uid: user.uid).userData,
-  //     builder: (context, snapshot){
-  //       if(snapshot.hasData){
-  //         UserData userData = snapshot.data;
-  //         if (userData.userRole == 'user'){
-  //           return InviteScreen();
-  //         }else if(userData.userRole == 'management'){
-  //           return AddEvent();
-  //         }else{
-  //           return ForgotScreen();
-  //         }
-  //       }
-  //     },
-  //   );
-  // }
+  void routing(){
+    User user = Provider.of<User>(context);
+    StreamBuilder<UserData>(
+      stream: FirestoreService(uid: user.uid).userData,
+      builder: (context, snapshot){
+        if(snapshot.hasData){
+          UserData userData = snapshot.data;
+          if (userData.userRole == 'user'){
+            return InviteScreen();
+          }else if(userData.userRole == 'management'){
+            return AddEvent();
+          }else{
+            return ForgotScreen();
+          }
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,13 +143,15 @@ class LoadingScreenFunc extends State<LoadingScreen> {
       ),
 
       body: Column(
-        child: Center(
-          child: Text('Signing In',
-            style: TextStyle(
-              color: Colors.white, fontSize: 22 
-            ),
-          )
-        )
+        children: <Widget>[
+          Center(
+            child: Text('Signing In',
+              style: TextStyle(
+                color: Colors.white, fontSize: 22 
+              ),
+            )
+          )  
+        ]
       )
     );
   }
