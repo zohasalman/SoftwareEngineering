@@ -1,10 +1,27 @@
 //Copied code, delete during integration
 import 'package:flutter/material.dart';
-import 'login.dart';
-import 'hostit.dart';
-import 'rateit.dart';
+import 'package:rateit/wrapper.dart';
+import 'package:rateit/user.dart';
+import 'package:rateit/auth.dart';
+import 'package:rateit/hostit.dart';
+import 'package:rateit/rateit.dart';
+import 'package:rateit/login.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
+
+// class MyApp extends StatelessWidget {
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return StreamProvider<User>.value(
+//       value: AuthService().user,
+//       child: MaterialApp(
+//         home: Wrapper(), // decides to sbow login screen or homepage
+//       ),
+//     );
+//   }
+// }
 
 class MyApp extends StatelessWidget {
   @override
@@ -72,7 +89,7 @@ class Button1 extends StatelessWidget {
     return GestureDetector(
       // When the child is tapped, show a snackbar.
       onTap: () {
-        main1();
+       main1();
       },
       // The custom button
       child: Container(
