@@ -247,7 +247,7 @@ class FirstScreen extends State<LoginScreen> {
                           image: DecorationImage(
                             image: AssetImage("asset/image/facebook.png")
                             ),
-                        ), 
+                        ),
                       ),
                     ),
                   ),
@@ -262,6 +262,11 @@ class FirstScreen extends State<LoginScreen> {
                           image: DecorationImage(
                             image: AssetImage("asset/image/google.png")
                             ),
+                        ),
+                        child: InkWell(
+                        onTap: () {
+                          _auth.signInWithGoogle();
+                        },
                         ), 
                       ),
                     ),
