@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+//import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rateit/login.dart';
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
 
 import 'VendorList.dart';
 
@@ -3473,7 +3473,6 @@ class MapSearchBar extends SearchDelegate<String>  {
 
   @override
   Widget buildLeading(BuildContext context) {
-    // TODO: implement buildLeading
     return IconButton(
       icon: new Icon(Icons.arrow_back_ios),
       onPressed:()=>Navigator.pop(context),
@@ -3483,13 +3482,11 @@ class MapSearchBar extends SearchDelegate<String>  {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
     return Text("Hi");
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
     return ListView.builder(
       padding: EdgeInsets.all(10),
       itemCount: 5,

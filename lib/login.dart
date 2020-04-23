@@ -40,7 +40,7 @@ class FirstScreen extends State<LoginScreen> {
     if (result == null){
       setState(() => _errorMessage = 'Invalid email or password combination.');
     }else{
-      LoadingScreen();
+      Redirection();
     }
   }
 

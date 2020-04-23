@@ -46,4 +46,18 @@ class FirestoreService{
     .map(_userDataFromSnapshot);
   }
 
+  Future<String> MyPromise(String uid) async {
+    try{
+      String userrole = '';
+      await Firestore.instance.collection("users").document(uid).get().then((value) => userrole = value.data['userRole']);
+      print('called');
+      return userrole;
+    }catch(e){
+      return "Error";
+    }
+  }
+
+  Stream<String> get users  {
+    return MyPromise(uid).asStream();
+  }
 }

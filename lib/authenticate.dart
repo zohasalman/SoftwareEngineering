@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rateit/login.dart';
-import 'package:rateit/rateit.dart';
-import 'package:rateit/hostit.dart';
+//import 'package:rateit/rateit.dart';
+//import 'package:rateit/hostit.dart';
 
 class Authenticate extends StatefulWidget {
   @override

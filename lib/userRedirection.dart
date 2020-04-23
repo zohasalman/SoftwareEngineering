@@ -9,150 +9,157 @@ import 'login.dart';
 import 'rateit.dart';
 import 'user.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firestore.dart';
 
-class UserRedirection extends StatefulWidget {
 
-  UserRedirection({this.uid});
+class Redirection extends StatefulWidget{
+
+  Redirection({this.uid});
   final String uid;
 
   @override
-  _UserRedirectionState createState() => _UserRedirectionState();
+  RedirectionFunc createState() => RedirectionFunc();
 }
 
-class _UserRedirectionState extends State<UserRedirection> {
+class RedirectionFunc extends State<Redirection> {
 
   @override
-  //trying using stream
   Widget build(BuildContext context) {
-    User user = Provider.of<User>(context);
-    return StreamBuilder<UserData>(
-      stream: FirestoreService(uid: user.uid).userData,
-      builder: (context, snapshot){
-        if(snapshot.hasData){
-          UserData userData = snapshot.data;
-          if (userData.userRole == 'user'){
-            return InviteScreen();
-          }else if(userData.userRole == 'management'){
-            return AddEvent();
-          }else{
-            return ForgotScreen();
-          }
-        }
-      },
+    User usr = Provider.of<User>(context);
+    String user = "Wrong";//usr.uid;
+    return StreamProvider<String>.value(
+      value: FirestoreService(uid: user).users,
+      child: Redirector(),
     );
   }
 }
 
-// query 
-Future<String> getUserRole(String uid) async {
-    try{
-      String userRole = '';
-      await Firestore.instance.document(uid).get().then((value) => userRole = value.data['userRole']);
-      return userRole;
-    }catch(e){
-      return e.toString();
+class Redirector extends StatefulWidget {
+  @override
+  RedirectorState createState() => RedirectorState();
+}
+
+class RedirectorState extends State<Redirector> {
+  @override
+  Widget build(BuildContext context) {
+    final usr = Provider.of<String>(context);
+    if (usr == 'user'){
+      return InviteScreen();
+    }
+    else if(usr == 'management'){ 
+      return AddEvent();
+    }
+    else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
+    //TO DOCan be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
+      return ErrorSignIn();
+    }
+    else if(usr == null){     //Data not Fetched yet or was null
+      return LoadingScreen();//Text("Error: Cannot connect to Database");
+    }
+    else{                     //Test Needed to confirm desired function
+      return ForgotScreen();
     }
   }
+ }
 
 
 
-class LoadingScreen extends StatefulWidget{
 
-  LoadingScreen({this.uid});
-  final String uid;
 
-  @override
-  LoadingScreenFunc createState() => LoadingScreenFunc();
-}
-
-class LoadingScreenFunc extends State<LoadingScreen> {
-
-  startTime() async {
-      return new Timer(Duration(seconds: 5), routing);
-  }
-  @override
-  void initState() {
-    super.initState();
-    startTime();
-  }
-
-  void routing(){
-    User user = Provider.of<User>(context);
-    StreamBuilder<UserData>(
-      stream: FirestoreService(uid: user.uid).userData,
-      builder: (context, snapshot){
-        if(snapshot.hasData){
-          UserData userData = snapshot.data;
-          if (userData.userRole == 'user'){
-            return InviteScreen();
-          }else if(userData.userRole == 'management'){
-            return AddEvent();
-          }else{
-            return ForgotScreen();
-          }
-        }
-      },
-    );
-  }
-
+class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(150.0),
-        child: ClipPath(
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              AppBar(
-                centerTitle: true,
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(0),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                      child: Text('Sign In',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                      ),
+    return Container(
+      color: Colors.white,
+      child: Center(
+        child: SpinKitFadingCircle(
+          color: Colors.red,
+          size: 75.0,
+        ) 
+      ),
+    );
+  }
+}
+
+class ErrorSignIn extends StatefulWidget {
+  @override
+  ErrorSignInState createState() => ErrorSignInState();
+}
+
+class ErrorSignInState extends State<ErrorSignIn> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        resizeToAvoidBottomPadding: false,
+        endDrawer:  SideBar(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                        child: Text('Error',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                        ),
+                    )
+                  ),
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                       
+                      ), 
+                    onPressed: (){
+                         Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                    }
+                  ),
+                  flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                    ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                    ),
                   )
                 ),
-                flexibleSpace: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
-                  ),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "asset/image/Chat.png",
-                      ),
-                      fit: BoxFit.fitWidth,
-                  ),
                 )
+              ],
+            ),
+            clipper: ClipShape(),
+          )
+        ),
+        body: Container(
+          width: MediaQuery.of(context).copyWith().size.width,
+          child: Padding(
+            padding: EdgeInsets.all(10.0), 
+            child: Center(
+              child: Text(
+                "Error: Sign In Failed.\nPlease enter the your correct username and password or Make sure you are connected to the internet",
+                style: TextStyle(color: Colors.black, fontSize: 28 ),
+                textAlign: TextAlign.center,
               ),
-              )
-            ],
+            ),
           ),
-          clipper: ClipShape(),
         )
-      ),
-
-      body: Column(
-        children: <Widget>[
-          Center(
-            child: Text('Signing In',
-              style: TextStyle(
-                color: Colors.white, fontSize: 22 
-              ),
-            )
-          )  
-        ]
       )
     );
   }
-}
+ }

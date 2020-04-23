@@ -13,7 +13,7 @@ class Wrapper extends StatelessWidget {
       return Authenticate();
     }else{
       String uid = user.uid.toString();
-      return UserRedirection(uid: uid);
+      return Redirection(uid: uid);
     }
   }
 }
