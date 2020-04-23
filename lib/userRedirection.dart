@@ -28,7 +28,7 @@ class RedirectionFunc extends State<Redirection> {
   @override
   Widget build(BuildContext context) {
     User usr = Provider.of<User>(context);
-    String user = "Wrong";//usr.uid;
+    String user = usr.uid;
     return StreamProvider<String>.value(
       value: FirestoreService(uid: user).users,
       child: Redirector(),
@@ -52,7 +52,7 @@ class RedirectorState extends State<Redirector> {
       return AddEvent();
     }
     else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
-    //TO DOCan be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
+    //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
       return ErrorSignIn();
     }
     else if(usr == null){     //Data not Fetched yet or was null
