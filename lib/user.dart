@@ -11,10 +11,9 @@ class UserData{
   final String gender;
   final DateTime dateOfBirth;
   final String email;
-  final String password;
   final String userRole;
 
-  UserData({this.uid, this.firstName, this.lastName, this.gender, this.dateOfBirth, this.email, this.password, this.userRole});
+  UserData({this.uid, this.firstName, this.lastName, this.gender, this.dateOfBirth, this.email, this.userRole});
 
   UserData.fromData(Map<String, dynamic> data)
     : uid = data['uid'],  
@@ -23,7 +22,6 @@ class UserData{
       gender = data['gender'], 
       dateOfBirth = data['dateOfBirth'], 
       email = data['email'], 
-      password = data['password'], 
       userRole = data['userRole'];
 
   Map<String, dynamic> toJSON(){
@@ -34,7 +32,6 @@ class UserData{
       'gender' : gender,
       'dateOfBirth' : dateOfBirth,
       'email' : email, 
-      'password' : password, 
       'userRole' : userRole
     };
   }

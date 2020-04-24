@@ -25,8 +25,11 @@ class AuthService {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
-      return _userFromFirebaseUser(user);
-
+      if (user.isEmailVerified){
+        return _userFromFirebaseUser(user);
+      }else{
+        return null;
+      }
     } catch (e) {
       print(e.toString());
       return null;
@@ -44,15 +47,29 @@ class AuthService {
         gender: gender,
         dateOfBirth: date,
         email: email,
-        password: password,
         userRole: 'user',
         ));
       FirebaseUser user = result.user;
-      return _userFromFirebaseUser(user);
+      try{
+        await user.sendEmailVerification();
+      }catch(e){
+        print("An error occured while trying to send email verification.");
+        print(e.message);
+      }
+      if (user.isEmailVerified){
+        return _userFromFirebaseUser(user);
+      }else{
+        return null;
+      }
     } catch (e) {
       print(e.toString());
       return null;
     }
+  }
+
+  // Forgot password
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 
    // Sign In with Google 

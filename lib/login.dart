@@ -499,8 +499,8 @@ class ThirdScreen extends State<Sign2Screen> {
       setState(() => _errorMessage = 'Sign Up failed');
     }else{
       print(result);
-      // Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
     }
+    Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
   }
 
   @override 
@@ -573,7 +573,7 @@ class ThirdScreen extends State<Sign2Screen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input.isEmpty? 'Please enter an email': null,
-                  onSaved: (input)=> email=input,
+                  onSaved: (input)=> email=input.trim(),
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(
@@ -592,7 +592,7 @@ class ThirdScreen extends State<Sign2Screen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
-                  onSaved: (input)=>password=input,
+                  onSaved: (input)=>password=input.trim(),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     labelStyle: TextStyle(
@@ -614,7 +614,7 @@ class ThirdScreen extends State<Sign2Screen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input!=password? 'Passwords do not match' : null,
-                  onSaved: (input)=>confirmpassword=input,
+                  onSaved: (input)=>confirmpassword=input.trim(),
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
                     labelStyle: TextStyle(
@@ -652,7 +652,7 @@ class ThirdScreen extends State<Sign2Screen> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding: EdgeInsets.only(top: 15, left: 85), 
-                  child: Text("Sign Up",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                  child: Text("Sign Up",style: TextStyle(color: Colors.white, fontSize: 22 )),
                 ),
 
               ),
@@ -795,7 +795,7 @@ class FourthScreen extends State<Sign3Screen> {
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "Registeration Email Sent",style: TextStyle(color: Colors.black, fontSize: 22)),
+                    TextSpan(text: "Confirmation Email Sent",style: TextStyle(color: Colors.black, fontSize: 22)),
                   
                   ]
                   )),
@@ -811,7 +811,7 @@ class FourthScreen extends State<Sign3Screen> {
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "An account registration request has been sent to your email. ",style: TextStyle(color: Colors.black, fontSize: 17)),
+                    TextSpan(text: "An account confirmation request has been sent to your email. ",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: "Click the link in the email to validate your email address.",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: "Questions?",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: "Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
@@ -848,7 +848,7 @@ class FourthScreen extends State<Sign3Screen> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   padding: EdgeInsets.only(top: 15, left: 85), 
-                  child: Text("Sign Up",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                  child: Text("Sign In",style: TextStyle(color: Colors.white, fontSize: 22 ))
                 ),
 
               ),
@@ -874,8 +874,14 @@ class FifthScreen extends State<ForgotScreen> {
   String email; 
   
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-  @override 
 
+  void submit() async {
+    _formKey.currentState.save();
+    await _auth.resetPassword(email); 
+    Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),); 
+  }
+
+  @override 
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -959,7 +965,7 @@ class FifthScreen extends State<ForgotScreen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input.isEmpty? 'Please enter an email': null,
-                  onSaved: (input)=> email=input,
+                  onSaved: (input)=> email=input.trim(),
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(
@@ -976,9 +982,7 @@ class FifthScreen extends State<ForgotScreen> {
               child: Transform.translate(
               offset: Offset(0,50),
               child: InkWell(
-                onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),);  
-                },
+                onTap: submit,
                 child: Container(
                   height: 50,
                   width: 250,
@@ -1154,7 +1158,7 @@ class SixthScreen extends State<Forgot2Screen> {
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "An email has been successfully sent to you with your login credentials.",style: TextStyle(color: Colors.black, fontSize: 17)),
+                    TextSpan(text: "An email has been successfully sent to you with password reset instructions.",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: "Questions?",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: " Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: "help.rateit@gmail.com ",style: TextStyle(color: Colors.pink[800], fontSize: 17))

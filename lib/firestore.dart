@@ -36,7 +36,6 @@ class FirestoreService{
       gender : snapshot.data['gender'], 
       dateOfBirth : snapshot.data['dateOfBirth'], 
       email : snapshot.data['email'], 
-      password : snapshot.data['password'], 
       userRole : snapshot.data['userRole'],
     );
   }
@@ -46,7 +45,7 @@ class FirestoreService{
     .map(_userDataFromSnapshot);
   }
 
-  Future<String> MyPromise(String uid) async {
+  Future<String> myPromise(String uid) async {
     try{
       String userrole = '';
       await Firestore.instance.collection("users").document(uid).get().then((value) => userrole = value.data['userRole']);
@@ -58,6 +57,6 @@ class FirestoreService{
   }
 
   Stream<String> get users  {
-    return MyPromise(uid).asStream();
+    return myPromise(uid).asStream();
   }
 }
