@@ -42,10 +42,10 @@ class App extends StatelessWidget{
 
 class AddEvent extends StatefulWidget {
   @override 
-  Screen36 createState()=> new Screen36(); 
+  AddEventState createState()=> new AddEventState(); 
 }
 
-class Screen36 extends State<AddEvent> {
+class AddEventState extends State<AddEvent> {
   String name, location;
   var logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -79,25 +79,26 @@ class Screen36 extends State<AddEvent> {
                     icon: Icon(
                       Icons.arrow_back,
                        
-                      ), 
+                    ), 
                     onPressed: (){
                       Navigator.pop(context);
-                      }),
+                    }
+                  ),
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
                     ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
                     ),
                   )
                 ),
@@ -110,10 +111,8 @@ class Screen36 extends State<AddEvent> {
       body: SingleChildScrollView(
         key: _formKey,
         child: Column(children: <Widget>[
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,-40),
-              child: Container(
+          Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.90,
                 padding:EdgeInsets.only( top: 10, left: 20, right: 20),
                 child: Column(
                   children: <Widget>[
@@ -130,18 +129,14 @@ class Screen36 extends State<AddEvent> {
                     )
                   ],
                 )
-              ),
-            ),
           ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,-40),
-              child: Container(
-                padding:EdgeInsets.only( top: 5, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                    child: TextFormField(
                       validator: (input)=> input.isEmpty? 'Please enter a valid location': null,
                       onSaved: (input)=> location=input,
                       decoration: InputDecoration(
@@ -152,90 +147,98 @@ class Screen36 extends State<AddEvent> {
                         )
                       ),
                     )
-                  ],
-                )
               ),
-            ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.add_location,
+                    color: Colors.white,),
+                    onPressed: () {
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
+                    },
+                  ),
+                ),
+              )
+            ],),
           ),
-        
-          Container (
-            child: Transform.translate(
-            offset: Offset(160,-90),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/location.png"),onPressed:()=>{} ),
-              ),
-            ),
-          ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,-80),
-              child: Container(
-                padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      keyboardType: TextInputType.number,
-                      validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                      onSaved: (input)=> number=input,
-                      decoration: InputDecoration(
-                        labelText: 'Number of vendors',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
-                        
-                      ),
+          
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  validator: (input)=> input.isEmpty? 'Please enter a number': null,
+                  onSaved: (input)=> number=input,
+                  decoration: InputDecoration(
+                    labelText: 'Number of vendors',
+                    labelStyle: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 19
                     )
-                  ],
+                    
+                  ),
                 )
-              ),
-            ),
+              ],
+            )
           ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,-70),
-              child: Container(
-                padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                
+                    child: TextFormField(
                       
-                      validator: (input)=> input.isEmpty? 'Please enter a logo': null,
-                      onSaved: (input)=> logo=input,
+                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                      onSaved: (input)=> location=input,
                       decoration: InputDecoration(
                         labelText: 'Upload a logo of your event',
                         labelStyle: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 19
                         )
-                        
                       ),
                     )
-                  ],
-                )
+                  
+                
               ),
-            ),
-          ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(162,-115),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-              ),
-            ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload,
+                    color: Colors.white,),
+                    onPressed: () {},
+                  ),
+                ),
+              )
+            ],),
           ),
           
-          Container(
-            child: Transform.translate(
-            offset: Offset(0,-115),
-              child: Container(
+           Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.90,
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
@@ -245,49 +248,49 @@ class Screen36 extends State<AddEvent> {
                   )),
 
               ),
-            ),
-          ),
 
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,-120),
-              child: Container(
-                padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      validator: (input)=> input.isEmpty? 'Please enter a photo': null,
-                      onSaved: (input)=> photo=input,
-                      decoration: InputDecoration(
-                        labelText: 'Upload a photo of your event',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
-                        
-                      ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                child: TextFormField( 
+                  validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                  onSaved: (input)=> location=input,
+                  decoration: InputDecoration(
+                    labelText: 'Upload a photo of your event',
+                    labelStyle: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 19
                     )
-                  ],
+                  ),
                 )
               ),
-            ),
-          ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(165,-165),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-              ),
-            ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload,
+                    color: Colors.white,),
+                    onPressed: () {},
+                  ),
+                ),
+              )
+            ],),
           ),
           
           Container(
-            child: Transform.translate(
-            offset: Offset(0,-165),
-              child: Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.90,
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
@@ -296,22 +299,38 @@ class Screen36 extends State<AddEvent> {
                   ]
                   )),
 
-              ),
-            ),
           ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,-175),
-              child: Container(
-                height: 70,
-                width: 160,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
+          Padding(
+            padding: EdgeInsets.all(15),
           ),
-
-          
+          Center(child: Container(
+                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+                width:60,
+                height:60,
+                child: Ink(
+                  width:60,
+                  height:60,
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    color: null,
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    alignment: Alignment.center,
+                    icon: Icon(Icons.arrow_forward,
+                    size: 45,
+                    color: Colors.white,),
+                    onPressed: () {
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                    },
+                  ),
+                ),
+          ),),
         ],
         )  
       )
@@ -632,12 +651,12 @@ class Screen39 extends State<EventMenu> {
   }
 }
 
-class AddVendor extends StatefulWidget {
+class AddVendorQty extends StatefulWidget {
   @override 
   Screen41 createState()=> new Screen41(); 
 }
 
-class Screen41 extends State<AddVendor> {
+class Screen41 extends State<AddVendorQty> {
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   List<DropdownMenuItem<String>> n=[];
@@ -851,12 +870,8 @@ class Screen41 extends State<AddVendor> {
                 child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
               ),
             ),
-          ),
-
-         
-         
-        ],
-        )  
+          ),         
+        ],),  
       )
     ); 
   }
@@ -864,131 +879,122 @@ class Screen41 extends State<AddVendor> {
 
 
 
-class AddVen extends StatefulWidget {
+class AddVendor extends StatefulWidget {
   @override 
-  Screen44 createState()=> new Screen44(); 
+  AddVendorState createState()=> new AddVendorState(); 
 }
 
-class Screen44 extends State<AddVen> {
+class AddVendorState extends State<AddVendor> {
   String name,email, stallid,item;
   bool value=false; 
   var logo, mlogo;  
   bool check=false; 
   var nu; 
-
   var n=int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
-  
-  int count=1; 
- 
+  int count=2; 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
-  
- 
-
   void add2(i){
-    menu2=List.from(menu2)..add(
-     
+    menu2=List.from(menu2)..add(     
       Container(
-      child: Transform.translate(
-        offset: Offset(-140,-50),
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
         child: InkWell(
-        child: new Container(
-          //padding: EdgeInsets.only(top: 130, left: 20), 
-          child: RichText(
-          text: TextSpan(children: <TextSpan>[
-            TextSpan(text: "Vendor $i",style: TextStyle(color: Colors.black, fontSize: 22))
-          ]
-          )),
-        ),
-        ),
+          child: new Container(
+          width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            //padding: EdgeInsets.only(top: 130, left: 20), 
+            child: RichText(
+              text: TextSpan(
+                children: <TextSpan>[
+                  TextSpan(
+                    text: "Vendor $i",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 22
+                      ),
+                  ),
+                ]
+              )
+            ),
+          ),
         ),
       ),
-      
-      );
+    );
 
-      setState(() {
+    setState(() {
         
-      });
-
+    });
   }
 
   void add3(){
     menu2=List.from(menu2)..add(
-     
-
-    Container(
-    child: Transform.translate(
-    offset: Offset(0,-50),
-    child: new Container(
-    padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-    child: Column(
-      children: <Widget>[
-        TextFormField(
-          validator: (input)=> input.isEmpty? 'Please enter a name': null,
-          onSaved: (input)=> name=input,
-          decoration: InputDecoration(
-            labelText: 'Stall Name',
-            labelStyle: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 19
-            )
-          ),
-        )
-      ],
-    )
-    ),
-    ),),
-      
-      );
-
-      setState(() {
-        
-      });
-
-  }
-
-   void add4(){
-    menu2=List.from(menu2)..add(
-     
       Container(
-        child: Transform.translate(
-        offset: Offset(0,-50),
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
         child: new Container(
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
         padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              validator: (input)=> input.isEmpty? 'Please enter an email': null,
-              onSaved: (input)=> email=input,
-              decoration: InputDecoration(
-                labelText: 'Email ID',
-                labelStyle: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 19
-                )
-              ),
-            )
-          ],
-        )
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                validator: (input)=> input.isEmpty? 'Please enter a name': null,
+                onSaved: (input)=> name=input,
+                decoration: InputDecoration(
+                  labelText: 'Stall Name',
+                  labelStyle: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 19
+                  )
+                ),
+              )
+            ],
+          )
+        ),
       ),
-        ),),
+    );
+
+    setState(() {
       
-      );
-
-      setState(() {
-        
-      });
-
+    });
   }
 
-   void add5(){
+  void add4(){
     menu2=List.from(menu2)..add(
      
       Container(
-          child: Transform.translate(
-          offset: Offset(0,-50),
-          child: new Container(
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        child: new Container(
+          width: MediaQuery.of(context).copyWith().size.width * 0.90,
+          padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                validator: (input)=> input.isEmpty? 'Please enter an email': null,
+                onSaved: (input)=> email=input,
+                decoration: InputDecoration(
+                  labelText: 'Email ID',
+                  labelStyle: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 19
+                  )
+                ),
+              )
+            ],
+          ),
+        ),
+      ),  
+    );
+
+    setState(() {
+      
+    });
+
+  }
+
+  void add5(){
+    menu2=List.from(menu2)..add(   
+      Container(
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        child: new Container(
+          width: MediaQuery.of(context).copyWith().size.width * 0.90,
           padding:EdgeInsets.only( top: 0, left: 20, right: 20),
           child: Column(
             children: <Widget>[
@@ -1006,100 +1012,106 @@ class Screen44 extends State<AddVen> {
             ],
           )
         ),
-          ),),
+      ),  
+    );
 
+    setState(() {
       
-      );
-
-      setState(() {
-        
-      });
+    });
 
   }
  
-   void add6(){
+  void add6(){
     menu2=List.from(menu2)..add(
-     
-
-    Container(
-      child: Transform.translate(
-      offset: Offset(0,-50),
-      child: new Container(
-      padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            validator: (input)=> input.isEmpty? 'Please enter a logo': null,
-            onSaved: (input)=> logo=input,
-            decoration: InputDecoration(
-              labelText: 'Upload a logo of the vendor',
-              labelStyle: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 19
+                Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                
+                    child: TextFormField(
+                      
+                      validator: (input)=> input.isEmpty? 'Please enter a logo': null,
+                      decoration: InputDecoration(
+                        labelText: 'Upload a logo of the vendor',
+                        labelStyle: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 19
+                        )
+                      ),
+                    )
+                  
+                
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload,
+                    color: Colors.white,),
+                    onPressed: () {},
+                  ),
+                ),
               )
-            ),
-          )
-        ],
-      )
-    ),
-      ),),
-      
-      );
+            ],),
+          ),
+    );
 
-      setState(() {
-        
-      });
+    setState(() {
+      
+    });
 
   }
 
-   void add7(){
-    menu2=List.from(menu2)..add(
-     
+  // void add7(){
+  //   menu2=List.from(menu2)..add(   
+  //     Container (
+  //       //width: MediaQuery.of(context).copyWith().size.width * 0.90,
+  //       child: Container(
+  //         //width: MediaQuery.of(context).copyWith().size.width * 0.90,
+  //         height: 50,
+  //         width: 250,
+  //         child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
+  //       ),
+  //     ),
+  //   );
+
+  //   setState(() {
       
-      Container (
-      child: Transform.translate(
-      offset: Offset(162,-100),
-        child: Container(
-          height: 50,
-          width: 250,
-          child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-        ),
-      ),
-    ),
-
-      );
-
-      setState(() {
-        
-      });
-
-  }
+  //   });
+  // }
 
    void add8(){
     menu2=List.from(menu2)..add(
      
       Container(
-        child: Transform.translate(
-        offset: Offset(0,-95),
-          child: Container(
-            padding: EdgeInsets.only(top: 0, left: 20), 
-            child: RichText(
-              text: TextSpan(children: <TextSpan>[
-                
-                TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
-              ]
-              )),
-
-          ),
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        child: Container(
+          width: MediaQuery.of(context).copyWith().size.width * 0.90,
+          padding: EdgeInsets.only(top: 0, left: 20), 
+          child: RichText(
+            text: TextSpan(children: <TextSpan>[
+              
+              TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
+            ]
+            )),
         ),
       ),
+    );
 
+    setState(() {
       
-      );
-
-      setState(() {
-        
-      });
+    });
 
   }
 
@@ -1107,34 +1119,33 @@ class Screen44 extends State<AddVen> {
     menu2=List.from(menu2)..add(
      
       Container(
-      child: Transform.translate(
-      offset: Offset(0,-100),
-      child: new Container(
-      padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            keyboardType: TextInputType.number,
-            validator: (input)=> input.isEmpty? 'Please enter a number': null,
-            onSaved: (input)=> no=List.from(no)..add(nu),
-            decoration: InputDecoration(
-              labelText: 'Number of menu items', 
-              labelStyle: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 19
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        child: new Container(
+          width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                keyboardType: TextInputType.number,
+                validator: (input)=> input.isEmpty? 'Please enter a number': null,
+                onSaved: (input)=> no=List.from(no)..add(nu),
+                decoration: InputDecoration(
+                  labelText: 'Number of menu items', 
+                  labelStyle: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 19
+                  )
+                ),
               )
-            ),
+            ],
           )
-        ],
-      )
-    ),
-      ),),
-      
-      );
+        ),
+      ),
+    );
 
-      setState(() {
-        
-      });
+    setState(() {
+      
+    });
 
   }
 
@@ -1143,7 +1154,8 @@ class Screen44 extends State<AddVen> {
     
     if (!check)
     {
-       for (var i=0; i<n; i++)
+      Padding(padding: EdgeInsets.only(top: 15));
+       for (var i=1; i<n; i++)
       {
         
         add2(i);
@@ -1151,7 +1163,6 @@ class Screen44 extends State<AddVen> {
         add4(); 
         add5(); 
         add6(); 
-        add7(); 
         add8(); 
         add9(); 
         
@@ -1221,23 +1232,45 @@ class Screen44 extends State<AddVen> {
       body: SingleChildScrollView(
         key: _formKey,
         child: Column(children: <Widget>[  
-          Container(
+          Center(
             child: Column(
             children: menu2),
           ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
-                height: 100,
-                width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
+          Padding(
+            padding: EdgeInsets.all(15),
+          ),
+          Center(child: Container(
+            //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+            width:60,
+            height:60,
+            child: Ink(
+              width:60,
+              height:60,
+              decoration:  ShapeDecoration(
+                shape: CircleBorder(),
+                color: null,
+                gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                ),
+                shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+              ),
+              child: IconButton(
+                alignment: Alignment.center,
+                icon: Icon(Icons.arrow_forward,
+                size: 45,
+                color: Colors.white,),
+                onPressed: () {
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                },
               ),
             ),
-          ),
+          ),),
       
-
+         Padding(
+            padding: EdgeInsets.all(15),
+          ),
           
         ],
         )  
@@ -3345,32 +3378,32 @@ class MapsFunc extends State<Maps> {
                     onPressed: (){
                       Navigator.pop(context);
                       }),
-                  actions: <Widget>[
-                    IconButton(
-                      onPressed: () {                          
-                        showSearch(
-                            context: context,
-                            delegate: MapSearchBar(),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.search,
+                  // actions: <Widget>[
+                  //   IconButton(
+                  //     onPressed: () {                          
+                  //       showSearch(
+                  //           context: context,
+                  //           delegate: MapSearchBar(),
+                  //       );
+                  //     },
+                  //     icon: Icon(
+                  //       Icons.search,
                       
-                      )
-                      ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          scaffoldKey.currentState.openEndDrawer();
-                          },
-                        child: Icon(
-                            Icons.menu,
+                  //     )
+                  //     ),
+                  //   Padding(
+                  //     padding: EdgeInsets.only(right: 20.0),
+                  //     child: GestureDetector(
+                  //       onTap: () {
+                  //         scaffoldKey.currentState.openEndDrawer();
+                  //         },
+                  //       child: Icon(
+                  //           Icons.menu,
                           
-                        ),
-                      )
-                    ),
-                  ],
+                  //       ),
+                  //     )
+                  //   ),
+                  // ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3507,6 +3540,14 @@ class SideBar extends StatefulWidget {
 }
 
 class SideBarProperties extends State<SideBar>{
+
+  void NormalSignOut() async {
+    User usr = Provider.of<User>(context, listen: false);
+    String user = usr.uid;
+    await FirestoreService(uid: user).normalSignOutPromise();
+    LoginScreen();
+  
+  }
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -3599,11 +3640,8 @@ class SideBarProperties extends State<SideBar>{
           Padding( padding: EdgeInsets.all(20),),
           Container(
             child: GestureDetector(
-              onTap: () {
-                User usr = Provider.of<User>(context, listen: false);
-                String user = usr.uid;
-                FirestoreService(uid: user).NormalSignOut();
-              },
+              onTap:() async {await FirestoreService().normalSignOutPromise();},
+             // },
               child: Container(
                 width: 230.0,
                 height: 50.0,

@@ -50,7 +50,7 @@ class FirestoreService{
     .map(_userDataFromSnapshot);
   }
 
-  Future<String> myPromise(String uid) async {
+  Future<String> userRolePromise(String uid) async {
     try{
       String userrole = '';
       await Firestore.instance.collection("users").document(uid).get().then((value) => userrole = value.data['userRole']);
@@ -62,14 +62,20 @@ class FirestoreService{
   }
 
   Stream<String> get users  {
-    return myPromise(uid).asStream();
+    return userRolePromise(uid).asStream();
   }
 
-  Future <Void> NormalSignOut()  async{
-    await FirebaseAuth.instance.signOut();
-    print("what");
-    BuildContext context;
-    Navigator.push(context,MaterialPageRoute(builder: (context)=>  LoginScreen() ),);
+  Future normalSignOutPromise()  async{
+    try{
+      return await FirebaseAuth.instance.signOut();
+    }
+    catch(e){
+      return null;
+    }
+    //return LoginScreen();
+    // print("what");
+    // BuildContext context;
+    // Navigator.push(context,MaterialPageRoute(builder: (context)=>  LoginScreen() ),);
   }
 
 }
