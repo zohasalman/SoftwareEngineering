@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rateit/user.dart';
 import 'package:rateit/firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class AuthService {
 
@@ -87,24 +87,28 @@ class AuthService {
   }
 
   // Sign In with Facebook
-  // Future<void> signInWithFacebook() async{
-  //   try {
-  //     var facebookLogin = new FacebookLogin();
-  //     var result = await facebookLogin.logIn(['email']);
+  Future<void> signInWithFacebook() async{
+    try {
+      var facebookLogin = new FacebookLogin();
+      var result = await facebookLogin.logIn(['email']);
 
-  //     if(result.status == FacebookLoginStatus.loggedIn) {
-  //       final AuthCredential credential = FacebookAuthProvider.getCredential(
-  //         accessToken: result.accessToken.token,
+      if(result.status == FacebookLoginStatus.loggedIn) {
+        final AuthCredential credential = FacebookAuthProvider.getCredential(
+          accessToken: result.accessToken.token,
 
-  //       );
-  //       final FirebaseUser user = (await FirebaseAuth.instance.signInWithCredential(credential)).user;
-  //       print('signed in ' + user.displayName);
-  //       return user;
-  //     }
-  //   }catch (e) {
-  //     print(e.message);
-  //   }
-  // }
+        );
+        final FirebaseUser user = (await FirebaseAuth.instance.signInWithCredential(credential)).user;
+        await _firestoreService.registerUser(UserData(
+          uid: user.uid,
+          userRole: 'user',
+        ));
+        print('signed in ' + user.displayName);
+        return user;
+      }
+    }catch (e) {
+      print(e.message);
+    }
+  }
 
   // sign out
   Future signOut() async{

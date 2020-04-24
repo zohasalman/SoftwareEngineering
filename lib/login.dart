@@ -248,6 +248,11 @@ class FirstScreen extends State<LoginScreen> {
                             image: AssetImage("asset/image/facebook.png")
                             ),
                         ),
+                        child: InkWell(
+                        onTap: () {
+                          _auth.signInWithFacebook();
+                        },
+                        ), 
                       ),
                     ),
                   ),
