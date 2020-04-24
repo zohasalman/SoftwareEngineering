@@ -1,4 +1,9 @@
+import 'dart:ffi';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:rateit/login.dart';
 import 'package:rateit/user.dart';
 
 import 'user.dart';
@@ -59,4 +64,12 @@ class FirestoreService{
   Stream<String> get users  {
     return myPromise(uid).asStream();
   }
+
+  Future <Void> NormalSignOut()  async{
+    await FirebaseAuth.instance.signOut();
+    print("what");
+    BuildContext context;
+    Navigator.push(context,MaterialPageRoute(builder: (context)=>  LoginScreen() ),);
+  }
+
 }

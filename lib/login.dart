@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:rateit/auth.dart';
 import 'VendorList.dart';
+import 'hostit.dart';
 import 'userRedirection.dart';
 
 void main1() => runApp(App());
@@ -64,50 +65,52 @@ class FirstScreen extends State<LoginScreen> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: Form(
-        key: _formKey,
-        child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Sign In',style: TextStyle(color: Colors.white, fontSize: 28 ))
                       ),
-                      image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
-                        ),
-                    ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 98, left: 80, right: 80),
-                                child:Text("Sign In",style: TextStyle(color: Colors.white, fontSize: 22 )) ,))
-                            )
-                          ] ,)
+                  )
+                ),
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
                       ),
-                    ),
+                      fit: BoxFit.fitWidth,
                   ),
                 ),
               ),
-            ),
+              ),
+            ],
           ),
+          clipper: ClipShape(),
+        )
+      ),
+      body: Form(
+        key: _formKey,
+        child: Column(children: <Widget>[
           Container(
             padding:EdgeInsets.only( top: 35, left: 20, right: 20),
             child: Column(
@@ -312,65 +315,59 @@ class SecondScreen extends State<SignScreen> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Sign Up',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                  )
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,    
+                    ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                    }),
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                  ),
+                )
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
       body: Form(
         key: _formKey,
-        child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
-                        ),
-                    ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 98, left: 80, right: 80),
-                                child:Text("Sign Up",style: TextStyle(color: Colors.white, fontSize: 22 )))), 
-                            ),
-                          ] ,)
-                      ),
-                    ),
-                  ),
-
-                ),
-              ),
-            ),
-          ),
-
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(-180,-140),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/arrow.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
-          ),
-          
-          
+        child: Column(children: <Widget>[          
           Container(
             padding:EdgeInsets.only( top: 1, left: 20, right: 20),
             child: Column(
@@ -507,66 +504,59 @@ class ThirdScreen extends State<Sign2Screen> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Sign Up',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                  )
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,    
+                    ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                    }),
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                  ),
+                )
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
       body: Form(
         key: _formKey,
-        child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
-                        ),
-                    ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 98, left: 80, right: 80),
-                                child:Text("Sign Up",style: TextStyle(color: Colors.white, fontSize: 22 )))), 
-                            ),
-                          ] ,)
-                      ),
-                    ),
-                  ),
-
-                ),
-              ),
-            ),
-          ),
-          Container (
-            child: Transform.translate(
-            offset: Offset(-180,-140),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/arrow.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
-          ),
-
-         
-
-
-          
+        child: Column(children: <Widget>[          
           Container(
             padding:EdgeInsets.only( top: 1, left: 20, right: 20),
             child: Column(
@@ -701,63 +691,59 @@ class FourthScreen extends State<Sign3Screen> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Sign Up',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                  )
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,    
+                    ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                    }),
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                  ),
+                )
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
       body: Form(
         key: _formKey,
         child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
-                        ),
-                    ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 98, left: 80, right: 80),
-                                child:Text("Sign Up",style: TextStyle(color: Colors.white, fontSize: 22 )))), 
-                            ),
-                          ] ,)
-                      ),
-                    ),
-                  ),
-
-                ),
-              ),
-            ),
-          ),
-          Container (
-            child: Transform.translate(
-            offset: Offset(-180,-140),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/arrow.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
-          ),
-          
-
           Container (
             child: Transform.translate(
             offset: Offset(0,0),
@@ -885,63 +871,59 @@ class FifthScreen extends State<ForgotScreen> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Forgot Password',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                  )
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,    
+                    ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                    }),
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                  ),
+                )
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
       body: Form(
         key: _formKey,
-        child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
-                        ),
-                    ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 78, left: 80, right: 80),
-                                child:Text("Forgot password",style: TextStyle(color: Colors.white, fontSize: 22 )))), 
-                            ),
-                          ] ,)
-                      ),
-                    ),
-                  ),
-
-                ),
-              ),
-            ),
-          ),
-          Container (
-            child: Transform.translate(
-            offset: Offset(-180,-140),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/arrow.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
-          ),
-
-          
+        child: Column(children: <Widget>[          
           Container(
             child: Transform.translate(
             offset: Offset(0,10),
@@ -1049,62 +1031,59 @@ class SixthScreen extends State<Forgot2Screen> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Forgot Password',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                  )
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,    
+                    ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                    }),
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                  ),
+                )
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
       body: Form(
         key: _formKey,
         child: Column(children: <Widget>[
-          Container(
-            child: Transform.scale(
-            scale: 1.5,  
-              child: Transform.rotate(
-                angle: -math.pi/18,
-                child: Transform.translate(
-                  offset: Offset(0,-60),
-                  child: Container (
-                    height: 175,
-                    width: 2000,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage("asset/image/Chat.png")
-                        ),
-                    ),
-                    child: Transform.translate(
-                      offset: Offset(0,60),
-                      child: Transform.rotate(
-                        angle: math.pi/18,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                              child: Container(child: Padding( 
-                                padding: EdgeInsets.only(bottom: 50, top: 78, left: 80, right: 80),
-                                child:Text("Forgot password",style: TextStyle(color: Colors.white, fontSize: 22 )))), 
-                            ),
-                          ] ,)
-                      ),
-                    ),
-                  ),
-
-                ),
-              ),
-            ),
-          ),
-          Container (
-            child: Transform.translate(
-            offset: Offset(-180,-140),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/arrow.png"),onPressed:()=>Navigator.pop(context) ),
-              ),
-            ),
-          ),
-
           Container (
             child: Transform.translate(
             offset: Offset(0,0),

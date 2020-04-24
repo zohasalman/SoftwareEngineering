@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'dart:math' as math;
+import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rateit/login.dart';
-//import 'package:firebase_database/firebase_database.dart';
-
+import 'firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'user.dart';
 import 'VendorList.dart';
 
 void main2() => runApp(App());
@@ -3598,7 +3600,9 @@ class SideBarProperties extends State<SideBar>{
           Container(
             child: GestureDetector(
               onTap: () {
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                User usr = Provider.of<User>(context, listen: false);
+                String user = usr.uid;
+                FirestoreService(uid: user).NormalSignOut();
               },
               child: Container(
                 width: 230.0,
