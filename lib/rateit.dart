@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:rateit/rateit_backend.dart';
 import 'dart:math' as math;
 import 'VendorList.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -28,13 +29,34 @@ class InviteScreen extends StatefulWidget {
 }
 
 class _InviteScreen extends State<InviteScreen> {
-  var _formkey = GlobalKey<FormState>();
+
+  String inviteCode = '';
+  String errorMessage = '';
+  final _formKey = GlobalKey<FormState>();
+
+  void submitInviteCode(){
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      String eventName = '';
+      verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
+        if (docs.documents.isNotEmpty){
+          eventName = docs.documents[0].data['Name'];
+          print(eventName);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => _RateItFirstScreen(eventName: eventName)));
+        }else{
+          errorMessage = 'No such event invite code exists.';
+        }
+      });
+    }
+    
+  }
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
-        key: _formkey,
+        key: _formKey,
         child: Column(
           children: <Widget>[
             Container(
@@ -91,7 +113,7 @@ class _InviteScreen extends State<InviteScreen> {
                 child: Align(
                     alignment: Alignment.center,
                     child: TextFormField(
-                        validator: (value) {
+                        validator: (value){
                           if (value.isEmpty) {
                             return 'Please enter invite code';
                           }
@@ -99,20 +121,19 @@ class _InviteScreen extends State<InviteScreen> {
                             return 'Invalid invite code';
                           }
                         },
+                        onSaved: (value) => inviteCode = value.trim(),
                         decoration: InputDecoration(
                             labelText: 'Enter invite code',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(80.0))))),
-              ),
+                        ),
             ),
             Container(
               child: Transform.translate(
                 offset: Offset(0.0, 100.0),
                 child: RaisedButton(
                   onPressed: () {
-                    if (_formkey.currentState.validate()) {
-                      Navigator.of(context).pushNamed("/rateitfirst");
-                    }
+                    submitInviteCode();
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(80.0)),
@@ -147,6 +168,10 @@ class _InviteScreen extends State<InviteScreen> {
 }
 
 class _RateItFirstScreen extends StatefulWidget {
+
+  _RateItFirstScreen({this.eventName});
+  final String eventName;
+
   @override
   State<StatefulWidget> createState() {
     return RateItFirstScreen();
@@ -199,13 +224,13 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                 ),
                 Container(
                   child: Transform.translate(
-                    offset: Offset(0, -400),
+                    offset: Offset(0, -335),
                     child: Container(
                       padding: EdgeInsets.only(top: 0, left: 20),
                       child: RichText(
                           text: TextSpan(children: <TextSpan>[
                         TextSpan(
-                            text: "Welcome to K-EAT",
+                            text: "Welcome to",
                             style:
                                 TextStyle(color: Colors.black, fontSize: 35)),
                       ])),
@@ -214,10 +239,26 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                 ),
                 Container(
                   child: Transform.translate(
-                    offset: Offset(0.0, -360.0),
+                    offset: Offset(0, -325),
+                    child: Container(
+                      padding: EdgeInsets.only(top: 0, left: 20),
+                      child: RichText(
+                          text: TextSpan(children: <TextSpan>[
+                        TextSpan(
+                            text: "${widget.eventName}",
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 35)),
+                      ])),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Transform.translate(
+                    offset: Offset(0.0, -260.0),
                     child: RaisedButton(
                       onPressed: () {
-                        Navigator.of(context).pushNamed("/rateitsecond");
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ViewVendor(eventName: '${widget.eventName}')));
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => _RateItSecondScreen(name: '${widget.name}')));
                       },
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(80.0)),
@@ -250,7 +291,12 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
   }
 }
 
+// idk why this screen. 
 class _RateItSecondScreen extends StatefulWidget {
+
+  _RateItSecondScreen({this.eventName});
+  final String eventName;
+
   @override
   State<StatefulWidget> createState() {
     return RateItSecondScreen();
@@ -301,7 +347,7 @@ class RateItSecondScreen extends State<_RateItSecondScreen> {
                                                   top: 78,
                                                   left: 80,
                                                   right: 80),
-                                              child: Text("K-EAT",
+                                              child: Text('${widget.eventName}',
                                                   style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 22)))),
@@ -598,6 +644,10 @@ List<String> genders = ['Male', 'Female', 'Other'];
 final genderSelected = TextEditingController();
 
 class ViewVendor extends StatefulWidget {
+
+  ViewVendor({this.eventName});
+  final String eventName;
+
   @override
   State<StatefulWidget> createState() {
     return _ViewVendor();
@@ -680,7 +730,7 @@ class _ViewVendor extends State<ViewVendor> {
                         alignment: Alignment.topLeft,
                         child: Padding(
                             padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('VendorName',
+                            child: Text('${widget.eventName}',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 28))),
                       )),
