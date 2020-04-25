@@ -4,6 +4,7 @@ import 'package:rateit/auth.dart';
 import 'VendorList.dart';
 import 'hostit.dart';
 import 'userRedirection.dart';
+import 'package:intl/intl.dart';
 
 void main1() => runApp(App());
 
@@ -11,6 +12,12 @@ class App extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return MaterialApp(
+    theme: new ThemeData(
+      primaryColor: Color(0xFFAC0D57),
+      splashColor: Color(0xFFFC4A1F),
+ 
+
+    ),
     debugShowCheckedModeBanner:  false,
     home: LoginScreen(),
     );
@@ -428,33 +435,47 @@ class SecondScreen extends State<SignScreen> {
           ),
 
           Container(
-            padding:EdgeInsets.only( top: 10, left: 20, right: 20, bottom: 20),
             child: Column(
               children: <Widget>[
-                Text(_dateTime == null ? 'Date of Birth': _dateTime.toString()),
-                RaisedButton(
-                  child: Text('Pick a date'),
+              Transform.translate(
+                  offset: Offset(-130,20),
+                child: Text( 'Date of Birth', style: TextStyle(color: Colors.grey[600], fontSize: 19) ),),
+                Transform.translate(
+                  offset: Offset(10,-10),
+                child:RaisedButton(
+                  child:Text(_dateTime == null ? 'DD-MM-YYYY': DateFormat('dd-MM-yyyy').format(_dateTime), style: TextStyle(color: Colors.grey[600], fontSize: 19) ),  
                   onPressed: (){
-                    print('here');
+                    //print('here');
                     showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(1950),
                       lastDate: DateTime.now(),
+                      builder: (BuildContext context, Widget child){
+                        return Theme(
+                          data: ThemeData(
+                            primarySwatch: Colors.pink,    
+                            accentColor: Colors.deepOrange,
+                            splashColor: Colors.deepOrange,
+                          ),
+                          child: child, 
+                          );
+                      }
                     ).then((date) {
                       setState(() {
                         _dateTime = date;
                       });
-                    }); 
+                    });
+                    
                   },
-                )
+                ),)
               ],
             )
           ),
 
           Expanded (
             child: Transform.translate(
-            offset: Offset(0,-60),
+            offset: Offset(0,30),
               child: Container(
                 height: 100,
                 width: 200,
