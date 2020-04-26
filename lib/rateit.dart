@@ -10,6 +10,7 @@ import 'user.dart';
 import 'dart:convert';
 import 'vendor-list.dart';
 import 'vendor.dart';
+import 'package:barcode_scan/barcode_scan.dart'; 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
@@ -48,8 +49,8 @@ class _InviteScreen extends State<InviteScreen> {
       String eventID = '';
       _firestore.verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
         if (docs.documents.isNotEmpty){
-          eventName = docs.documents[0].data['Name'];
-          eventID = docs.documents[0].data['EventId'];
+          eventName = docs.documents[0].data['name'];
+          eventID = docs.documents[0].data['eventID'];
           print(eventName);
           print(eventID);
           Navigator.push(context, MaterialPageRoute(builder: (context) => _RateItFirstScreen(eventName: eventName, eventID: eventID)));
@@ -659,6 +660,7 @@ class ViewVendor extends StatefulWidget {
   ViewVendor({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
+  String qr=""; 
 
 
   @override
@@ -835,9 +837,15 @@ class _ViewVendor extends State<ViewVendor> {
       body: VendorsList(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
-        onPressed: () {
+         onPressed: () async {
+          
 
-            Navigator.of(context).pushNamed('/doratings');
+            //Navigator.of(context).pushNamed('/doratings');
+            String scanning= await BarcodeScanner.scan(); 
+
+            setState(){
+              qr=scanning; 
+         }
         },
       ),
     ),
