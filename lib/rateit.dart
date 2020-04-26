@@ -672,6 +672,7 @@ class ViewVendor extends StatefulWidget {
 class _ViewVendor extends State<ViewVendor> {
   String result;
   UserData userInfo;
+  String qr=""; 
 
   // Future _scanQR() async{
   //   try {
