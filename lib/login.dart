@@ -119,10 +119,14 @@ class FirstScreen extends State<LoginScreen> {
         key: _formKey,
         child: Column(children: <Widget>[
           Container(
-            padding:EdgeInsets.only( top: 35, left: 20, right: 20),
             child: Column(
               children: <Widget>[
-                TextFormField(
+                Container(
+                  
+                  width: 370,
+                  child: Padding(
+                  padding: EdgeInsets.only(top:30.0),
+                  child:TextFormField(
                   validator: (input)=> input.isEmpty? 'Please enter an email': null,
                   onSaved: (input)=> _email = input.trim(),
                   decoration: InputDecoration(
@@ -132,16 +136,23 @@ class FirstScreen extends State<LoginScreen> {
                       fontSize: 19
                     )
                   ),
-                )
+                  )
+                ),),
               ],
             )
           ),
 
           Container(
-            padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+           
             child: Column(
               children: <Widget>[
-                TextFormField(
+                Container(
+                  
+                  width: 370,
+                  child: Padding(
+                  padding: EdgeInsets.only(top:10.0),
+                  child:TextFormField(
+                
                   validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
                   onSaved: (input)=> _password = input.trim(),
                   decoration: InputDecoration(
@@ -152,24 +163,27 @@ class FirstScreen extends State<LoginScreen> {
                     ),
                   ),
                   obscureText: true,
-                ),
+                ),),),
                 SizedBox(height: 7),
                 InkWell(
                   onTap: (){
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> ForgotScreen()),); 
                   },
                   child: new Container(
-                  alignment: Alignment(1,0),
-                  padding: EdgeInsets.only(top: 15, left: 20), 
+                 
+                  alignment: Alignment.centerRight,
                   child: InkWell(
-                    child: Text('Forgot Password?',
+                    child: Text('Forgot Password? ',
                     style: TextStyle(color: Colors.grey[400],fontWeight: FontWeight.bold, decoration: TextDecoration.underline )
+                  
                     )
+                    
                   )
                   ),
                 ),
                 
                 Container(
+                  height:20,
                   child: Row(
                     children: <Widget>[
                       Theme(
@@ -189,38 +203,43 @@ class FirstScreen extends State<LoginScreen> {
                 ),
 
                   Container(
-                  child: Transform.translate(
-                  offset: Offset(0,0),
-                  child: InkWell(
-                    onTap: submit,
-                    child: Container(
-                      height: 50,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [ 
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]
+                  child: Padding(
+                    padding: EdgeInsets.only(top:40),
+                    child: InkWell(
+                      onTap: submit,
+                      child: Container(
+                        height: 50,
+                        width: 250,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [ 
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]
+                          ),
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        borderRadius: BorderRadius.circular(30),
+                        padding: EdgeInsets.only(top: 15, left: 85), 
+                        child: Text("Sign In",style: TextStyle(color: Colors.white, fontSize: 22 ))
                       ),
-                      padding: EdgeInsets.only(top: 15, left: 85), 
-                      child: Text("Sign In",style: TextStyle(color: Colors.white, fontSize: 22 ))
-                    ),
 
+                    ),
                   ),
+                
                 ),
-              ),
+
+              
 
               Container(
-              child: Transform.translate(
-                offset: Offset(0,12),
+                alignment: Alignment(0,0),
+                padding: EdgeInsets.only(top: 20, left: 0),
                 child: InkWell(
                   onTap: (){
-                  widget.toggleView();
+                    _formKey.currentState.reset(); 
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
+                  //widget.toggleView();
                 },
                 child: new Container(
                   //padding: EdgeInsets.only(top: 130, left: 20), 
@@ -232,14 +251,11 @@ class FirstScreen extends State<LoginScreen> {
                   )),
                 ),
                 ),
-                ),
               ),
-
               
-
                 Container(
                   alignment: Alignment(0,0),
-                  padding: EdgeInsets.only(top: 15, left: 20), 
+                  padding: EdgeInsets.only(top: 5, left: 20), 
                   child: InkWell(
                     child: Text('Or',
                     style: TextStyle(color: Colors.grey[600] )
@@ -247,46 +263,47 @@ class FirstScreen extends State<LoginScreen> {
                   )
                 ),
 
+                Container(
+                  alignment: Alignment(0,0),
+                  padding: EdgeInsets.only(top: 20),
+                ),
+              
+
+                Center (
+                  //alignment: Alignment.bottomCenter,
+                  child: Container(
+                  height: 50,
+                  width: 250,
+                  
+                  decoration: BoxDecoration(
+                    
+                    image: DecorationImage(
+                      image: AssetImage("asset/image/facebook.png")
+                      ),
+                  ),
+                  child: InkWell(
+                  onTap: () {
+                    _auth.signInWithFacebook();
+                  },
+                  ), 
+                      
+                ),),
+
                 Container (
-                    child: Transform.translate(
-                    offset: Offset(0,10),
-                      child: Container(
-                        height: 50,
-                        width: 250,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("asset/image/facebook.png")
-                            ),
-                        ),
-                        child: InkWell(
-                        onTap: () {
-                          _auth.signInWithFacebook();
-                        },
-                        ), 
+                  height: 50,
+                  width: 250,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("asset/image/google.png")
                       ),
-                    ),
                   ),
-
-                  Container (
-                    child: Transform.translate(
-                    offset: Offset(0,15),
-                      child: Container(
-                        height: 50,
-                        width: 250,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage("asset/image/google.png")
-                            ),
-                        ),
-                        child: InkWell(
-                        onTap: () {
-                          _auth.signInWithGoogle();
-                        },
-                        ), 
-                      ),
-                    ),
-                  ),
-
+                  child: InkWell(
+                  onTap: () {
+                    _auth.signInWithGoogle();
+                  },
+                  ), 
+                ),
+                
               ]
             )
           )
@@ -435,13 +452,14 @@ class SecondScreen extends State<SignScreen> {
           ),
 
           Container(
-            child: Column(
+            child: Row(
               children: <Widget>[
-              Transform.translate(
-                  offset: Offset(-130,20),
-                child: Text( 'Date of Birth', style: TextStyle(color: Colors.grey[600], fontSize: 19) ),),
-                Transform.translate(
-                  offset: Offset(10,-10),
+                Container(
+                padding: EdgeInsets.only( top: 20, left: 20),
+                child: Text( 'Date of Birth', style: TextStyle(color: Colors.grey[600], fontSize: 19) ),
+                ),
+                Container(
+                padding: EdgeInsets.only(top:15, left: 20),
                 child:RaisedButton(
                   child:Text(_dateTime == null ? 'DD-MM-YYYY': DateFormat('dd-MM-yyyy').format(_dateTime), style: TextStyle(color: Colors.grey[600], fontSize: 19) ),  
                   onPressed: (){
@@ -474,17 +492,16 @@ class SecondScreen extends State<SignScreen> {
           ),
 
           Expanded (
-            child: Transform.translate(
-            offset: Offset(0,30),
-              child: Container(
-                height: 100,
-                width: 200,
-                child: new IconButton(
-                  icon: new Image.asset("asset/image/icon.png"),
-                  onPressed: submit, 
-                ),
+         
+            child: Container(
+              height: 100,
+              width: 200,
+              child: new IconButton(
+                icon: new Image.asset("asset/image/icon.png"),
+                onPressed: submit, 
               ),
             ),
+          
           ),
         ],
         )  
@@ -640,10 +657,9 @@ class ThirdScreen extends State<Sign2Screen> {
               ]
             )
           ),
-
           Container(
-              child: Transform.translate(
-              offset: Offset(0,30),
+            child: Padding(
+              padding: EdgeInsets.only(top:100),
               child: InkWell(
                 onTap: submit,
                 child: Container(
@@ -668,11 +684,14 @@ class ThirdScreen extends State<Sign2Screen> {
 
               ),
             ),
+          
           ),
 
+          
+
           Container(
-          child: Transform.translate(
-            offset: Offset(0,100),
+          
+            padding: EdgeInsets.only(top: 20), 
             child: InkWell(
               onTap: (){
               Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),); 
@@ -687,7 +706,7 @@ class ThirdScreen extends State<Sign2Screen> {
               )),
             ),
             ),
-            ),
+            
           ),
 
                     
@@ -766,9 +785,7 @@ class FourthScreen extends State<Sign3Screen> {
         key: _formKey,
         child: Column(children: <Widget>[
           Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
+            child: Container(
                 height: 100,
                 width: 100,
                 decoration: BoxDecoration(
@@ -778,11 +795,12 @@ class FourthScreen extends State<Sign3Screen> {
                 ), 
               ),
             ),
-          ),
+        
 
           Container (
-            child: Transform.translate(
-            offset: Offset(-120,0),
+            child: Row(children: <Widget>[
+            Container(
+            
               child: Container(
                 height: 100,
                 width: 100,
@@ -793,11 +811,10 @@ class FourthScreen extends State<Sign3Screen> {
                 ), 
               ),
             ),
-          ),
+          
           
            Container(
-            child: Transform.translate(
-            offset: Offset(20,-65),
+            
               child: Container(
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
@@ -809,13 +826,12 @@ class FourthScreen extends State<Sign3Screen> {
 
               ),
             ),
-           ),
+           ]),),
 
           Container(
-            child: Transform.translate(
-            offset: Offset(0,-40),
-              child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
+          
+              child: Center(
+                
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
                     TextSpan(text: "An account confirmation request has been sent to your email. ",style: TextStyle(color: Colors.black, fontSize: 17)),
@@ -827,13 +843,13 @@ class FourthScreen extends State<Sign3Screen> {
                   )),
 
               ),
-            ),
+            
           ),
 
           
          Container(
-            child: Transform.translate(
-            offset: Offset(0,40),
+           padding: EdgeInsets.only(top: 50), 
+            
             child: InkWell(
               onTap: (){
                 Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
@@ -860,7 +876,7 @@ class FourthScreen extends State<Sign3Screen> {
 
               ),
             ),
-          ),
+          
 
 
 
@@ -946,8 +962,7 @@ class FifthScreen extends State<ForgotScreen> {
         key: _formKey,
         child: Column(children: <Widget>[          
           Container(
-            child: Transform.translate(
-            offset: Offset(0,10),
+            padding: EdgeInsets.only(top: 25), 
               child: Container(
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
@@ -958,7 +973,7 @@ class FifthScreen extends State<ForgotScreen> {
                   )),
 
               ),
-            ),
+            
           ),
 
           
@@ -982,8 +997,8 @@ class FifthScreen extends State<ForgotScreen> {
           ),
 
          Container(
-              child: Transform.translate(
-              offset: Offset(0,50),
+           padding: EdgeInsets.only(top: 80, left: 0), 
+              
               child: InkWell(
                 onTap: submit,
                 child: Container(
@@ -1006,13 +1021,12 @@ class FifthScreen extends State<ForgotScreen> {
                 ),
 
               ),
-            ),
+            
               
           ),
           
           Container(
-          child: Transform.translate(
-            offset: Offset(0,100),
+          padding: EdgeInsets.only(top: 20, left: 0), 
             child: InkWell(
               onTap: (){
               Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
@@ -1027,7 +1041,7 @@ class FifthScreen extends State<ForgotScreen> {
                 )),
             ),
             ),
-            ),
+            
           ),
            
 
@@ -1105,24 +1119,12 @@ class SixthScreen extends State<Forgot2Screen> {
       body: Form(
         key: _formKey,
         child: Column(children: <Widget>[
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("asset/image/check.png")
-                    ),
-                ), 
-              ),
-            ),
-          ),
+          
 
           Container (
-            child: Transform.translate(
-            offset: Offset(-120,0),
+            child: Row(children: <Widget>[
+            Container(
+            
               child: Container(
                 height: 100,
                 width: 100,
@@ -1133,11 +1135,10 @@ class SixthScreen extends State<Forgot2Screen> {
                 ), 
               ),
             ),
-          ),
+          
           
            Container(
-            child: Transform.translate(
-            offset: Offset(20,-65),
+            
               child: Container(
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
@@ -1149,13 +1150,12 @@ class SixthScreen extends State<Forgot2Screen> {
 
               ),
             ),
-           ),
+           ]),),
 
           Container(
-            child: Transform.translate(
-            offset: Offset(0,-40),
-              child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
+          
+              child: Center(
+                
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
                     TextSpan(text: "An email has been successfully sent to you with password reset instructions.",style: TextStyle(color: Colors.black, fontSize: 17)),
@@ -1166,14 +1166,14 @@ class SixthScreen extends State<Forgot2Screen> {
                   )),
 
               ),
-            ),
+            
           ),
 
-           
-            Container(
-              child: Transform.translate(
-              offset: Offset(0,20),
-              child: InkWell(
+          
+         Container(
+           padding: EdgeInsets.only(top: 50), 
+            
+            child: InkWell(
                 onTap: (){
                   Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
                 },
@@ -1198,7 +1198,6 @@ class SixthScreen extends State<Forgot2Screen> {
 
               ),
             ),
-          ),
 
           
          
