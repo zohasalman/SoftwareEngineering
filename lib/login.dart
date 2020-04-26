@@ -121,11 +121,10 @@ class FirstScreen extends State<LoginScreen> {
           Container(
             child: Column(
               children: <Widget>[
-                Container(
-                  
-                  width: 370,
+                
+                 Container(
                   child: Padding(
-                  padding: EdgeInsets.only(top:30.0),
+                  padding:EdgeInsets.only( top: 30, left: 20, right: 20), 
                   child:TextFormField(
                   validator: (input)=> input.isEmpty? 'Please enter an email': null,
                   onSaved: (input)=> _email = input.trim(),
@@ -148,9 +147,8 @@ class FirstScreen extends State<LoginScreen> {
               children: <Widget>[
                 Container(
                   
-                  width: 370,
                   child: Padding(
-                  padding: EdgeInsets.only(top:10.0),
+                  padding:EdgeInsets.only( top: 0, left: 20, right: 20), 
                   child:TextFormField(
                 
                   validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
