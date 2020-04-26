@@ -16,7 +16,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
 // import 'package:qrcode_reader/qrcode_reader.dart';
-//hello
+
 
 
 void main3() => runApp(MaterialApp(
