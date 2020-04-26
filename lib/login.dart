@@ -922,7 +922,7 @@ class FifthScreen extends State<ForgotScreen> {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      padding: EdgeInsets.only(bottom: 60.0, left: 10),
                       child: Text('Forgot Password',style: TextStyle(color: Colors.white, fontSize: 28 ))
                       ),
                   )
@@ -1080,7 +1080,7 @@ class SixthScreen extends State<Forgot2Screen> {
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      padding: EdgeInsets.only(bottom: 60.0, left: 10),
                       child: Text('Forgot Password',style: TextStyle(color: Colors.white, fontSize: 28 ))
                       ),
                   )
