@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'Event.dart';
 import 'userRedirection.dart';
 import 'userRedirection.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 
 
 void main() => runApp(new MyApp());//one-line function
@@ -75,8 +75,10 @@ class ListViewExampleState extends State<ListViewExample> {
                 ),
                 new Container(
                   padding: const EdgeInsets.only(bottom: 10.0),
-                  child: CachedNetworkImage(
-                    imageUrl: eventdata.coverimage,
+                  child: Image(
+                    image: NetworkImage(
+                      eventdata.coverimage,
+                    ),
                     width: 100,
                     height: 100,
                     fit: BoxFit.cover,
