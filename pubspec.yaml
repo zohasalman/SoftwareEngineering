@@ -37,6 +37,7 @@ dependencies:
   google_sign_in: ^4.4.4
   flutter_facebook_login: ^3.0.0
   geopoint: ^0.7.1
+  cached_network_image: "^0.4.1"
 
 dev_dependencies:
   flutter_test:
