@@ -304,117 +304,117 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
 }
 
 // idk why this screen. 
-class _RateItSecondScreen extends StatefulWidget {
+// class _RateItSecondScreen extends StatefulWidget {
 
-  _RateItSecondScreen({this.eventName});
-  final String eventName;
+//   _RateItSecondScreen({this.eventName});
+//   final String eventName;
 
-  @override
-  State<StatefulWidget> createState() {
-    return RateItSecondScreen();
-  }
-}
+//   @override
+//   State<StatefulWidget> createState() {
+//     return RateItSecondScreen();
+//   }
+// }
 
-class RateItSecondScreen extends State<_RateItSecondScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: Container(
-            decoration: BoxDecoration(),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: Transform.scale(
-                    scale: 1.5,
-                    child: Transform.rotate(
-                      angle: -math.pi / 18,
-                      child: Transform.translate(
-                        offset: Offset(0, -60),
-                        child: Container(
-                          height: 175,
-                          width: 2000,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                begin: Alignment.topRight,
-                                end: Alignment.topLeft,
-                                colors: [
-                                  Color(0xFFAC0D57),
-                                  Color(0xFFFC4A1F),
-                                ]),
-                            image: DecorationImage(
-                                image: AssetImage("asset/image/Chat.png")),
-                          ),
-                          child: Transform.translate(
-                            offset: Offset(0, 60),
-                            child: Transform.rotate(
-                                angle: math.pi / 18,
-                                child: Stack(
-                                  children: <Widget>[
-                                    Positioned(
-                                      child: Container(
-                                          child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  bottom: 50,
-                                                  top: 78,
-                                                  left: 80,
-                                                  right: 80),
-                                              child: Text('${widget.eventName}',
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 22)))),
-                                    ),
-                                  ],
-                                )),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  child: Transform.translate(
-                    offset: Offset(180, -140),
-                    child: Container(
-                      height: 50,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("asset/image/menu.png")),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  child: Transform.translate(
-                    offset: Offset(180, -140),
-                    child: Container(
-                      height: 50,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("asset/image/search.png")),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  child: Transform.translate(
-                    offset: Offset(140, 250),
-                    child: Container(
-                      height: 250,
-                      width: 250,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("asset/image/camera.png")),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )));
-  }
-}
+// class RateItSecondScreen extends State<_RateItSecondScreen> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         resizeToAvoidBottomPadding: false,
+//         body: Container(
+//             decoration: BoxDecoration(),
+//             child: Column(
+//               children: <Widget>[
+//                 Container(
+//                   child: Transform.scale(
+//                     scale: 1.5,
+//                     child: Transform.rotate(
+//                       angle: -math.pi / 18,
+//                       child: Transform.translate(
+//                         offset: Offset(0, -60),
+//                         child: Container(
+//                           height: 175,
+//                           width: 2000,
+//                           decoration: BoxDecoration(
+//                             gradient: LinearGradient(
+//                                 begin: Alignment.topRight,
+//                                 end: Alignment.topLeft,
+//                                 colors: [
+//                                   Color(0xFFAC0D57),
+//                                   Color(0xFFFC4A1F),
+//                                 ]),
+//                             image: DecorationImage(
+//                                 image: AssetImage("asset/image/Chat.png")),
+//                           ),
+//                           child: Transform.translate(
+//                             offset: Offset(0, 60),
+//                             child: Transform.rotate(
+//                                 angle: math.pi / 18,
+//                                 child: Stack(
+//                                   children: <Widget>[
+//                                     Positioned(
+//                                       child: Container(
+//                                           child: Padding(
+//                                               padding: EdgeInsets.only(
+//                                                   bottom: 50,
+//                                                   top: 78,
+//                                                   left: 80,
+//                                                   right: 80),
+//                                               child: Text('${widget.eventName}',
+//                                                   style: TextStyle(
+//                                                       color: Colors.white,
+//                                                       fontSize: 22)))),
+//                                     ),
+//                                   ],
+//                                 )),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 Container(
+//                   child: Transform.translate(
+//                     offset: Offset(180, -140),
+//                     child: Container(
+//                       height: 50,
+//                       width: 250,
+//                       decoration: BoxDecoration(
+//                         image: DecorationImage(
+//                             image: AssetImage("asset/image/menu.png")),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 Container(
+//                   child: Transform.translate(
+//                     offset: Offset(180, -140),
+//                     child: Container(
+//                       height: 50,
+//                       width: 250,
+//                       decoration: BoxDecoration(
+//                         image: DecorationImage(
+//                             image: AssetImage("asset/image/search.png")),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 Container(
+//                   child: Transform.translate(
+//                     offset: Offset(140, 250),
+//                     child: Container(
+//                       height: 250,
+//                       width: 250,
+//                       decoration: BoxDecoration(
+//                         image: DecorationImage(
+//                             image: AssetImage("asset/image/camera.png")),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             )));
+//   }
+// }
 
 class Clipshape extends CustomClipper<Path> {
   @override
@@ -480,7 +480,7 @@ class _EditProfile extends State<EditProfile> {
                           ]),
                       image: DecorationImage(
                         image: AssetImage(
-                          "asset/image/frame1.png",
+                          "asset/image/Chat.png",
                         ),
                         fit: BoxFit.fitWidth,
                       ),
@@ -780,7 +780,7 @@ class _ViewVendor extends State<ViewVendor> {
                         ]),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/frame1.png",
+                        "asset/image/Chat.png",
                       ),
                       fit: BoxFit.fitWidth,
                     ),
@@ -837,7 +837,8 @@ class _ViewVendor extends State<ViewVendor> {
       ),
       body: VendorsList(),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
+        backgroundColor: Colors.pink[800],
+        child: Image.asset("asset/image/Camera 1.png") ,
          onPressed: () async {
           
 
@@ -888,6 +889,8 @@ class _ViewMyRating extends State<ViewMyRating> {
         flag: 'meetthecheese.png',
         vendorrating: '4.5/5'),
   ];
+  String qr=""; 
+
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -925,7 +928,7 @@ class _ViewMyRating extends State<ViewMyRating> {
                         ]),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/frame1.png",
+                        "asset/image/Chat.png",
                       ),
                       fit: BoxFit.fitWidth,
                     ),
@@ -961,8 +964,18 @@ class _ViewMyRating extends State<ViewMyRating> {
             );
           }),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
-        onPressed: () {},
+        backgroundColor: Colors.pink[800],
+        child: Image.asset("asset/image/Camera 1.png") ,
+         onPressed: () async {
+          
+
+            //Navigator.of(context).pushNamed('/doratings');
+            String scanning= await BarcodeScanner.scan(); 
+
+            setState(){
+              qr=scanning; 
+         }
+        },
       ),
     );
   }
@@ -1011,7 +1024,7 @@ class _EditRatings extends State<EditRatings> {
                         ]),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/frame1.png",
+                        "asset/image/Chat.png",
                       ),
                       fit: BoxFit.fitWidth,
                     ),
@@ -1266,7 +1279,7 @@ class _EditRating1State extends State<EditRating1> {
                         ]),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/frame1.png",
+                        "asset/image/Chat.png",
                       ),
                       fit: BoxFit.fitWidth,
                     ),
@@ -1427,7 +1440,7 @@ class _DoRatings extends State<DoRatings> {
                         ]),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/frame1.png",
+                        "asset/image/Chat.png",
                       ),
                       fit: BoxFit.fitWidth,
                     ),
@@ -1666,7 +1679,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                         ]),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/frame1.png",
+                        "asset/image/Chat.png",
                       ),
                       fit: BoxFit.fitWidth,
                     ),
