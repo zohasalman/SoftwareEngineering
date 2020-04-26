@@ -844,7 +844,7 @@ class _ViewVendor extends State<ViewVendor> {
             String scanning= await BarcodeScanner.scan(); 
 
             setState(){
-              qr=scanning; 
+              var qr=scanning; 
          }
         },
       ),
