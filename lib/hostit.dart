@@ -35,17 +35,21 @@ class App extends StatelessWidget{
   Widget build(BuildContext context){
     return MaterialApp(
     debugShowCheckedModeBanner:  false,
-    home:  Maps(),
+    home:  AddEvent(null),
     );
   }
 }
 
 class AddEvent extends StatefulWidget {
+  AddEvent(LatLng coord);
+
   @override 
   AddEventState createState()=> new AddEventState(); 
 }
 
 class AddEventState extends State<AddEvent> {
+  AddEventState({this.eid});
+  LatLng eid;
   String name, location;
   var logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -137,8 +141,17 @@ class AddEventState extends State<AddEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                     child: TextFormField(
-                      validator: (input)=> input.isEmpty? 'Please enter a valid location': null,
-                      onSaved: (input)=> location=input,
+                      validator: (String value) {
+                        var lat='';
+                        var lon='';
+                        if (eid!=null){
+                          lat=eid.latitude.toString();
+                          lon=eid.longitude.toString();
+                        }
+                        return value.isNotEmpty ? '$lat,$lon' : null;
+                      },
+                      //validator: (input)=> input.isEmpty? 'Please enter a valid location': null,
+                      //onSaved: (input)=> location=input,
                       decoration: InputDecoration(
                         labelText: 'Location',
                         labelStyle: TextStyle(
@@ -163,8 +176,8 @@ class AddEventState extends State<AddEvent> {
                   child: IconButton(
                     icon: Icon(Icons.add_location,
                     color: Colors.white,),
-                    onPressed: () {
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
+                    onPressed: () {Maps();
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
                   ),
                 ),
@@ -779,7 +792,6 @@ class Screen41 extends State<AddVendorQty> {
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    
                     TextSpan(text: "How many vendors would you like to add?",style: TextStyle(color: Colors.black, fontSize: 20))
                   ]
                   )),
@@ -3328,12 +3340,16 @@ class ScreenQRselect extends State<QRselection> {
 }
 
 class Maps extends StatefulWidget {
+  //Maps(LatLng eid);
+
   @override
   MapsFunc createState() => MapsFunc();
 }
 
 
 class MapsFunc extends State<Maps> {
+  LatLng coord=null;
+  //MapsFunc({this.coord});
   Completer<GoogleMapController> _controller = Completer();
   Marker marker=Marker(
     markerId: MarkerId("1"),
@@ -3347,6 +3363,7 @@ class MapsFunc extends State<Maps> {
 
   @override
   Widget build(BuildContext context) {
+    //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
     return MaterialApp(
       home: Scaffold(
         key: scaffoldKey,
@@ -3376,7 +3393,8 @@ class MapsFunc extends State<Maps> {
                       Icons.arrow_back,    
                       ), 
                     onPressed: (){
-                      Navigator.pop(context);
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord)),);
+                      //Navigator.pop(context);
                       }),
                   // actions: <Widget>[
                   //   IconButton(
@@ -3441,6 +3459,7 @@ class MapsFunc extends State<Maps> {
                   markerSet.clear();
                   markerSet.add(marker1);
                   marker=marker1;
+                  coord=coordinates;
                 });
           },
           markers: markerSet,

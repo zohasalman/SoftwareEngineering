@@ -1,38 +1,41 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 class Event{ 
-  final String uid; //unique identifier
+  final String EventId; //unique identifier
   
-  Event({this.uid});
+  Event({this.EventId});
 }
 
 class EventData{
   final String EventId;
   final String InviteCode;
-  final String Location;
-  final String gender;
-  final DateTime dateOfBirth;
-  final String email;
-  final String EventRole;
+  final LatLng Location;
+  final DateTime StartDate;
+  final DateTime EndDate;
+  final String Name;
+  final String uid;
 
-  EventData({this.uid, this.firstName, this.lastName, this.gender, this.dateOfBirth, this.email, this.EventRole});
+
+  EventData({this.uid, this.EventId, this.InviteCode, this.Location, this.StartDate, this.EndDate, this.Name});
 
   EventData.fromData(Map<String, dynamic> data)
     : uid = data['uid'],
-      firstName = data['firstName'],
-      lastName = data['lastName'],
-      gender = data['gender'],
-      dateOfBirth = data['dateOfBirth'], 
-      email = data['email'],
-      EventRole = data['EventRole'];
+      EventId = data['EventId'],
+      InviteCode = data['InviteCode'],
+      Location = data['Location'],
+      StartDate = data['StartDate'],
+      EndDate = data['EndDate'],
+      Name = data['Name'];
 
   Map<String, dynamic> toJSON(){
     return{
       'uid' : uid, 
-      'firstName' : firstName,
-      'lastName' : lastName,
-      'gender' : gender,
-      'dateOfBirth' : dateOfBirth,
-      'email' : email, 
-      'EventRole' : EventRole
+      'EventId' : EventId,
+      'InviteCode' : InviteCode,
+      'Location' : Location,
+      'StartDate' : StartDate,
+      'EndDate' : EndDate,
+      'Name' : Name,
     };
   }
 }

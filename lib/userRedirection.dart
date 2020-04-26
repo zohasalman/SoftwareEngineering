@@ -49,7 +49,7 @@ class RedirectorState extends State<Redirector> {
       return InviteScreen();
     }
     else if(usr == 'management'){ 
-      return AddEvent();
+      return AddEvent(null);
     }
     else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
