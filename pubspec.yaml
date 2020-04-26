@@ -79,6 +79,7 @@ flutter:
    - asset/image/bin.png
    - asset/image/search.png
    - asset/image/user.png
+   - asset/image/123.jpg
    - asset/image/
    
   # An image asset can refer to one or more resolution-specific "variants", see
