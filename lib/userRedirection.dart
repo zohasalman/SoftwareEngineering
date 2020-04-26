@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:rateit/hostit.dart';
 import 'package:rateit/rateit.dart';
@@ -10,9 +9,6 @@ import 'rateit.dart';
 import 'user.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'firestore.dart';
-
 
 class Redirection extends StatefulWidget{
 

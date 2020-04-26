@@ -1,9 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:rateit/rateit_backend.dart';
+import 'package:provider/provider.dart';
+import 'firestore.dart';
 import 'dart:math' as math;
 import 'VendorList.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'localData.dart';
+import 'user.dart';
+import 'dart:convert';
+import 'vendor-list.dart';
+import 'vendor.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
@@ -33,16 +39,20 @@ class _InviteScreen extends State<InviteScreen> {
   String inviteCode = '';
   String errorMessage = '';
   final _formKey = GlobalKey<FormState>();
+  final _firestore = FirestoreService();
 
   void submitInviteCode(){
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       String eventName = '';
-      verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
+      String eventID = '';
+      _firestore.verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
         if (docs.documents.isNotEmpty){
           eventName = docs.documents[0].data['Name'];
+          eventID = docs.documents[0].data['EventId'];
           print(eventName);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => _RateItFirstScreen(eventName: eventName)));
+          print(eventID);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => _RateItFirstScreen(eventName: eventName, eventID: eventID)));
         }else{
           errorMessage = 'No such event invite code exists.';
         }
@@ -169,8 +179,9 @@ class _InviteScreen extends State<InviteScreen> {
 
 class _RateItFirstScreen extends StatefulWidget {
 
-  _RateItFirstScreen({this.eventName});
+  _RateItFirstScreen({this.eventName, this.eventID});
   final String eventName;
+  final String eventID;
 
   @override
   State<StatefulWidget> createState() {
@@ -257,7 +268,7 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                     offset: Offset(0.0, -260.0),
                     child: RaisedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ViewVendor(eventName: '${widget.eventName}')));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ViewVendor(eventName: '${widget.eventName}', eventID: '${widget.eventID}')));
                         // Navigator.push(context, MaterialPageRoute(builder: (context) => _RateItSecondScreen(name: '${widget.name}')));
                       },
                       shape: RoundedRectangleBorder(
@@ -404,7 +415,7 @@ class RateItSecondScreen extends State<_RateItSecondScreen> {
   }
 }
 
-class clipshape extends CustomClipper<Path> {
+class Clipshape extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     var clipline = new Path();
@@ -501,7 +512,7 @@ class _EditProfile extends State<EditProfile> {
                   )
                 ],
               ),
-              clipper: clipshape(),
+              clipper: Clipshape(),
             )),
         endDrawer: Drawer(
           child: ListView(
@@ -645,8 +656,10 @@ final genderSelected = TextEditingController();
 
 class ViewVendor extends StatefulWidget {
 
-  ViewVendor({this.eventName});
+  ViewVendor({this.eventName, this.eventID});
   final String eventName;
+  final String eventID;
+
 
   @override
   State<StatefulWidget> createState() {
@@ -656,6 +669,8 @@ class ViewVendor extends StatefulWidget {
 
 class _ViewVendor extends State<ViewVendor> {
   String result;
+  UserData userInfo;
+
   // Future _scanQR() async{
   //   try {
   //     var qrResult = await BarcodeScanner.scan();
@@ -685,36 +700,53 @@ class _ViewVendor extends State<ViewVendor> {
   //     });
   //   }
   // }
-  List<VendorList> vendors = [
-    VendorList(
-        vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'McDonalds', flag: 'mcdonalds.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'No Lies Fries',
-        flag: 'noliesfries.png',
-        vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'Caffe Parha',
-        flag: 'caffeparha.png',
-        vendorrating: '4.5/5'),
-    VendorList(vendorname: 'DOH', flag: 'doh.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'Carbie', flag: 'carbie.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'The Story', flag: 'thestory.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'Meet the Cheese',
-        flag: 'meetthecheese.png',
-        vendorrating: '4.5/5'),
-  ];
+  // List<VendorList> vendors = [
+  //   VendorList(
+  //       vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
+  //   VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'McDonalds', flag: 'mcdonalds.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'No Lies Fries',
+  //       flag: 'noliesfries.png',
+  //       vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'Caffe Parha',
+  //       flag: 'caffeparha.png',
+  //       vendorrating: '4.5/5'),
+  //   VendorList(vendorname: 'DOH', flag: 'doh.png', vendorrating: '4.5/5'),
+  //   VendorList(vendorname: 'Carbie', flag: 'carbie.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'The Story', flag: 'thestory.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'Meet the Cheese',
+  //       flag: 'meetthecheese.png',
+  //       vendorrating: '4.5/5'),
+  // ];
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
+  void initState(){
+    super.initState();
+    // start of getting local stored user info 
+    // readContent().then((String value) {
+    //   print(value);
+    //   userInfo = UserData.fromData(json.decode(value.toString()));
+    // });
+    // print(userInfo);  // some error generated here 
+    // end of it 
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+
+    // final vendorFromDB = Provider.of<List<Vendor>>(context);  
+
+    return StreamProvider<List<Vendor>>.value(
+      value: FirestoreService().getVendorInfo('${widget.eventID}'),
+      child: Scaffold(
       key: scaffoldKey,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
@@ -753,14 +785,15 @@ class _ViewVendor extends State<ViewVendor> {
                 )
               ],
             ),
-            clipper: clipshape(),
+            clipper: Clipshape(),
           )),
       endDrawer: Drawer(
         child: ListView(
           children: <Widget>[
+
             new UserAccountsDrawerHeader(
               accountName: new Text('Uzair Mustafa',
-                  style: TextStyle(fontSize: 17.0, color: Colors.black)),
+                style: TextStyle(fontSize: 17.0, color: Colors.black)),
               accountEmail: new Text(
                 'uzairmustafa@rateit.com',
                 style: TextStyle(fontSize: 17.0, color: Colors.black),
@@ -799,25 +832,7 @@ class _ViewVendor extends State<ViewVendor> {
           ],
         ),
       ),
-      body: ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: vendors.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                onTap: () {
-                  debugPrint('${vendors[index].vendorname} is pressed!');
-                },
-                title: Text(vendors[index].vendorname),
-                leading: CircleAvatar(
-                  backgroundImage:
-                      AssetImage('asset/image/${vendors[index].flag}'),
-                ),
-                trailing: Text(vendors[index].vendorrating),
-              ),
-            );
-          }),
+      body: VendorsList(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
         onPressed: () {
@@ -825,6 +840,7 @@ class _ViewVendor extends State<ViewVendor> {
             Navigator.of(context).pushNamed('/doratings');
         },
       ),
+    ),
     );
   }
 }
@@ -837,7 +853,6 @@ class ViewMyRating extends StatefulWidget {
 }
 
 class _ViewMyRating extends State<ViewMyRating> {
-  var _textcontroller = new TextEditingController();
 
   String result;
 
@@ -909,7 +924,7 @@ class _ViewMyRating extends State<ViewMyRating> {
                 )
               ],
             ),
-            clipper: clipshape(),
+            clipper: Clipshape(),
           )),
       body: ListView.builder(
           shrinkWrap: true,
@@ -995,7 +1010,7 @@ class _EditRatings extends State<EditRatings> {
                 )
               ],
             ),
-            clipper: clipshape(),
+            clipper: Clipshape(),
           )),
       body: Padding(
         padding: EdgeInsets.all(5.0),
@@ -1250,7 +1265,7 @@ class _EditRating1State extends State<EditRating1> {
                 )
               ],
             ),
-            clipper: clipshape(),
+            clipper: Clipshape(),
           )),
       body: Padding(
           padding: EdgeInsets.all(5.0),
@@ -1411,7 +1426,7 @@ class _DoRatings extends State<DoRatings> {
                 )
               ],
             ),
-            clipper: clipshape(),
+            clipper: Clipshape(),
           )),
       body: Padding(
         padding: EdgeInsets.all(5.0),
@@ -1650,7 +1665,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                 )
               ],
             ),
-            clipper: clipshape(),
+            clipper: Clipshape(),
           )),
       body: Padding(
           padding: EdgeInsets.all(5.0),

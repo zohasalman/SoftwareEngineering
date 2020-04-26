@@ -1,12 +1,10 @@
-import 'dart:ffi';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:rateit/login.dart';
 import 'package:rateit/user.dart';
-
+import 'localData.dart';
+import 'vendor.dart';
 import 'user.dart';
+
 
 class FirestoreService{
 
@@ -14,6 +12,7 @@ class FirestoreService{
   FirestoreService({this.uid});
 
   final CollectionReference _usersCollectionReference = Firestore.instance.collection('users');
+  final CollectionReference _vendorCollectionReference = Firestore.instance.collection('Vendor');
 
   Future registerUser(UserData user) async{
     try {
@@ -53,7 +52,10 @@ class FirestoreService{
   Future<String> userRolePromise(String uid) async {
     try{
       String userrole = '';
-      await Firestore.instance.collection("users").document(uid).get().then((value) => userrole = value.data['userRole']);
+      await Firestore.instance.collection("users").document(uid).get().then((value){
+        userrole = value.data['userRole'];
+        writeContent(value.data);
+      });
       print('called');
       return userrole;
     }catch(e){
@@ -73,9 +75,33 @@ class FirestoreService{
       return null;
     }
     //return LoginScreen();
-    // print("what");
     // BuildContext context;
     // Navigator.push(context,MaterialPageRoute(builder: (context)=>  LoginScreen() ),);
+  }
+
+  // rate it backend 
+  List<Vendor> _vendorListFromSnapshot(QuerySnapshot snapshot){
+    return  snapshot.documents.map((doc){
+      return Vendor(
+        aggregateRating: doc.data['aggregateRating'] ?? 0,
+        email: doc.data['email'] ?? '',
+        eventId: doc.data['eventId'] ?? '',
+        name: doc.data['name'] ?? '',
+        qrCode: doc.data['qrCode'] ?? '',
+        stallNo: doc.data['stallNo'] ?? -1,
+        vendorId: doc.data['vendorID'] ?? '',
+        logo: doc.data['logo'] ?? '',
+      );
+    }).toList();
+  }
+
+  Future<QuerySnapshot> verifyInviteCode(String inviteCode) async {
+    return await Firestore.instance.collection('Event').where('InviteCode', isEqualTo: inviteCode).getDocuments();
+  }
+
+  Stream<List<Vendor>> getVendorInfo(String eventID) {
+    return _vendorCollectionReference.where('eventId', isEqualTo: eventID).snapshots()
+    .map(_vendorListFromSnapshot);
   }
 
 }
