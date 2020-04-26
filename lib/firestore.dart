@@ -97,7 +97,7 @@ class FirestoreService{
   }
 
   Future<QuerySnapshot> verifyInviteCode(String inviteCode) async {
-    return await Firestore.instance.collection('Event').where('InviteCode', isEqualTo: inviteCode).getDocuments();
+    return await Firestore.instance.collection('Event').where('invitecode', isEqualTo: inviteCode).getDocuments();
   }
 
   Stream<List<Vendor>> getVendorInfo(String eventID) {

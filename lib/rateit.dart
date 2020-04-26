@@ -48,8 +48,8 @@ class _InviteScreen extends State<InviteScreen> {
       String eventID = '';
       _firestore.verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
         if (docs.documents.isNotEmpty){
-          eventName = docs.documents[0].data['Name'];
-          eventID = docs.documents[0].data['EventId'];
+          eventName = docs.documents[0].data['name'];
+          eventID = docs.documents[0].data['eventID'];
           print(eventName);
           print(eventID);
           Navigator.push(context, MaterialPageRoute(builder: (context) => _RateItFirstScreen(eventName: eventName, eventID: eventID)));
