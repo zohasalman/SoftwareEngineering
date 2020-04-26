@@ -97,7 +97,7 @@ class FirestoreService{
   }
 
   Future<QuerySnapshot> verifyInviteCode(String inviteCode) async {
-    return await Firestore.instance.collection('Event').where('InviteCode', isEqualTo: inviteCode).getDocuments();
+    return await Firestore.instance.collection('Event').where('invitecode', isEqualTo: inviteCode).getDocuments();
   }
 
   Stream<List<Vendor>> getVendorInfo(String eventID) {
@@ -108,15 +108,15 @@ class FirestoreService{
   // List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
   //   return  snapshot.documents.map((doc){
   //     return Event(
-  //       coverimage: doc.data['coverimage'] ?? 0,
-  //       eventID: doc.data['eventID'] ?? '',
-  //       enddate: doc.data['enddate'] ?? '',
-  //       name: doc.data['name'] ?? '',
-  //       startdate: doc.data['startdate'] ?? '',
-  //       invitecode: doc.data['invitecode'] ?? -1,
-  //       location1: doc.data['location1'] ?? '',
-  //       logo: doc.data['logo'] ?? '',
-  //       uid:doc.data['uid'] ?? '',
+  //       coverimage: doc.data['coverimage'],
+  //       eventID: doc.data['eventID'],
+  //       enddate: doc.data['enddate'],
+  //       name: doc.data['name'],
+  //       startdate: doc.data['startdate'],
+  //       invitecode: doc.data['invitecode'],
+  //       location1: doc.data['location1'],
+  //       logo: doc.data['logo'],
+  //       uid:doc.data['uid'],
   //     );
   //   }).toList();
   // }
