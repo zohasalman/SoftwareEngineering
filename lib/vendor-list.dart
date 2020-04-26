@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'vendor.dart';
 import 'userRedirection.dart';
+import 'rateit.dart';
 
 class VendorsList extends StatefulWidget {
   @override
@@ -25,6 +26,14 @@ class _VendorsListState extends State<VendorsList> {
             child:ListTile(
                       onTap: () {
                         debugPrint('${vendors[index].name} is pressed!');
+                        String image;
+                  var route = new MaterialPageRoute(
+                    builder: (BuildContext context) => new TopRatedItems(
+                        value: '${vendors[index].name}',
+                        image: 'asset/image/${vendors[index].logo}'),
+                  );
+                  Navigator.of(context).push(route);
+
                       },
                       title: Text(vendors[index].name),
                       leading: CircleAvatar(

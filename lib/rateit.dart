@@ -206,7 +206,7 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                       offset: Offset(0, -50),
                       child: Container(
                         height: 2000,
-                        width: 2000,
+                        width: 2300,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                               image: AssetImage("asset/image/rateit.png")),
@@ -224,7 +224,7 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                         offset: Offset(0, -150),
                         child: Container(
                           height: 2000,
-                          width: 2000,
+                          width: 2300,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: AssetImage("asset/image/rateit.png")),
@@ -1782,5 +1782,237 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
     );
   }
 }
+
+class TopRatedItems extends StatefulWidget {
+  String value, image;
+
+  TopRatedItems({Key key, this.value, this.image}) : super(key: key);
+
+  @override
+  _TopRatedItems createState() => new _TopRatedItems();
+}
+
+class _TopRatedItems extends State<TopRatedItems> {
+  double myrating;
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                            child: Text('${widget.value}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 28))),
+                      )),
+                  flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/frame1.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )),
+                )
+              ],
+            ),
+            clipper: Clipshape(),
+          )),
+      body: Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Container(
+            child: ListView(
+          children: <Widget>[
+            Container(
+              height: 200.0,
+              width: 200.0,
+              child: Padding(
+                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                child: Image.asset('${widget.image}'),
+              ),
+            ),
+            new Divider(),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                  child: Text('Top Rated Items',
+                      style: TextStyle(color: Colors.red, fontSize: 22)),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                  child: Text('Reviews',
+                      style: TextStyle(color: Colors.red, fontSize: 22)),
+                )
+              ],
+            ),
+            Row(
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: 0.0, left: 20.0),
+                        child: Image.asset('asset/image/bigmac.png'),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
+                          child: Text('BigMac',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 15)))
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
+                    child: Column(
+                      children: <Widget>[
+                        RatingBar(
+                          initialRating: 0,
+                          minRating: 0,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 0.5),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {
+                            double myrating;
+                            print(rating);
+                          },
+                        ),
+                        
+                      ],
+                    ),
+                  ),
+                )),
+              ],
+            ),
+            new Divider(),
+            Row(
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: 0.0, left: 0.0),
+                        child: Image.asset('asset/image/mcchicken.png'),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
+                          child: Text('McChicken',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 15)))
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
+                    child: Column(
+                      children: <Widget>[
+                        RatingBar(
+                          initialRating: 0,
+                          minRating: 0,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 0.5),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {
+                            print( rating);
+                          },
+                        ),
+                       
+                      ],
+                    ),
+                  ),
+                )),
+              ],
+            ),
+            new Divider(),
+            Row(
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: 0.0, left: 15.0),
+                        child: Image.asset('asset/image/McFries.png'),
+                      ),
+                      Padding(
+                          padding:
+                              EdgeInsets.only(right: 0.0, left: 20.0, top: 0.0),
+                          child: Text('Mc Fries',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 15)))
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: Container(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
+                    child: Column(
+                      children: <Widget>[
+                        RatingBar(
+                          initialRating: 0,
+                          minRating: 0,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 0.5),
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {
+                            print(rating);
+                          },
+                        ),
+                        
+                      ],
+                    ),
+                  ),
+                )),
+              ],
+            ),
+            new Divider(),
+           
+          ],
+        )),
+      ),
+     
+    );
+  }
+}
+
+
 
 
