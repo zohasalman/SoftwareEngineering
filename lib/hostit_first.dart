@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-//import 'package:cached_network_image/cached_network_image.dart';
-import 'data.dart';
+import 'package:provider/provider.dart';
+import 'Event.dart';
+import 'userRedirection.dart';
+import 'userRedirection.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 void main() => runApp(new MyApp());//one-line function
 
@@ -40,21 +44,18 @@ class ListViewExample extends StatefulWidget {
   }
 }
 class ListViewExampleState extends State<ListViewExample> {
-  List<Card> _buildListItemsFromFlowers(){
+  
+   
+  List<Card> _buildListItemsFromEvents(eventdata){
     int index = 0;
-    return flowers.map((flower){
+    return eventdata.map((flower){
       var container = Card(
         child: new Row(
           children: <Widget>[
-
-
-
             new Container(
               margin: new EdgeInsets.all(10.0),
               child:CircleAvatar(
-                backgroundImage: AssetImage(
-                  "asset/image/noliesfries.png",
-                ),
+                backgroundImage: NetworkImage('$eventdata.logo'),
               ),
             ),
             new Column(
@@ -74,14 +75,13 @@ class ListViewExampleState extends State<ListViewExample> {
                 ),
                 new Container(
                   padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Align(
-                    alignment: Alignment(-0.75,-0.75),
-                    child: new Image.asset(
-                      'asset/image/123.jpg',
-                      height: 250.0,
-                      width: 300.0,
-                    ),
+                  child: CachedNetworkImage(
+                    imageUrl: eventdata.coverimage,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
                   ),
+
                 )
               ],
             ),
@@ -95,6 +95,25 @@ class ListViewExampleState extends State<ListViewExample> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    final eventdata = Provider.of<List<Event>>(context);
+    if (eventdata==null){
+      return LoadingScreen();
+    }else{
+      return ListView(
+        children: _buildListItemsFromEvents(eventdata),
+      );
+    }
+  }
+}
+
+class HostitHomescreen extends StatefulWidget {
+  @override
+  _HostitHomescreenState createState() => _HostitHomescreenState();
+}
+
+class _HostitHomescreenState extends State<HostitHomescreen> {
+  @override
+  Widget build(BuildContext context) {
     return new Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
@@ -146,9 +165,7 @@ class ListViewExampleState extends State<ListViewExample> {
             clipper: ClipShape(),
           )
       ),
-      body: ListView(
-        children: _buildListItemsFromFlowers(),
-      ),
+      body: ListViewExample(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           //add code

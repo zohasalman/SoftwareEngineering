@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rateit/user.dart';
+import 'Event.dart';
 import 'localData.dart';
 import 'vendor.dart';
 import 'user.dart';
@@ -102,6 +103,27 @@ class FirestoreService{
   Stream<List<Vendor>> getVendorInfo(String eventID) {
     return _vendorCollectionReference.where('eventId', isEqualTo: eventID).snapshots()
     .map(_vendorListFromSnapshot);
+  }
+
+  List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
+    return  snapshot.documents.map((doc){
+      return Event(
+        coverimage: doc.data['coverimage'] ?? 0,
+        eventID: doc.data['eventID'] ?? '',
+        enddate: doc.data['enddate'] ?? '',
+        name: doc.data['name'] ?? '',
+        startdate: doc.data['startdate'] ?? '',
+        invitecode: doc.data['invitecode'] ?? -1,
+        location1: doc.data['location1'] ?? '',
+        logo: doc.data['logo'] ?? '',
+        uid:doc.data['uid'] ?? '',
+      );
+    }).toList();
+  }
+
+  Stream<List<Event>> getEventInfo(String eventID) {
+    return _vendorCollectionReference.snapshots()
+    .map(_eventListFromSnapshot);
   }
 
 }
