@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rateit/login.dart';
 import 'firestore.dart';
 import 'dart:math' as math;
 import 'VendorList.dart';
@@ -16,6 +17,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:camera/camera.dart';
 // import 'package:qrcode_reader/qrcode_reader.dart';
 
+
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
         home: InviteScreen(),
@@ -27,6 +29,149 @@ void main3() => runApp(MaterialApp(
           '/editrating1': (BuildContext context) => new EditRating1(),
           '/doratings': (BuildContext context) => new DoRatings()
         }));
+
+class SideBar2 extends StatefulWidget {
+  @override
+  SideBarProperties2 createState() => new SideBarProperties2();
+}
+
+class SideBarProperties2 extends State<SideBar2>{
+
+  void NormalSignOut() async {
+    User usr = Provider.of<User>(context, listen: false);
+    String user = usr.uid;
+    await FirestoreService(uid: user).normalSignOutPromise();
+    LoginScreen();
+  
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: new Column(
+        
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+      
+            Padding( padding: EdgeInsets.all(30),),
+            CircleAvatar(
+              radius:70, 
+              backgroundImage: new NetworkImage('http://i.pravatar.cc/300'),
+            ),
+            Text(
+              'Uzair Mustafa',
+              style: TextStyle(fontSize: 30, color: Colors.black)
+            ),
+            Text(
+              'uzairmustafa@rateit.com',
+              style: TextStyle(fontSize: 22, color: Colors.black)
+            ),
+          Padding( padding: EdgeInsets.all(30),),
+          Container(
+            child: GestureDetector(
+              onTap: () { //Change on Integration
+                Navigator.of(context).pushNamed("/EditProfileScreen");
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Edit Profile',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
+            child: GestureDetector(
+              onTap: () { //Change on Integration
+                Navigator.of(context).pushNamed("/Viewratings");
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('View my Ratings',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
+            child: GestureDetector(
+              onTap:() async {await FirestoreService().normalSignOutPromise();},
+             // },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Sign Out',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+        ]
+      ),
+    );
+  }
+}
 
 class InviteScreen extends StatefulWidget {
   @override
@@ -515,36 +660,7 @@ class _EditProfile extends State<EditProfile> {
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              new UserAccountsDrawerHeader(
-                accountName: new Text(
-                  'Uzair Mustafa',
-                  style: TextStyle(fontSize: 17.0, color: Colors.black),
-                  textAlign: TextAlign.center,
-                ),
-                accountEmail: new Text(
-                  'uzairmustafa@rateit.com',
-                  style: TextStyle(fontSize: 17.0, color: Colors.black),
-                  textAlign: TextAlign.center,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                ),
-                currentAccountPicture: new CircleAvatar(
-                  backgroundImage: new NetworkImage('http://i.pravatar.cc/300'),
-                  backgroundColor: Color(0xFFAC0D57),
-                ),
-              ),
-              Container(
-                child: RaisedButton(
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-        ),
+        endDrawer: SideBar2(),
         body: Container(
           padding: const EdgeInsets.all(10.0),
           child: ListView(
@@ -790,51 +906,7 @@ class _ViewVendor extends State<ViewVendor> {
             ),
             clipper: Clipshape(),
           )),
-      endDrawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-
-            new UserAccountsDrawerHeader(
-              accountName: new Text('Uzair Mustafa',
-                style: TextStyle(fontSize: 17.0, color: Colors.black)),
-              accountEmail: new Text(
-                'uzairmustafa@rateit.com',
-                style: TextStyle(fontSize: 17.0, color: Colors.black),
-                textAlign: TextAlign.center,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              currentAccountPicture: new CircleAvatar(
-                backgroundImage: new NetworkImage('http://i.pravatar.cc/300'),
-                backgroundColor: Color(0xFFAC0D57),
-              ),
-            ),
-            Container(
-              child: RaisedButton(
-                child: Text('Edit Profile'),
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/EditProfileScreen");
-                },
-              ),
-            ),
-            Container(
-              child: RaisedButton(
-                child: Text('View My Ratings'),
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/Viewratings");
-                },
-              ),
-            ),
-            Container(
-              child: RaisedButton(
-                child: Text('Sign Out'),
-                onPressed: () {},
-              ),
-            ),
-          ],
-        ),
-      ),
+      endDrawer: SideBar2(),
       body: VendorsList(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pink[800],
