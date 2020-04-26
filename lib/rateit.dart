@@ -10,6 +10,7 @@ import 'user.dart';
 import 'dart:convert';
 import 'vendor-list.dart';
 import 'vendor.dart';
+import 'package:barcode_scan/barcode_scan.dart'; 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
@@ -659,6 +660,7 @@ class ViewVendor extends StatefulWidget {
   ViewVendor({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
+  String qr=""; 
 
 
   @override
@@ -835,9 +837,15 @@ class _ViewVendor extends State<ViewVendor> {
       body: VendorsList(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
-        onPressed: () {
+         onPressed: () async {
+          
 
-            Navigator.of(context).pushNamed('/doratings');
+            //Navigator.of(context).pushNamed('/doratings');
+            String scanning= await BarcodeScanner.scan(); 
+
+            setState(){
+              qr=scanning; 
+         }
         },
       ),
     ),
