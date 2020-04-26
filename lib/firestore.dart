@@ -14,7 +14,7 @@ class FirestoreService{
 
   final CollectionReference _usersCollectionReference = Firestore.instance.collection('users');
   final CollectionReference _vendorCollectionReference = Firestore.instance.collection('Vendor');
-
+  final CollectionReference _eventCollectionReference = Firestore.instance.collection('Event');
   Future registerUser(UserData user) async{
     try {
       await _usersCollectionReference.document(user.uid).setData(user.toJSON());
@@ -122,7 +122,7 @@ class FirestoreService{
   }
 
   Stream<List<Event>> getEventInfo(String eventID) {
-    return _vendorCollectionReference.snapshots()
+    return _eventCollectionReference.snapshots()
     .map(_eventListFromSnapshot);
   }
 
