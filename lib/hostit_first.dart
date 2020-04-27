@@ -50,6 +50,26 @@ class ListViewExample extends StatefulWidget {
 }
 class ListViewExampleState extends State<ListViewExample> {
   
+  var eventdata = [
+    new Event(
+      coverimage:"https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fkarachi-eat-2017.jpg?alt=media&token=da800a5d-2413-4f1b-bce5-0b04299215b7",
+      eventID:"cVgoRCSqbBCrjM6fg2Np",
+      logo:"https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fimages.png?alt=media&token=bdfc149d-27e2-46a9-a40e-5434ef3209c2",
+      invitecode:"khieat",
+      location1:new GeoPoint(longitude: 60.9, latidude: 20.4),
+      name:"Karachi Eat",
+      uid:"aDsAvwk0mbgV1CQSUI5wJbU75Zt2"
+    ),
+    new Event(
+      coverimage:"https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347",
+      eventID:"cVgoRCSqbBCrjM6fg2Np",
+      logo:"https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691",
+      invitecode:"khieat",
+      location1:new GeoPoint(longitude: 60.9, latidude: 20.4),
+      name:"Coke Fest",
+      uid:"aDsAvwk0mbgV1CQSUI5wJbU75Zt2"
+    )
+  ];
    
   List<GestureDetector> _buildListItemsFromEvents(eventdata){
     int index = 0;
@@ -117,14 +137,9 @@ class ListViewExampleState extends State<ListViewExample> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    final eventdata = Provider.of<List<Event>>(context);
-    if (eventdata==null){
-      return LoadingScreen();
-    }else{
       return ListView(
         children: _buildListItemsFromEvents(eventdata),
       );
-    }
   }
 }
 
