@@ -187,7 +187,6 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
       body: ListViewExample(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-           Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent()),);
           //add code
         },
         child: Icon(Icons.add),
