@@ -1917,6 +1917,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                               child: Text(
                                 "Submit",
                                 textAlign: TextAlign.center,
+                                
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.white),
                               ),
@@ -1997,7 +1998,11 @@ class _TopRatedItems extends State<TopRatedItems> {
                   padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
                   child: Image.network('${widget.image}'),
                 ),
+                
+
+           
               ),
+<<<<<<< HEAD
               RatingBar.readOnly(
                 initialRating: 3.5,
                 filledIcon: Icons.star,
@@ -2009,6 +2014,28 @@ class _TopRatedItems extends State<TopRatedItems> {
                 halfFilledColor: Colors.amber,
                 size: 36,
               ),
+=======
+
+              Padding(
+                    padding: EdgeInsets.only(right: 0.0, left: 50.0),
+                    child: Column(
+                      children: <Widget>[
+                        RatingBar.readOnly(
+                          //Balaj chnage this line
+                          initialRating: double.parse('3.8'),
+                          isHalfAllowed: true,
+                          halfFilledIcon: Icons.star_half,
+                          filledIcon: Icons.star,
+                          emptyIcon: Icons.star_border,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 30,
+                        ),
+                      ],
+                    ),
+                  ),
+>>>>>>> 2f085fc4b8c748041bd07efc7e358f044d8ccf1e
               new Divider(),
               Row(
                 children: <Widget>[

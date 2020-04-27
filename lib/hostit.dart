@@ -91,9 +91,8 @@ class AddEventState extends State<AddEvent> {
                   leading: IconButton(
                     icon: Icon(
                       Icons.arrow_back,
-                       
                     ), 
-                    onPressed: (){
+                    onPressed: () {
                        Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
                     }
                   ),
@@ -131,7 +130,7 @@ class AddEventState extends State<AddEvent> {
                   children: <Widget>[
                     TextFormField(
                       validator: (input)=> input.isEmpty? 'Please enter a name': null,
-                      onSaved: (input)=> name=input,
+                      onChanged: (input)=> name=input,
                       decoration: InputDecoration(
                         labelText: 'Name of the event',
                         labelStyle: TextStyle(
@@ -152,7 +151,7 @@ class AddEventState extends State<AddEvent> {
                     child: TextFormField(
                       validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                       //validator: (input)=> input.isEmpty? 'Please enter a valid location': null,
-                      //onSaved: (input)=> location=input,
+                      onChanged: (input)=> input='(${coord.latitude},${coord.longitude})',
                       decoration: InputDecoration(
                         labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
@@ -177,7 +176,7 @@ class AddEventState extends State<AddEvent> {
                   child: IconButton(
                     icon: Icon(Icons.add_location,
                     color: Colors.white,),
-                    onPressed: () {//Maps();
+                    onPressed: () {
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
                   ),
@@ -194,7 +193,7 @@ class AddEventState extends State<AddEvent> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onSaved: (input)=> number=int.parse(input),
+                  onChanged: (input)=> number=int.parse(input),
                   decoration: InputDecoration(
                     labelText: 'Number of vendors',
                     labelStyle: TextStyle(
@@ -217,7 +216,7 @@ class AddEventState extends State<AddEvent> {
                     child: TextFormField(
                       
                       validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onSaved: (input)=> logo=input,
+                      onChanged: (input)=> logo=input,
                       decoration: InputDecoration(
                         labelText: 'Upload a logo of your event',
                         labelStyle: TextStyle(
@@ -271,7 +270,7 @@ class AddEventState extends State<AddEvent> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField( 
                   validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                  onSaved: (input)=> photo=input,
+                  onChanged: (input)=> photo=input,
                   decoration: InputDecoration(
                     labelText: 'Upload a photo of your event',
                     labelStyle: TextStyle(
@@ -308,7 +307,6 @@ class AddEventState extends State<AddEvent> {
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    
                     TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                   )),
@@ -339,17 +337,17 @@ class AddEventState extends State<AddEvent> {
                     icon: Icon(Icons.arrow_forward,
                     size: 45,
                     color: Colors.white,),
-                    onPressed: () {
+                    onPressed: () async {
                       GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
-                      //String uid = Provider.of<String>(context);
-                      var newEvent = new Event(uid:'uid', eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
-                      print('KKKKKKKKKKKKKKKKKk');
-
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> one(data:newEvent,numVen: number)),);
-
-
-
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                      
+    //String usr = Provider.of<User>(context).uid.toString();
+    //String user = usr.uid;
+                        var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
+                        String routee=null;
+                        await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
+                            await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true);
+                        });
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);
                     },
                   ),
                 ),
