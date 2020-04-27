@@ -2432,3 +2432,205 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
     );
   }
 }
+
+class ViewReviews extends StatefulWidget {
+  String value, image;
+
+  ViewReviews({Key key, this.value, this.image}) : super(key: key);
+
+  @override
+  _ViewReviews createState() => new _ViewReviews();
+}
+
+class _ViewReviews extends State<ViewReviews> {
+  double myrating;
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                            child: Text('${widget.value}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 28))),
+                      )),
+                  flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )),
+                )
+              ],
+            ),
+            clipper: Clipshape(),
+          )),
+      body: Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Container(
+            child: ListView(
+          children: <Widget>[
+            Container(
+              height: 200.0,
+              width: 200.0,
+              child: Padding(
+                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                child: Image.asset('${widget.image}'),
+              ),
+            ),
+            RatingBar.readOnly(
+              initialRating: 3.5,
+              filledIcon: Icons.star,
+              emptyIcon: Icons.star_border,
+              halfFilledIcon: Icons.star_half,
+              isHalfAllowed: true,
+              filledColor: Colors.amber,
+              emptyColor: Colors.amber,
+              halfFilledColor: Colors.amber,
+              size: 40,
+            ),
+            new Divider(),
+            Row(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                    child: GestureDetector(
+                      onTap: () {Navigator.pop(context);},
+                    child: Text('My Ratings',
+                        style: TextStyle(color: Colors.red, fontSize: 22)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20.0,
+                  ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30.0),
+                  child: Container(
+                child: GestureDetector(
+              onTap: () {
+              },
+              child: Container(
+                width: 170.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: Text('My Reviews',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
+              ),
+            )),
+                )
+                
+              ],
+            ),
+
+            Padding(
+              padding: EdgeInsets.only (top: 15.0, right: 45.0, left: 45.0),
+              child: Container(
+                width: 200.0,
+                
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                   gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        //Colors.white,
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                        
+                      ]),
+                  color: Colors.redAccent,
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 30.0),
+                      child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              )
+                    ),
+
+                    Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+
+                ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: 200.0,
+                          maxWidth: 270.0,
+                          minHeight: 30.0,
+                          maxHeight: 100.0,
+                        ),
+                        child: AutoSizeText(
+                          "My review is this and I give very good reviews and I am proud",
+                          style: TextStyle(fontSize: 18.0),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  )
+                  ],
+                )
+              )
+            )
+            
+                
+          ],
+        )),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.edit),
+        onPressed: () {
+          // var route = new MaterialPageRoute(
+          //   builder: (BuildContext context) => new ChangeRatings(
+          //       value: '${widget.value}', image: '${widget.image}'),
+          // );
+          // Navigator.of(context).push(route);
+        },
+      ),
+    );
+  }
+}
