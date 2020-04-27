@@ -2821,11 +2821,11 @@ class _ViewReviews extends State<ViewReviews> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.edit),
         onPressed: () {
-          var route = new MaterialPageRoute(
-            builder: (BuildContext context) => new ChangeRatings(
-                value: '${widget.value}', image: '${widget.image}'),
-          );
-          Navigator.of(context).push(route);
+          // var route = new MaterialPageRoute(
+          //   builder: (BuildContext context) => new ChangeRatings(
+          //       value: '${widget.value}', image: '${widget.image}'),
+          // );
+          // Navigator.of(context).push(route);
         },
       ),
     );
