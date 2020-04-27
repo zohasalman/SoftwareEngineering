@@ -4,6 +4,10 @@ import 'Event.dart';
 import 'hostit.dart';
 import 'userRedirection.dart';
 import 'userRedirection.dart';
+import 'hostit.dart';
+import 'login.dart';
+import 'user.dart';
+import 'firestore.dart';
 // import 'package:cached_network_image/cached_network_image.dart';
 
 
@@ -83,8 +87,9 @@ class ListViewExampleState extends State<ListViewExample> {
                     image: NetworkImage(
                       eventdata.coverimage,
                     ),
-                    width: 100,
-                    height: 100,
+                    alignment: Alignment.center,
+                    width: 350,
+                    height: 200,
                     fit: BoxFit.cover,
                   ),
 
@@ -127,6 +132,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      endDrawer: SideBar1(),
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -152,6 +158,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
                       ),
                       onPressed: (){
                         Navigator.pop(context);
+                        //add code
                       }),
                   flexibleSpace: Container(
                       decoration: BoxDecoration(
@@ -185,6 +192,116 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.red[600],
+      ),
+    );
+  }
+}
+
+
+
+class SideBar1 extends StatefulWidget {
+  @override
+  SideBar1Properties createState() => new SideBar1Properties();
+}
+
+class SideBar1Properties extends State<SideBar1>{
+
+  void NormalSignOut() async {
+    User usr = Provider.of<User>(context, listen: false);
+    String user = usr.uid;
+    await FirestoreService(uid: user).normalSignOutPromise();
+    LoginScreen();
+  
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: new Column(
+        
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+            Padding( padding: EdgeInsets.all(30),),
+            CircleAvatar(
+              radius:70, 
+              backgroundImage: AssetImage("asset/image/user.png"),
+            ),
+            Text(
+              'Aladin', 
+              style: TextStyle(fontSize: 30, color: Colors.black)
+            ),
+            Text(
+              'Aladin@hotmail.com', 
+              style: TextStyle(fontSize: 22, color: Colors.black)
+            ),
+          Padding( padding: EdgeInsets.all(30),),
+          Container(
+            child: GestureDetector(
+              onTap: () { //Change on Integration
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Edit Profile',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
+            child: GestureDetector(
+              onTap:() async {await FirestoreService().normalSignOutPromise();},
+             // },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Sign Out',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+        ]
       ),
     );
   }
