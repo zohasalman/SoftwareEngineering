@@ -28,21 +28,31 @@ class _ListItemState extends State<ListItem> {
                   child: Column(
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                        child: Image.network('${items[index].logo}', height: 25.0, width: 25.0,), 
+                        padding: EdgeInsets.only(top: 20,right: 0.0, left: 20.0),
+                        child: CircleAvatar(
+                          radius: 60, 
+                          backgroundImage: NetworkImage('${items[index].logo}'), 
+                          backgroundColor: Colors.transparent, 
+                        )
+                        
                       ),
                       Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
+                          padding: EdgeInsets.only(top: 10,right: 0.0, left: 20.0),
                           child: Text('${items[index].name}',
                               style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
+                                  TextStyle(color: Colors.black, fontSize: 18)))
+                      
                     ],
                   ),
                 ),
-                Expanded(
+
+                 Container(
+                  child: Column(
+                    children: <Widget>[
+                       Container(
                     child: Container(
                   child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
+                    padding: EdgeInsets.only(right: 0.0, left: 50.0),
                     child: Column(
                       children: <Widget>[
                         RatingBar.readOnly(
@@ -53,12 +63,24 @@ class _ListItemState extends State<ListItem> {
                           emptyIcon: Icons.star_border,
                           filledColor: Colors.amber,
                           emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber
+                          halfFilledColor: Colors.amber,
+                          size: 30,
                         ),
                       ],
                     ),
                   ),
                 )),
+
+                Padding(
+                          padding: EdgeInsets.only(top: 10,right: 0.0, left: 20.0),
+                          child: Text('${items[index].aggregateRating}',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 18)))
+                      
+                    ],
+                  ),
+                ),
+               
               ],
             );
       });
