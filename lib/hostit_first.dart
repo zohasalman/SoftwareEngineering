@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Event.dart';
+import 'hostit.dart';
 import 'userRedirection.dart';
 import 'userRedirection.dart';
 // import 'package:cached_network_image/cached_network_image.dart';
@@ -146,7 +147,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
                   ),
                   leading: IconButton(
                       icon: Icon(
-                        Icons.menu,
+                        Icons.arrow_back,
 
                       ),
                       onPressed: (){
@@ -179,6 +180,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
       body: ListViewExample(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
+           Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent()),);
           //add code
         },
         child: Icon(Icons.add),

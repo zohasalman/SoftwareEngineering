@@ -16,6 +16,7 @@ import 'userRedirection.dart';
 import 'dart:convert';
 import 'VendorList.dart';
 import 'package:random_string/random_string.dart';
+import 'hostit_first.dart';
 
 void main2() => runApp(App());
 
@@ -59,7 +60,7 @@ class AddEventState extends State<AddEvent> {
   //AddEventState({this.eid});
   LatLng coord;
   AddEventState({this.coord});
-  var i =0.0;
+  int number;
   String name;
   String logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -93,7 +94,7 @@ class AddEventState extends State<AddEvent> {
                        
                     ), 
                     onPressed: (){
-                      Navigator.pop(context);
+                       Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
                     }
                   ),
                   flexibleSpace: Container(
@@ -193,7 +194,7 @@ class AddEventState extends State<AddEvent> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onSaved: (input)=> number=input,
+                  onSaved: (input)=> number=int.parse(input),
                   decoration: InputDecoration(
                     labelText: 'Number of vendors',
                     labelStyle: TextStyle(
@@ -340,15 +341,15 @@ class AddEventState extends State<AddEvent> {
                     color: Colors.white,),
                     onPressed: () {
                       GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
-                      String uid = Provider.of<String>(context);
-                      var newEvent = new Event(uid:uid, eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
+                      //String uid = Provider.of<String>(context);
+                      var newEvent = new Event(uid:'uid', eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
+                      print('KKKKKKKKKKKKKKKKKk');
+
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> one(data:newEvent,numVen: number)),);
 
 
 
-
-
-
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
                     },
                   ),
                 ),
@@ -517,7 +518,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,10),
               child: InkWell(
                 onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
                 },
                 child: Container(
                   height: 50,
@@ -547,7 +548,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,30),
               child: InkWell(
                 onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
                 },
                 child: Container(
                   height: 50,
@@ -577,6 +578,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,50),
               child: InkWell(
                 onTap: (){
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty()),);
                   //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
                 },
                 child: Container(
@@ -607,7 +609,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,70),
               child: InkWell(
                 onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);  
                 },
                 child: Container(
                   height: 50,
@@ -888,7 +890,9 @@ class Screen41 extends State<AddVendorQty> {
               child: Container(
                 height: 100,
                 width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
+                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),)
+                } ),
               ),
             ),
           ),         
@@ -3390,7 +3394,7 @@ class MapsFunc extends State<Maps> {
                       Icons.arrow_back,    
                       ), 
                     onPressed: (){
-                      
+                      coord=LatLng(23.32, 65.1);
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                     }
                   ),
@@ -3712,32 +3716,97 @@ class SideBarProperties extends State<SideBar>{
   }
 }
 
-class CreateEvent extends StatefulWidget {
+// class CreateEvent extends StatefulWidget {
 
-  Event data;
-  int numVen;
-  CreateEvent({this.data,this.numVen});
-  @override
-  CreateEventEntry createState() => CreateEventEntry();
-}
+//   Event data;
+//   int numVen;
+//   CreateEvent({this.data,this.numVen});
+  
+//   @override
+//   CreateEventEntry createState() => CreateEventEntry();
+// }
 
-class CreateEventEntry extends State<CreateEvent> {
-  Event data;
-  int numVen;
-  CreateEventEntry({this.data,this.numVen});
-  @override
-  Widget build(BuildContext context) {
-    String done = FirestoreService().addEventPromise(data).toString();//addEventPromise(data); 
+// class CreateEventEntry extends State<CreateEvent> {
+//   final Event data;
+//   final int numVen;
+//   CreateEventEntry({this.data,this.numVen});
+//   @override
+//   Widget build(BuildContext context) {
+//     print(numVen);
+//     print('k');
+//     //return FirestoreService().addEventPromise(data).toString();//addEventPromise(data); 
     
-    if (done == ''){
-      return LoadingScreen();
-    }
-    else if(done == 'Error'){  //Failure to fetch Data, Firebase Error. 
-    //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
-      return ErrorSignIn();
-    }
-    else{
-      return AddVendor();
-    }
-  }
- }
+//     // if (done == ''){
+//     //   return LoadingScreen();
+//     // }
+//     // else if(done == 'Error'){  //Failure to fetch Data, Firebase Error. 
+//     // //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
+//     //   return ErrorSignIn();
+//     // }
+//     // else{
+//     //   return AddVendor();
+//     // }
+//   }
+//  }
+
+
+
+// class one extends StatefulWidget{
+
+//   Event data;
+//   int numVen;
+//   one({this.data,this.numVen});
+
+//   @override
+//   two createState() => two();
+// }
+
+// class two extends State<one> {
+
+//   Event data;
+//   int numVen;
+//   two({this.data,this.numVen});
+
+
+//   @override
+//   Widget build(BuildContext context) {
+//     User usr = Provider.of<User>(context);
+//     String user = usr.uid;
+//     return StreamProvider<String>.value(
+//       value: FirestoreService().addEventPromise(data).asStream(),
+//       child: three(),
+//     );
+//   }
+// }
+
+// class three extends StatefulWidget {
+  
+//   Event data;
+//   int numVen;
+//   three({this.data,this.numVen});
+
+//   @override
+//   four createState() => four();
+// }
+
+// class four extends State<three> {
+//     Event data;
+//   int numVen;
+//   four({this.data,this.numVen});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final usr = Provider.of<String>(context);
+//     if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
+//     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
+//       return ErrorSignIn();
+//     }
+//     else if(usr == null){     //Data not Fetched yet or was null
+//       return LoadingScreen();//Text("Error: Cannot connect to Database");
+//     }
+//     else{                     //Test Needed to confirm desired function
+//       return ForgotScreen();
+//     }
+//   }
+//  }
+
