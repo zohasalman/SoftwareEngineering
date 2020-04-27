@@ -26,20 +26,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// class ClipShape extends CustomClipper<Path>{
-//   @override
-//   Path getClip(Size size) {
-//     var clipline= new Path();
-//     clipline.lineTo(0, size.height-0);
-//     clipline.lineTo(size.width, size.height-100);
-//     clipline.lineTo(size.width, 0);
-//     return clipline;
-//   }
-//   @override
-//   bool shouldReclip(CustomClipper<Path> oldClipper) {
-//     return true;
-//   }
-// }
+class ClipShape extends CustomClipper<Path>{
+  @override
+  Path getClip(Size size) {
+    var clipline= new Path();
+    clipline.lineTo(0, size.height-0);
+    clipline.lineTo(size.width, size.height-100);
+    clipline.lineTo(size.width, 0);
+    return clipline;
+  }
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
+  }
+}
 
 class ListViewExample extends StatefulWidget {
   @override
@@ -55,52 +55,57 @@ class ListViewExampleState extends State<ListViewExample> {
     int index = 0;
     return eventdata.map((flower){
       var container = Card(
-        child: new Row(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            new Container(
-              margin: new EdgeInsets.all(10.0),
-              child:Align(
-                alignment: Alignment.topLeft,
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage('$eventdata.logo'),
-                ),
-              )
-            ),
-            new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                new Container(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: new Text(
-                    eventdata.name,
-                    style: new TextStyle(
-                        fontWeight:  FontWeight.bold,
-                        fontSize: 20.0,
-                        color: Colors.black
-                    ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage('$eventdata.logo')
                   ),
                 ),
-                new Container(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Image(
-                    image: NetworkImage(
-                      eventdata.coverimage,
+                Padding(
+                  padding: EdgeInsets.only(left:10.0),
+                  child: Text(
+                    eventdata.name,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
-                    alignment: Alignment.center,
-                    width: 350,
-                    height: 200,
-                    fit: BoxFit.cover,
                   ),
-
                 )
               ],
             ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    child: Image(
+                      image: NetworkImage(
+                        eventdata.coverimage,
+                      ),
+                      height: 200,
+                      width: 350,
+                    ),
+                  ),
+                )
+              ],
+            )
           ],
         ),
       );
       index = index + 1;
       final gestureDetector = GestureDetector(
+        child: container,
         onTap: (){
           //write code here
           var eventToBeEntered=eventdata.name;
@@ -187,7 +192,6 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
       body: ListViewExample(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: null)),);
           //add code
         },
         child: Icon(Icons.add),
