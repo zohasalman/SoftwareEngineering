@@ -38,6 +38,7 @@ dependencies:
   google_sign_in: ^4.4.4
   flutter_facebook_login: ^3.0.0
   geopoint: ^0.7.1
+  rating_bar: ^0.2.0
   # cached_network_image: "^0.4.1"
 
 dev_dependencies:
@@ -83,6 +84,11 @@ flutter:
    - asset/image/search.png
    - asset/image/user.png
    - asset/image/
+   - asset/image/rateit.png
+   - asset/image/McFries.png
+   - asset/image/bigmac.png
+   - asset/image/mcchicken.png
+   - asset/image/Group 55.png
    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
