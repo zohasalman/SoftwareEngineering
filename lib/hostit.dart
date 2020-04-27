@@ -35,21 +35,23 @@ class App extends StatelessWidget{
   Widget build(BuildContext context){
     return MaterialApp(
     debugShowCheckedModeBanner:  false,
-    home:  AddEvent(null),
+    home:  AddEvent(coord: null),
     );
   }
 }
 
 class AddEvent extends StatefulWidget {
-  AddEvent(LatLng coord);
-
+  final LatLng coord;
+  AddEvent({this.coord});
+  
   @override 
   AddEventState createState()=> new AddEventState(); 
 }
 
 class AddEventState extends State<AddEvent> {
-  AddEventState({this.eid});
-  LatLng eid;
+  //AddEventState({this.eid});
+  LatLng coord;
+  AddEventState({this.coord});
   String name, location;
   var logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -144,9 +146,9 @@ class AddEventState extends State<AddEvent> {
                       validator: (String value) {
                         var lat='';
                         var lon='';
-                        if (eid!=null){
-                          lat=eid.latitude.toString();
-                          lon=eid.longitude.toString();
+                        if (coord!=null){
+                          lat=coord.latitude.toString();
+                          lon=coord.longitude.toString();
                         }
                         return value.isNotEmpty ? '$lat,$lon' : null;
                       },
@@ -176,8 +178,8 @@ class AddEventState extends State<AddEvent> {
                   child: IconButton(
                     icon: Icon(Icons.add_location,
                     color: Colors.white,),
-                    onPressed: () {Maps();
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
+                    onPressed: () {//Maps();
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
                   ),
                 ),
@@ -1071,7 +1073,7 @@ class AddVendorState extends State<AddVendor> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);},
                   ),
                 ),
               )
@@ -1274,7 +1276,7 @@ class AddVendorState extends State<AddVendor> {
                 size: 45,
                 color: Colors.white,),
                 onPressed: () {
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);   //Modify here to upload Event Data and then move on
                 },
               ),
             ),
@@ -1572,7 +1574,9 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
               child: Container(
                 height: 100,
                 width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
+                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection()),),
+                } ),
               ),
             ),
           ),
@@ -3348,7 +3352,8 @@ class Maps extends StatefulWidget {
 
 
 class MapsFunc extends State<Maps> {
-  LatLng coord=null;
+  LatLng coord;
+  //Marker coord;
   //MapsFunc({this.coord});
   Completer<GoogleMapController> _controller = Completer();
   Marker marker=Marker(
@@ -3393,9 +3398,11 @@ class MapsFunc extends State<Maps> {
                       Icons.arrow_back,    
                       ), 
                     onPressed: (){
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord)),);
+                      
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                       //Navigator.pop(context);
-                      }),
+                    }
+                  ),
                   // actions: <Widget>[
                   //   IconButton(
                   //     onPressed: () {                          
@@ -3460,6 +3467,8 @@ class MapsFunc extends State<Maps> {
                   markerSet.add(marker1);
                   marker=marker1;
                   coord=coordinates;
+                  print(coord.latitude);
+                  print(coord.longitude);
                 });
           },
           markers: markerSet,

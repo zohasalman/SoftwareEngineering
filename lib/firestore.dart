@@ -23,7 +23,7 @@ class FirestoreService{
     }
   }
 
-  Future<String> getUserRole(String uid) async {
+  Future<String> getUserData(String uid) async {
     try{
       String userRole = '';
       await _usersCollectionReference.document(uid).get().then((value) => userRole = value.data['userRole']);

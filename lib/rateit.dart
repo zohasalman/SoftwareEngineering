@@ -11,9 +11,13 @@ import 'user.dart';
 import 'dart:convert';
 import 'vendor-list.dart';
 import 'vendor.dart';
+<<<<<<< HEAD
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:rating_bar/rating_bar.dart';
 import 'package:intl/intl.dart';
+=======
+//import 'package:barcode_scan/barcode_scan.dart'; 
+>>>>>>> 9f4a681553d7e57fbd9187c1b0515003a47d27af
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
@@ -966,7 +970,11 @@ class _ViewVendor extends State<ViewVendor> {
           child: Image.asset("asset/image/Camera 1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
+<<<<<<< HEAD
             String scanning = await BarcodeScanner.scan();
+=======
+            String scanning ;//= await BarcodeScanner.scan(); 
+>>>>>>> 9f4a681553d7e57fbd9187c1b0515003a47d27af
 
             setState() {
               var qr = scanning;
@@ -1086,6 +1094,7 @@ class _ViewMyRating extends State<ViewMyRating> {
           }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pink[800],
+<<<<<<< HEAD
         child: Image.asset("asset/image/Camera 1.png"),
         onPressed: () async {
           //Navigator.of(context).pushNamed('/doratings');
@@ -1094,6 +1103,18 @@ class _ViewMyRating extends State<ViewMyRating> {
           setState() {
             qr = scanning;
           }
+=======
+        child: Image.asset("asset/image/Camera 1.png") ,
+         onPressed: () async {
+          
+
+            //Navigator.of(context).pushNamed('/doratings');
+            String scanning ;//= await BarcodeScanner.scan(); 
+
+            setState(){
+              qr=scanning; 
+         }
+>>>>>>> 9f4a681553d7e57fbd9187c1b0515003a47d27af
         },
       ),
     );
