@@ -2002,17 +2002,26 @@ class _TopRatedItems extends State<TopRatedItems> {
 
            
               ),
-              RatingBar.readOnly(
-                initialRating: 3.5,
-                filledIcon: Icons.star,
-                emptyIcon: Icons.star_border,
-                halfFilledIcon: Icons.star_half,
-                isHalfAllowed: true,
-                filledColor: Colors.amber,
-                emptyColor: Colors.amber,
-                halfFilledColor: Colors.amber,
-                size: 36,
-              ),
+
+              Padding(
+                    padding: EdgeInsets.only(right: 0.0, left: 50.0),
+                    child: Column(
+                      children: <Widget>[
+                        RatingBar.readOnly(
+                          //Balaj chnage this line
+                          initialRating: double.parse('3.8'),
+                          isHalfAllowed: true,
+                          halfFilledIcon: Icons.star_half,
+                          filledIcon: Icons.star,
+                          emptyIcon: Icons.star_border,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 30,
+                        ),
+                      ],
+                    ),
+                  ),
               new Divider(),
               Row(
                 children: <Widget>[
