@@ -143,27 +143,27 @@ class FirestoreService{
     .map(_itemListFromSnapshot);
   }
 
-  // view my rating
+  view my rating
 
-  // List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
-  //   return  snapshot.documents.map((doc){
-  //     return Event(
-  //       coverimage: doc.data['coverimage'],
-  //       eventID: doc.data['eventID'],
-  //       enddate: doc.data['enddate'],
-  //       name: doc.data['name'],
-  //       startdate: doc.data['startdate'],
-  //       invitecode: doc.data['invitecode'],
-  //       location1: doc.data['location1'],
-  //       logo: doc.data['logo'],
-  //       uid:doc.data['uid'],
-  //     );
-  //   }).toList();
-  // }
+  List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
+    return  snapshot.documents.map((doc){
+      return Event(
+        coverimage: doc.data['coverimage'],
+        eventID: doc.data['eventID'],
+        enddate: doc.data['enddate'],
+        name: doc.data['name'],
+        startdate: doc.data['startdate'],
+        invitecode: doc.data['invitecode'],
+        location1: doc.data['location1'],
+        logo: doc.data['logo'],
+        uid:doc.data['uid'],
+      );
+    }).toList();
+  }
 
-  // Stream<List<Event>> getEventInfo(String eventID) {
-  //   return _eventCollectionReference.snapshots()
-  //   .map(_eventListFromSnapshot);
-  // }
+  Stream<List<Event>> getEventInfo(String eventID) {
+    return _eventCollectionReference.snapshots()
+    .map(_eventListFromSnapshot);
+  }
 
 }
