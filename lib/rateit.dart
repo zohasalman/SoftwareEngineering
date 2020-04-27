@@ -1991,7 +1991,12 @@ class _TopRatedItems extends State<TopRatedItems> {
                   padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
                   child: Image.network('${widget.image}'),
                 ),
+                
+
+           
               ),
+
+              
               new Divider(),
               Row(
                 children: <Widget>[
