@@ -41,6 +41,7 @@ dependencies:
   rating_bar: ^0.2.0
   json_serializable: ^3.3.0
   random_string: ^2.0.1
+  auto_size_text: ^2.1.0
   # cached_network_image: "^0.4.1"
 
 dev_dependencies:
