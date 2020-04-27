@@ -11,7 +11,7 @@ import 'user.dart';
 import 'dart:convert';
 import 'vendor-list.dart';
 import 'vendor.dart';
-import 'package:barcode_scan/barcode_scan.dart'; 
+//import 'package:barcode_scan/barcode_scan.dart'; 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
@@ -916,7 +916,7 @@ class _ViewVendor extends State<ViewVendor> {
           
 
             //Navigator.of(context).pushNamed('/doratings');
-            String scanning= await BarcodeScanner.scan(); 
+            String scanning ;//= await BarcodeScanner.scan(); 
 
             setState(){
               var qr=scanning; 
@@ -1043,7 +1043,7 @@ class _ViewMyRating extends State<ViewMyRating> {
           
 
             //Navigator.of(context).pushNamed('/doratings');
-            String scanning= await BarcodeScanner.scan(); 
+            String scanning ;//= await BarcodeScanner.scan(); 
 
             setState(){
               qr=scanning; 
