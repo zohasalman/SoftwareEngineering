@@ -3348,7 +3348,6 @@ class Maps extends StatefulWidget {
 
 class MapsFunc extends State<Maps> {
   LatLng coord;
-  //Marker coord;
   Completer<GoogleMapController> _controller = Completer();
   Marker marker=Marker(
     markerId: MarkerId("1"),
@@ -3362,7 +3361,6 @@ class MapsFunc extends State<Maps> {
 
   @override
   Widget build(BuildContext context) {
-    //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
     return MaterialApp(
       home: Scaffold(
         key: scaffoldKey,
@@ -3394,24 +3392,21 @@ class MapsFunc extends State<Maps> {
                     onPressed: (){
                       
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
-                      //Navigator.pop(context);
                     }
                   ),
-                  actions: <Widget>[
-                    IconButton(
-                      onPressed: () {
-                        
-                        coord = LatLng(24.51,32.12);                        
-                        // showSearch(
-                        //     context: context,
-                        //     delegate: MapSearchBar(),
-                        // );
-                      },
-                      icon: Icon(
-                        Icons.search,
+                  // actions: <Widget>[
+                  //   IconButton(
+                  //     onPressed: () {                     
+                  //       showSearch(
+                  //           context: context,
+                  //           delegate: MapSearchBar(),
+                  //       );
+                  //     },
+                  //     icon: Icon(
+                  //       Icons.search,
                       
-                      )
-                      ),
+                  //     )
+                  //     ),
                   //   Padding(
                   //     padding: EdgeInsets.only(right: 20.0),
                   //     child: GestureDetector(
@@ -3424,7 +3419,7 @@ class MapsFunc extends State<Maps> {
                   //       ),
                   //     )
                   //   ),
-                  ],
+                  //],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
