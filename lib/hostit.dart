@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -7,11 +8,14 @@ import 'package:rateit/login.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
 import 'localData.dart';
 import 'user.dart';
+import 'Event.dart';
+import 'userRedirection.dart';
 import 'dart:convert';
 import 'VendorList.dart';
+import 'package:random_string/random_string.dart';
 
 void main2() => runApp(App());
 
@@ -48,18 +52,17 @@ class AddEvent extends StatefulWidget {
   AddEvent({this.coord});
   
   @override 
-  AddEventState createState()=> new AddEventState(); 
+  AddEventState createState()=> new AddEventState(coord: coord); 
 }
 
 class AddEventState extends State<AddEvent> {
   //AddEventState({this.eid});
   LatLng coord;
   AddEventState({this.coord});
-  String name, location;
-  var logo, photo;  
+  var i =0.0;
+  String name;
+  String logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-  
-
   @override 
   Widget build(BuildContext context){
     return Scaffold(
@@ -146,19 +149,11 @@ class AddEventState extends State<AddEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                     child: TextFormField(
-                      validator: (String value) {
-                        var lat='';
-                        var lon='';
-                        if (coord!=null){
-                          lat=coord.latitude.toString();
-                          lon=coord.longitude.toString();
-                        }
-                        return value.isNotEmpty ? '$lat,$lon' : null;
-                      },
+                      validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                       //validator: (input)=> input.isEmpty? 'Please enter a valid location': null,
                       //onSaved: (input)=> location=input,
                       decoration: InputDecoration(
-                        labelText: 'Location',
+                        labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 19
@@ -221,7 +216,7 @@ class AddEventState extends State<AddEvent> {
                     child: TextFormField(
                       
                       validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onSaved: (input)=> location=input,
+                      onSaved: (input)=> logo=input,
                       decoration: InputDecoration(
                         labelText: 'Upload a logo of your event',
                         labelStyle: TextStyle(
@@ -275,7 +270,7 @@ class AddEventState extends State<AddEvent> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField( 
                   validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                  onSaved: (input)=> location=input,
+                  onSaved: (input)=> photo=input,
                   decoration: InputDecoration(
                     labelText: 'Upload a photo of your event',
                     labelStyle: TextStyle(
@@ -344,7 +339,16 @@ class AddEventState extends State<AddEvent> {
                     size: 45,
                     color: Colors.white,),
                     onPressed: () {
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                      GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                      String uid = Provider.of<String>(context);
+                      var newEvent = new Event(uid:uid, eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
+
+
+
+
+
+
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
                     },
                   ),
                 ),
@@ -3345,7 +3349,6 @@ class Maps extends StatefulWidget {
 class MapsFunc extends State<Maps> {
   LatLng coord;
   //Marker coord;
-  //MapsFunc({this.coord});
   Completer<GoogleMapController> _controller = Completer();
   Marker marker=Marker(
     markerId: MarkerId("1"),
@@ -3394,19 +3397,21 @@ class MapsFunc extends State<Maps> {
                       //Navigator.pop(context);
                     }
                   ),
-                  // actions: <Widget>[
-                  //   IconButton(
-                  //     onPressed: () {                          
-                  //       showSearch(
-                  //           context: context,
-                  //           delegate: MapSearchBar(),
-                  //       );
-                  //     },
-                  //     icon: Icon(
-                  //       Icons.search,
+                  actions: <Widget>[
+                    IconButton(
+                      onPressed: () {
+                        
+                        coord = LatLng(24.51,32.12);                        
+                        // showSearch(
+                        //     context: context,
+                        //     delegate: MapSearchBar(),
+                        // );
+                      },
+                      icon: Icon(
+                        Icons.search,
                       
-                  //     )
-                  //     ),
+                      )
+                      ),
                   //   Padding(
                   //     padding: EdgeInsets.only(right: 20.0),
                   //     child: GestureDetector(
@@ -3419,7 +3424,7 @@ class MapsFunc extends State<Maps> {
                   //       ),
                   //     )
                   //   ),
-                  // ],
+                  ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3567,9 +3572,11 @@ class SideBarProperties extends State<SideBar>{
   void initState() {
     super.initState();
     readContent().then((String value) {
-      Map userMap = json.decode(value);
-      var user = UserData.fromData(userMap);
-      variable=user;
+      print('OOOOOOOOOOOOOOOOO');
+      Map<String, dynamic> userMap = json.decode(value);
+      UserData final_object = UserData.fromData(userMap);
+      variable=final_object;
+      //variable=user;
     });
   }
 
@@ -3593,8 +3600,10 @@ class SideBarProperties extends State<SideBar>{
               radius:70, 
               backgroundImage: AssetImage("asset/image/user.png"),
             ),
-            Text(
-              variable.firstName, 
+            Text((() {
+                if(variable==null){return "Aladin";}  // your code here
+                else{return "nadnvaf";}
+              }()),
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
             Text(
@@ -3707,3 +3716,33 @@ class SideBarProperties extends State<SideBar>{
     );
   }
 }
+
+class CreateEvent extends StatefulWidget {
+
+  Event data;
+  int numVen;
+  CreateEvent({this.data,this.numVen});
+  @override
+  CreateEventEntry createState() => CreateEventEntry();
+}
+
+class CreateEventEntry extends State<CreateEvent> {
+  Event data;
+  int numVen;
+  CreateEventEntry({this.data,this.numVen});
+  @override
+  Widget build(BuildContext context) {
+    String done = FirestoreService().addEventPromise(data).toString();//addEventPromise(data); 
+    
+    if (done == ''){
+      return LoadingScreen();
+    }
+    else if(done == 'Error'){  //Failure to fetch Data, Firebase Error. 
+    //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
+      return ErrorSignIn();
+    }
+    else{
+      return AddVendor();
+    }
+  }
+ }

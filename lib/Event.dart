@@ -1,5 +1,6 @@
 // import 'dart:html';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 // class Event{ 
@@ -12,16 +13,16 @@ class Event{
   final String coverimage;
   final String eventID;
   // final LatLng location;
-  final DateTime enddate;
+  //final Timestamp enddate;
   final String logo;
   final String invitecode;
-  final LatLng location1;
+  final GeoPoint location1;
   final String name;
-  final DateTime startdate;
+  //final Timestamp startdate;
   final String uid;
 
 
-  Event({this.uid, this.eventID, this.invitecode, this.location1, this.startdate, this.enddate, this.name,this.logo,this.coverimage});
+  Event({this.uid, this.eventID, this.invitecode, this.location1,  this.name,this.logo,this.coverimage});//this.startdate, this.enddate, this.name,this.logo,this.coverimage});
 
   // EventData.fromData(Map<String, dynamic> data)
   //   : uid = data['uid'],
@@ -32,15 +33,17 @@ class Event{
   //     EndDate = data['EndDate'],
   //     Name = data['Name'];
 
-  // Map<String, dynamic> toJSON(){
-  //   return{
-  //     'uid' : uid, 
-  //     'EventId' : EventId,
-  //     'InviteCode' : InviteCode,
-  //     'Location' : Location,
-  //     'StartDate' : StartDate,
-  //     'EndDate' : EndDate,
-  //     'Name' : Name,
-  //   };
-  // }
+  Map<String, dynamic> toJSON(){
+    return{
+      'uid' : uid, 
+      'eventID' : eventID,
+      'invitecode' : invitecode,
+      'location1' : location1,
+      //'StartDate' : StartDate,
+      //'EndDate' : EndDate,
+      'name' : name,
+      'logo' : logo,
+      'coverimage' : coverimage,
+    };
+  }
 }
