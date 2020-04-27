@@ -91,9 +91,8 @@ class AddEventState extends State<AddEvent> {
                   leading: IconButton(
                     icon: Icon(
                       Icons.arrow_back,
-                       
                     ), 
-                    onPressed: (){
+                    onPressed: () {
                        Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
                     }
                   ),
@@ -308,7 +307,6 @@ class AddEventState extends State<AddEvent> {
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    
                     TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                   )),
@@ -339,17 +337,20 @@ class AddEventState extends State<AddEvent> {
                     icon: Icon(Icons.arrow_forward,
                     size: 45,
                     color: Colors.white,),
-                    onPressed: () {
+                    onPressed: () async {
                       GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
                       //String uid = Provider.of<String>(context);
                       var newEvent = new Event(uid:'uid', eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
-                      print('KKKKKKKKKKKKKKKKKk');
-
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> one(data:newEvent,numVen: number)),);
-
-
-
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                      String routee=null;
+                      await Firestore.instance.collection("Event").add(newEvent.toJSON()).then((eid) async{
+                          await Firestore.instance.collection('Event').document(eid.toString()).setData({'eventID':eid});
+                      });
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);
+                      if (routee==null)
+                      {return LoadingScreen();}
+                      else{
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                      }
                     },
                   ),
                 ),
