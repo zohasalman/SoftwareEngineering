@@ -57,7 +57,7 @@ class _ListItemState extends State<ListItem> {
                     child: Column(
                       children: <Widget>[
                         RatingBar.readOnly(
-                          initialRating: double.parse('${vendors[index].aggregateRating}'),
+                          initialRating: double.parse('${items[index].aggregateRating}'),
                           isHalfAllowed: true,
                           halfFilledIcon: Icons.star_half,
                           filledIcon: Icons.star,
