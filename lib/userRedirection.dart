@@ -4,6 +4,7 @@ import 'package:rateit/hostit.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'hostit.dart';
+import 'hostit_first.dart';
 import 'login.dart';
 import 'rateit.dart';
 import 'user.dart';
@@ -45,7 +46,7 @@ class RedirectorState extends State<Redirector> {
       return InviteScreen();
     }
     else if(usr == 'management'){ 
-      return AddEvent(coord: null);
+      return HostitHomescreen();
     }
     else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
