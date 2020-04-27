@@ -28,8 +28,8 @@ class _PicturefromgalleryState extends State<Picturefromgallery> {
     }
 
     Future UploadPictureToFirebase(BuildContext context)async{
-      String Filename = basename(_image.path);
-      StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(FileName);
+      //String Filename = basename(_image.path);
+      StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(basename(_image.path));
        StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
        StorageTaskSnapshot taskSnapshot=await uploadTask.onComplete;
        setState(() {
