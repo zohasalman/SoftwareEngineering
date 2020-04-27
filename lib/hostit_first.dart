@@ -46,7 +46,7 @@ class ListViewExample extends StatefulWidget {
 class ListViewExampleState extends State<ListViewExample> {
   
    
-  List<Card> _buildListItemsFromEvents(eventdata){
+  List<GestureDetector> _buildListItemsFromEvents(eventdata){
     int index = 0;
     return eventdata.map((flower){
       var container = Card(
@@ -54,9 +54,12 @@ class ListViewExampleState extends State<ListViewExample> {
           children: <Widget>[
             new Container(
               margin: new EdgeInsets.all(10.0),
-              child:CircleAvatar(
-                backgroundImage: NetworkImage('$eventdata.logo'),
-              ),
+              child:Align(
+                alignment: Alignment.topLeft,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage('$eventdata.logo'),
+                ),
+              )
             ),
             new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,7 +68,7 @@ class ListViewExampleState extends State<ListViewExample> {
                 new Container(
                   padding: const EdgeInsets.only(bottom: 10.0),
                   child: new Text(
-                    flower.flowerName,
+                    eventdata.name,
                     style: new TextStyle(
                         fontWeight:  FontWeight.bold,
                         fontSize: 20.0,
@@ -91,7 +94,13 @@ class ListViewExampleState extends State<ListViewExample> {
         ),
       );
       index = index + 1;
-      return container;
+      final gestureDetector = GestureDetector(
+        onTap: (){
+          //write code here
+          var eventToBeEntered=eventdata.name;
+        },
+      );
+      return gestureDetector;
     }).toList();
   }
   @override
