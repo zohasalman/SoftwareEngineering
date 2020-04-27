@@ -266,7 +266,12 @@ class _InviteScreen extends State<InviteScreen> {
                 offset: Offset(0.0, 70.0),
                 child: Align(
                     alignment: Alignment.center,
-                    child: TextFormField(
+                    child: new Theme(
+                      data: new ThemeData(
+                        primaryColor: Colors.pink, 
+                      ),
+                      child: TextFormField(
+                      cursorColor: Colors.pink,
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please enter invite code';
@@ -279,9 +284,13 @@ class _InviteScreen extends State<InviteScreen> {
                         decoration: InputDecoration(
                             labelText: 'Enter invite code',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(80.0))))),
+                              borderSide: BorderSide(color: Colors.pink),
+                                borderRadius: BorderRadius.circular(80.0)))
+                      )
+                    )
+                    )),
               ),
-            ),
+            
             Container(
               child: Transform.translate(
                 offset: Offset(0.0, 100.0),
@@ -343,12 +352,12 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
               children: <Widget>[
                 Expanded(
                   child: Transform.scale(
-                    scale: 1.2,
+                    scale: 1.3,
                     child: Transform.translate(
                       offset: Offset(0, -50),
                       child: Container(
                         height: 2000,
-                        width: 2300,
+                        width: 2500,
                         decoration: BoxDecoration(
                           image: DecorationImage(
                               image: AssetImage("asset/image/rateit.png")),
@@ -361,7 +370,7 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                   child: Transform.rotate(
                     angle: math.pi,
                     child: Transform.scale(
-                      scale: 1.2,
+                      scale: 1.3,
                       child: Transform.translate(
                         offset: Offset(0, -150),
                         child: Container(
@@ -928,11 +937,11 @@ class _ViewVendor extends State<ViewVendor> {
   void initState() {
     super.initState();
     // start of getting local stored user info
-    // readContent().then((String value) {
-    //   Map userMap = jsonDecode(value);
-    //   var user = UserData.fromData(userMap);
-    //   userInfo = json.decode(value);
-    // });
+    readContent().then((String value) {
+      Map userMap = jsonDecode(value);
+      var user = UserData.fromData(userMap);
+      userInfo = json.decode(value);
+    });
     //print(userInfo);  // some error generated here
     // end of it
   }
@@ -988,7 +997,7 @@ class _ViewVendor extends State<ViewVendor> {
         body: VendorsList(),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.pink[800],
-          child: Image.asset("asset/image/Camera 1.png"),
+          child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning ;//= await BarcodeScanner.scan(); 
@@ -1111,7 +1120,7 @@ class _ViewMyRating extends State<ViewMyRating> {
           }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pink[800],
-        child: Image.asset("asset/image/Camera 1.png") ,
+        child: Image.asset("asset/image/Camera_1.png") ,
          onPressed: () async {
           
 
@@ -1901,6 +1910,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                               child: Text(
                                 "Submit",
                                 textAlign: TextAlign.center,
+                                
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.white),
                               ),
@@ -1926,6 +1936,7 @@ class TopRatedItems extends StatefulWidget {
 class _TopRatedItems extends State<TopRatedItems> {
   double myrating;
   @override
+  
   Widget build(BuildContext context) {
     return StreamProvider<List<Item>>.value(
       value: FirestoreService().getItemInfo('${widget.vendorId}'),
@@ -1959,7 +1970,7 @@ class _TopRatedItems extends State<TopRatedItems> {
                           ]),
                       image: DecorationImage(
                         image: AssetImage(
-                          "asset/image/frame1.png",
+                          "asset/image/Chat.png",
                         ),
                         fit: BoxFit.fitWidth,
                       ),
@@ -1981,7 +1992,30 @@ class _TopRatedItems extends State<TopRatedItems> {
                   padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
                   child: Image.network('${widget.image}'),
                 ),
+                
+
+           
               ),
+
+              Padding(
+                    padding: EdgeInsets.only(right: 0.0, left: 50.0),
+                    child: Column(
+                      children: <Widget>[
+                        RatingBar.readOnly(
+                          //Balaj chnage this line
+                          initialRating: double.parse('3.8'),
+                          isHalfAllowed: true,
+                          halfFilledIcon: Icons.star_half,
+                          filledIcon: Icons.star,
+                          emptyIcon: Icons.star_border,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 30,
+                        ),
+                      ],
+                    ),
+                  ),
               new Divider(),
               Row(
                 children: <Widget>[
