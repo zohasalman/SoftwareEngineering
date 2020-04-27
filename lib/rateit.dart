@@ -17,6 +17,8 @@ import 'package:rating_bar/rating_bar.dart';
 import 'item-list.dart';
 import 'item.dart';
 import 'edit-profile.dart';
+import 'my-rating.dart';
+import 'rating-list.dart';
 
 //import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
@@ -180,6 +182,10 @@ class SideBarProperties2 extends State<SideBar2> {
 }
 
 class InviteScreen extends StatefulWidget {
+
+  InviteScreen({this.uid});
+  final String uid;
+
   @override
   State<StatefulWidget> createState() {
     return _InviteScreen();
@@ -201,6 +207,7 @@ class _InviteScreen extends State<InviteScreen> {
         if (docs.documents.isNotEmpty) {
           eventName = docs.documents[0].data['name'];
           eventID = docs.documents[0].data['eventID'];
+          user_id = '${widget.uid}';
           print(eventName);
           print(eventID);
           Navigator.push(
@@ -605,7 +612,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
-  String _uid, _name, _email, _password, _gender;
+  String _name, _email, _password, _gender;
   DateTime _dateOfBirth;
 
   final _formKey = GlobalKey<FormState>();
@@ -613,7 +620,7 @@ class _EditProfile extends State<EditProfile> {
 
   void submit() {
     _formKey.currentState.save();
-    _updateData.update(_uid, _name, _email, _password, _gender, _dateOfBirth);
+    _updateData.update(user_id, _name, _email, _password, _gender, _dateOfBirth);
     // TODO: Send an alert that data updated
   }
 
@@ -1033,359 +1040,190 @@ class ViewMyRating extends StatefulWidget {
 class _ViewMyRating extends State<ViewMyRating> {
   String result;
 
-  List<VendorList> vendors = [
-    VendorList(
-        vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'McDonalds', flag: 'mcdonalds.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'No Lies Fries',
-        flag: 'noliesfries.png',
-        vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'Caffe Parha',
-        flag: 'caffeparha.png',
-        vendorrating: '4.5/5'),
-    VendorList(vendorname: 'DOH', flag: 'doh.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'Carbie', flag: 'carbie.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'The Story', flag: 'thestory.png', vendorrating: '4.5/5'),
-    VendorList(
-        vendorname: 'Meet the Cheese',
-        flag: 'meetthecheese.png',
-        vendorrating: '4.5/5'),
-  ];
+  // List<VendorList> vendors = [
+  //   VendorList(
+  //       vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
+  //   VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'McDonalds', flag: 'mcdonalds.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'No Lies Fries',
+  //       flag: 'noliesfries.png',
+  //       vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'Caffe Parha',
+  //       flag: 'caffeparha.png',
+  //       vendorrating: '4.5/5'),
+  //   VendorList(vendorname: 'DOH', flag: 'doh.png', vendorrating: '4.5/5'),
+  //   VendorList(vendorname: 'Carbie', flag: 'carbie.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'The Story', flag: 'thestory.png', vendorrating: '4.5/5'),
+  //   VendorList(
+  //       vendorname: 'Meet the Cheese',
+  //       flag: 'meetthecheese.png',
+  //       vendorrating: '4.5/5'),
+  // ];
   String qr = "";
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('My Ratings',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 28))),
-                      )),
-                  flexibleSpace: Container(
-                      decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "asset/image/Chat.png",
+    return StreamProvider<List<MyRating>>.value(
+      value: FirestoreService().getMyRating(user_id),
+      child: Scaffold(
+        key: scaffoldKey,
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              child: Text('My Ratings',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
                       ),
-                      fit: BoxFit.fitWidth,
-                    ),
-                  )),
-                )
-              ],
-            ),
-            clipper: Clipshape(),
-          )),
-      body: ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: vendors.length,
-          itemBuilder: (context, index) {
-            return Card(
-              child: ListTile(
-                onTap: () {
-                  String image;
-                  var route = new MaterialPageRoute(
-                    builder: (BuildContext context) => new EditRatings(
-                        value: '${vendors[index].vendorname}',
-                        image: 'asset/image/${vendors[index].flag}'),
-                  );
-                  Navigator.of(context).push(route);
-                },
-                title: Text(vendors[index].vendorname),
-                leading: CircleAvatar(
-                  backgroundImage:
-                      AssetImage('asset/image/${vendors[index].flag}'),
-                ),
-                trailing: Text(vendors[index].vendorrating),
+                    )),
+                  )
+                ],
               ),
-            );
-          }),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.pink[800],
-        child: Image.asset("asset/image/Camera_1.png"),
-        onPressed: () async {
-          //Navigator.of(context).pushNamed('/doratings');
-          String scanning; //= await BarcodeScanner.scan();
-
-          setState() {
-            qr = scanning;
+              clipper: Clipshape(),
+            )),
+        body: RatingList(),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.pink[800],
+          child: Image.asset("asset/image/Camera 1.png") ,
+          onPressed: () async {
+              //Navigator.of(context).pushNamed('/doratings');
+              String scanning ;//= await BarcodeScanner.scan(); 
+              setState(){
+                qr=scanning; 
           }
-        },
+          },
+        ),
       ),
     );
   }
 }
 
 class EditRatings extends StatefulWidget {
-  String value, image;
+  String value, image, rating, item_Id;
 
-  EditRatings({Key key, this.value, this.image}) : super(key: key);
+  EditRatings({this.value, this.image, this.rating, this.item_Id});
 
   @override
   _EditRatings createState() => new _EditRatings();
 }
 
 class _EditRatings extends State<EditRatings> {
-  double myrating;
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('${widget.value}',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 28))),
-                      )),
-                  flexibleSpace: Container(
-                      decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "asset/image/Chat.png",
+    return StreamProvider <List<Item>>.value(
+      value: FirestoreService().getMyRatingItem('${widget.item_Id}'),
+      child: Scaffold(
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              child: Text('${widget.value}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
                       ),
-                      fit: BoxFit.fitWidth,
-                    ),
-                  )),
-                )
-              ],
-            ),
-            clipper: Clipshape(),
-          )),
-      body: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Container(
-            child: ListView(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.asset('${widget.image}'),
+                    )),
+                  )
+                ],
               ),
-            ),
-            RatingBar.readOnly(
-              initialRating: 3.5,
-              filledIcon: Icons.star,
-              emptyIcon: Icons.star_border,
-              halfFilledIcon: Icons.star_half,
-              isHalfAllowed: true,
-              filledColor: Colors.amber,
-              emptyColor: Colors.amber,
-              halfFilledColor: Colors.amber,
-              size: 40,
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                  child: Text('Top Rated Items',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
+              clipper: Clipshape(),
+            )),
+        body: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Container(
+              child: ListView(
+            children: <Widget>[
+              Container(
+                height: 200.0,
+                width: 200.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                  child: Image.network('${widget.image}'),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                )
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                        child: Image.asset('asset/image/bigmac.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('BigMac',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar.readOnly(
-                          initialRating: 3.5,
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 40,
-                        ),
-                        // Text(
-                        //   '$myrating/5',
-                        //   style: TextStyle(color: Colors.black, fontSize: 15),
-                        // )
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 0.0),
-                        child: Image.asset('asset/image/mcchicken.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('McChicken',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar.readOnly(
-                          initialRating: 3.5,
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 40,
-                        ),
-                        // Text(
-                        //   '$myrating/5',
-                        //   style: TextStyle(color: Colors.black, fontSize: 15),
-                        // )
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 15.0),
-                        child: Image.asset('asset/image/McFries.png'),
-                      ),
-                      Padding(
-                          padding:
-                              EdgeInsets.only(right: 0.0, left: 20.0, top: 0.0),
-                          child: Text('Mc Fries',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar.readOnly(
-                          initialRating: 3.5,
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 40,
-                        ),
-                        // Text(
-                        //   '$myrating/5',
-                        //   style: TextStyle(color: Colors.black, fontSize: 15),
-                        // )
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-          ],
-        )),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.edit),
-        onPressed: () {
-          var route = new MaterialPageRoute(
-            builder: (BuildContext context) => new ChangeRatings(
-                value: '${widget.value}', image: '${widget.image}'),
-          );
-          Navigator.of(context).push(route);
-        },
-      ),
+              ),
+              RatingBar.readOnly(
+                initialRating: double.parse('${widget.rating}'),
+                filledIcon: Icons.star,
+                emptyIcon: Icons.star_border,
+                halfFilledIcon: Icons.star_half,
+                isHalfAllowed: true,
+                filledColor: Colors.amber,
+                emptyColor: Colors.amber,
+                halfFilledColor: Colors.amber,
+                size: 40,
+              ),
+              ListItem(),
+              FloatingActionButton(
+                child: Icon(Icons.edit),
+                onPressed: () {
+                  var route = new MaterialPageRoute(
+                    builder: (BuildContext context) => new ChangeRatings(
+                        value: '${widget.value}', image: '${widget.image}'),
+                  );
+                  Navigator.of(context).push(route);
+                },
+              ),
+            ]
+            )
+          )
+        ),
+      )
     );
   }
 }

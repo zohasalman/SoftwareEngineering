@@ -28,12 +28,16 @@ class RedirectionFunc extends State<Redirection> {
     String user = usr.uid;
     return StreamProvider<String>.value(
       value: FirestoreService(uid: user).users,
-      child: Redirector(),
+      child: Redirector(uid: user),
     );
   }
 }
 
 class Redirector extends StatefulWidget {
+
+  Redirector({this.uid});
+  final String uid;
+
   @override
   RedirectorState createState() => RedirectorState();
 }
@@ -43,7 +47,7 @@ class RedirectorState extends State<Redirector> {
   Widget build(BuildContext context) {
     final usr = Provider.of<String>(context);
     if (usr == 'user'){
-      return InviteScreen();
+      return InviteScreen(uid: '${widget.uid}');
     }
     else if(usr == 'management'){ 
       return HostitHomescreen();
@@ -137,7 +141,7 @@ class ErrorSignInState extends State<ErrorSignIn> {
                 )
               ],
             ),
-            clipper: ClipShape(),
+            // clipper: ClipShape(),
           )
         ),
         body: Container(
