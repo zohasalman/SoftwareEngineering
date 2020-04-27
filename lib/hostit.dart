@@ -1073,7 +1073,7 @@ class AddVendorState extends State<AddVendor> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);},
                   ),
                 ),
               )
@@ -1276,7 +1276,7 @@ class AddVendorState extends State<AddVendor> {
                 size: 45,
                 color: Colors.white,),
                 onPressed: () {
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);   //Modify here to upload Event Data and then move on
                 },
               ),
             ),
@@ -1574,7 +1574,9 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
               child: Container(
                 height: 100,
                 width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
+                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection()),),
+                } ),
               ),
             ),
           ),
@@ -3351,6 +3353,7 @@ class Maps extends StatefulWidget {
 
 class MapsFunc extends State<Maps> {
   LatLng coord;
+  //Marker coord;
   //MapsFunc({this.coord});
   Completer<GoogleMapController> _controller = Completer();
   Marker marker=Marker(
@@ -3464,6 +3467,8 @@ class MapsFunc extends State<Maps> {
                   markerSet.add(marker1);
                   marker=marker1;
                   coord=coordinates;
+                  print(coord.latitude);
+                  print(coord.longitude);
                 });
           },
           markers: markerSet,
