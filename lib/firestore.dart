@@ -79,7 +79,7 @@ class FirestoreService{
         id=eid.toString();
         updateEventID(id);
       });
-      //print('called');
+      print('calledYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYy');
       return id;
     }catch(e){
       return "Error";

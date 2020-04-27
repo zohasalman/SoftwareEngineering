@@ -937,11 +937,11 @@ class _ViewVendor extends State<ViewVendor> {
   void initState() {
     super.initState();
     // start of getting local stored user info
-    readContent().then((String value) {
-      Map userMap = jsonDecode(value);
-      var user = UserData.fromData(userMap);
-      userInfo = json.decode(value);
-    });
+    // readContent().then((String value) {
+    //   Map userMap = jsonDecode(value);
+    //   var user = UserData.fromData(userMap);
+    //   userInfo = json.decode(value);
+    // });
     //print(userInfo);  // some error generated here
     // end of it
   }
