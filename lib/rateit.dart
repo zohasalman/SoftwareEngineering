@@ -13,6 +13,9 @@ import 'vendor-list.dart';
 import 'vendor.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';
+import 'item-list.dart';
+import 'item.dart';
+import 'edit-profile.dart';
 //import 'package:barcode_scan/barcode_scan.dart'; 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
@@ -587,11 +590,25 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
+
+  String _uid,_name, _email, _password, _gender;
+  DateTime _dateOfBirth;
+
+  final _formKey = GlobalKey<FormState>(); 
+  final EditUserData _updateData = EditUserData();
+
+  void submit(){
+    _formKey.currentState.save();
+    _updateData.update(_uid, _name, _email, _password, _gender, _dateOfBirth);
+    // TODO: Send an alert that data updated
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        key: _formKey,
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(370.0),
             child: ClipPath(
@@ -635,11 +652,13 @@ class _EditProfile extends State<EditProfile> {
                     children: <Widget>[
                       Padding(
                           padding: const EdgeInsets.only(top: 110.0),
+                          child: GestureDetector(
+                            onTap: () {print("Upload Photo");},
                           child: CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 70.0,
                             child: Image.asset('asset/image/circular.png'),
-                          )),
+                          ))),
                       Padding(
                           padding: const EdgeInsets.only(top: 3.0),
                           child: Text('Uzair Mustafa',
@@ -683,7 +702,8 @@ class _EditProfile extends State<EditProfile> {
                   Image.asset('asset/image/name.png'),
                   SizedBox(width: 10),
                   Flexible(
-                    child: TextField(
+                    child: TextFormField(
+                      onSaved: (input)=> _name = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter a name',
                         border: OutlineInputBorder(),
@@ -700,7 +720,8 @@ class _EditProfile extends State<EditProfile> {
                   Image.asset('asset/image/email.png'),
                   SizedBox(width: 10),
                   Flexible(
-                    child: TextField(
+                    child: TextFormField(
+                      onSaved: (input)=> _email = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter an email',
                         border: OutlineInputBorder(),
@@ -717,7 +738,8 @@ class _EditProfile extends State<EditProfile> {
                   Image.asset('asset/image/password.png'),
                   SizedBox(width: 10),
                   Flexible(
-                    child: TextField(
+                    child: TextFormField(
+                      onSaved: (input)=> _password = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter a password',
                         border: OutlineInputBorder(),
@@ -734,7 +756,8 @@ class _EditProfile extends State<EditProfile> {
                   Image.asset('asset/image/gender.png'),
                   SizedBox(width: 10),
                    Flexible(
-                    child: TextField(
+                    child: TextFormField(
+                      onSaved: (input)=> _gender = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter a Gender',
                         border: OutlineInputBorder(),
@@ -792,6 +815,7 @@ class _EditProfile extends State<EditProfile> {
                 child: GestureDetector(
               onTap: () {
                 print('Submit pressed');
+                submit();
               },
               child: Container(
                 width: 120.0,
@@ -1619,10 +1643,10 @@ class _DoRatings extends State<DoRatings> {
                           emptyIcon: Icons.star_border,
                           halfFilledIcon: Icons.star_half,
                           isHalfAllowed: true,
-                          filledColor: Colors.green,
-                          emptyColor: Colors.redAccent,
-                          halfFilledColor: Colors.amberAccent,
-                          size: 48,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 42,
                         ),
                       ],
                     ),
@@ -1661,10 +1685,10 @@ class _DoRatings extends State<DoRatings> {
                           emptyIcon: Icons.star_border,
                           halfFilledIcon: Icons.star_half,
                           isHalfAllowed: true,
-                          filledColor: Colors.green,
-                          emptyColor: Colors.redAccent,
-                          halfFilledColor: Colors.amberAccent,
-                          size: 48,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 42,
                         ),
                       ],
                     ),
@@ -1704,10 +1728,10 @@ class _DoRatings extends State<DoRatings> {
                           emptyIcon: Icons.star_border,
                           halfFilledIcon: Icons.star_half,
                           isHalfAllowed: true,
-                          filledColor: Colors.green,
-                          emptyColor: Colors.redAccent,
-                          halfFilledColor: Colors.amberAccent,
-                          size: 48,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 42,
                         ),
                       ],
                     ),
@@ -1818,10 +1842,10 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                             emptyIcon: Icons.star_border,
                             halfFilledIcon: Icons.star_half,
                             isHalfAllowed: true,
-                            filledColor: Colors.green,
-                            emptyColor: Colors.redAccent,
-                            halfFilledColor: Colors.amberAccent,
-                            size: 48,
+                            filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 42,
                           ),
                         ],
                       ),
@@ -1891,9 +1915,9 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
 }
 
 class TopRatedItems extends StatefulWidget {
-  String value, image;
+  String value, image, vendorId;
 
-  TopRatedItems({Key key, this.value, this.image}) : super(key: key);
+  TopRatedItems({this.value, this.image, this.vendorId});
 
   @override
   _TopRatedItems createState() => new _TopRatedItems();
@@ -1903,198 +1927,85 @@ class _TopRatedItems extends State<TopRatedItems> {
   double myrating;
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('${widget.value}',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 28))),
-                      )),
-                  flexibleSpace: Container(
-                      decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "asset/image/frame1.png",
+    return StreamProvider<List<Item>>.value(
+      value: FirestoreService().getItemInfo('${widget.vendorId}'),
+      child: Scaffold(
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              child: Text('${widget.value}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/frame1.png",
+                        ),
+                        fit: BoxFit.fitWidth,
                       ),
-                      fit: BoxFit.fitWidth,
-                    ),
-                  )),
-                )
-              ],
-            ),
-            clipper: Clipshape(),
-          )),
-      body: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Container(
-            child: ListView(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.asset('${widget.image}'),
+                    )),
+                  )
+                ],
               ),
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                  child: Text('Top Rated Items',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
+              clipper: Clipshape(),
+            )),
+        body: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Container(
+              child: ListView(
+            children: <Widget>[
+              Container(
+                height: 200.0,
+                width: 200.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                  child: Image.network('${widget.image}'),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                )
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                        child: Image.asset('asset/image/bigmac.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('BigMac',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
+              ),
+              new Divider(),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                    child: Text('Top Rated Items',
+                        style: TextStyle(color: Colors.red, fontSize: 22)),
                   ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar.readOnly(
-                            initialRating: 3.5,
-                            isHalfAllowed: true,
-                            halfFilledIcon: Icons.star_half,
-                            filledIcon: Icons.star,
-                            emptyIcon: Icons.star_border,
-                            filledColor: Colors.amber,
-                            emptyColor: Colors.amber,
-                            halfFilledColor: Colors.amber),
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 0.0),
-                        child: Image.asset('asset/image/mcchicken.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('McChicken',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar.readOnly(
-                            initialRating: 3.5,
-                            isHalfAllowed: true,
-                            halfFilledIcon: Icons.star_half,
-                            filledIcon: Icons.star,
-                            emptyIcon: Icons.star_border,
-                            filledColor: Colors.amber,
-                            emptyColor: Colors.amber,
-                            halfFilledColor: Colors.amber),
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 15.0),
-                        child: Image.asset('asset/image/McFries.png'),
-                      ),
-                      Padding(
-                          padding:
-                              EdgeInsets.only(right: 0.0, left: 20.0, top: 0.0),
-                          child: Text('Mc Fries',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar.readOnly(
-                            initialRating: 3.5,
-                            isHalfAllowed: true,
-                            halfFilledIcon: Icons.star_half,
-                            filledIcon: Icons.star,
-                            emptyIcon: Icons.star_border,
-                            filledColor: Colors.amber,
-                            emptyColor: Colors.amber,
-                            halfFilledColor: Colors.amber),
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-          ],
-        )),
-      ),
-    );
+                  Padding(
+                    padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                    child: Text('Reviews',
+                        style: TextStyle(color: Colors.red, fontSize: 22)),
+                  )
+                ],
+              ),
+              ListItem(),
+              // new Divider(),
+            ],
+          )),
+        ),
+        ),
+      );
+    }
   }
-}
 
 class ChangeRatings extends StatefulWidget {
   String value, image;

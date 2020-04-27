@@ -26,11 +26,11 @@ class _VendorsListState extends State<VendorsList> {
             child:ListTile(
                       onTap: () {
                         debugPrint('${vendors[index].name} is pressed!');
-                        String image;
                   var route = new MaterialPageRoute(
                     builder: (BuildContext context) => new TopRatedItems(
                         value: '${vendors[index].name}',
-                        image: 'asset/image/${vendors[index].logo}'),
+                        image: '${vendors[index].logo}', 
+                        vendorId: '${vendors[index].vendorId}'),
                   );
                   Navigator.of(context).push(route);
 
