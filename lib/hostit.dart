@@ -8,7 +8,9 @@ import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'localData.dart';
 import 'user.dart';
+import 'dart:convert';
 import 'VendorList.dart';
 
 void main2() => runApp(App());
@@ -3557,6 +3559,19 @@ class SideBar extends StatefulWidget {
 }
 
 class SideBarProperties extends State<SideBar>{
+  UserData variable;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+ 
+  @override
+  void initState() {
+    super.initState();
+    readContent().then((String value) {
+      Map userMap = json.decode(value);
+      var user = UserData.fromData(userMap);
+      variable=user;
+    });
+  }
 
   void NormalSignOut() async {
     User usr = Provider.of<User>(context, listen: false);
@@ -3579,7 +3594,7 @@ class SideBarProperties extends State<SideBar>{
               backgroundImage: AssetImage("asset/image/user.png"),
             ),
             Text(
-              'Aladin', 
+              variable.firstName, 
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
             Text(

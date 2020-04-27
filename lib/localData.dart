@@ -15,6 +15,7 @@ Future<File> get _localFile async{
 void writeContent(dynamic data) async {
   final file = await _localFile;
   var sink = file.openWrite();
+  print(data);
   sink.write(data);
   sink.close();
 }
@@ -23,6 +24,9 @@ Future<String> readContent() async{
   try{
     final file = await _localFile;
     String content = await file.readAsString();
+    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+    print(content);
+    print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
     return content;
   }catch(e){
     return e.toString();
