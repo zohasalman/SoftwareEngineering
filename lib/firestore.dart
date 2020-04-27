@@ -5,6 +5,7 @@ import 'Event.dart';
 import 'localData.dart';
 import 'vendor.dart';
 import 'user.dart';
+import 'item.dart';
 
 
 class FirestoreService{
@@ -14,7 +15,10 @@ class FirestoreService{
 
   final CollectionReference _usersCollectionReference = Firestore.instance.collection('users');
   final CollectionReference _vendorCollectionReference = Firestore.instance.collection('Vendor');
+  final CollectionReference _itemCollectionReference = Firestore.instance.collection('item');
+  final CollectionReference _reviewsCollectionReference = Firestore.instance.collection('review');
   final CollectionReference _eventCollectionReference = Firestore.instance.collection('Event');
+
   Future registerUser(UserData user) async{
     try {
       await _usersCollectionReference.document(user.uid).setData(user.toJSON());
@@ -57,7 +61,7 @@ class FirestoreService{
         userrole = value.data['userRole'];
         writeContent(value.data);
       });
-      print('called');
+      //print('called');
       return userrole;
     }catch(e){
       return "Error";
@@ -90,7 +94,7 @@ class FirestoreService{
         name: doc.data['name'] ?? '',
         qrCode: doc.data['qrCode'] ?? '',
         stallNo: doc.data['stallNo'] ?? -1,
-        vendorId: doc.data['vendorID'] ?? '',
+        vendorId: doc.data['vendorId'] ?? '',
         logo: doc.data['logo'] ?? '',
       );
     }).toList();
@@ -104,6 +108,42 @@ class FirestoreService{
     return _vendorCollectionReference.where('eventId', isEqualTo: eventID).snapshots()
     .map(_vendorListFromSnapshot);
   }
+
+  // for Vendor Details
+  List<Item> _itemListFromSnapshot(QuerySnapshot snapshot){
+    print(snapshot.documents.toString());
+    return snapshot.documents.map((doc){
+      return Item(
+        itemId: doc.data['itemId'] ?? '',
+        name: doc.data['name'] ?? '',
+        vendorId: doc.data['vendorId'] ?? '',
+        logo: doc.data['logo'] ?? '',
+        aggregateRating: doc.data['aggregateRating'] ?? 0,
+      );
+    }).toList();
+  }
+
+  Stream<List<Item>> getItemInfo(String vendorId){ //each vendor's top rated item query
+    print('vendorId');
+    return _itemCollectionReference.where('vendorId', isEqualTo: vendorId).snapshots()
+    .map(_itemListFromSnapshot);
+  }
+    
+  Future<QuerySnapshot> getReviewsInfo(String vendorId){ // gets each vendor's reviews
+    return _reviewsCollectionReference.where('vendorId', isEqualTo: vendorId).getDocuments();
+  }
+
+  // For Rating
+  Future<QuerySnapshot> getVendor(String vendorId){
+    return _vendorCollectionReference.where('vendorId', isEqualTo: vendorId).getDocuments();
+  }
+
+  Stream<List<Item>> getAllItemInfo(String vendorId){ //each vendor's all item query
+    return _itemCollectionReference.where('vendorId', isEqualTo: vendorId).snapshots()
+    .map(_itemListFromSnapshot);
+  }
+
+  // view my rating
 
   // List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
   //   return  snapshot.documents.map((doc){

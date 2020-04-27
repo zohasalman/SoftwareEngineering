@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rateit/login.dart';
+import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -3289,7 +3290,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> InviteScreen()),);
                               },
                               child: Container(
                                 width: 250.0,
