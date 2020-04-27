@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rateit/login.dart';
@@ -16,12 +17,14 @@ import 'package:rating_bar/rating_bar.dart';
 import 'item-list.dart';
 import 'item.dart';
 import 'edit-profile.dart';
-//import 'package:barcode_scan/barcode_scan.dart'; 
+
+//import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
 // import 'package:qrcode_reader/qrcode_reader.dart';
- DateTime _dateTime; 
+DateTime _dateTime;
+String user_id;
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
         home: InviteScreen(),
@@ -33,7 +36,6 @@ void main3() => runApp(MaterialApp(
           '/editrating1': (BuildContext context) => new EditRating1(),
           '/doratings': (BuildContext context) => new DoRatings(),
           '/changeratings': (BuildContext context) => new ChangeRatings(),
-
         }));
 
 class SideBar2 extends StatefulWidget {
@@ -45,6 +47,7 @@ class SideBarProperties2 extends State<SideBar2> {
   void NormalSignOut() async {
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
+    user_id = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
     LoginScreen();
   }
@@ -75,7 +78,10 @@ class SideBarProperties2 extends State<SideBar2> {
               onTap: () {
                 //Change on Integration
                 //Navigator.of(context).pushNamed("/EditProfileScreen");
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditProfile()),
+                );
               },
               child: Container(
                 width: 230.0,
@@ -108,7 +114,10 @@ class SideBarProperties2 extends State<SideBar2> {
               onTap: () {
                 //Change on Integration
                 //Navigator.of(context).pushNamed("/Viewratings");
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewMyRating()),);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ViewMyRating()),
+                );
               },
               child: Container(
                 width: 230.0,
@@ -263,34 +272,32 @@ class _InviteScreen extends State<InviteScreen> {
             ),
             Container(
               child: Transform.translate(
-                offset: Offset(0.0, 70.0),
-                child: Align(
-                    alignment: Alignment.center,
-                    child: new Theme(
-                      data: new ThemeData(
-                        primaryColor: Colors.pink, 
-                      ),
-                      child: TextFormField(
-                      cursorColor: Colors.pink,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter invite code';
-                          }
-                          if (value.length > 6 || value.length < 6) {
-                            return 'Invalid invite code';
-                          }
-                        },
-                        onSaved: (value) => inviteCode = value.trim(),
-                        decoration: InputDecoration(
-                            labelText: 'Enter invite code',
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.pink),
-                                borderRadius: BorderRadius.circular(80.0)))
-                      )
-                    )
-                    )),
-              ),
-            
+                  offset: Offset(0.0, 70.0),
+                  child: Align(
+                      alignment: Alignment.center,
+                      child: new Theme(
+                          data: new ThemeData(
+                            primaryColor: Colors.pink,
+                          ),
+                          child: TextFormField(
+                              cursorColor: Colors.pink,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Please enter invite code';
+                                }
+                                if (value.length > 6 || value.length < 6) {
+                                  return 'Invalid invite code';
+                                }
+                              },
+                              onSaved: (value) => inviteCode = value.trim(),
+                              decoration: InputDecoration(
+                                  labelText: 'Enter invite code',
+                                  border: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.pink),
+                                      borderRadius:
+                                          BorderRadius.circular(80.0))))))),
+            ),
             Container(
               child: Transform.translate(
                 offset: Offset(0.0, 100.0),
@@ -592,21 +599,19 @@ class EditProfile extends StatefulWidget {
   EditProfile({Key key, this.title}) : super(key: key);
 
   final String title;
- 
 
   @override
   _EditProfile createState() => _EditProfile();
 }
 
 class _EditProfile extends State<EditProfile> {
-
-  String _uid,_name, _email, _password, _gender;
+  String _uid, _name, _email, _password, _gender;
   DateTime _dateOfBirth;
 
-  final _formKey = GlobalKey<FormState>(); 
+  final _formKey = GlobalKey<FormState>();
   final EditUserData _updateData = EditUserData();
 
-  void submit(){
+  void submit() {
     _formKey.currentState.save();
     _updateData.update(_uid, _name, _email, _password, _gender, _dateOfBirth);
     // TODO: Send an alert that data updated
@@ -662,12 +667,14 @@ class _EditProfile extends State<EditProfile> {
                       Padding(
                           padding: const EdgeInsets.only(top: 110.0),
                           child: GestureDetector(
-                            onTap: () {print("Upload Photo");},
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 70.0,
-                            child: Image.asset('asset/image/circular.png'),
-                          ))),
+                              onTap: () {
+                                print("Upload Photo");
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 70.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              ))),
                       Padding(
                           padding: const EdgeInsets.only(top: 3.0),
                           child: Text('Uzair Mustafa',
@@ -712,7 +719,7 @@ class _EditProfile extends State<EditProfile> {
                   SizedBox(width: 10),
                   Flexible(
                     child: TextFormField(
-                      onSaved: (input)=> _name = input.trim(),
+                      onSaved: (input) => _name = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter a name',
                         border: OutlineInputBorder(),
@@ -730,7 +737,7 @@ class _EditProfile extends State<EditProfile> {
                   SizedBox(width: 10),
                   Flexible(
                     child: TextFormField(
-                      onSaved: (input)=> _email = input.trim(),
+                      onSaved: (input) => _email = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter an email',
                         border: OutlineInputBorder(),
@@ -748,7 +755,7 @@ class _EditProfile extends State<EditProfile> {
                   SizedBox(width: 10),
                   Flexible(
                     child: TextFormField(
-                      onSaved: (input)=> _password = input.trim(),
+                      onSaved: (input) => _password = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter a password',
                         border: OutlineInputBorder(),
@@ -764,9 +771,9 @@ class _EditProfile extends State<EditProfile> {
                 children: <Widget>[
                   Image.asset('asset/image/gender.png'),
                   SizedBox(width: 10),
-                   Flexible(
+                  Flexible(
                     child: TextFormField(
-                      onSaved: (input)=> _gender = input.trim(),
+                      onSaved: (input) => _gender = input.trim(),
                       decoration: InputDecoration(
                         hintText: 'Enter a Gender',
                         border: OutlineInputBorder(),
@@ -779,76 +786,80 @@ class _EditProfile extends State<EditProfile> {
               ),
               SizedBox(height: 10),
               Container(
-            child: Row(
-              children: <Widget>[
-                Container(
-                padding: EdgeInsets.only( top: 20, left: 20),
-                child: Text( 'Date of Birth', style: TextStyle(color: Colors.grey[600], fontSize: 19) ),
-                ),
-                Container(
-                padding: EdgeInsets.only(top:15, left: 20),
-                child:RaisedButton(
-                  child:Text(_dateTime == null ? 'DD-MM-YYYY': DateFormat('dd-MM-yyyy').format(_dateTime), style: TextStyle(color: Colors.grey[600], fontSize: 19) ),  
-                  onPressed: (){
-                    //print('here');
-                    showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1950),
-                      lastDate: DateTime.now(),
-                      builder: (BuildContext context, Widget child){
-                        return Theme(
-                          data: ThemeData(
-                            primarySwatch: Colors.pink,    
-                            accentColor: Colors.deepOrange,
-                            splashColor: Colors.deepOrange,
-                          ),
-                          child: child, 
-                          );
-                      }
-                    ).then((date) {
-                      setState(() {
-                        _dateTime = date;
-                      });
-                    });
-                    
-                  },
-                ),)
-              ],
-            )
-          ),
-
+                  child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(top: 20, left: 20),
+                    child: Text('Date of Birth',
+                        style:
+                            TextStyle(color: Colors.grey[600], fontSize: 19)),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 15, left: 20),
+                    child: RaisedButton(
+                      child: Text(
+                          _dateTime == null
+                              ? 'DD-MM-YYYY'
+                              : DateFormat('dd-MM-yyyy').format(_dateTime),
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 19)),
+                      onPressed: () {
+                        //print('here');
+                        showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1950),
+                            lastDate: DateTime.now(),
+                            builder: (BuildContext context, Widget child) {
+                              return Theme(
+                                data: ThemeData(
+                                  primarySwatch: Colors.pink,
+                                  accentColor: Colors.deepOrange,
+                                  splashColor: Colors.deepOrange,
+                                ),
+                                child: child,
+                              );
+                            }).then((date) {
+                          setState(() {
+                            _dateTime = date;
+                          });
+                        });
+                      },
+                    ),
+                  )
+                ],
+              )),
               SizedBox(height: 10),
               SizedBox(height: 10),
               Container(
-                child: GestureDetector(
-              onTap: () {
-                print('Submit pressed');
-                submit();
-              },
-              child: Container(
-                width: 120.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
-                  ],
-                  borderRadius: BorderRadius.circular(30.0),
+                  child: GestureDetector(
+                onTap: () {
+                  print('Submit pressed');
+                  submit();
+                },
+                child: Container(
+                  width: 120.0,
+                  height: 50.0,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]),
+                    boxShadow: const [
+                      BoxShadow(blurRadius: 10),
+                    ],
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  padding: EdgeInsets.all(12.0),
+                  child: Center(
+                    child: Text('Submit',
+                        style: TextStyle(color: Colors.white, fontSize: 22)),
+                  ),
                 ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('Submit',
-                      style: TextStyle(color: Colors.white, fontSize: 22)),
-                ),
-              ),
-            ))
+              ))
             ],
           ),
         ),
@@ -1000,7 +1011,7 @@ class _ViewVendor extends State<ViewVendor> {
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
-            String scanning ;//= await BarcodeScanner.scan(); 
+            String scanning; //= await BarcodeScanner.scan();
 
             setState() {
               var qr = scanning;
@@ -1120,16 +1131,14 @@ class _ViewMyRating extends State<ViewMyRating> {
           }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.pink[800],
-        child: Image.asset("asset/image/Camera_1.png") ,
-         onPressed: () async {
-          
+        child: Image.asset("asset/image/Camera_1.png"),
+        onPressed: () async {
+          //Navigator.of(context).pushNamed('/doratings');
+          String scanning; //= await BarcodeScanner.scan();
 
-            //Navigator.of(context).pushNamed('/doratings');
-            String scanning ;//= await BarcodeScanner.scan(); 
-
-            setState(){
-              qr=scanning; 
-         }
+          setState() {
+            qr = scanning;
+          }
         },
       ),
     );
@@ -1202,17 +1211,17 @@ class _EditRatings extends State<EditRatings> {
                 child: Image.asset('${widget.image}'),
               ),
             ),
-             RatingBar.readOnly(
-                          initialRating: 3.5,
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 40,
-                        ),
+            RatingBar.readOnly(
+              initialRating: 3.5,
+              filledIcon: Icons.star,
+              emptyIcon: Icons.star_border,
+              halfFilledIcon: Icons.star_half,
+              isHalfAllowed: true,
+              filledColor: Colors.amber,
+              emptyColor: Colors.amber,
+              halfFilledColor: Colors.amber,
+              size: 40,
+            ),
             new Divider(),
             Row(
               children: <Widget>[
@@ -1364,7 +1373,6 @@ class _EditRatings extends State<EditRatings> {
               ],
             ),
             new Divider(),
-            
           ],
         )),
       ),
@@ -1372,11 +1380,10 @@ class _EditRatings extends State<EditRatings> {
         child: Icon(Icons.edit),
         onPressed: () {
           var route = new MaterialPageRoute(
-                          builder: (BuildContext context) => new ChangeRatings(
-                              value: '${widget.value}',
-                              image: '${widget.image}'),
-                        );
-                        Navigator.of(context).push(route);
+            builder: (BuildContext context) => new ChangeRatings(
+                value: '${widget.value}', image: '${widget.image}'),
+          );
+          Navigator.of(context).push(route);
         },
       ),
     );
@@ -1470,8 +1477,8 @@ class _EditRating1State extends State<EditRating1> {
                             halfFilledIcon: Icons.star_half,
                             isHalfAllowed: true,
                             filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
+                            emptyColor: Colors.amber,
+                            halfFilledColor: Colors.amber,
                             size: 48,
                           ),
                         ],
@@ -1852,9 +1859,9 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                             halfFilledIcon: Icons.star_half,
                             isHalfAllowed: true,
                             filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 42,
+                            emptyColor: Colors.amber,
+                            halfFilledColor: Colors.amber,
+                            size: 42,
                           ),
                         ],
                       ),
@@ -1936,7 +1943,6 @@ class TopRatedItems extends StatefulWidget {
 class _TopRatedItems extends State<TopRatedItems> {
   double myrating;
   @override
-  
   Widget build(BuildContext context) {
     return StreamProvider<List<Item>>.value(
       value: FirestoreService().getItemInfo('${widget.vendorId}'),
@@ -1996,6 +2002,19 @@ class _TopRatedItems extends State<TopRatedItems> {
 
            
               ),
+<<<<<<< HEAD
+              RatingBar.readOnly(
+                initialRating: 3.5,
+                filledIcon: Icons.star,
+                emptyIcon: Icons.star_border,
+                halfFilledIcon: Icons.star_half,
+                isHalfAllowed: true,
+                filledColor: Colors.amber,
+                emptyColor: Colors.amber,
+                halfFilledColor: Colors.amber,
+                size: 36,
+              ),
+=======
 
               Padding(
                     padding: EdgeInsets.only(right: 0.0, left: 50.0),
@@ -2016,18 +2035,52 @@ class _TopRatedItems extends State<TopRatedItems> {
                       ],
                     ),
                   ),
+>>>>>>> 2f085fc4b8c748041bd07efc7e358f044d8ccf1e
               new Divider(),
               Row(
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                    child: Text('Top Rated Items',
-                        style: TextStyle(color: Colors.red, fontSize: 22)),
-                  ),
+                   Container(
+                child: GestureDetector(
+              onTap: () {
+              },
+              child: Container(
+                width: 200.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: Text('Top Rated Items',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
+              ),
+            )),
                   Padding(
                     padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                    child: Text('Reviews',
-                        style: TextStyle(color: Colors.red, fontSize: 22)),
+                    child: GestureDetector(
+                      onTap: () {
+                        var route = new MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              TopRatedItemsReviews(
+                                  value: '${widget.value}',
+                                  image: '${widget.image}'),
+                        );
+                        Navigator.of(context).push(route);
+                      },
+                      child: Text('Reviews',
+                          style: TextStyle(color: Colors.red, fontSize: 22)),
+                    ),
                   )
                 ],
               ),
@@ -2036,10 +2089,10 @@ class _TopRatedItems extends State<TopRatedItems> {
             ],
           )),
         ),
-        ),
-      );
-    }
+      ),
+    );
   }
+}
 
 class ChangeRatings extends StatefulWidget {
   String value, image;
@@ -2280,7 +2333,278 @@ class _ChangeRatings extends State<ChangeRatings> {
           ],
         )),
       ),
-     
+    );
+  }
+}
+
+class TopRatedItemsReviews extends StatefulWidget {
+  String value, image, vendorId;
+
+  TopRatedItemsReviews({this.value, this.image, this.vendorId});
+
+  @override
+  _TopRatedItemsReviews createState() => new _TopRatedItemsReviews();
+}
+
+class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
+  double myrating;
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<List<Item>>.value(
+      value: FirestoreService().getItemInfo('${widget.vendorId}'),
+      child: Scaffold(
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              child: Text('${widget.value}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )),
+                  )
+                ],
+              ),
+              clipper: Clipshape(),
+            )),
+        body: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Container(
+              child: ListView(
+            children: <Widget>[
+              Container(
+                height: 200.0,
+                width: 200.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                  child: Image.network('${widget.image}'),
+                ),
+              ),
+              RatingBar.readOnly(
+                initialRating: 3.5,
+                filledIcon: Icons.star,
+                emptyIcon: Icons.star_border,
+                halfFilledIcon: Icons.star_half,
+                isHalfAllowed: true,
+                filledColor: Colors.amber,
+                emptyColor: Colors.amber,
+                halfFilledColor: Colors.amber,
+                size: 36,
+              ),
+              new Divider(),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                    child: GestureDetector(
+                      onTap: () {Navigator.pop(context);},
+                    child: Text('Top Rated Items',
+                        style: TextStyle(color: Colors.red, fontSize: 22)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  // Padding(
+                  //   padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                  //   child: Text('Reviews',
+                  //       style: TextStyle(color: Colors.red, fontSize: 22)),
+                  // )
+                  Container(
+                child: GestureDetector(
+              onTap: () {
+              },
+              child: Container(
+                width: 170.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: Text('Reviews',
+                      style: TextStyle(color: Colors.white, fontSize: 20)),
+                ),
+              ),
+            ))
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, right: 30.0, left: 15.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                print("Upload Photo");
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              ))),
+                      Padding(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, right: 10.0),
+                          child: Text('4.5/5'))
+                    ],
+                  ),
+                  SizedBox(
+                    width: 40.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 10.0),
+                    child: Container(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: 200.0,
+                          maxWidth: 200.0,
+                          minHeight: 30.0,
+                          maxHeight: 100.0,
+                        ),
+                        child: AutoSizeText(
+                          "McDonalds was Amazing. Good food. Good people",
+                          style: TextStyle(fontSize: 15.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              new Divider(),
+              Row(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, right: 30.0, left: 15.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                print("Upload Photo");
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              ))),
+                      Padding(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, right: 10.0),
+                          child: Text('4.5/5'))
+                    ],
+                  ),
+                  SizedBox(
+                    width: 40.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 10.0),
+                    child: Container(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: 200.0,
+                          maxWidth: 200.0,
+                          minHeight: 30.0,
+                          maxHeight: 100.0,
+                        ),
+                        child: AutoSizeText(
+                          "McDonalds was Amazing. Good food. Good people",
+                          style: TextStyle(fontSize: 15.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              new Divider(),
+              Row(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, right: 30.0, left: 15.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                print("Upload Photo");
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              ))),
+                      Padding(
+                          padding:
+                              const EdgeInsets.only(top: 10.0, right: 10.0),
+                          child: Text('4.5/5'))
+                    ],
+                  ),
+                  SizedBox(
+                    width: 40.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 10.0),
+                    child: Container(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: 200.0,
+                          maxWidth: 200.0,
+                          minHeight: 30.0,
+                          maxHeight: 100.0,
+                        ),
+                        child: AutoSizeText(
+                          "McDonalds was Amazing. Good food. Good people",
+                          style: TextStyle(fontSize: 15.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          )),
+        ),
+      ),
     );
   }
 }
