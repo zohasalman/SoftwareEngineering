@@ -61,7 +61,7 @@ class FirestoreService{
         userrole = value.data['userRole'];
         writeContent(value.data);
       });
-      print('called');
+      //print('called');
       return userrole;
     }catch(e){
       return "Error";

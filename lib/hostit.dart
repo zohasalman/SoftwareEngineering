@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rateit/login.dart';
+import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -1320,8 +1321,6 @@ class Screen45 extends State<Add> {
   void addvalue(j){
     menu2=List.from(menu2)..add(
        Container(
-        child: Transform.translate(
-        offset: Offset(0,-70),
         child: new Container(
         padding:EdgeInsets.only( top: 0, left: 20, right: 20),
         child: Column(
@@ -1341,7 +1340,6 @@ class Screen45 extends State<Add> {
           ],
         ),
         ),
-        ),
        )
 
     
@@ -1357,8 +1355,6 @@ class Screen45 extends State<Add> {
     void addvalue2(){
     menu2=List.from(menu2)..add(
       Container(
-      child: Transform.translate(
-      offset: Offset(0,-60),
       child: new Container(
       padding:EdgeInsets.only( top: 0, left: 20, right: 20),
       child: Column(
@@ -1376,7 +1372,6 @@ class Screen45 extends State<Add> {
             ),
           )
         ]),
-      ),
       ),),
 
      
@@ -1393,13 +1388,10 @@ class Screen45 extends State<Add> {
     menu2=List.from(menu2)..add(
      
       Container (
-        child: Transform.translate(
-        offset: Offset(170,-110),
           child: Container(
             height: 50,
             width: 250,
             child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-          ),
         ),
       ),
       
@@ -1419,8 +1411,6 @@ class Screen45 extends State<Add> {
     menu2=List.from(menu2)..add(
      
       Container(
-      child: Transform.translate(
-        offset: Offset(-140,-50),
         child: InkWell(
         child: new Container(
           //padding: EdgeInsets.only(top: 130, left: 20), 
@@ -1429,7 +1419,6 @@ class Screen45 extends State<Add> {
             TextSpan(text: "Vendor $i",style: TextStyle(color: Colors.black, fontSize: 22))
           ]
           )),
-        ),
         ),
         ),
       ),
@@ -3301,7 +3290,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> InviteScreen()),);
                               },
                               child: Container(
                                 width: 250.0,
