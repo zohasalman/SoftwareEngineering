@@ -11,6 +11,8 @@ import 'user.dart';
 import 'dart:convert';
 import 'vendor-list.dart';
 import 'vendor.dart';
+import 'package:intl/intl.dart';
+import 'package:rating_bar/rating_bar.dart';
 //import 'package:barcode_scan/barcode_scan.dart'; 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
