@@ -18,6 +18,7 @@ class _ListItemState extends State<ListItem> {
       return LoadingScreen();
     }else{
       return ListView.builder(
+        scrollDirection: Axis.vertical,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: items.length,

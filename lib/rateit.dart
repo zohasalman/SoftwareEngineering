@@ -937,11 +937,11 @@ class _ViewVendor extends State<ViewVendor> {
   void initState() {
     super.initState();
     // start of getting local stored user info
-    // readContent().then((String value) {
-    //   Map userMap = jsonDecode(value);
-    //   var user = UserData.fromData(userMap);
-    //   userInfo = json.decode(value);
-    // });
+    readContent().then((String value) {
+      Map userMap = jsonDecode(value);
+      var user = UserData.fromData(userMap);
+      userInfo = json.decode(value);
+    });
     //print(userInfo);  // some error generated here
     // end of it
   }
@@ -1979,8 +1979,7 @@ class _TopRatedItems extends State<TopRatedItems> {
               ),
               clipper: Clipshape(),
             )),
-        body: SingleChildScrollView(
-        child: Padding(
+        body: Padding(
           padding: EdgeInsets.all(5.0),
           child: Container(
               child: ListView(
@@ -2012,7 +2011,7 @@ class _TopRatedItems extends State<TopRatedItems> {
               // new Divider(),
             ],
           )),
-        ),),
+        ),
         ),
       );
     }
