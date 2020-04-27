@@ -61,9 +61,6 @@ class RedirectorState extends State<Redirector> {
  }
 
 
-
-
-
 class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -159,3 +156,4 @@ class ErrorSignInState extends State<ErrorSignIn> {
     );
   }
  }
+

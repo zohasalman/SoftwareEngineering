@@ -68,6 +68,24 @@ class FirestoreService{
     }
   }
 
+  Future updateEventID(String eid) async {
+    return await Firestore.instance.collection('Event').document(eid).setData({'eventID':eid});
+  }
+
+ Future<String> addEventPromise(Event data) async {
+    try{
+      String id='';
+      await Firestore.instance.collection("Event").add(data.toJSON()).then((eid){
+        id=eid.toString();
+        updateEventID(id);
+      });
+      print('calledYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYy');
+      return id;
+    }catch(e){
+      return "Error";
+    }
+  }
+
   Stream<String> get users  {
     return userRolePromise(uid).asStream();
   }
@@ -143,27 +161,27 @@ class FirestoreService{
     .map(_itemListFromSnapshot);
   }
 
-  // view my rating
+  //view my rating
 
-  // List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
-  //   return  snapshot.documents.map((doc){
-  //     return Event(
-  //       coverimage: doc.data['coverimage'],
-  //       eventID: doc.data['eventID'],
-  //       enddate: doc.data['enddate'],
-  //       name: doc.data['name'],
-  //       startdate: doc.data['startdate'],
-  //       invitecode: doc.data['invitecode'],
-  //       location1: doc.data['location1'],
-  //       logo: doc.data['logo'],
-  //       uid:doc.data['uid'],
-  //     );
-  //   }).toList();
-  // }
+  List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
+    return  snapshot.documents.map((doc){
+      return Event(
+        coverimage: doc.data['coverimage'],
+        eventID: doc.data['eventID'],
+       //enddate: doc.data['enddate'],
+        name: doc.data['name'],
+        //startdate: doc.data['startdate'],
+        invitecode: doc.data['invitecode'],
+        location1: doc.data['location1'],
+        logo: doc.data['logo'],
+        uid:doc.data['uid'],
+      );
+    }).toList();
+  }
 
-  // Stream<List<Event>> getEventInfo(String eventID) {
-  //   return _eventCollectionReference.snapshots()
-  //   .map(_eventListFromSnapshot);
-  // }
+  Stream<List<Event>> getEventInfo(String eventID) {
+    return _eventCollectionReference.snapshots()
+    .map(_eventListFromSnapshot);
+  }
 
 }

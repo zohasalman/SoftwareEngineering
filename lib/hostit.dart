@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -7,9 +8,15 @@ import 'package:rateit/login.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
+import 'localData.dart';
 import 'user.dart';
+import 'Event.dart';
+import 'userRedirection.dart';
+import 'dart:convert';
 import 'VendorList.dart';
+import 'package:random_string/random_string.dart';
+import 'hostit_first.dart';
 
 void main2() => runApp(App());
 
@@ -46,18 +53,17 @@ class AddEvent extends StatefulWidget {
   AddEvent({this.coord});
   
   @override 
-  AddEventState createState()=> new AddEventState(); 
+  AddEventState createState()=> new AddEventState(coord: coord); 
 }
 
 class AddEventState extends State<AddEvent> {
   //AddEventState({this.eid});
   LatLng coord;
   AddEventState({this.coord});
-  String name, location;
-  var logo, photo;  
+  int number;
+  String name;
+  String logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-  
-
   @override 
   Widget build(BuildContext context){
     return Scaffold(
@@ -88,7 +94,7 @@ class AddEventState extends State<AddEvent> {
                        
                     ), 
                     onPressed: (){
-                      Navigator.pop(context);
+                       Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
                     }
                   ),
                   flexibleSpace: Container(
@@ -144,19 +150,11 @@ class AddEventState extends State<AddEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                     child: TextFormField(
-                      validator: (String value) {
-                        var lat='';
-                        var lon='';
-                        if (coord!=null){
-                          lat=coord.latitude.toString();
-                          lon=coord.longitude.toString();
-                        }
-                        return value.isNotEmpty ? '$lat,$lon' : null;
-                      },
+                      validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                       //validator: (input)=> input.isEmpty? 'Please enter a valid location': null,
                       //onSaved: (input)=> location=input,
                       decoration: InputDecoration(
-                        labelText: 'Location',
+                        labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 19
@@ -196,7 +194,7 @@ class AddEventState extends State<AddEvent> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onSaved: (input)=> number=input,
+                  onSaved: (input)=> number=int.parse(input),
                   decoration: InputDecoration(
                     labelText: 'Number of vendors',
                     labelStyle: TextStyle(
@@ -219,7 +217,7 @@ class AddEventState extends State<AddEvent> {
                     child: TextFormField(
                       
                       validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onSaved: (input)=> location=input,
+                      onSaved: (input)=> logo=input,
                       decoration: InputDecoration(
                         labelText: 'Upload a logo of your event',
                         labelStyle: TextStyle(
@@ -273,7 +271,7 @@ class AddEventState extends State<AddEvent> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField( 
                   validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                  onSaved: (input)=> location=input,
+                  onSaved: (input)=> photo=input,
                   decoration: InputDecoration(
                     labelText: 'Upload a photo of your event',
                     labelStyle: TextStyle(
@@ -342,6 +340,15 @@ class AddEventState extends State<AddEvent> {
                     size: 45,
                     color: Colors.white,),
                     onPressed: () {
+                      GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                      //String uid = Provider.of<String>(context);
+                      var newEvent = new Event(uid:'uid', eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
+                      print('KKKKKKKKKKKKKKKKKk');
+
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> one(data:newEvent,numVen: number)),);
+
+
+
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);   //Modify here to upload Event Data and then move on
                     },
                   ),
@@ -511,7 +518,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,10),
               child: InkWell(
                 onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
                 },
                 child: Container(
                   height: 50,
@@ -541,7 +548,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,30),
               child: InkWell(
                 onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
                 },
                 child: Container(
                   height: 50,
@@ -571,6 +578,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,50),
               child: InkWell(
                 onTap: (){
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty()),);
                   //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
                 },
                 child: Container(
@@ -601,7 +609,7 @@ class Screen39 extends State<EventMenu> {
               offset: Offset(0,70),
               child: InkWell(
                 onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);  
                 },
                 child: Container(
                   height: 50,
@@ -882,7 +890,9 @@ class Screen41 extends State<AddVendorQty> {
               child: Container(
                 height: 100,
                 width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
+                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),)
+                } ),
               ),
             ),
           ),         
@@ -3342,8 +3352,6 @@ class Maps extends StatefulWidget {
 
 class MapsFunc extends State<Maps> {
   LatLng coord;
-  //Marker coord;
-  //MapsFunc({this.coord});
   Completer<GoogleMapController> _controller = Completer();
   Marker marker=Marker(
     markerId: MarkerId("1"),
@@ -3357,7 +3365,6 @@ class MapsFunc extends State<Maps> {
 
   @override
   Widget build(BuildContext context) {
-    //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
     return MaterialApp(
       home: Scaffold(
         key: scaffoldKey,
@@ -3387,14 +3394,13 @@ class MapsFunc extends State<Maps> {
                       Icons.arrow_back,    
                       ), 
                     onPressed: (){
-                      
+                      coord=LatLng(23.32, 65.1);
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
-                      //Navigator.pop(context);
                     }
                   ),
                   // actions: <Widget>[
                   //   IconButton(
-                  //     onPressed: () {                          
+                  //     onPressed: () {                     
                   //       showSearch(
                   //           context: context,
                   //           delegate: MapSearchBar(),
@@ -3417,7 +3423,7 @@ class MapsFunc extends State<Maps> {
                   //       ),
                   //     )
                   //   ),
-                  // ],
+                  //],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3557,6 +3563,21 @@ class SideBar extends StatefulWidget {
 }
 
 class SideBarProperties extends State<SideBar>{
+  UserData variable;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+ 
+  @override
+  void initState() {
+    super.initState();
+    readContent().then((String value) {
+      print('OOOOOOOOOOOOOOOOO');
+      Map<String, dynamic> userMap = json.decode(value);
+      UserData final_object = UserData.fromData(userMap);
+      variable=final_object;
+      //variable=user;
+    });
+  }
 
   void NormalSignOut() async {
     User usr = Provider.of<User>(context, listen: false);
@@ -3578,8 +3599,10 @@ class SideBarProperties extends State<SideBar>{
               radius:70, 
               backgroundImage: AssetImage("asset/image/user.png"),
             ),
-            Text(
-              'Aladin', 
+            Text((() {
+                if(variable==null){return "Aladin";}  // your code here
+                else{return "nadnvaf";}
+              }()),
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
             Text(
@@ -3692,3 +3715,98 @@ class SideBarProperties extends State<SideBar>{
     );
   }
 }
+
+// class CreateEvent extends StatefulWidget {
+
+//   Event data;
+//   int numVen;
+//   CreateEvent({this.data,this.numVen});
+  
+//   @override
+//   CreateEventEntry createState() => CreateEventEntry();
+// }
+
+// class CreateEventEntry extends State<CreateEvent> {
+//   final Event data;
+//   final int numVen;
+//   CreateEventEntry({this.data,this.numVen});
+//   @override
+//   Widget build(BuildContext context) {
+//     print(numVen);
+//     print('k');
+//     //return FirestoreService().addEventPromise(data).toString();//addEventPromise(data); 
+    
+//     // if (done == ''){
+//     //   return LoadingScreen();
+//     // }
+//     // else if(done == 'Error'){  //Failure to fetch Data, Firebase Error. 
+//     // //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
+//     //   return ErrorSignIn();
+//     // }
+//     // else{
+//     //   return AddVendor();
+//     // }
+//   }
+//  }
+
+
+
+// class one extends StatefulWidget{
+
+//   Event data;
+//   int numVen;
+//   one({this.data,this.numVen});
+
+//   @override
+//   two createState() => two();
+// }
+
+// class two extends State<one> {
+
+//   Event data;
+//   int numVen;
+//   two({this.data,this.numVen});
+
+
+//   @override
+//   Widget build(BuildContext context) {
+//     User usr = Provider.of<User>(context);
+//     String user = usr.uid;
+//     return StreamProvider<String>.value(
+//       value: FirestoreService().addEventPromise(data).asStream(),
+//       child: three(),
+//     );
+//   }
+// }
+
+// class three extends StatefulWidget {
+  
+//   Event data;
+//   int numVen;
+//   three({this.data,this.numVen});
+
+//   @override
+//   four createState() => four();
+// }
+
+// class four extends State<three> {
+//     Event data;
+//   int numVen;
+//   four({this.data,this.numVen});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final usr = Provider.of<String>(context);
+//     if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
+//     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
+//       return ErrorSignIn();
+//     }
+//     else if(usr == null){     //Data not Fetched yet or was null
+//       return LoadingScreen();//Text("Error: Cannot connect to Database");
+//     }
+//     else{                     //Test Needed to confirm desired function
+//       return ForgotScreen();
+//     }
+//   }
+//  }
+
