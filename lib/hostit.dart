@@ -1321,8 +1321,6 @@ class Screen45 extends State<Add> {
   void addvalue(j){
     menu2=List.from(menu2)..add(
        Container(
-        child: Transform.translate(
-        offset: Offset(0,-70),
         child: new Container(
         padding:EdgeInsets.only( top: 0, left: 20, right: 20),
         child: Column(
@@ -1342,7 +1340,6 @@ class Screen45 extends State<Add> {
           ],
         ),
         ),
-        ),
        )
 
     
@@ -1358,8 +1355,6 @@ class Screen45 extends State<Add> {
     void addvalue2(){
     menu2=List.from(menu2)..add(
       Container(
-      child: Transform.translate(
-      offset: Offset(0,-60),
       child: new Container(
       padding:EdgeInsets.only( top: 0, left: 20, right: 20),
       child: Column(
@@ -1377,7 +1372,6 @@ class Screen45 extends State<Add> {
             ),
           )
         ]),
-      ),
       ),),
 
      
@@ -1394,13 +1388,10 @@ class Screen45 extends State<Add> {
     menu2=List.from(menu2)..add(
      
       Container (
-        child: Transform.translate(
-        offset: Offset(170,-110),
           child: Container(
             height: 50,
             width: 250,
             child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-          ),
         ),
       ),
       
@@ -1420,8 +1411,6 @@ class Screen45 extends State<Add> {
     menu2=List.from(menu2)..add(
      
       Container(
-      child: Transform.translate(
-        offset: Offset(-140,-50),
         child: InkWell(
         child: new Container(
           //padding: EdgeInsets.only(top: 130, left: 20), 
@@ -1430,7 +1419,6 @@ class Screen45 extends State<Add> {
             TextSpan(text: "Vendor $i",style: TextStyle(color: Colors.black, fontSize: 22))
           ]
           )),
-        ),
         ),
         ),
       ),
