@@ -56,7 +56,7 @@ class ListViewExampleState extends State<ListViewExample> {
       eventID:"cVgoRCSqbBCrjM6fg2Np",
       logo:"https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fimages.png?alt=media&token=bdfc149d-27e2-46a9-a40e-5434ef3209c2",
       invitecode:"khieat",
-      location1:new GeoPoint(longitude: 60.9, latidude: 20.4),
+      location1:null,// GeoPoint(longitude: 60.9, latidude: 20.4),
       name:"Karachi Eat",
       uid:"aDsAvwk0mbgV1CQSUI5wJbU75Zt2"
     ),
@@ -65,26 +65,29 @@ class ListViewExampleState extends State<ListViewExample> {
       eventID:"cVgoRCSqbBCrjM6fg2Np",
       logo:"https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691",
       invitecode:"khieat",
-      location1:new GeoPoint(longitude: 60.9, latidude: 20.4),
+      location1:null,//new GeoPoint(longitude: 60.9, latidude: 20.4),
       name:"Coke Fest",
       uid:"aDsAvwk0mbgV1CQSUI5wJbU75Zt2"
     )
   ];
    
-  List<GestureDetector> _buildListItemsFromEvents(eventdata){
+  List<GestureDetector> _buildListItemsFromEvents(){
     int index = 0;
-    return eventdata.map((flower){
-      var container = Card(
+    return eventdata.map((eventdata){
+      var container = Card(//child:GestureDetector(
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+
                 Align(
                   alignment: Alignment.topLeft,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage('$eventdata.logo')
+                  child: ClipRRect(
+                    child: Container(child: Image.network('$eventdata.logo')),
+                    borderRadius: BorderRadius.circular(16)
                   ),
                 ),
                 Padding(
@@ -121,14 +124,15 @@ class ListViewExampleState extends State<ListViewExample> {
               ],
             )
           ],
-        ),
+        ),//),
       );
       index = index + 1;
       final gestureDetector = GestureDetector(
         child: container,
         onTap: (){
           //write code here
-          var eventToBeEntered=eventdata.name;
+          //var eventToBeEntered=eventdata.name;
+          Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);
         },
       );
       return gestureDetector;
@@ -138,7 +142,7 @@ class ListViewExampleState extends State<ListViewExample> {
   Widget build(BuildContext context) {
     // TODO: implement build
       return ListView(
-        children: _buildListItemsFromEvents(eventdata),
+        children: _buildListItemsFromEvents(),
       );
   }
 }
@@ -208,6 +212,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           //add code
+          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: null,)),);
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.red[600],

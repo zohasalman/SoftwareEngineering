@@ -150,8 +150,7 @@ class AddEventState extends State<AddEvent> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                     child: TextFormField(
                       validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
-                      //validator: (input)=> input.isEmpty? 'Please enter a valid location': null,
-                      onChanged: (input)=> input='(${coord.latitude},${coord.longitude})',
+                      //validator: (input)=> input.isEmpty? 'Please enter a valid location': nu//coord=LatLng(23.32, 65.1);
                       decoration: InputDecoration(
                         labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
@@ -338,16 +337,17 @@ class AddEventState extends State<AddEvent> {
                     size: 45,
                     color: Colors.white,),
                     onPressed: () async {
-                      GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                     //
                       
     //String usr = Provider.of<User>(context).uid.toString();
     //String user = usr.uid;
+                        GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
                         var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
                         //String routee=null;
                         await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
                             await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true);
                         });
-                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);//numVen:6,eid:'ss')),);
                     },
                   ),
                 ),
@@ -441,11 +441,10 @@ class Screen39 extends State<EventMenu> {
           )
         ),
       body: Form(
-        key: _formKey,
-        child: Column(children: <Widget>[
+        key: _formKey, child: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: <Widget>[
+          
            Container(
-            child: Transform.translate(
-            offset: Offset(0,-60),
             child: InkWell(
               onTap: (){
               
@@ -464,12 +463,10 @@ class Screen39 extends State<EventMenu> {
               
             ),
             ),
-            ),
+            
           ),
 
           Container(
-            child: Transform.translate(
-            offset: Offset(0,-40),
             child: Padding(
               padding:EdgeInsets.only(top: 0, left: 0), 
               child: Container(
@@ -477,12 +474,10 @@ class Screen39 extends State<EventMenu> {
                 width: 350, 
                 color: Colors.black,),
               ),
-            ),
+            
           ),
 
           Container(
-              child: Transform.translate(
-              offset: Offset(0,-10),
               child: InkWell(
                 onTap: (){
                   //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
@@ -507,16 +502,14 @@ class Screen39 extends State<EventMenu> {
                 ),
 
               ),
-            ),
+            
           ),
 
           
           Container(
-              child: Transform.translate(
-              offset: Offset(0,10),
               child: InkWell(
                 onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
+                 // Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
                 },
                 child: Container(
                   height: 50,
@@ -538,15 +531,13 @@ class Screen39 extends State<EventMenu> {
                 ),
 
               ),
-            ),
+            
           ),
 
           Container(
-              child: Transform.translate(
-              offset: Offset(0,30),
               child: InkWell(
                 onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
+                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
                 },
                 child: Container(
                   height: 50,
@@ -568,12 +559,10 @@ class Screen39 extends State<EventMenu> {
                 ),
 
               ),
-            ),
+            
           ),
 
           Container(
-              child: Transform.translate(
-              offset: Offset(0,50),
               child: InkWell(
                 onTap: (){
                   Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty()),);
@@ -599,12 +588,10 @@ class Screen39 extends State<EventMenu> {
                 ),
 
               ),
-            ),
+            
           ),
 
           Container(
-              child: Transform.translate(
-              offset: Offset(0,70),
               child: InkWell(
                 onTap: (){
                   Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);  
@@ -629,12 +616,10 @@ class Screen39 extends State<EventMenu> {
                 ),
 
               ),
-            ),
+            
           ),
 
           Container(
-              child: Transform.translate(
-              offset: Offset(0,90),
               child: InkWell(
                 onTap: (){
                   //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
@@ -659,14 +644,14 @@ class Screen39 extends State<EventMenu> {
                 ),
 
               ),
-            ),
+            
           ),
           
 
           
 
           
-        ],
+        ],),
         )  
       )
     ); 
@@ -889,7 +874,7 @@ class Screen41 extends State<AddVendorQty> {
                 height: 100,
                 width: 200,
                 child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),)
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),)//numVen:6,eid:'ss')),)
                 } ),
               ),
             ),
@@ -903,18 +888,18 @@ class Screen41 extends State<AddVendorQty> {
 
 
 class AddVendor extends StatefulWidget {
-  final int numVen;
-  final String eid;
-  AddVendor({this.numVen,this.eid});
+  // final int numVen;
+  // final String eid;
+  // AddVendor({this.numVen,this.eid});
 
   @override 
   AddVendorState createState()=> new AddVendorState(); 
 }
 
 class AddVendorState extends State<AddVendor> {
-  int numVen;
-  String eid;
-  AddVendorState({this.numVen,this.eid});
+  // int numVen;
+  // String eid;
+  // AddVendorState({this.numVen,this.eid});
   //int numm=this.numVen;
 
   //List<String> name,email, stallid,item;//
@@ -1188,7 +1173,7 @@ class AddVendorState extends State<AddVendor> {
     if (!check)
     {
       Padding(padding: EdgeInsets.only(top: 15));
-       for (var i=1; i<numVen; i++)
+       for (var i=1; i<=6; i++)
       {
         
         add2(i);
@@ -1612,7 +1597,7 @@ class Screen46 extends State<EditVen> {
   final dcontroller3=new TextEditingController(); 
   final dcontroller4=new TextEditingController(); 
   final dcontroller5=new TextEditingController(); 
-  String inputname="Mcdonalds", inputemail="zohasalman123@gmail.com", inputstallid="112344", inputimage="mcdonalds.png", inputmenunumber="8";
+  String inputname="Carbie", inputemail="zohasalman123@gmail.com", inputstallid="112344", inputimage="carbie.png", inputmenunumber="8";
   
   bool value=false; 
 
@@ -3271,7 +3256,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-        
+                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3308,7 +3293,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> InviteScreen()),);
+                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3402,7 +3387,7 @@ class MapsFunc extends State<Maps> {
                       Icons.arrow_back,    
                       ), 
                     onPressed: (){
-                      coord=LatLng(23.32, 65.1);
+                      //coord=LatLng(23.32, 65.1);
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                     }
                   ),
@@ -3655,7 +3640,7 @@ class SideBarProperties extends State<SideBar>{
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
               },
               child: Container(
                 width: 230.0,
