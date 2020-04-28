@@ -18,7 +18,7 @@ import 'item-list.dart';
 import 'item.dart';
 import 'edit-profile.dart';
 
-//import 'package:barcode_scan/barcode_scan.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
@@ -27,7 +27,7 @@ DateTime _dateTime;
 String user_id;
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: InviteScreen(),
+        home: LoginScreen(),
         routes: <String, WidgetBuilder>{
           "/rateitfirst": (BuildContext context) => new _RateItFirstScreen(),
           "/rateitsecond": (BuildContext context) => new ViewVendor(),
@@ -149,6 +149,10 @@ class SideBarProperties2 extends State<SideBar2> {
                 child: GestureDetector(
               onTap: () async {
                 await FirestoreService().normalSignOutPromise();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
               },
               // },
               child: Container(
@@ -1011,7 +1015,7 @@ class _ViewVendor extends State<ViewVendor> {
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
-            String scanning; //= await BarcodeScanner.scan();
+            String scanning = await BarcodeScanner.scan();
 
             setState() {
               var qr = scanning;
@@ -1413,6 +1417,7 @@ class _EditRatings extends State<EditRatings> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.edit),
+        backgroundColor: Color(0xFFFC4A1F),
         onPressed: () {
           var route = new MaterialPageRoute(
             builder: (BuildContext context) => new ChangeRatings(
@@ -1549,6 +1554,7 @@ class _EditRating1State extends State<EditRating1> {
                                 style: TextStyle(fontSize: 22),
                               ),
                             );
+                           
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(80.0)),
@@ -2185,9 +2191,34 @@ class _ChangeRatings extends State<ChangeRatings> {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                  child: Text('Top Rated Items',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
+                  padding: EdgeInsets.only(left: 5.0),
+                  child: Container(
+                child: GestureDetector(
+              onTap: () {
+              },
+              child: Container(
+                width: 200.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: Text('Top Rated Reviews',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
+              ),
+            )),
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 10.0, left: 60.0),
@@ -2522,7 +2553,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                           maxHeight: 100.0,
                         ),
                         child: AutoSizeText(
-                          "McDonalds was Amazing. Good food. Good people",
+                          "The ambiance was Amazing. Good food. Good people. I would really like to come again",
                           style: TextStyle(fontSize: 15.0),
                         ),
                       ),
@@ -2545,12 +2576,12 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
                                 radius: 30.0,
-                                child: Image.asset('asset/image/circular.png'),
+                                child: Image.asset('asset/image/avatar.png'),
                               ))),
                       Padding(
                           padding:
                               const EdgeInsets.only(top: 10.0, right: 10.0),
-                          child: Text('4.5/5'))
+                          child: Text('2/5'))
                     ],
                   ),
                   SizedBox(
@@ -2568,7 +2599,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                           maxHeight: 100.0,
                         ),
                         child: AutoSizeText(
-                          "McDonalds was Amazing. Good food. Good people",
+                          "The chicken was a bit undercooked. The fries were not the way I wanted. Pls improve!",
                           style: TextStyle(fontSize: 15.0),
                         ),
                       ),
@@ -2591,7 +2622,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
                                 radius: 30.0,
-                                child: Image.asset('asset/image/circular.png'),
+                                child: Image.asset('asset/image/avatar1.png'),
                               ))),
                       Padding(
                           padding:
@@ -2614,7 +2645,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                           maxHeight: 100.0,
                         ),
                         child: AutoSizeText(
-                          "McDonalds was Amazing. Good food. Good people",
+                          "Overall good service. I am satisfied.",
                           style: TextStyle(fontSize: 15.0),
                         ),
                       ),
@@ -2802,7 +2833,8 @@ class _ViewReviews extends State<ViewReviews> {
                           maxHeight: 100.0,
                         ),
                         child: AutoSizeText(
-                          "My review is this and I give very good reviews and I am proud",
+                          "The burger of McDonalds were juicy and tendor, the ambiance was great I would love to come again",
+                          
                           style: TextStyle(fontSize: 18.0),
                           textAlign: TextAlign.center,
                         ),
@@ -2820,14 +2852,228 @@ class _ViewReviews extends State<ViewReviews> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.edit),
+        backgroundColor: Color(0xFFFC4A1F),
         onPressed: () {
-          // var route = new MaterialPageRoute(
-          //   builder: (BuildContext context) => new ChangeRatings(
-          //       value: '${widget.value}', image: '${widget.image}'),
-          // );
-          // Navigator.of(context).push(route);
+          var route = new MaterialPageRoute(
+            builder: (BuildContext context) => new EditReviews(
+                value: '${widget.value}', image: '${widget.image}'),
+          );
+          Navigator.of(context).push(route);
         },
       ),
+    );
+  }
+}
+
+class EditReviews extends StatefulWidget {
+  String value, image;
+
+  EditReviews({Key key, this.value, this.image}) : super(key: key);
+
+  @override
+  _EditReviews createState() => new _EditReviews();
+}
+
+class _EditReviews extends State<EditReviews> {
+  double myrating;
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                            child: Text('${widget.value}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 28))),
+                      )),
+                  flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )),
+                )
+              ],
+            ),
+            clipper: Clipshape(),
+          )),
+      body: Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Container(
+            child: ListView(
+          children: <Widget>[
+            Container(
+              height: 200.0,
+              width: 200.0,
+              child: Padding(
+                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                child: Image.asset('${widget.image}'),
+              ),
+            ),
+            RatingBar.readOnly(
+              initialRating: 3.5,
+              filledIcon: Icons.star,
+              emptyIcon: Icons.star_border,
+              halfFilledIcon: Icons.star_half,
+              isHalfAllowed: true,
+              filledColor: Colors.amber,
+              emptyColor: Colors.amber,
+              halfFilledColor: Colors.amber,
+              size: 40,
+            ),
+            new Divider(),
+            Row(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                    child: GestureDetector(
+                      onTap: () {Navigator.pop(context);},
+                    child: Text('My Ratings',
+                        style: TextStyle(color: Colors.red, fontSize: 22)),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20.0,
+                  ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30.0),
+                  child: Container(
+                child: GestureDetector(
+              onTap: () {
+              },
+              child: Container(
+                width: 170.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: Text('My Reviews',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
+              ),
+            )),
+                )
+                
+              ],
+            ),
+
+            Padding(
+              padding: EdgeInsets.only (top: 15.0, right: 45.0, left: 45.0),
+              child: Container(
+                width: 200.0,
+                
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                   gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        //Colors.white,
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                        
+                      ]),
+                  color: Colors.redAccent,
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 30.0),
+                      child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              )
+                    ),
+
+                    Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.white,
+
+                ),
+    
+                        child: TextFormField(    
+                        
+                           decoration: InputDecoration(
+                              labelText: 'Write a new review...',
+                              contentPadding: new EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)
+                            ),                       
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            height: 2.0,
+                            color: Colors.black                  
+                          )
+                        ),
+                      
+                    ),
+                  )
+                  ],
+                )
+              )
+            ),
+            SizedBox(
+              height: 30.0,
+            ),
+             Container(
+                height: 100.0,
+                width: 100.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20.0, bottom: 0.0),
+                  child: GestureDetector(
+                      child: Image.asset('asset/image/Group 55.png'),
+                      onTap: () {
+                        var route = new MaterialPageRoute(
+                          builder: (BuildContext context) => new EditRating1(
+                              value: '${widget.value}',
+                              image: '${widget.image}'),
+                        );
+                        Navigator.of(context).push(route);
+                      }),
+                ))
+            
+                
+          ],
+        )),
+      ),
+      
     );
   }
 }

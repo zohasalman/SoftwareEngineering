@@ -825,8 +825,9 @@ class FourthScreen extends State<Sign3Screen> {
               ),
             ),
            ]),),
-
-          Container(
+          Padding(
+            padding: EdgeInsets.only(left: 10.0),
+          child: Container(
           
               child: Center(
                 
@@ -842,6 +843,7 @@ class FourthScreen extends State<Sign3Screen> {
 
               ),
             
+          ),
           ),
 
           

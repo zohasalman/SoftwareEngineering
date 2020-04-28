@@ -28,7 +28,7 @@ dependencies:
   provider: ^4.0.5
   cloud_firestore: ^0.13.5
   flutter_spinkit: "^4.1.2"
-  #barcode_scan: ^2.0.2
+  barcode_scan: ^2.0.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -94,6 +94,10 @@ flutter:
    - asset/image/bigmac.png
    - asset/image/mcchicken.png
    - asset/image/Group 55.png
+   - asset/image/uzair_1.jpeg
+   - asset/image/uzair_2.jpeg
+   - asset/image/avatar.png
+   - asset/image/avatar1.png
    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
