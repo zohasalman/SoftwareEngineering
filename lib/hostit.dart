@@ -3256,7 +3256,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);
+                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3293,7 +3293,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);
+                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);
                               },
                               child: Container(
                                 width: 250.0,
