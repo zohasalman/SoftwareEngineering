@@ -343,7 +343,7 @@ class AddEventState extends State<AddEvent> {
     //String usr = Provider.of<User>(context).uid.toString();
     //String user = usr.uid;
                         var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
-                        String routee=null;
+                        //String routee=null;
                         await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
                             await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true);
                         });
@@ -903,17 +903,27 @@ class Screen41 extends State<AddVendorQty> {
 
 
 class AddVendor extends StatefulWidget {
+  final int numVen;
+  final String eid;
+  AddVendor({this.numVen,this.eid});
+
   @override 
   AddVendorState createState()=> new AddVendorState(); 
 }
 
 class AddVendorState extends State<AddVendor> {
+  int numVen;
+  String eid;
+  AddVendorState({this.numVen,this.eid});
+  //int numm=this.numVen;
+
+  //List<String> name,email, stallid,item;//
   String name,email, stallid,item;
   bool value=false; 
   var logo, mlogo;  
   bool check=false; 
   var nu; 
-  var n=int.parse(number); 
+  var n= int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
   int count=2; 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -1178,7 +1188,7 @@ class AddVendorState extends State<AddVendor> {
     if (!check)
     {
       Padding(padding: EdgeInsets.only(top: 15));
-       for (var i=1; i<n; i++)
+       for (var i=1; i<numVen; i++)
       {
         
         add2(i);
@@ -1217,7 +1227,7 @@ class AddVendorState extends State<AddVendor> {
                       child: Padding(
                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
                         child: Text('Add Vendors',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
+                      ),
                     )
                   ),
                   leading: IconButton(

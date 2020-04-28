@@ -6,6 +6,7 @@ import 'localData.dart';
 import 'vendor.dart';
 import 'user.dart';
 import 'item.dart';
+import 'my-rating.dart';
 
 
 class FirestoreService{
@@ -17,6 +18,7 @@ class FirestoreService{
   final CollectionReference _vendorCollectionReference = Firestore.instance.collection('Vendor');
   final CollectionReference _itemCollectionReference = Firestore.instance.collection('item');
   final CollectionReference _reviewsCollectionReference = Firestore.instance.collection('review');
+  final CollectionReference _ratingCollectionReference = Firestore.instance.collection('rating');
   final CollectionReference _eventCollectionReference = Firestore.instance.collection('Event');
 
   Future registerUser(UserData user) async{
@@ -123,7 +125,7 @@ class FirestoreService{
   }
 
   Stream<List<Vendor>> getVendorInfo(String eventID) {
-    return _vendorCollectionReference.where('eventId', isEqualTo: eventID).snapshots()
+    return _vendorCollectionReference.where('eventId', isEqualTo: eventID).orderBy('aggregateRating', descending: true).snapshots()
     .map(_vendorListFromSnapshot);
   }
 
@@ -162,6 +164,35 @@ class FirestoreService{
   }
 
   //view my rating
+   List<MyRating> _ratingListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return MyRating(
+        itemId: doc.data['itemId'] ?? '',
+        userId: doc.data['userId'] ?? '',
+        ratingId: doc.data['ratingId'] ?? '',
+        vendorId: doc.data['vendorId'] ?? '',
+        vendorName: doc.data['vendorName'] ?? '',
+        vendorLogo: doc.data['vendorLogo'] ?? '',
+        rating: doc.data['rating'] ?? 0,
+        // timeStamp: doc.data['timeStamp'] ?? '',
+      );
+    }).toList();
+  }
+
+  Stream<List<MyRating>> getMyRating(String uid){
+    print("helloooo");
+    print(uid);
+    print("hogyaaa");
+    return _ratingCollectionReference.where('userId', isEqualTo: uid).snapshots()
+    .map(_ratingListFromSnapshot);
+  }
+
+  Stream<List<Item>> getMyRatingItem(String itemId){
+    return _itemCollectionReference.where('itemId', isEqualTo: itemId).snapshots()
+    .map(_itemListFromSnapshot);
+  }
+
+
 
   List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
     return  snapshot.documents.map((doc){
