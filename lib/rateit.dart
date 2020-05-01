@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rateit/login.dart';
+import 'package:rateit/ratedItem.dart';
 import 'firestore.dart';
 import 'dart:math' as math;
 import 'VendorList.dart';
@@ -18,7 +19,7 @@ import 'item-list.dart';
 import 'item.dart';
 import 'edit-profile.dart';
 import 'my-rating.dart';
-import 'rating-list.dart';
+import 'ratedVendor.dart';
 
 //import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
@@ -928,31 +929,7 @@ class _ViewVendor extends State<ViewVendor> {
   //     });
   //   }
   // }
-  // List<VendorList> vendors = [
-  //   VendorList(
-  //       vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
-  //   VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'McDonalds', flag: 'mcdonalds.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'No Lies Fries',
-  //       flag: 'noliesfries.png',
-  //       vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'Caffe Parha',
-  //       flag: 'caffeparha.png',
-  //       vendorrating: '4.5/5'),
-  //   VendorList(vendorname: 'DOH', flag: 'doh.png', vendorrating: '4.5/5'),
-  //   VendorList(vendorname: 'Carbie', flag: 'carbie.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'The Story', flag: 'thestory.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'Meet the Cheese',
-  //       flag: 'meetthecheese.png',
-  //       vendorrating: '4.5/5'),
-  // ];
-
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -1044,38 +1021,14 @@ class ViewMyRating extends StatefulWidget {
 class _ViewMyRating extends State<ViewMyRating> {
   String result;
 
-  // List<VendorList> vendors = [
-  //   VendorList(
-  //       vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
-  //   VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'McDonalds', flag: 'mcdonalds.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'No Lies Fries',
-  //       flag: 'noliesfries.png',
-  //       vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'Caffe Parha',
-  //       flag: 'caffeparha.png',
-  //       vendorrating: '4.5/5'),
-  //   VendorList(vendorname: 'DOH', flag: 'doh.png', vendorrating: '4.5/5'),
-  //   VendorList(vendorname: 'Carbie', flag: 'carbie.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'The Story', flag: 'thestory.png', vendorrating: '4.5/5'),
-  //   VendorList(
-  //       vendorname: 'Meet the Cheese',
-  //       flag: 'meetthecheese.png',
-  //       vendorrating: '4.5/5'),
-  // ];
   String qr = "";
 
-  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<MyRating>>.value(
-      value: FirestoreService().getMyRating(user_id),
+    return StreamProvider<List<RatedVendor>>.value(
+      value: FirestoreService().getMyRatedVendor(user_id),
       child: Scaffold(
         key: scaffoldKey,
         appBar: PreferredSize(
@@ -1117,7 +1070,7 @@ class _ViewMyRating extends State<ViewMyRating> {
               ),
               clipper: Clipshape(),
             )),
-        body: RatingList(),
+        body: RatedVendorList(),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.pink[800],
           child: Image.asset("asset/image/Camera 1.png") ,
@@ -1135,9 +1088,10 @@ class _ViewMyRating extends State<ViewMyRating> {
 }
 
 class EditRatings extends StatefulWidget {
-  String value, image, rating, item_Id;
 
-  EditRatings({this.value, this.image, this.rating, this.item_Id});
+  String name, image, rating, vendorId;
+
+  EditRatings({this.name, this.image, this.rating, this.vendorId});
 
   @override
   _EditRatings createState() => new _EditRatings();
@@ -1146,8 +1100,8 @@ class EditRatings extends StatefulWidget {
 class _EditRatings extends State<EditRatings> {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider <List<Item>>.value(
-      value: FirestoreService().getMyRatingItem('${widget.item_Id}'),
+    return StreamProvider <List<RatedItem>>.value(
+      value: FirestoreService().getMyRatedItem(user_id, '${widget.vendorId}'),
       child: Scaffold(
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(150.0),
@@ -1163,7 +1117,7 @@ class _EditRatings extends State<EditRatings> {
                           alignment: Alignment.topLeft,
                           child: Padding(
                               padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.value}',
+                              child: Text('${widget.name}',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
                         )),
@@ -1212,13 +1166,13 @@ class _EditRatings extends State<EditRatings> {
                 halfFilledColor: Colors.amber,
                 size: 40,
               ),
-              ListItem(),
+              RatedItemList(),
               FloatingActionButton(
                 child: Icon(Icons.edit),
                 onPressed: () {
                   var route = new MaterialPageRoute(
                     builder: (BuildContext context) => new ChangeRatings(
-                        value: '${widget.value}', image: '${widget.image}'),
+                        value: '${widget.name}', image: '${widget.image}'),
                   );
                   Navigator.of(context).push(route);
                 },

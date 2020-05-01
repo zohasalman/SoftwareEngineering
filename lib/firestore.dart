@@ -18,7 +18,8 @@ class FirestoreService{
   final CollectionReference _vendorCollectionReference = Firestore.instance.collection('Vendor');
   final CollectionReference _itemCollectionReference = Firestore.instance.collection('item');
   final CollectionReference _reviewsCollectionReference = Firestore.instance.collection('review');
-  final CollectionReference _ratingCollectionReference = Firestore.instance.collection('rating');
+  final CollectionReference _ratedVendorCollectionReference = Firestore.instance.collection('ratedVendor');
+  final CollectionReference _ratedItemCollectionReference = Firestore.instance.collection('ratedItems');
   final CollectionReference _eventCollectionReference = Firestore.instance.collection('Event');
 
   Future registerUser(UserData user) async{
@@ -148,10 +149,6 @@ class FirestoreService{
     return _itemCollectionReference.where('vendorId', isEqualTo: vendorId).snapshots()
     .map(_itemListFromSnapshot);
   }
-    
-  Future<QuerySnapshot> getReviewsInfo(String vendorId){ // gets each vendor's reviews
-    return _reviewsCollectionReference.where('vendorId', isEqualTo: vendorId).getDocuments();
-  }
 
   // For Rating
   Future<QuerySnapshot> getVendor(String vendorId){
@@ -164,36 +161,50 @@ class FirestoreService{
   }
 
   //view my rating
-   List<MyRating> _ratingListFromSnapshot(QuerySnapshot snapshot){
+  List<RatedVendor> _ratedVendorListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc){
-      return MyRating(
-        itemId: doc.data['itemId'] ?? '',
+      return RatedVendor(
         userId: doc.data['userId'] ?? '',
-        ratingId: doc.data['ratingId'] ?? '',
         vendorId: doc.data['vendorId'] ?? '',
         vendorName: doc.data['vendorName'] ?? '',
         vendorLogo: doc.data['vendorLogo'] ?? '',
-        rating: doc.data['rating'] ?? 0,
-        // timeStamp: doc.data['timeStamp'] ?? '',
+        rating: doc.data['myVendorRating'] ?? 0,
+        reviewId: doc.data['reviewId'] ?? '',
       );
     }).toList();
   }
 
-  Stream<List<MyRating>> getMyRating(String uid){
-    print("helloooo");
+  Stream<List<RatedVendor>> getMyRatedVendor(String uid){
     print(uid);
-    print("hogyaaa");
-    return _ratingCollectionReference.where('userId', isEqualTo: uid).snapshots()
-    .map(_ratingListFromSnapshot);
+    return _ratedVendorCollectionReference.where('userId', isEqualTo: uid).snapshots()
+    .map(_ratedVendorListFromSnapshot);
   }
 
-  Stream<List<Item>> getMyRatingItem(String itemId){
-    return _itemCollectionReference.where('itemId', isEqualTo: itemId).snapshots()
-    .map(_itemListFromSnapshot);
+  List<RatedItem> _ratedItemListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return RatedItem(
+        userId: doc.data['userId'] ?? '',
+        vendorId: doc.data['vendorId'] ?? '',
+        itemName: doc.data['itemName'] ?? '',
+        itemLogo: doc.data['itemLogo'] ?? '',
+        rating: doc.data['myItemRating'] ?? 0,
+        itemId: doc.data['itemId'] ?? '',
+      );
+    }).toList();
   }
 
+  Stream<List<RatedItem>> getMyRatedItem(String uid, String vendorId){
+    return _ratedItemCollectionReference.where('userId', isEqualTo: uid).where('vendorId', isEqualTo: vendorId).snapshots()
+    .map(_ratedItemListFromSnapshot);
+  }
+
+  // new view my rating
 
 
+
+  
+
+  // host it 
   List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
     return  snapshot.documents.map((doc){
       return Event(
