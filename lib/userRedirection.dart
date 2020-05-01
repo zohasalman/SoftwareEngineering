@@ -50,7 +50,7 @@ class RedirectorState extends State<Redirector> {
       return InviteScreen(uid: '${widget.uid}');
     }
     else if(usr == 'management'){ 
-      return HostitHomescreen();
+      return HostitHomescreen();//AddVendor(numVen:1,eid:'da');//
     }
     else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 

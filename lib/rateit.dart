@@ -20,7 +20,7 @@ import 'edit-profile.dart';
 import 'my-rating.dart';
 import 'rating-list.dart';
 
-import 'package:barcode_scan/barcode_scan.dart';
+//import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
@@ -1022,7 +1022,7 @@ class _ViewVendor extends State<ViewVendor> {
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
-            String scanning = await BarcodeScanner.scan();
+            String scanning = "";//await BarcodeScanner.scan();
 
             setState() {
               var qr = scanning;

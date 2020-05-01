@@ -60,7 +60,7 @@ class AddEventState extends State<AddEvent> {
   //AddEventState({this.eid});
   LatLng coord;
   AddEventState({this.coord});
-  int number;
+  int eventNumber;
   String name;
   String logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -192,7 +192,7 @@ class AddEventState extends State<AddEvent> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onChanged: (input)=> number=int.parse(input),
+                  onChanged: (input)=> eventNumber=int.parse(input),
                   decoration: InputDecoration(
                     labelText: 'Number of vendors',
                     labelStyle: TextStyle(
@@ -337,17 +337,18 @@ class AddEventState extends State<AddEvent> {
                     size: 45,
                     color: Colors.white,),
                     onPressed: () async {
-                     //
-                      
-    //String usr = Provider.of<User>(context).uid.toString();
-    //String user = usr.uid;
-                        GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                      //if(coord!=null){
+                        GeoPoint eventLocation = GeoPoint(23.0,66.0);//coord.latitude, coord.longitude);
+                        String eventid;
                         var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
                         //String routee=null;
-                        await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
-                            await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true);
-                        });
-                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),);//numVen:6,eid:'ss')),);
+                        if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
+                          await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
+                              await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;});
+                          });
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid)),);
+                        }
+                     // }
                     },
                   ),
                 ),
@@ -442,216 +443,211 @@ class Screen39 extends State<EventMenu> {
         ),
       body: Form(
         key: _formKey, child: Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: <Widget>[
-          
-           Container(
-            child: InkWell(
-              onTap: (){
-              
-            },
-            child: new Container(
-              //padding: EdgeInsets.only(top: 130, left: 20), 
-              child: RichText(
-              text: TextSpan(children: <TextSpan>[
-                TextSpan(text: "Invite code| ",style: TextStyle(color: Colors.grey[600], fontSize: 25)),
-                TextSpan(text: " AB64z9 ",style: TextStyle(color: Colors.black, fontSize: 25 )),
+          child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: <Widget>[
+            
+            Container(
+              child: InkWell(
+                onTap: (){
+                
+              },
+              child: new Container(
+                //padding: EdgeInsets.only(top: 130, left: 20), 
+                child: RichText(
+                text: TextSpan(children: <TextSpan>[
+                  TextSpan(text: "Invite code| ",style: TextStyle(color: Colors.grey[600], fontSize: 25)),
+                  TextSpan(text: " AB64z9 ",style: TextStyle(color: Colors.black, fontSize: 25 )),
 
-              ]
-              )
+                ]
+                )
+                
+              ),
+                
+              ),
+              ),
               
             ),
+
+            Container(
+              child: Padding(
+                padding:EdgeInsets.only(top: 0, left: 0), 
+                child: Container(
+                  height: 1, 
+                  width: 350, 
+                  color: Colors.black,),
+                ),
               
             ),
+
+            Container(
+                child: InkWell(
+                  onTap: (){
+                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: EdgeInsets.only(top: 15, left: 40), 
+                    child: Text("Generate Comprehensive Report",style: TextStyle(color: Colors.white, fontSize: 18 ))
+                  ),
+
+                ),
+              
             ),
-            
-          ),
 
-          Container(
-            child: Padding(
-              padding:EdgeInsets.only(top: 0, left: 0), 
-              child: Container(
-                height: 1, 
-                width: 350, 
-                color: Colors.black,),
-              ),
             
-          ),
-
-          Container(
-              child: InkWell(
-                onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
-                },
-                child: Container(
-                  height: 50,
-                  width: 350,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
+            Container(
+                child: InkWell(
+                  onTap: (){
+                  // Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    borderRadius: BorderRadius.circular(50),
+                    padding: EdgeInsets.only(top: 15, left: 90), 
+                    child: Text("Download QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
-                  padding: EdgeInsets.only(top: 15, left: 40), 
-                  child: Text("Generate Comprehensive Report",style: TextStyle(color: Colors.white, fontSize: 18 ))
+
                 ),
+              
+            ),
 
-              ),
-            
-          ),
-
-          
-          Container(
-              child: InkWell(
-                onTap: (){
-                 // Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
-                },
-                child: Container(
-                  height: 50,
-                  width: 350,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
+            Container(
+                child: InkWell(
+                  onTap: (){
+                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    borderRadius: BorderRadius.circular(50),
+                    padding: EdgeInsets.only(top: 15, left: 115), 
+                    child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
-                  padding: EdgeInsets.only(top: 15, left: 90), 
-                  child: Text("Download QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
+
                 ),
+              
+            ),
 
-              ),
-            
-          ),
-
-          Container(
-              child: InkWell(
-                onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
-                },
-                child: Container(
-                  height: 50,
-                  width: 350,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
+            Container(
+                child: InkWell(
+                  onTap: (){
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty()),);
+                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    borderRadius: BorderRadius.circular(50),
+                    padding: EdgeInsets.only(top: 15, left: 125), 
+                    child: Text("Add Vendors",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
-                  padding: EdgeInsets.only(top: 15, left: 115), 
-                  child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
+
                 ),
+              
+            ),
 
-              ),
-            
-          ),
-
-          Container(
-              child: InkWell(
-                onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty()),);
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
-                },
-                child: Container(
-                  height: 50,
-                  width: 350,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
+            Container(
+                child: InkWell(
+                  onTap: (){
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);  
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    borderRadius: BorderRadius.circular(50),
+                    padding: EdgeInsets.only(top: 15, left: 125), 
+                    child: Text("Edit a Vendor",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
-                  padding: EdgeInsets.only(top: 15, left: 125), 
-                  child: Text("Add Vendors",style: TextStyle(color: Colors.white, fontSize: 18 ))
+
                 ),
+              
+            ),
 
-              ),
-            
-          ),
-
-          Container(
-              child: InkWell(
-                onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);  
-                },
-                child: Container(
-                  height: 50,
-                  width: 350,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
+            Container(
+                child: InkWell(
+                  onTap: (){
+                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  },
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
                     ),
-                    borderRadius: BorderRadius.circular(50),
+                    padding: EdgeInsets.only(top: 15, left: 130), 
+                    child: Text("Edit Event",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
-                  padding: EdgeInsets.only(top: 15, left: 125), 
-                  child: Text("Edit a Vendor",style: TextStyle(color: Colors.white, fontSize: 18 ))
+
                 ),
-
-              ),
-            
-          ),
-
-          Container(
-              child: InkWell(
-                onTap: (){
-                  //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
-                },
-                child: Container(
-                  height: 50,
-                  width: 350,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
-                    ),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  padding: EdgeInsets.only(top: 15, left: 130), 
-                  child: Text("Edit Event",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                ),
-
-              ),
-            
-          ),
-          
-
-          
-
-          
-        ],),
+              
+            ),
+          ],),
         )  
       )
     ); 
@@ -874,7 +870,7 @@ class Screen41 extends State<AddVendorQty> {
                 height: 100,
                 width: 200,
                 child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor()),)//numVen:6,eid:'ss')),)
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:6,eid:'ss')),)
                 } ),
               ),
             ),
@@ -887,23 +883,23 @@ class Screen41 extends State<AddVendorQty> {
 
 
 
+
 class AddVendor extends StatefulWidget {
-  // final int numVen;
-  // final String eid;
-  // AddVendor({this.numVen,this.eid});
+  final int numVen;
+  final String eid;
+  AddVendor({this.numVen,this.eid});
 
   @override 
-  AddVendorState createState()=> new AddVendorState(); 
+  AddVendorState createState()=> new AddVendorState(numVen: numVen,eid: eid ); 
 }
 
 class AddVendorState extends State<AddVendor> {
-  // int numVen;
-  // String eid;
-  // AddVendorState({this.numVen,this.eid});
-  //int numm=this.numVen;
-
-  //List<String> name,email, stallid,item;//
-  String name,email, stallid,item;
+  int numVen;
+  String eid;
+  AddVendorState({this.numVen,this.eid});
+  List<String> name = [];
+  List<String> email = new List<String>(), stallid = new List<String>();
+  List<int> item = new List<int>();
   bool value=false; 
   var logo, mlogo;  
   bool check=false; 
@@ -924,7 +920,7 @@ class AddVendorState extends State<AddVendor> {
               text: TextSpan(
                 children: <TextSpan>[
                   TextSpan(
-                    text: "Vendor $i",
+                    text: "Vendor ${i+1}",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 22
@@ -943,7 +939,7 @@ class AddVendorState extends State<AddVendor> {
     });
   }
 
-  void add3(){
+  void add3(i){
     menu2=List.from(menu2)..add(
       Container(
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -954,7 +950,7 @@ class AddVendorState extends State<AddVendor> {
             children: <Widget>[
               TextFormField(
                 validator: (input)=> input.isEmpty? 'Please enter a name': null,
-                onSaved: (input)=> name=input,
+                onChanged: (input)=> name[i]= input,
                 decoration: InputDecoration(
                   labelText: 'Stall Name',
                   labelStyle: TextStyle(
@@ -974,7 +970,7 @@ class AddVendorState extends State<AddVendor> {
     });
   }
 
-  void add4(){
+  void add4(i){
     menu2=List.from(menu2)..add(
      
       Container(
@@ -985,8 +981,8 @@ class AddVendorState extends State<AddVendor> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                validator: (input)=> input.isEmpty? 'Please enter an email': null,
-                onSaved: (input)=> email=input,
+                validator: (input)=> input.isEmpty? 'Please enter an email ': null,
+                onChanged: (input)=> email[i]= input,
                 decoration: InputDecoration(
                   labelText: 'Email ID',
                   labelStyle: TextStyle(
@@ -1007,7 +1003,7 @@ class AddVendorState extends State<AddVendor> {
 
   }
 
-  void add5(){
+  void add5(i){
     menu2=List.from(menu2)..add(   
       Container(
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -1018,7 +1014,7 @@ class AddVendorState extends State<AddVendor> {
             children: <Widget>[
               TextFormField(
                 validator: (input)=> input.isEmpty? 'Please enter a stall ID': null,
-                onSaved: (input)=> stallid=input,
+                onChanged: (input)=> stallid[i]= input,
                 decoration: InputDecoration(
                   labelText: 'Stall ID',
                   labelStyle: TextStyle(
@@ -1039,28 +1035,26 @@ class AddVendorState extends State<AddVendor> {
 
   }
  
-  void add6(){
+  void add6(i){
     menu2=List.from(menu2)..add(
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              child: Row(children: <Widget>[
                 Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            child: Row(children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.75,
-                padding:EdgeInsets.only( top: 5, left: 20),
+                  width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                  padding:EdgeInsets.only( top: 5, left: 20),
                 
-                    child: TextFormField(
-                      
-                      validator: (input)=> input.isEmpty? 'Please enter a logo': null,
-                      decoration: InputDecoration(
-                        labelText: 'Upload a logo of the vendor',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
-                      ),
-                    )
-                  
-                
+                  child: TextFormField(
+                    
+                    validator: (input)=> input.isEmpty? 'Please enter a logo': null,
+                    decoration: InputDecoration(
+                      labelText: 'Upload a logo of the vendor',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 19
+                      )
+                    ),
+                  )
               ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.10,
@@ -1077,7 +1071,10 @@ class AddVendorState extends State<AddVendor> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);},
+                    onPressed: () {
+                      //Add Upload image function here
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);
+                    },
                   ),
                 ),
               )
@@ -1091,25 +1088,8 @@ class AddVendorState extends State<AddVendor> {
 
   }
 
-  // void add7(){
-  //   menu2=List.from(menu2)..add(   
-  //     Container (
-  //       //width: MediaQuery.of(context).copyWith().size.width * 0.90,
-  //       child: Container(
-  //         //width: MediaQuery.of(context).copyWith().size.width * 0.90,
-  //         height: 50,
-  //         width: 250,
-  //         child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-  //       ),
-  //     ),
-  //   );
 
-  //   setState(() {
-      
-  //   });
-  // }
-
-   void add8(){
+   void add8(i){
     menu2=List.from(menu2)..add(
      
       Container(
@@ -1133,7 +1113,7 @@ class AddVendorState extends State<AddVendor> {
 
   }
 
-   void add9(){
+   void add9(i){
     menu2=List.from(menu2)..add(
      
       Container(
@@ -1146,7 +1126,7 @@ class AddVendorState extends State<AddVendor> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                onSaved: (input)=> no=List.from(no)..add(nu),
+                onChanged: (input)=> item[i]= int.parse(input),//no=List.from(no)..add(nu),
                 decoration: InputDecoration(
                   labelText: 'Number of menu items', 
                   labelStyle: TextStyle(
@@ -1170,23 +1150,23 @@ class AddVendorState extends State<AddVendor> {
   @override 
   Widget build(BuildContext context){
     
-    if (!check)
-    {
+    if (!check && numVen>0){
       Padding(padding: EdgeInsets.only(top: 15));
-       for (var i=1; i<=6; i++)
-      {
-        
+      for (var i=0 ; i<numVen ; i++){
+        name.add('');
+        email.add('');
+        stallid.add('');
+        item.add(0);
+        Padding(padding: EdgeInsets.only(top: 10));
         add2(i);
-        add3(); 
-        add4(); 
-        add5(); 
-        add6(); 
-        add8(); 
-        add9(); 
-        
+        add3(i);
+        add4(i); 
+        add5(i); 
+        add6(i); 
+        add8(i); 
+        add9(i); 
       }
       check=true; 
-
     }
    
     
@@ -1279,8 +1259,23 @@ class AddVendorState extends State<AddVendor> {
                 icon: Icon(Icons.arrow_forward,
                 size: 45,
                 color: Colors.white,),
-                onPressed: () {
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);   //Modify here to upload Event Data and then move on
+                onPressed: () async {
+                  bool check =true;
+                  List<String> venId = List<String>();
+                  for(var i=0; i<numVen; i++){
+                    if(name[i]=='' || email[i]=='' || stallid[i]=='' || item[i]==0){
+                      check=false;
+                    }
+                  }
+                  if (check){
+                    for (var i=0; i<numVen; i++){
+                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventID' : eid, 'name' : name[i], 'stallNo' : stallid[i], 'logo':null }).then((vid) async{
+                            await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);});
+                        });
+                    }
+                    //print("RRRRRRRR${item.length}");
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);//vid: null, numVen: null)),);   //Modify here to upload Event Data and then move on
+                  }
                 },
               ),
             ),
@@ -1301,6 +1296,10 @@ class AddVendorState extends State<AddVendor> {
 
 
 class Add extends StatefulWidget {
+  // final List<String> vid;
+  // final List<int> numVen;
+  // Add({this.numVen,this.vid});
+
   @override 
   Screen45 createState()=> new Screen45(); 
 }
@@ -1358,28 +1357,26 @@ class Screen45 extends State<Add> {
     void addvalue2(){
     menu2=List.from(menu2)..add(
       Container(
-      child: new Container(
-      padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            //keyboardType: TextInputType.number,
-            validator: (input)=> input.isEmpty? 'Please upload a logo': null,
-            onSaved: (input)=> mlogo=input,
-            decoration: InputDecoration(
-              labelText: 'Upload a logo of the menu item',
-              labelStyle: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 19
-              )
-            ),
-          )
-        ]),
-      ),),
-
-     
-      
-      );
+        child: new Container(
+        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              //keyboardType: TextInputType.number,
+              validator: (input)=> input.isEmpty? 'Please upload a logo': null,
+              onSaved: (input)=> mlogo=input,
+              decoration: InputDecoration(
+                labelText: 'Upload a logo of the menu item',
+                labelStyle: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 19
+                )
+              ),
+            )
+          ]),
+        ),
+      ),
+    );
 
       setState(() {
         
@@ -1399,14 +1396,9 @@ class Screen45 extends State<Add> {
       ),
       
       );
-
       setState(() {
-        
+
       });
-
-
-      
-
   }
 
   
@@ -1419,7 +1411,7 @@ class Screen45 extends State<Add> {
           //padding: EdgeInsets.only(top: 130, left: 20), 
           child: RichText(
           text: TextSpan(children: <TextSpan>[
-            TextSpan(text: "Vendor $i",style: TextStyle(color: Colors.black, fontSize: 22))
+            TextSpan(text: "Vendor ${i+1}",style: TextStyle(color: Colors.black, fontSize: 22))
           ]
           )),
         ),
@@ -1446,9 +1438,8 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
       {
         for (var i=0; i<n; i++)
         {
-          add2(i+1); 
-          //print(no[i]); 
-          for (var j=0; j<no[i]; j++){
+          add2(i); 
+          for (var j=0; j<item[i].length; j++){
             addvalue(j+1); 
             addvalue2(); 
             addvalue3(); 
@@ -2058,8 +2049,7 @@ class Screen48 extends State<Edit> {
       {
         for (var i=0; i<n; i++)
         {
-          add2(i+1); 
-          //print(no[i]); 
+          add2(i+1);
           for (var j=0; j<no[i]; j++){
             addvalue(j+1); 
             addvalue2(); 
@@ -3455,8 +3445,6 @@ class MapsFunc extends State<Maps> {
                   markerSet.add(marker1);
                   marker=marker1;
                   coord=coordinates;
-                  print(coord.latitude);
-                  print(coord.longitude);
                 });
           },
           markers: markerSet,
@@ -3564,7 +3552,6 @@ class SideBarProperties extends State<SideBar>{
   void initState() {
     super.initState();
     readContent().then((String value) {
-      print('OOOOOOOOOOOOOOOOO');
       Map<String, dynamic> userMap = json.decode(value);
       UserData final_object = UserData.fromData(userMap);
       variable=final_object;
@@ -3708,98 +3695,3 @@ class SideBarProperties extends State<SideBar>{
     );
   }
 }
-
-// class CreateEvent extends StatefulWidget {
-
-//   Event data;
-//   int numVen;
-//   CreateEvent({this.data,this.numVen});
-  
-//   @override
-//   CreateEventEntry createState() => CreateEventEntry();
-// }
-
-// class CreateEventEntry extends State<CreateEvent> {
-//   final Event data;
-//   final int numVen;
-//   CreateEventEntry({this.data,this.numVen});
-//   @override
-//   Widget build(BuildContext context) {
-//     print(numVen);
-//     print('k');
-//     //return FirestoreService().addEventPromise(data).toString();//addEventPromise(data); 
-    
-//     // if (done == ''){
-//     //   return LoadingScreen();
-//     // }
-//     // else if(done == 'Error'){  //Failure to fetch Data, Firebase Error. 
-//     // //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
-//     //   return ErrorSignIn();
-//     // }
-//     // else{
-//     //   return AddVendor();
-//     // }
-//   }
-//  }
-
-
-
-// class one extends StatefulWidget{
-
-//   Event data;
-//   int numVen;
-//   one({this.data,this.numVen});
-
-//   @override
-//   two createState() => two();
-// }
-
-// class two extends State<one> {
-
-//   Event data;
-//   int numVen;
-//   two({this.data,this.numVen});
-
-
-//   @override
-//   Widget build(BuildContext context) {
-//     User usr = Provider.of<User>(context);
-//     String user = usr.uid;
-//     return StreamProvider<String>.value(
-//       value: FirestoreService().addEventPromise(data).asStream(),
-//       child: three(),
-//     );
-//   }
-// }
-
-// class three extends StatefulWidget {
-  
-//   Event data;
-//   int numVen;
-//   three({this.data,this.numVen});
-
-//   @override
-//   four createState() => four();
-// }
-
-// class four extends State<three> {
-//     Event data;
-//   int numVen;
-//   four({this.data,this.numVen});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final usr = Provider.of<String>(context);
-//     if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
-//     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
-//       return ErrorSignIn();
-//     }
-//     else if(usr == null){     //Data not Fetched yet or was null
-//       return LoadingScreen();//Text("Error: Cannot connect to Database");
-//     }
-//     else{                     //Test Needed to confirm desired function
-//       return ForgotScreen();
-//     }
-//   }
-//  }
-
