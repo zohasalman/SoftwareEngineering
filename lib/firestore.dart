@@ -81,7 +81,6 @@ class FirestoreService{
         id=eid.toString();
         updateEventID(id);
       });
-      print('calledYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYy');
       return id;
     }catch(e){
       return "Error";
@@ -123,6 +122,7 @@ class FirestoreService{
   Future<QuerySnapshot> verifyInviteCode(String inviteCode) async {
     return await Firestore.instance.collection('Event').where('invitecode', isEqualTo: inviteCode).getDocuments();
   }
+
 
   Stream<List<Vendor>> getVendorInfo(String eventID) {
     return _vendorCollectionReference.where('eventId', isEqualTo: eventID).orderBy('aggregateRating', descending: true).snapshots()

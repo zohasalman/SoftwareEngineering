@@ -338,7 +338,7 @@ class AddEventState extends State<AddEvent> {
                     color: Colors.white,),
                     onPressed: () async {
                       //if(coord!=null){
-                        GeoPoint eventLocation = GeoPoint(23.0,66.0);//coord.latitude, coord.longitude);
+                        GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
                         String eventid;
                         var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
                         //String routee=null;
@@ -346,7 +346,7 @@ class AddEventState extends State<AddEvent> {
                           await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
                               await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;});
                           });
-                          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid)),);
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
                         }
                      // }
                     },
@@ -361,18 +361,25 @@ class AddEventState extends State<AddEvent> {
 }
 
 class EventMenu extends StatefulWidget {
+  final String eid;
+  final String eventName;
+  EventMenu({this.eid,this.eventName});
   @override 
   Screen39 createState()=> new Screen39(); 
 }
 
 class Screen39 extends State<EventMenu> {
-  String eventName= "Karachi Eat"; 
+  final String eid;
+  final String eventName;
+  Screen39({this.eid,this.eventName});
+
+
    
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
   @override 
-  Widget build(BuildContext context){
-    return Scaffold(
+  Widget build(BuildContext context) {    
+    return  Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
         endDrawer:  SideBar(),
@@ -650,7 +657,7 @@ class Screen39 extends State<EventMenu> {
           ],),
         )  
       )
-    ); 
+    );
   }
 }
 
@@ -887,7 +894,8 @@ class Screen41 extends State<AddVendorQty> {
 class AddVendor extends StatefulWidget {
   final int numVen;
   final String eid;
-  AddVendor({this.numVen,this.eid});
+  final String eventName;
+  AddVendor({this.eventName,this.numVen,this.eid});
 
   @override 
   AddVendorState createState()=> new AddVendorState(numVen: numVen,eid: eid ); 
@@ -896,7 +904,8 @@ class AddVendor extends StatefulWidget {
 class AddVendorState extends State<AddVendor> {
   int numVen;
   String eid;
-  AddVendorState({this.numVen,this.eid});
+  String eventName;
+  AddVendorState({this.eventName,this.numVen,this.eid});
   List<String> name = [];
   List<String> email = new List<String>(), stallid = new List<String>();
   List<int> item = new List<int>();
@@ -1126,7 +1135,7 @@ class AddVendorState extends State<AddVendor> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                onChanged: (input)=> item[i]= int.parse(input),//no=List.from(no)..add(nu),
+                onChanged: (input)=> item[i]= int.parse(input),
                 decoration: InputDecoration(
                   labelText: 'Number of menu items', 
                   labelStyle: TextStyle(
@@ -1273,8 +1282,7 @@ class AddVendorState extends State<AddVendor> {
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);});
                         });
                     }
-                    //print("RRRRRRRR${item.length}");
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);//vid: null, numVen: null)),);   //Modify here to upload Event Data and then move on
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> Add(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                   }
                 },
               ),
@@ -1296,43 +1304,45 @@ class AddVendorState extends State<AddVendor> {
 
 
 class Add extends StatefulWidget {
-  // final List<String> vid;
-  // final List<int> numVen;
-  // Add({this.numVen,this.vid});
+  final String eid;
+  final List<String> vid;
+  final List<int> numVen;
+  final String eventName;
+  Add({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  Screen45 createState()=> new Screen45(); 
+  Screen45 createState()=> new Screen45(vid:vid,numVen:numVen); 
 }
 
 class Screen45 extends State<Add> {
-  String name,email, stallid,item;
-  bool value=false; 
-  var logo, mlogo;  
+  String eid;
+  String eventName;
+  List<String> vid;
+  List<int> numVen;
+  Screen45({this.eid,this.numVen,this.vid,this.eventName});
+  List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
+  //List<String> itemcoll = new List<String>();
+  bool value=false;
   bool check=false; 
-  var nu; 
-
   var n=int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
-  
-  int count=1; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
-  
 
-  void addvalue(j){
+  void addvalue(i,j){
     menu2=List.from(menu2)..add(
-       Container(
-        child: new Container(
+      Container(
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
         padding:EdgeInsets.only( top: 0, left: 20, right: 20),
         child: Column(
           children: <Widget>[
             TextFormField(
               //keyboardType: TextInputType.number,
               validator: (input)=> input.isEmpty? 'Please enter menu item': null,
-              onSaved: (input)=> item=input,
+              onChanged: (input)=> itemname[i][j]=input,
               decoration: InputDecoration(
-                labelText: 'Menu Item $j',
+                labelText: 'Menu Item ${j+1}',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -1340,31 +1350,27 @@ class Screen45 extends State<Add> {
               ),
             ),
           ],
-        ),
-        ),
-       )
-
-    
-      
-      );
-
-      setState(() {
+        )
+      ),
+    );
+    setState(() {
         
-      });
+    });
 
   }
 
-    void addvalue2(){
+  void addvalue2(i,j){
     menu2=List.from(menu2)..add(
       Container(
-        child: new Container(
-        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        child: Row(children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.75,
+            padding:EdgeInsets.only( top: 5, left: 20),
+            child: TextFormField(
               //keyboardType: TextInputType.number,
               validator: (input)=> input.isEmpty? 'Please upload a logo': null,
-              onSaved: (input)=> mlogo=input,
+              onChanged: (input)=> mlogo[i][j]=input,
               decoration: InputDecoration(
                 labelText: 'Upload a logo of the menu item',
                 labelStyle: TextStyle(
@@ -1373,42 +1379,40 @@ class Screen45 extends State<Add> {
                 )
               ),
             )
-          ]),
-        ),
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.10,
+            child: Ink(
+              decoration:  ShapeDecoration(
+                shape: CircleBorder(),
+                gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                ),
+                shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.file_upload,
+                color: Colors.white,),
+                onPressed: () {
+                  
+                },
+              ),
+            ),
+          )
+        ],),
       ),
     );
-
-      setState(() {
-        
-      });
-
+    setState(() {
+    });
   }
-
-  void addvalue3(){
-    menu2=List.from(menu2)..add(
-     
-      Container (
-          child: Container(
-            height: 50,
-            width: 250,
-            child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-        ),
-      ),
-      
-      );
-      setState(() {
-
-      });
-  }
-
   
   void add2(i){
     menu2=List.from(menu2)..add(
-     
       Container(
         child: InkWell(
         child: new Container(
-          //padding: EdgeInsets.only(top: 130, left: 20), 
           child: RichText(
           text: TextSpan(children: <TextSpan>[
             TextSpan(text: "Vendor ${i+1}",style: TextStyle(color: Colors.black, fontSize: 22))
@@ -1417,8 +1421,7 @@ class Screen45 extends State<Add> {
         ),
         ),
       ),
-      
-      );
+    );
 
       setState(() {
         
@@ -1430,38 +1433,25 @@ class Screen45 extends State<Add> {
 var scaffoldKey=GlobalKey<ScaffoldState>();
   @override 
   Widget build(BuildContext context){
-
-    
-    
+    if (!check)
     {
-       if (!check)
+      for (var i=0; i<numVen.length; i++)
       {
-        for (var i=0; i<n; i++)
-        {
-          add2(i); 
-          for (var j=0; j<item[i].length; j++){
-            addvalue(j+1); 
-            addvalue2(); 
-            addvalue3(); 
-
-          }
-
-          
-          
+        add2(i); 
+        itemname.add([]);
+        mlogo.add([]);
+        for (var j=0; j<numVen[i]; j++){
+          itemname[i].add('');
+          mlogo[i].add('');
+          addvalue(i,j); 
+          addvalue2(i,j); 
+          //addvalue3(); 
         }
-        check=true; 
-        
-
       }
-   
-
+      check=true; 
     }
     
-   
-    
-    
     return Scaffold(
-     
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
         endDrawer:  SideBar(),
@@ -1488,10 +1478,11 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                     icon: Icon(
                       Icons.arrow_back,
                        
-                      ), 
+                    ), 
                     onPressed: (){
                       Navigator.pop(context);
-                      }),
+                    }
+                  ),
                   actions: <Widget>[
                        IconButton(
                         onPressed: () {                          
@@ -1544,34 +1535,49 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
         ),
       body: SingleChildScrollView(
         key: _formKey,
-        child: Column(children: <Widget>[
-          
-          Container(
-            child: Column(
-            children: menu2),
-          ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
-                height: 100,
-                width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection()),),
-                } ),
+        child: Center( 
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  children: menu2
+                ),
+              ), 
+              Container (
+                child: Ink(
+                  height: 100,
+                  width: 200,
+                  child: IconButton(
+                    icon: new Image.asset("asset/image/icon.png"),
+                    onPressed:() async {
+                      bool checkNext = true;
+                        //add eid from previous screen here to pass to QR to Event menu 
+                        for (var i=0; i<numVen.length; i++){
+                          for (var j=0; j<numVen[i]; j++){
+                            if(itemname[i][j]=='' ){
+                              checkNext=false;
+                            }
+                          }
+                        }
+                        if (checkNext){
+                          for (var i=0; i<numVen.length; i++){
+                            for (var j=0; j<numVen[i]; j++){
+                              //print(itemname[i][j]);
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){});//venId.add(vid.documentID);});
+                                });
+                            }
+                          }
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
+                        }
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
-      
-
-
-          
-        ],
+            ],
+          )
         )  
       )
-
-      
     ); 
   }
 }
@@ -3169,11 +3175,18 @@ class MyApp extends StatelessWidget {
 }
 
 class QRselection extends StatefulWidget {
+  final String eid;
+  final String eventName;
+  QRselection({this.eid,this.eventName});
+
   @override
   ScreenQRselect createState() => new ScreenQRselect();
 }
 
 class ScreenQRselect extends State<QRselection> {
+  String eid,eventName;
+  ScreenQRselect({this.eid,this.eventName});
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -3246,7 +3259,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);
+                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3283,7 +3296,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);
+                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
                               },
                               child: Container(
                                 width: 250.0,
