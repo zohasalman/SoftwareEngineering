@@ -5,6 +5,7 @@ import 'VendorList.dart';
 import 'hostit.dart';
 import 'userRedirection.dart';
 import 'package:intl/intl.dart';
+import 'package:email_validator/email_validator.dart';
 
 void main1() => runApp(App());
 
@@ -42,11 +43,14 @@ class FirstScreen extends State<LoginScreen> {
 
   final _formKey= GlobalKey<FormState>(); 
 
+  
   void submit() async {
+    setState(() => _errorMessage = '');
     _formKey.currentState.save();
     dynamic result = await _auth.signInEmailAndPassword(_email, _password); 
     if (result == null){
       setState(() => _errorMessage = 'Invalid email or password combination.');
+
     }else{
       Redirection();
     }
@@ -122,11 +126,11 @@ class FirstScreen extends State<LoginScreen> {
             child: Column(
               children: <Widget>[
                 
-                 Container(
+                 SafeArea(
                   child: Padding(
                   padding:EdgeInsets.only( top: 30, left: 20, right: 20), 
                   child:TextFormField(
-                  validator: (input)=> input.isEmpty? 'Please enter an email': null,
+                  validator: (input)=> input.isEmpty? null : null,
                   onSaved: (input)=> _email = input.trim(),
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -141,11 +145,11 @@ class FirstScreen extends State<LoginScreen> {
             )
           ),
 
-          Container(
+          SafeArea(
            
             child: Column(
               children: <Widget>[
-                Container(
+                SafeArea(
                   
                   child: Padding(
                   padding:EdgeInsets.only( top: 0, left: 20, right: 20), 
@@ -162,6 +166,25 @@ class FirstScreen extends State<LoginScreen> {
                   ),
                   obscureText: true,
                 ),),),
+
+                SafeArea(
+                    child: _errorMessage != "Invalid email or password combination."? Container() : Container(
+                      
+                      padding:EdgeInsets.only( top: 5), 
+                      child: Column(
+                        children: <Widget>[
+                          
+                          Container(
+                            alignment: Alignment(-0.8,-0.9),
+                              child: Text(_errorMessage,
+                              style: TextStyle(color: Colors.red)
+                              ),
+                          ),
+                        ],
+                      )                        
+                    ),
+                  ),
+
                 SizedBox(height: 7),
                 InkWell(
                   onTap: (){
@@ -200,7 +223,7 @@ class FirstScreen extends State<LoginScreen> {
 
                 ),
 
-                  Container(
+                  SafeArea(
                   child: Padding(
                     padding: EdgeInsets.only(top:40),
                     child: InkWell(
@@ -239,7 +262,7 @@ class FirstScreen extends State<LoginScreen> {
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
                   //widget.toggleView();
                 },
-                child: new Container(
+                child: new SafeArea(
                   //padding: EdgeInsets.only(top: 130, left: 20), 
                   child: RichText(
                   text: TextSpan(children: <TextSpan>[
@@ -287,7 +310,7 @@ class FirstScreen extends State<LoginScreen> {
                       
                 ),),
 
-                Container (
+                Container(
                   height: 50,
                   width: 250,
                   decoration: BoxDecoration(
@@ -323,18 +346,44 @@ class SignScreen extends StatefulWidget {
 
 
 class SecondScreen extends State<SignScreen> {
-  String firstName, lastName, gender, _errorMesage;
+  String firstName='', lastName='', gender, _errorMesage;
+  bool error1=true, error2=true; 
+
   DateTime _dateTime; 
-  
+
+  bool validate=false; 
   final _formKey= GlobalKey<FormState>(); 
 
   void submit(){
+    setState(() => validate=true);
     _formKey.currentState.save();
-    Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign2Screen(firstName: firstName, lastName: lastName, gender: gender,date: _dateTime)));
+    if (!error1 && !error2 && (firstName!='') && (lastName!='')) {
+      Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign2Screen(firstName: firstName, lastName: lastName, gender: gender,date: _dateTime)));
+    }
+    
+  }
+
+  List<DropdownMenuItem<String>> n=[];
+  void loadData(){
+    n=[];
+    n.add(new DropdownMenuItem(
+      child: new Text('Male'),
+      value: 'Male')
+    ); 
+    n.add(new DropdownMenuItem(
+      child: new Text('Female'),
+      value: 'Female')
+    ); 
+     n.add(new DropdownMenuItem(
+      child: new Text('Other'),
+      value: 'Other')
+    ); 
+   
   }
 
   @override 
   Widget build(BuildContext context){
+    loadData(); 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: PreferredSize(
@@ -389,13 +438,14 @@ class SecondScreen extends State<SignScreen> {
       ),
       body: Form(
         key: _formKey,
+        autovalidate: validate,
         child: Column(children: <Widget>[          
           Container(
             padding:EdgeInsets.only( top: 1, left: 20, right: 20),
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  validator: (input)=> input.isEmpty? 'Please enter a valid first name': null, 
+                  validator: (input)=> input.isEmpty? 'Please fill out this field': null, 
                   onSaved: (input)=> firstName = input,
                   decoration: InputDecoration(
                     labelText: 'First Name',
@@ -414,7 +464,7 @@ class SecondScreen extends State<SignScreen> {
             child: Column(
               children: <Widget>[
                  TextFormField(
-                  validator: (input)=> input.isEmpty? 'Please enter a valid last name': null, 
+                  validator: (input)=> input.isEmpty? 'Please fill out this field': null, 
                   onSaved: (input)=> lastName=input,
                   decoration: InputDecoration(
                     labelText: 'Last Name',
@@ -427,28 +477,52 @@ class SecondScreen extends State<SignScreen> {
               ],
             )
           ),
-
-
-          Container(
+          SafeArea(
+            child:  Container(
             padding:EdgeInsets.only( top: 10, left: 20, right: 20),
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  validator: (input)=> input.isEmpty? 'Please enter a valid gender' : null, 
-                  onSaved: (input)=> gender = input,
-                  decoration: InputDecoration(
-                    labelText: 'Gender',
-                    labelStyle: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 19
-                    )
-                  ),
+            child: Row(
+            children: <Widget>[
+              Text('Gender',style: TextStyle(color: Colors.grey[600], fontSize: 19)),
+              Container(
+              padding:EdgeInsets.only(left:80 ),
+              child: DropdownButton<String>(
+                value:gender, 
+                items:n, 
+                onChanged: (value){
+                  gender =value; 
+                  error1=false; 
+                  setState((){
+                  });
+                },
+                underline: SizedBox(), 
+                hint: Text(
+                  'Please select an option'
                 ),
-
-              ]
-            )
+              ),),],
+            ), ),
           ),
 
+
+           SafeArea(
+              child: !(error1 && validate)? Container() : Container(
+                // print(error1),
+                // print(validate),
+                
+                padding:EdgeInsets.only( top: 5), 
+                child: Column(
+                  children: <Widget>[
+                    
+                    Container(
+                      alignment: Alignment(-0.8,-0.9),
+                        child: Text("Please select a gender above",
+                        style: TextStyle(color: Colors.red)
+                        ),
+                    ),
+                  ],
+                )                        
+              ),
+            ),
+         
           Container(
             child: Row(
               children: <Widget>[
@@ -479,6 +553,7 @@ class SecondScreen extends State<SignScreen> {
                       }
                     ).then((date) {
                       setState(() {
+                        error2=false;
                         _dateTime = date;
                       });
                     });
@@ -488,6 +563,28 @@ class SecondScreen extends State<SignScreen> {
               ],
             )
           ),
+
+          
+           SafeArea(
+              child: !(error2 && validate)? Container() : Container(
+                // print(error1),
+                // print(validate),
+                
+                padding:EdgeInsets.only( top: 5), 
+                child: Column(
+                  children: <Widget>[
+                    
+                    Container(
+                      alignment: Alignment(-0.8,-0.9),
+                        child: Text("Please select a date above",
+                        style: TextStyle(color: Colors.red)
+                        ),
+                    ),
+                  ],
+                )                        
+              ),
+            ),
+         
 
           Expanded (
          
@@ -521,19 +618,29 @@ class Sign2Screen extends StatefulWidget {
 
 
 class ThirdScreen extends State<Sign2Screen> {
-  String email, password, confirmpassword, _errorMessage; 
-  
+  String email='', password='', confirmpassword='', _errorMessage; 
+  bool validate=false; 
+  bool error1=false, error2=false, error3=false; 
   final _formKey= GlobalKey<FormState>(); 
 
   void submit() async {
+    setState(() => validate=true);
     _formKey.currentState.save();
     dynamic result = await _auth.registerWithEmailAndPassword(widget.firstName, widget.lastName, widget.gender, widget.date, email, password); 
     if (result == null){
-      setState(() => _errorMessage = 'Sign Up failed');
+      setState(() => _errorMessage = 'This email has already been registered');
     }else{
       print(result);
     }
-    Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
+    print(email); 
+    print(password); 
+    print(confirmpassword); 
+    if (EmailValidator.validate(email, true) && (password.length<6) && (confirmpassword==password))
+    {
+      
+        Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
+    }
+    
   }
 
   @override 
@@ -592,14 +699,18 @@ class ThirdScreen extends State<Sign2Screen> {
       ),
       body: Form(
         key: _formKey,
+        autovalidate: validate, 
         child: Column(children: <Widget>[          
           Container(
             padding:EdgeInsets.only( top: 1, left: 20, right: 20),
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  validator: (input)=> input.isEmpty? 'Please enter an email': null,
-                  onSaved: (input)=> email=input.trim(),
+                  validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
+                  onSaved: (input)=> setState(() {
+                    error1=true;
+                    email=input.trim(); 
+                  }),
                   decoration: InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(
@@ -618,7 +729,10 @@ class ThirdScreen extends State<Sign2Screen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
-                  onSaved: (input)=>password=input.trim(),
+                  onSaved: (input)=> setState(() {
+                    error2=true;
+                    password=input.trim(); 
+                  }),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     labelStyle: TextStyle(
@@ -640,7 +754,10 @@ class ThirdScreen extends State<Sign2Screen> {
               children: <Widget>[
                 TextFormField(
                   validator: (input)=> input!=password? 'Passwords do not match' : null,
-                  onSaved: (input)=>confirmpassword=input.trim(),
+                  onSaved: (input)=> setState(() {
+                    error3=true;
+                    confirmpassword=input.trim(); 
+                  }),
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
                     labelStyle: TextStyle(
@@ -655,9 +772,27 @@ class ThirdScreen extends State<Sign2Screen> {
               ]
             )
           ),
+
+          SafeArea(
+            child: _errorMessage != 'This email has already been registered'? Container() : Container(
+              
+              padding:EdgeInsets.only( top: 5), 
+              child: Column(
+                children: <Widget>[
+                  
+                  Container(
+                    alignment: Alignment(-0.8,-0.9),
+                      child: Text(_errorMessage,
+                      style: TextStyle(color: Colors.red)
+                      ),
+                  ),
+                ],
+              )                        
+            ),
+          ),
           Container(
             child: Padding(
-              padding: EdgeInsets.only(top:100),
+              padding: EdgeInsets.only(top:50),
               child: InkWell(
                 onTap: submit,
                 child: Container(
@@ -895,12 +1030,23 @@ class ForgotScreen extends StatefulWidget {
 
 class FifthScreen extends State<ForgotScreen> {
   String email; 
+  String _errorMessage=''; 
   
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
   void submit() async {
+    setState(() => _errorMessage = '');
     _formKey.currentState.save();
-    await _auth.resetPassword(email); 
+
+    try{
+      await _auth.resetPassword(email); 
+      return null; 
+    } catch(e){
+      
+      _errorMessage="Not a registered email address";
+
+    }
+    
     Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),); 
   }
 
@@ -995,9 +1141,26 @@ class FifthScreen extends State<ForgotScreen> {
               ],
             )
           ),
+          SafeArea(
+            child: _errorMessage != "Not a registered email address"? Container() : Container(
+              
+              padding:EdgeInsets.only( top: 5), 
+              child: Column(
+                children: <Widget>[
+                  
+                  Container(
+                    alignment: Alignment(-0.8,-0.9),
+                      child: Text(_errorMessage,
+                      style: TextStyle(color: Colors.red)
+                      ),
+                  ),
+                ],
+              )                        
+            ),
+          ),
 
          Container(
-           padding: EdgeInsets.only(top: 80, left: 0), 
+           padding: EdgeInsets.only(top: 50, left: 0), 
               
               child: InkWell(
                 onTap: submit,
@@ -1153,6 +1316,7 @@ class SixthScreen extends State<Forgot2Screen> {
            ]),),
 
           Container(
+            padding: EdgeInsets.only(top: 20, left: 20, right: 20), 
           
               child: Center(
                 
