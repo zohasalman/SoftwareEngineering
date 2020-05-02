@@ -2179,21 +2179,23 @@ class EditEvent extends StatefulWidget {
   final String eid;
   EditEvent({this.eid,this.coord,this.eventData});
   @override 
-  Screen50 createState()=> new Screen50(eid:eid,coord:coord,eventData: eventData); 
+  EditEventState createState()=> new EditEventState(eid:eid,coord:coord,eventData: eventData); 
 }
 
-class Screen50 extends State<EditEvent> {
+class EditEventState extends State<EditEvent> {
   Event eventData;
   LatLng coord;
   String eid;
-  Screen50({this.eid,this.coord,this.eventData});
+  String savedName="", savedLogo="", savedCover="";
+  GeoPoint savedLocation=null;
+  EditEventState({this.eid,this.coord,this.eventData});
   String name, add, vendor, image, pic;
   final dcontroller=new TextEditingController(); 
   final dcontroller2=new TextEditingController(); 
   final dcontroller3=new TextEditingController(); 
   final dcontroller4=new TextEditingController(); 
   final dcontroller5=new TextEditingController(); 
-  String input="Karachi Eat", inputadd="Block 3 Clifton, Karachi", inputvendors="9", inputimag="logo.png", inputmepic="Cover.jpg";
+
   
   bool value=false; 
 
@@ -2209,11 +2211,26 @@ class Screen50 extends State<EditEvent> {
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
 
+  void getCoordinates() async {
+    final updatedcoord = await Navigator.push(
+      context,
+      CupertinoPageRoute(
+          fullscreenDialog: true, builder: (context) => EditMaps()),
+    );
+    coord=updatedcoord;
+  }
+
   @override 
   Widget build(BuildContext context){
-     
-    
-        
+    savedName=eventData.name;
+    savedLocation=GeoPoint(coord.latitude, coord.longitude);
+    savedLogo=eventData.logo;
+    savedCover=eventData.coverimage;
+    dcontroller.text=eventData.name;
+    //dcontroller2.text='${eventData.location1.latitude},${eventData.location1.longitude}';
+    dcontroller3.text=eventData.logo;
+    dcontroller4.text=eventData.coverimage;
+
     return Scaffold(
      
       resizeToAvoidBottomPadding: false,
@@ -2279,14 +2296,20 @@ class Screen50 extends State<EditEvent> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
+                      controller: dcontroller,
                       validator: (input)=> input.isEmpty? 'Please enter a name': null,
-                      onChanged: (input)=> name=input,
+                      onChanged: (input)=> savedName=input,
                       decoration: InputDecoration(
-                        labelText: 'Name of the event',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
+                        hintText: 'Enter your name',
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: ()=>{
+                            setState((){
+                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
+                              //dcontroller.clear();
+                            }),
+                          },
+                        ),
                       ),
                     )
                   ],
@@ -2299,8 +2322,11 @@ class Screen50 extends State<EditEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                     child: TextFormField(
-                      validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
+                      //controller: dcontroller,
+                      //validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                       //validator: (input)=> input.isEmpty? 'Please enter a valid location': nu//coord=LatLng(23.32, 65.1);
+                      readOnly: true,
+                      //controller: dcontroller2,
                       decoration: InputDecoration(
                         labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
@@ -2326,7 +2352,8 @@ class Screen50 extends State<EditEvent> {
                     icon: Icon(Icons.add_location,
                     color: Colors.white,),
                     onPressed: () {
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
+                      getCoordinates();
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
                   ),
                 ),
@@ -2334,27 +2361,7 @@ class Screen50 extends State<EditEvent> {
             ],),
           ),
           
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  //onChanged: (input)=> eventNumber=int.parse(input),
-                  decoration: InputDecoration(
-                    labelText: 'Number of vendors',
-                    labelStyle: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 19
-                    )
-                    
-                  ),
-                )
-              ],
-            )
-          ),
+
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             child: Row(children: <Widget>[
@@ -2363,15 +2370,20 @@ class Screen50 extends State<EditEvent> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 
                     child: TextFormField(
-                      
+                      controller: dcontroller3,
                       validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onChanged: (input)=> logo=input,
+                      onChanged: (input)=> savedLogo=input,
                       decoration: InputDecoration(
-                        labelText: 'Upload a logo of your event',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
+                        hintText: 'Upload a logo of your event',
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: ()=>{
+                            setState((){
+                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller3.clear());
+                              //dcontroller3.clear();
+                            }),
+                          },
+                        ),
                       ),
                     )
                   
@@ -2418,14 +2430,20 @@ class Screen50 extends State<EditEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField( 
+                  controller: dcontroller4,
                   validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                  //onChanged: (input)=> photo=input,
+                  onChanged: (input)=> savedCover=input,
                   decoration: InputDecoration(
-                    labelText: 'Upload a photo of your event',
-                    labelStyle: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 19
-                    )
+                    hintText: 'Upload a photo of your event',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: ()=>{
+                        setState((){
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller4.clear());
+                          //dcontroller4.clear();
+                        }),
+                      },
+                    ),
                   ),
                 )
               ),
@@ -2464,36 +2482,40 @@ class Screen50 extends State<EditEvent> {
           Padding(
             padding: EdgeInsets.all(15),
           ),
-          Center(child: Container(
-                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+          Center(
+            child: Container(
+              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+              width:60,
+              height:60,
+              child: Ink(
                 width:60,
                 height:60,
-                child: Ink(
-                  width:60,
-                  height:60,
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    color: null,
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                    ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                decoration:  ShapeDecoration(
+                  shape: CircleBorder(),
+                  color: null,
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
                   ),
-                  child: IconButton(
-                    alignment: Alignment.center,
-                    icon: Icon(Icons.arrow_forward,
-                    size: 45,
-                    color: Colors.white,),
-                    onPressed: () async {
-                      //if(coord!=null){
-                        GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                        }
-                     // }
-                  ),
+                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
                 ),
-          ),),
+                child: IconButton(
+                  alignment: Alignment.center,
+                  icon: Icon(Icons.arrow_forward,
+                  size: 45,
+                  color: Colors.white,),
+                  onPressed: () async {
+                    //if(coord!=null){
+                    GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
+                    await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true);
+                    //}
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
+                  }
+                ),
+              ),
+            ),
+          ),
         ],
         )  
       )
@@ -2627,7 +2649,6 @@ class SuccessScreen extends State<Screen> {
                   
                   ]
                   )),
-
               ),
             ),
            ),
@@ -3480,7 +3501,7 @@ class EditMaps extends StatefulWidget {
 }
 
 
-class EditMapsFunc extends State<Maps> {
+class EditMapsFunc extends State<EditMaps> {
   LatLng coord;
   Completer<GoogleMapController> _controller = Completer();
   Marker marker=Marker(
@@ -3524,6 +3545,8 @@ class EditMapsFunc extends State<Maps> {
                       Icons.arrow_back,    
                       ), 
                     onPressed: (){
+                      if (coord != null)
+                        Navigator.pop(context, coord);
                       //coord=LatLng(23.32, 65.1);
                       //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid: eid,coord: coord)),);
                     }
