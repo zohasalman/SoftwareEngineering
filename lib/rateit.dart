@@ -20,14 +20,16 @@ import 'item.dart';
 import 'edit-profile.dart';
 import 'my-rating.dart';
 import 'ratedVendor.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'rate-body-items.dart';
 
-//import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
 // import 'package:camera/camera.dart';
 // import 'package:qrcode_reader/qrcode_reader.dart';
 DateTime _dateTime;
 String user_id;
+
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
         home: LoginScreen(),
@@ -999,11 +1001,16 @@ class _ViewVendor extends State<ViewVendor> {
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
-            String scanning = "";//await BarcodeScanner.scan();
-
-            setState() {
-              var qr = scanning;
-            }
+            // String scanning = ""; 
+            // scanning  = await BarcodeScanner.scan();
+            String name, logo;
+            await FirestoreService().getVendor('bSXeCJ7OEYV24U31fksL').then((docs){
+              if (docs.documents.isNotEmpty){
+                name = docs.documents[0].data['name'];
+                logo = docs.documents[0].data['logo'];
+              }
+            });
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DoRatings(name: name, logo: logo, vendorId: 'bSXeCJ7OEYV24U31fksL')));
           },
         ),
       ),
@@ -1346,238 +1353,125 @@ class _EditRating1State extends State<EditRating1> {
 }
 
 class DoRatings extends StatefulWidget {
-  String value, image;
 
-  DoRatings({Key key, this.value, this.image}) : super(key: key);
+  String name, logo, vendorId;
+  
+  DoRatings({this.name, this.logo, this.vendorId});
 
   @override
   _DoRatings createState() => new _DoRatings();
 }
 
 class _DoRatings extends State<DoRatings> {
-  double myrating;
+  List<Map> myRatingInfo = new List();
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('McDonalds',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 28))),
-                      )),
-                  flexibleSpace: Container(
-                      decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]),
-                    image: DecorationImage(
-                      image: AssetImage(
+    return StreamProvider<List<Item>>.value(
+      value: FirestoreService().getAllItemInfo('${widget.vendorId}'),
+      child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              child: Text('${widget.name}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
                         "asset/image/Chat.png",
                       ),
-                      fit: BoxFit.fitWidth,
-                    ),
-                  )),
-                )
-              ],
-            ),
-            clipper: Clipshape(),
-          )),
-      body: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Container(
-            child: ListView(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.asset('asset/image/mcdonalds.png'),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )),
+                  )
+                ],
               ),
+              clipper: Clipshape(),
             ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                  child: Text('Top Rated Items',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                )
-              ],
             ),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                        child: Image.asset('asset/image/bigmac.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('BigMac',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar(
-                          onRatingChanged: (rating) =>
-                              setState(() => rating = rating),
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 42,
-                        ),
-                      ],
+            body: Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Container(
+                  child: ListView(
+                children: <Widget>[
+                  Container(
+                    height: 200.0,
+                    width: 200.0,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                      child: Image.network('${widget.logo}')
                     ),
                   ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 0.0),
-                        child: Image.asset('asset/image/mcchicken.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('McChicken',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
+                  DisplayItems(list: myRatingInfo),
+                  Container(
+                  height: 100.0,
+                  width: 100.0,
                   child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar(
-                          onRatingChanged: (rating) =>
-                              setState(() => rating = rating),
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 42,
-                        ),
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 15.0),
-                        child: Image.asset('asset/image/McFries.png'),
-                      ),
-                      Padding(
-                          padding:
-                              EdgeInsets.only(right: 0.0, left: 20.0, top: 0.0),
-                          child: Text('Mc Fries',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar(
-                          onRatingChanged: (rating) =>
-                              setState(() => rating = rating),
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 42,
-                        ),
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Container(
-                height: 100.0,
-                width: 100.0,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 0.0),
-                  child: GestureDetector(
-                      child: Image.asset('asset/image/Group 55.png'),
-                      onTap: () {}),
-                ))
-          ],
-        )),
-      ),
+                    padding: EdgeInsets.only(bottom: 0.0),
+                    child: GestureDetector(
+                        child: Image.asset('asset/image/Group 55.png'),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => DoRatingFinal(
+                              name: '${widget.name}', 
+                              image: '${widget.logo}',
+                              vendorId: '${widget.vendorId}',
+                              list: myRatingInfo,
+                              )));
+                        }),
+                    )
+                  )
+                ]
+              )
+            )
+          )
+        ),
     );
   }
 }
 
 class DoRatingFinal extends StatefulWidget {
-  String value, image;
+  String name, image, vendorId;
+  List<Map> list;  
 
-  DoRatingFinal({Key key, this.value, this.image}) : super(key: key);
+  DoRatingFinal({this.name, this.image, this.vendorId, this.list});
   @override
   _DoRatingFinalState createState() => _DoRatingFinalState();
 }
 
 class _DoRatingFinalState extends State<DoRatingFinal> {
+
+  String review;
+  double finalRating;
+
+  void submit(double finalRating){
+    var error = FirestoreService().sendRatings(user_id, widget.list, widget.name, widget.image, widget.vendorId, review, finalRating);
+    if (error != null){
+      print(error);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -1627,7 +1521,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
               child: Column(
                 children: <Widget>[
                   Container(
-                      child: Text('McDonalds',
+                      child: Text('${widget.name}',
                           style: TextStyle(fontSize: 20, color: Colors.black))),
                   Container(
                     alignment: Alignment(0.00, 0.0),
@@ -1635,7 +1529,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                     width: 200.0,
                     child: Padding(
                       padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                      child: Image.asset('asset/image/mcdonalds.png'),
+                      child: Image.network('${widget.image}'),
                     ),
                   ),
                   new Divider(),
@@ -1649,8 +1543,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                       child: Column(
                         children: <Widget>[
                           RatingBar(
-                            onRatingChanged: (rating) =>
-                                setState(() => rating = rating),
+                            onRatingChanged: (rating) => finalRating = rating,
                             filledIcon: Icons.star,
                             emptyIcon: Icons.star_border,
                             halfFilledIcon: Icons.star_half,
@@ -1686,6 +1579,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                         offset: Offset(0.0, 100.0),
                         child: RaisedButton(
                           onPressed: () {
+                            submit(finalRating);
                             AlertDialog(
                               content: Text(
                                 'Success!',
