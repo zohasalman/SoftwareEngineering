@@ -4,12 +4,14 @@ import 'package:rateit/hostit.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'hostit.dart';
+import 'Event.dart';
 import 'hostit_first.dart';
 import 'login.dart';
 import 'rateit.dart';
 import 'user.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Redirection extends StatefulWidget{
 
@@ -50,7 +52,7 @@ class RedirectorState extends State<Redirector> {
       return InviteScreen(uid: '${widget.uid}');
     }
     else if(usr == 'management'){ 
-      return HostitHomescreen();//AddVendor(numVen:1,eid:'da');//
+      return HostitHomescreen();//EditEvent(eid:'Pop',coord:LatLng(0, 0) ,eventData:Event(uid:null, eventID:null, invitecode:null, location1:null, name:'aladin', logo:'c', coverimage:'d'), );//HostitHomescreen();//AddVendor(numVen:1,eid:'da');//
     }
     else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 

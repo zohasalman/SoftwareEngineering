@@ -341,7 +341,6 @@ class AddEventState extends State<AddEvent> {
                         GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
                         String eventid;
                         var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
-                        //String routee=null;
                         if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
                           await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
                               await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;});
@@ -365,7 +364,7 @@ class EventMenu extends StatefulWidget {
   final String eventName;
   EventMenu({this.eid,this.eventName});
   @override 
-  Screen39 createState()=> new Screen39(); 
+  Screen39 createState()=> new Screen39(eid:eid,eventName:eventName ); 
 }
 
 class Screen39 extends State<EventMenu> {
@@ -517,7 +516,7 @@ class Screen39 extends State<EventMenu> {
             Container(
                 child: InkWell(
                   onTap: (){
-                  // Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu()),);  
+                    
                   },
                   child: Container(
                     height: 50,
@@ -573,8 +572,7 @@ class Screen39 extends State<EventMenu> {
             Container(
                 child: InkWell(
                   onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty()),);
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty(eid: eid, eventName: eventName,)),);
                   },
                   child: Container(
                     height: 50,
@@ -629,8 +627,15 @@ class Screen39 extends State<EventMenu> {
 
             Container(
                 child: InkWell(
-                  onTap: (){
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  onTap: () async {
+                    Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
+                    //await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true);
+                    await Firestore.instance.collection('Event').document(eid).get().then((value){
+                      Event passEvent = new Event(uid:null, eventID:null, invitecode:null, location1:value.data['location1'], name:value.data['name'], logo:value.data['logo'], coverimage:value.data['coverimage']);
+                      varEvent = passEvent;
+                      //varEvent.logo = value.data['userRole'];
+                    });
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
                   },
                   child: Container(
                     height: 50,
@@ -662,11 +667,20 @@ class Screen39 extends State<EventMenu> {
 }
 
 class AddVendorQty extends StatefulWidget {
+  final String eid;
+  final String eventName;
+  AddVendorQty({this.eid,this.eventName});
+
   @override 
-  Screen41 createState()=> new Screen41(); 
+  Screen41 createState()=> new Screen41(eid:eid,eventName:eventName); 
 }
 
 class Screen41 extends State<AddVendorQty> {
+  final String eid;
+  int numVen;
+  String eventName;
+  String valSave;
+  Screen41({this.eid,this.eventName});
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   List<DropdownMenuItem<String>> n=[];
@@ -688,7 +702,6 @@ class Screen41 extends State<AddVendorQty> {
       child: new Text('4'),
       value: '4')
     ); 
-
     n.add(new DropdownMenuItem(
       child: new Text('5'),
       value: '5')
@@ -723,7 +736,7 @@ class Screen41 extends State<AddVendorQty> {
 
   @override 
   Widget build(BuildContext context){
-     loadData(); 
+    loadData(); 
     return Scaffold(
         //key: scaffoldKey,
         endDrawer:  SideBar(),
@@ -783,23 +796,21 @@ class Screen41 extends State<AddVendorQty> {
         key: _formKey,
         child: Column(children: <Widget>[
           Container(
-            child: Transform.translate(
-            offset: Offset(0,0),
+            child: Center(
               child: Container(
                 padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
                     TextSpan(text: "How many vendors would you like to add?",style: TextStyle(color: Colors.black, fontSize: 20))
-                  ]
-                  )),
-
+                  ],),
+                ),
               ),
             ),
           ),
 
           Container (
-            child: Transform.translate(
-            offset: Offset(0,40),
+            child: Center(
+            
             child: Container(
               height: 50,
               width: 250,
@@ -817,46 +828,38 @@ class Screen41 extends State<AddVendorQty> {
               ), 
 
               child: Container(
-                child: Transform.translate(
-                offset: Offset(70,0),
-                child:DropdownButton<String>(
+                child: Center(
                 
-                value:number, 
-                
-                
-                items:n, 
-                
-                onChanged: (value){
-                  number=value; 
-                  setState((){
-                  });
-                },
-                underline: SizedBox(), 
-                
-                
-                hint: Text(
-                  " Vendors",
-                  style: TextStyle(fontSize: 22),
-                ),
-                
-              ),
-              
-            ), 
-          ), 
+                  child:DropdownButton<String>(
+                    value:valSave, 
+                    items:n, 
+                    onChanged: (value){
+                      valSave=value; 
+                      setState((){
+                      });
+                    },
+                    underline: SizedBox(), 
+                    hint: Text(
+                      " Vendors",
+                      style: TextStyle(fontSize: 22),
+                    ),
+                  ),
+                ), 
+              ), 
             ), 
             ),
           ),
 
          
           Container(
-            child: number!="Custom"? Container(): Container(
+            child: valSave!="Custom"? Container() : Container(
               padding:EdgeInsets.only( top: 80, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
                   TextFormField(
                     keyboardType: TextInputType.number,
                     validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                    onSaved: (input)=> number=input,
+                    onChanged: (input)=> valSave=input,
                     decoration: InputDecoration(
                       labelText: 'Number of Vendors',
                       labelStyle: TextStyle(
@@ -871,13 +874,15 @@ class Screen41 extends State<AddVendorQty> {
           ),
 
           Expanded (
-            child: Transform.translate(
-            offset: Offset(0,-50),
+            child: Center(
+            //offset: Offset(0,-50),
               child: Container(
                 height: 100,
                 width: 200,
                 child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:6,eid:'ss')),)
+                  numVen=int.parse(valSave),
+                  //print(numVen),
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:numVen, eid:eid, eventName:eventName)),)
                 } ),
               ),
             ),
@@ -886,6 +891,8 @@ class Screen41 extends State<AddVendorQty> {
       )
     ); 
   }
+
+
 }
 
 
@@ -898,7 +905,7 @@ class AddVendor extends StatefulWidget {
   AddVendor({this.eventName,this.numVen,this.eid});
 
   @override 
-  AddVendorState createState()=> new AddVendorState(numVen: numVen,eid: eid ); 
+  AddVendorState createState()=> new AddVendorState(numVen: numVen,eid: eid,eventName: eventName ); 
 }
 
 class AddVendorState extends State<AddVendor> {
@@ -1311,7 +1318,7 @@ class Add extends StatefulWidget {
   Add({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  Screen45 createState()=> new Screen45(vid:vid,numVen:numVen); 
+  Screen45 createState()=> new Screen45(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
 class Screen45 extends State<Add> {
@@ -2167,11 +2174,19 @@ class Screen48 extends State<Edit> {
 
 
 class EditEvent extends StatefulWidget {
+  final Event eventData;
+  final LatLng coord;
+  final String eid;
+  EditEvent({this.eid,this.coord,this.eventData});
   @override 
-  Screen50 createState()=> new Screen50(); 
+  Screen50 createState()=> new Screen50(eid:eid,coord:coord,eventData: eventData); 
 }
 
 class Screen50 extends State<EditEvent> {
+  Event eventData;
+  LatLng coord;
+  String eid;
+  Screen50({this.eid,this.coord,this.eventData});
   String name, add, vendor, image, pic;
   final dcontroller=new TextEditingController(); 
   final dcontroller2=new TextEditingController(); 
@@ -2227,7 +2242,7 @@ class Screen50 extends State<EditEvent> {
                     icon: Icon(
                       Icons.arrow_back,
                        
-                      ), 
+                    ), 
                     onPressed: (){
                       Navigator.pop(context);
                       }),
@@ -2258,249 +2273,227 @@ class Screen50 extends State<EditEvent> {
       body: SingleChildScrollView(
         key: _formKey,
         child: Column(children: <Widget>[
-          
           Container(
-            child: Column(
-            children: menu2),
+                width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      validator: (input)=> input.isEmpty? 'Please enter a name': null,
+                      onChanged: (input)=> name=input,
+                      decoration: InputDecoration(
+                        labelText: 'Name of the event',
+                        labelStyle: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 19
+                        )
+                      ),
+                    )
+                  ],
+                )
           ),
-
-                
           Container(
-          child: Transform.translate(
-          offset: Offset(0,-50),
-          child: new Container(
-          padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: dcontroller,
-                validator: (input)=> input.isEmpty? 'Please enter a name': null,
-                onSaved: (input)=> name=input,
-                decoration: InputDecoration(
-                  hintText: input,
-                  suffixIcon: IconButton(
-                    onPressed: ()=> {
-                      setState((){
-                        dcontroller.clear();
-                      }),
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                    child: TextFormField(
+                      validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
+                      //validator: (input)=> input.isEmpty? 'Please enter a valid location': nu//coord=LatLng(23.32, 65.1);
+                      decoration: InputDecoration(
+                        labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
+                        labelStyle: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 19
+                        )
+                      ),
+                    )
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.add_location,
+                    color: Colors.white,),
+                    onPressed: () {
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
-                    icon: Icon(Icons.clear), 
-                  )
-
+                  ),
                 ),
               )
-            ],
-          )
+            ],),
           ),
-          ),),
-
-
+          
           Container(
-            child: Transform.translate(
-            offset: Offset(0,-30),
-            child: new Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
             padding:EdgeInsets.only( top: 0, left: 20, right: 20),
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  controller: dcontroller2,
-                  validator: (input)=> input.isEmpty? 'Please enter an address': null,
-                  onSaved: (input)=> add=input,
+                  keyboardType: TextInputType.number,
+                  validator: (input)=> input.isEmpty? 'Please enter a number': null,
+                  //onChanged: (input)=> eventNumber=int.parse(input),
                   decoration: InputDecoration(
-                    hintText: inputadd,
-                    suffixIcon: IconButton(
-                      onPressed: ()=> {
-                        setState((){
-                          dcontroller2.clear();
-                        }),
-                      },
-                      icon: Icon(Icons.clear), 
+                    labelText: 'Number of vendors',
+                    labelStyle: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 19
                     )
-
+                    
                   ),
                 )
               ],
             )
           ),
-            ),),
-
-          
-
-           Container(
-          child: Transform.translate(
-          offset: Offset(0,-10),
-          child: new Container(
-          padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                  controller: dcontroller3,
-                  validator: (input)=> input.isEmpty? 'Please enter the number of vendors': null,
-                  onSaved: (input)=>  vendor=input,
-                  decoration: InputDecoration(
-                    hintText: inputvendors,
-                    suffixIcon: IconButton(
-                      onPressed: ()=> {
-                        setState((){
-                          dcontroller3.clear();
-                        }),
-                      },
-                      icon: Icon(Icons.clear), 
-                    )
-
-                  ),
-                )
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
                 
-            
-            ],
-          )
-        ),
-          ),),
-
-       
-
-        Container(
-          child: Transform.translate(
-          offset: Offset(0,10),
-          child: new Container(
-          padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                  controller: dcontroller4,
-                  validator: (input)=> input.isEmpty? 'Please enter an image of event': null,
-                  onSaved: (input)=>  image=input,
-                  decoration: InputDecoration(
-                    hintText: inputimag,
-                    suffixIcon: IconButton(
-                      onPressed: ()=> {
-                        setState((){
-                          dcontroller4.clear();
-                        }),
-                      },
-                      icon: Icon(Icons.clear), 
+                    child: TextFormField(
+                      
+                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                      onChanged: (input)=> logo=input,
+                      decoration: InputDecoration(
+                        labelText: 'Upload a logo of your event',
+                        labelStyle: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 19
+                        )
+                      ),
                     )
+                  
+                
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload,
+                    color: Colors.white,),
+                    onPressed: () {},
+                  ),
+                ),
+              )
+            ],),
+          ),
+          
+           Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                padding: EdgeInsets.only(top: 0, left: 20), 
+                child: RichText(
+                  text: TextSpan(children: <TextSpan>[
+                    
+                    TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
+                  ]
+                  )),
 
+              ),
+
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                child: TextFormField( 
+                  validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                  //onChanged: (input)=> photo=input,
+                  decoration: InputDecoration(
+                    labelText: 'Upload a photo of your event',
+                    labelStyle: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 19
+                    )
                   ),
                 )
-             
-            ],
-          )
-        ),
-          ),),
-
-        Container (
-          child: Transform.translate(
-          offset: Offset(162,-40),
-            child: Container(
-              height: 50,
-              width: 250,
-              child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-            ),
-          ),
-        ),
-          
-        Container(
-        child: Transform.translate(
-          offset: Offset(0,-35),
-            child: Container(
-              padding: EdgeInsets.only(top: 0, left: 20), 
-              child: RichText(
-                text: TextSpan(children: <TextSpan>[
-                  
-                  TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3",style: TextStyle(color: Colors.red, fontSize: 15))
-                ]
-                )),
-
-            ),
-          ),
-        ),
-
-
-        Container(
-        child: Transform.translate(
-        offset: Offset(0,-25),
-        child: new Container(
-        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-
-              keyboardType: TextInputType.number,
-              controller: dcontroller5,
-                  validator: (input)=> input.isEmpty? 'Please insert a picture of the event': null,
-                  onSaved: (input)=>  pic=input,
-                  decoration: InputDecoration(
-                    hintText: inputmepic,
-                    suffixIcon: IconButton(
-                      onPressed: ()=> {
-                        setState((){
-                          dcontroller5.clear();
-                        }),
-                      },
-                      icon: Icon(Icons.clear), 
-                    )
-
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
                   ),
-                )
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload,
+                    color: Colors.white,),
+                    onPressed: () {},
+                  ),
+                ),
+              )
+            ],),
+          ),
           
-          ],
-        )
-      ),
-        ),),
+          Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                padding: EdgeInsets.only(top: 0, left: 20), 
+                child: RichText(
+                  text: TextSpan(children: <TextSpan>[
+                    TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
+                  ]
+                  )),
 
-          Container (
-          child: Transform.translate(
-          offset: Offset(162,-75),
-            child: Container(
-              height: 50,
-              width: 250,
-              child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-            ),
           ),
-        ),
-
-        Container(
-        child: Transform.translate(
-          offset: Offset(0,-70),
-            child: Container(
-              padding: EdgeInsets.only(top: 0, left: 20), 
-              child: RichText(
-                text: TextSpan(children: <TextSpan>[
-                  
-                  TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
-                ]
-                )),
-
-            ),
+          Padding(
+            padding: EdgeInsets.all(15),
           ),
-        ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,-40),
-              child: Container(
-                height: 100,
-                width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
-              ),
-            ),
-          ),
-
-          
-          Container (
-            child: Transform.translate(
-            offset: Offset(160,-495),
-              child: Container(
-                height: 50,
-                width: 250,
-                child: new IconButton(icon: new Image.asset("asset/image/location.png"),onPressed:()=>{} ),
-              ),
-            ),
-          ),
-      
-
-          
+          Center(child: Container(
+                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+                width:60,
+                height:60,
+                child: Ink(
+                  width:60,
+                  height:60,
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    color: null,
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    alignment: Alignment.center,
+                    icon: Icon(Icons.arrow_forward,
+                    size: 45,
+                    color: Colors.white,),
+                    onPressed: () async {
+                      //if(coord!=null){
+                        GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
+                        }
+                     // }
+                  ),
+                ),
+          ),),
         ],
         )  
       )
@@ -3180,7 +3173,7 @@ class QRselection extends StatefulWidget {
   QRselection({this.eid,this.eventName});
 
   @override
-  ScreenQRselect createState() => new ScreenQRselect();
+  ScreenQRselect createState() => new ScreenQRselect(eid:eid,eventName:eventName);
 }
 
 class ScreenQRselect extends State<QRselection> {
@@ -3476,6 +3469,161 @@ class MapsFunc extends State<Maps> {
     );
   }
 }
+
+
+
+class EditMaps extends StatefulWidget {
+  //Maps(LatLng eid);
+
+  @override
+  EditMapsFunc createState() => EditMapsFunc();
+}
+
+
+class EditMapsFunc extends State<Maps> {
+  LatLng coord;
+  Completer<GoogleMapController> _controller = Completer();
+  Marker marker=Marker(
+    markerId: MarkerId("1"),
+    draggable: true
+  ); //storing position coordinates in the variable
+  Set<Marker> markerSet={};
+  var scaffoldKey=GlobalKey<ScaffoldState>();
+  void _onMapCreated(GoogleMapController controller) {
+    _controller.complete(controller);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        key: scaffoldKey,
+        extendBodyBehindAppBar: true,
+        endDrawer:  SideBar(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                        child: Text('Location',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                        ),
+                    )
+                  ),
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,    
+                      ), 
+                    onPressed: (){
+                      //coord=LatLng(23.32, 65.1);
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid: eid,coord: coord)),);
+                    }
+                  ),
+                  // actions: <Widget>[
+                  //   IconButton(
+                  //     onPressed: () {                     
+                  //       showSearch(
+                  //           context: context,
+                  //           delegate: MapSearchBar(),
+                  //       );
+                  //     },
+                  //     icon: Icon(
+                  //       Icons.search,
+                      
+                  //     )
+                  //     ),
+                  //   Padding(
+                  //     padding: EdgeInsets.only(right: 20.0),
+                  //     child: GestureDetector(
+                  //       onTap: () {
+                  //         scaffoldKey.currentState.openEndDrawer();
+                  //         },
+                  //       child: Icon(
+                  //           Icons.menu,
+                          
+                  //       ),
+                  //     )
+                  //   ),
+                  //],
+                  flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                    ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                    ),
+                  )
+                ),
+                )
+              ],
+            ),
+            clipper: ClipShape(),
+          )
+        ),
+
+        body:     
+        GoogleMap(
+          onTap: (LatLng coordinates){
+                final Marker marker1 = Marker(
+                  markerId: MarkerId('1'),
+                  draggable: true,
+                  position: coordinates,
+                );
+                setState(() {
+                  markerSet.clear();
+                  markerSet.add(marker1);
+                  marker=marker1;
+                  coord=coordinates;
+                });
+          },
+          markers: markerSet,
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: LatLng(30, 68),
+            zoom: 5,
+          ),
+          mapType: MapType.hybrid,
+          rotateGesturesEnabled: true,
+          scrollGesturesEnabled: true,
+          tiltGesturesEnabled: true,
+          myLocationEnabled: true,          
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
