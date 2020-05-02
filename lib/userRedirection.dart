@@ -4,12 +4,14 @@ import 'package:rateit/hostit.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'hostit.dart';
+import 'Event.dart';
 import 'hostit_first.dart';
 import 'login.dart';
 import 'rateit.dart';
 import 'user.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Redirection extends StatefulWidget{
 
