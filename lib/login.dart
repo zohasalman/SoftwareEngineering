@@ -1037,17 +1037,13 @@ class FifthScreen extends State<ForgotScreen> {
   void submit() async {
     setState(() => _errorMessage = '');
     _formKey.currentState.save();
-
-    try{
-      await _auth.resetPassword(email); 
-      return null; 
-    } catch(e){
-      
-      _errorMessage="Not a registered email address";
-
+    var error = await _auth.resetPassword(email);     
+    if (error != null){
+      _errorMessage = error;
+      print(error);
+    }else{
+      Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),); 
     }
-    
-    Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),); 
   }
 
   @override 

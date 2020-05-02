@@ -68,12 +68,12 @@ class AuthService {
   }
 
   // Forgot password
-  Future<void> resetPassword(String email) async {
+  Future<String> resetPassword(String email) async {
     try{
       await _auth.sendPasswordResetEmail(email: email);
       return null; 
     }catch(e){
-      return e.toString(); 
+      return 'User record not found'; 
     }
   }
 
