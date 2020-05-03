@@ -170,7 +170,7 @@ class FirestoreService{
         vendorName: doc.data['vendorName'] ?? '',
         vendorLogo: doc.data['vendorLogo'] ?? '',
         rating: doc.data['myVendorRating'] ?? 0,
-        reviewId: doc.data['reviewId'] ?? '',
+        reviewId: doc.data['vendorReviewId'] ?? '',
       );
     }).toList();
   }
@@ -199,8 +199,20 @@ class FirestoreService{
     .map(_ratedItemListFromSnapshot);
   }
 
+  Future<String> getReview(String reviewId) async {
+    print('in review scene:');
+    print(reviewId);
+    String review = '';
+    await _reviewsCollectionReference.document(reviewId).get().then((docs){
+        review = docs.data['review'];
+      });
+    print('review');
+    print(review);
+    return review;
+  }
+
   // do ratings
-  
+
   // Future<QuerySnapshot> getReviewId(String userId, String vendorId){
   //   return _reviewsCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments();
   // }
@@ -265,10 +277,10 @@ class FirestoreService{
     String reviewId = '';
     await _ratedVendorCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments()
     .then((docs){
-          if (docs.documents.isNotEmpty){
-            docId = docs.documents[0].data['ratedVendorId'];
-            reviewId = docs.documents[0].data['reviewId'];
-          }
+      if (docs.documents.isNotEmpty){
+        docId = docs.documents[0].data['ratedVendorId'];
+        reviewId = docs.documents[0].data['reviewId'];
+      }
     });
     return [docId, reviewId];
   }
@@ -318,7 +330,7 @@ class FirestoreService{
         try {
           // get item id 
           String ratedItemId = await getRatedItemsDocumentId(uid, vendorId, item['itemId']);
-          await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['rating']});
+          await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['givenRating']});
         } catch (e) {
           print(e.toString());
         }
