@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rateit/hostit.dart';
 import 'package:rateit/rateit.dart';
+import 'package:rateit/vendorlist-hostit.dart';
 import 'firestore.dart';
 import 'hostit.dart';
 import 'Event.dart';
@@ -52,7 +53,7 @@ class RedirectorState extends State<Redirector> {
       return InviteScreen(uid: '${widget.uid}');
     }
     else if(usr == 'management'){ 
-      return HostitHomescreen();//AddVendor(numVen:1,eid:'da');//
+      return ViewVendorHostIt(eventName: 'hhhh',eventID: 'cVgoRCSqbBCrjM6fg2Np',);//AddVendor(eid: 'cVgoRCSqbBCrjM6fg2Np',numVen:1,eventName: 'sdfasg',);//ViewVendorHostIt(eventName: 'hhhh',eventID: 'cVgoRCSqbBCrjM6fg2Np',);//EditEvent(eid:'da',eventData:Event( name: 'nme',logo: 'logo',coverimage: 'cover' ),coord: LatLng(23, 12), );//Add( eid:'eid', numVen:[2,1], vid:['lol','yop'], eventName:'nme');
     }
     else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
