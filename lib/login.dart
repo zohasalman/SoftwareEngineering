@@ -6,6 +6,7 @@ import 'hostit.dart';
 import 'userRedirection.dart';
 import 'package:intl/intl.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main1() => runApp(App());
 
@@ -40,37 +41,48 @@ class FirstScreen extends State<LoginScreen> {
   String _password = '';
   String _errorMessage = ''; 
   bool rememberme=false;
+  bool hasInfo = false;
 
   final _formKey= GlobalKey<FormState>(); 
 
   
   void submit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() => _errorMessage = '');
     _formKey.currentState.save();
+    prefs.setBool('rememberMe', rememberme);
+    if (rememberme == true){
+      prefs.setString('email', _email);
+      prefs.setString('password', _password);
+    }
     dynamic result = await _auth.signInEmailAndPassword(_email, _password); 
     if (result == null){
       setState(() => _errorMessage = 'Invalid email or password combination.');
-
     }else{
       Redirection();
     }
   }
 
-  void remembermeChange(bool value)=> setState((){
-    rememberme=value; 
-
-    if (rememberme)
-    {
-      //Remember
+  void autoLogIn() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('rememberMe') == true){
+      final String emailId = prefs.getString('email');
+      final String pw = prefs.getString('password');
+      _email = emailId;
+      _password = pw;
+      hasInfo = true;
+      print('rememberMe:');
+      print(hasInfo);
+      print(emailId);
+      print(pw);
     }
+  }
 
-    else 
-    {
-      //Forget user
-    }
-
-  },
-  ); 
+  @override
+  void initState() {
+    super.initState();
+    autoLogIn();
+  }
 
   @override 
   Widget build(BuildContext context){
@@ -131,6 +143,7 @@ class FirstScreen extends State<LoginScreen> {
                     child: Padding(
                     padding:EdgeInsets.only( top: 30, left: 20, right: 20), 
                     child:TextFormField(
+                    initialValue: hasInfo? _email: null,
                     validator: (input)=> input.isEmpty? null : null,
                     onSaved: (input)=> _email = input.trim(),
                     decoration: InputDecoration(
@@ -155,7 +168,7 @@ class FirstScreen extends State<LoginScreen> {
                     child: Padding(
                     padding:EdgeInsets.only( top: 0, left: 20, right: 20), 
                     child:TextFormField(
-                  
+                    initialValue: hasInfo? _password: null,
                     validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
                     onSaved: (input)=> _password = input.trim(),
                     decoration: InputDecoration(
@@ -214,7 +227,7 @@ class FirstScreen extends State<LoginScreen> {
                             value: rememberme,
                             checkColor: Colors.grey[800],
                             activeColor: Colors.grey[600],
-                            onChanged: (value) { remembermeChange(value);},
+                            onChanged: (value) => rememberme = value,
                             )
                         ),
                         Text('Remember Me?',
