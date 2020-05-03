@@ -15,6 +15,7 @@ import 'vendor-list.dart';
 import 'vendor.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';
+import 'package:dropdownfield/dropdownfield.dart';
 import 'item-list.dart';
 import 'item.dart';
 import 'edit-profile.dart';
@@ -24,6 +25,9 @@ import 'ratedVendor.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:async';
+import 'dart:io';
 
 DateTime _dateTime;
 String user_id;
@@ -638,6 +642,62 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
+
+  List<String> genders = ['Male', 'Female', 'Other'];
+  final genderSelected = TextEditingController();
+  final formKey = new GlobalKey<FormState>();
+
+
+
+  Future<void> _showChoiceDialogue(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text('Select'),
+              content: SingleChildScrollView(
+                  child: ListBody(
+                children: <Widget>[
+                  GestureDetector(
+                      child: Text('Gallery'),
+                      onTap: () {
+                        _openGallery(context);
+                      }),
+                  Padding(padding: EdgeInsets.all(8.0)),
+                  GestureDetector(
+                      child: Text('Camera'),
+                      onTap: () {
+                        _openCamera(context);
+                      })
+                ],
+              )));
+        });
+  }
+
+  File _image;
+
+  Future _openGallery(BuildContext context) async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
+    Navigator.of(context).pop();
+  }
+
+  Future _openCamera(BuildContext context) async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    String selectCity;
+
+    setState(() {
+      _image = image;
+    });
+    Navigator.of(context).pop();
+  }
+
+   bool error1=true, error2=true;
+   bool validate=false; 
+
   String _name, _email, _password, _gender;
   DateTime _dateOfBirth;
 
@@ -721,23 +781,43 @@ class _EditProfile extends State<EditProfile> {
                                     backgroundImage: NetworkImage(
                                         '${myUserInfo.profilePicture}'),
                                   ))),
-                          Padding(
-                              padding: const EdgeInsets.only(top: 3.0),
-                              child: Text(
-                                  myUserInfo.firstName +
-                                      ' ' +
-                                      myUserInfo.lastName,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20.0,
+                          Container(
+                              child: Transform.translate(
+                                  offset: Offset(50.0, -60.0),
+                                  child: MaterialButton(
+                                    onPressed: () {
+                                      _showChoiceDialogue(context);
+                                    },
+                                    color: Color(0xFFFC4A1F),
+                                    textColor: Colors.white,
+                                    child: Icon(
+                                      Icons.camera_alt,
+                                      size: 24,
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    shape: CircleBorder(),
                                   ))),
                           Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: Transform.translate(
+                                  offset: Offset(0.0, -50.0),
+                                  child: Text(
+                                      myUserInfo.firstName +
+                                          ' ' +
+                                          myUserInfo.lastName,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                      )))),
+                          Padding(
                               padding: const EdgeInsets.only(top: 3.0),
-                              child: Text(myUserInfo.email,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                  )))
+                              child: Transform.translate(
+                                  offset: Offset(0.0, -50.0),
+                                  child: Text(myUserInfo.email,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16.0,
+                                      )))),
                         ],
                       )
                     ],
@@ -794,70 +874,25 @@ class _EditProfile extends State<EditProfile> {
                                     fontSize: 15, color: Colors.black),
                               ),
                             ))),
-                    Card(
-                      child: ListTile(
-                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
-                          title: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Edit Username',
-                              hintText: 'Uzair Mustafa',
-                              labelStyle:
-                                  TextStyle(fontSize: 15, color: Colors.black),
-                            ),
-                          ),
-                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                          onTap: () {}),
-                    ),
-                    Card(
-                      child: ListTile(
-                          leading: Icon(Icons.lock_outline,
-                              color: Color(0xFFFC4A1F)),
-                          title: TextFormField(
-                            decoration: InputDecoration(
-                              labelText: 'Change Password',
-                              hintText: '*********',
-                              labelStyle:
-                                  TextStyle(fontSize: 15, color: Colors.black),
-                            ),
-                          ),
-                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                          onTap: () {
-                            TextField();
-                          }),
-                    ),
-                    Card(
-                      child: ListTile(
-                          leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
-                          title: TextFormField(
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              labelText: 'Update Email',
-                              hintText: 'uzairmustufa@ratetit.com',
-                              labelStyle:
-                                  TextStyle(fontSize: 15, color: Colors.black),
-                            ),
-                          ),
-                          // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                          onTap: () {}),
-                    ),
-                    Card(
-                      child: ListTile(
-                          leading:
-                              Icon(Icons.hot_tub, color: Color(0xFFFC4A1F)),
-                          title: Text('Gender'),
-                          // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                          onTap: () {
-                            DropdownButton<String>(
-                              value: _gender,
-                              items: n,
-                              onChanged: (value) {
-                                _gender = value;
-                                //error1=false;
-                                setState(() {});
-                              },
-                            );
-                          }),
-                    ),
+                    // Card(
+                    //   child: ListTile(
+                    //       leading:
+                    //           Icon(Icons.hot_tub, color: Color(0xFFFC4A1F)),
+                    //       title: Text('Gender'),
+                    //       // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                    //       onTap: () {
+                    //         DropdownButton<String>(
+                    //           value: _gender,
+                    //           items: n,
+                    //           onChanged: (value) {
+                    //             _gender = value;
+                    //             //error1=false;
+                    //             setState(() {});
+                    //           },
+                    //         );
+                    //       }),
+                    // ),
+                     
                     Card(
                       child: ListTile(
                         leading: Icon(Icons.calendar_today,
@@ -900,14 +935,80 @@ class _EditProfile extends State<EditProfile> {
                             // }
                             ),
                       ),
-                    )
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.lock_outline,
+                              color: Color(0xFFFC4A1F)),
+                          title: DropDownField(
+                          controller: genderSelected,
+                          hintText: 'Please select your Gender',
+                          enabled: true,
+                          items: genders,
+                          onValueChanged: (value)
+                          {
+                            setState((){
+                             // selectCity = value;
+                            });
+                          }
+
+                        )
+                      ),
+                    ),
+                     SafeArea(
+                child: InkWell(
+                  onTap: () async{
+                    return await showDialog(
+                      context: context,
+                      builder: (BuildContext context){
+                        return AlertDialog(
+                          title: Text("Details have been saved successfully!"),
+                          actions: <Widget>[
+                            Center(
+                              child: FlatButton(
+                                onPressed: ()=>Navigator.of(context).pop(false),
+                                child: Text("Ok"),
+                              )
+                            )
+                          ],
+                        ); 
+                      },
+                    );
+                  },
+
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 40, right: 40.0, left: 40.0), 
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: EdgeInsets.only(top: 15, left: 135), 
+                    child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18 ))
+                  ),),),
+
+                ),
+              
+            ),
+
                   ]),
             )));
   }
 }
 
-List<String> genders = ['Male', 'Female', 'Other'];
-final genderSelected = TextEditingController();
+
 
 class ViewVendor extends StatefulWidget {
   ViewVendor({this.eventName, this.eventID});
@@ -1382,46 +1483,54 @@ class _EditRating1State extends State<EditRating1> {
                   //         style: TextStyle(fontSize: 18)),
                   //   ),
                   // )
-                  Container(
-                    child: Transform.translate(
-                        offset: Offset(0.0, 100.0),
-                        child: RaisedButton(
-                          onPressed: () {
-                            AlertDialog(
-                              content: Text(
-                                'Success!',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 22),
-                              ),
-                            );
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(80.0)),
-                          padding: EdgeInsets.all(0.0),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xFFAC0D57),
-                                      Color(0xFFFC4A1F)
-                                    ],
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft),
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Container(
-                              constraints: BoxConstraints(
-                                  maxWidth: 250.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Submit",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 20.0, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        )),
-                  ),
+                   SafeArea(
+                child: InkWell(
+                  onTap: () async{
+                    return await showDialog(
+                      context: context,
+                      builder: (BuildContext context){
+                        return AlertDialog(
+                          title: Text("Success!"),
+                          actions: <Widget>[
+                            Center(
+                              child: FlatButton(
+                                onPressed: ()=>Navigator.of(context).pop(false),
+                                child: Text("ok"),
+                              )
+                            )
+                          ],
+                        ); 
+                      },
+                    );
+                  },
+
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 40), 
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: EdgeInsets.only(top: 15, left: 140), 
+                    child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18 ))
+                  ),),),
+
+                ),
+              
+            ),
+                  
                 ],
               ))),
     );
@@ -1647,47 +1756,54 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                   //         style: TextStyle(fontSize: 18)),
                   //   ),
                   // )
-                  Container(
-                    child: Transform.translate(
-                        offset: Offset(0.0, 100.0),
-                        child: RaisedButton(
-                          onPressed: () {
-                            submit(finalRating);
-                            AlertDialog(
-                              content: Text(
-                                'Success!',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 22),
-                              ),
-                            );
-                          },
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(80.0)),
-                          padding: EdgeInsets.all(0.0),
-                          child: Ink(
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xFFAC0D57),
-                                      Color(0xFFFC4A1F)
-                                    ],
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft),
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Container(
-                              constraints: BoxConstraints(
-                                  maxWidth: 250.0, minHeight: 50.0),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Submit",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 20.0, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        )),
-                  ),
+                   SafeArea(
+                child: InkWell(
+                  onTap: () async{
+                    return await showDialog(
+                      context: context,
+                      builder: (BuildContext context){
+                        return AlertDialog(
+                          title: Text("Success!"),
+                          actions: <Widget>[
+                            Center(
+                              child: FlatButton(
+                                onPressed: ()=>Navigator.of(context).pop(false),
+                                child: Text("ok"),
+                              )
+                            )
+                          ],
+                        ); 
+                      },
+                    );
+                  },
+
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 40), 
+                  child: Container(
+                    height: 50,
+                    width: 350,
+                    
+                    
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                      ),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: EdgeInsets.only(top: 15, left: 140), 
+                    child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18 ))
+                  ),),),
+
+                ),
+              
+            ),
+                  
                 ],
               ))),
     );
@@ -2874,3 +2990,7 @@ class _DoReviews extends State<DoReviews> {
     );
   }
 }
+
+
+
+
