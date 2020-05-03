@@ -148,7 +148,7 @@ class FirstScreen extends State<LoginScreen> {
                     onSaved: (input)=> _email = input.trim(),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(
+                      labelStyle: TextStyle(  
                         color: Colors.grey[600],
                         fontSize: 19
                       )

@@ -20,10 +20,11 @@ import 'item.dart';
 import 'edit-profile.dart';
 import 'my-rating.dart';
 import 'ratedVendor.dart';
-//import 'package:barcode_scan/barcode_scan.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'reviewfromdb.dart';
 
 DateTime _dateTime;
 String user_id;
@@ -928,31 +929,6 @@ class _ViewVendor extends State<ViewVendor> {
 
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // start of getting local stored user info
-  // readContent().then((String value) {
-  //   // print(value);
-  //   var data = jsonDecode(value);
-  //   print('hii');
-  //   print(data);
-  //   userInfo = UserData(
-  //     uid: data['uid'],
-  //       firstName: data['firstName'],
-  //       lastName : data['lastName'],
-  //       gender : data['gender'],
-  //       // dateOfBirth : value.data['dateOfBirth'],
-  //       email : data['email'],
-  //       userRole : data['userRole'],
-  //   );
-  // });
-  // print('from rateit');
-  // print(userInfo);  // some error generated here
-
-  // end of it
-  // }
-
   @override
   Widget build(BuildContext context) {
     // final vendorFromDB = Provider.of<List<Vendor>>(context);
@@ -1007,11 +983,11 @@ class _ViewVendor extends State<ViewVendor> {
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
-            // String scanning = "";
-            // scanning  = await BarcodeScanner.scan();
+            String scanning = "";
+            scanning  = await BarcodeScanner.scan();
             String name, logo;
             await FirestoreService()
-                .getVendor('bSXeCJ7OEYV24U31fksL')
+                .getVendor(scanning)
                 .then((docs) {
               if (docs.documents.isNotEmpty) {
                 name = docs.documents[0].data['name'];
@@ -1024,7 +1000,7 @@ class _ViewVendor extends State<ViewVendor> {
                     builder: (context) => DoRatings(
                         name: name,
                         logo: logo,
-                        vendorId: 'bSXeCJ7OEYV24U31fksL')));
+                        vendorId: scanning)));
           },
         ),
       ),
@@ -1097,10 +1073,24 @@ class _ViewMyRating extends State<ViewMyRating> {
           child: Image.asset("asset/image/Camera 1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
-            String scanning; //= await BarcodeScanner.scan();
-            setState() {
-              qr = scanning;
-            }
+            String scanning = "";
+            scanning  = await BarcodeScanner.scan();
+            String name, logo;
+            await FirestoreService()
+                .getVendor(scanning)
+                .then((docs) {
+              if (docs.documents.isNotEmpty) {
+                name = docs.documents[0].data['name'];
+                logo = docs.documents[0].data['logo'];
+              }
+            });
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DoRatings(
+                        name: name,
+                        logo: logo,
+                        vendorId: scanning)));
           },
         ),
       ),
@@ -1231,8 +1221,7 @@ class _EditRatings extends State<EditRatings> {
                               String review = await FirestoreService()
                                   .getReview(widget.reviewId);
                               var route = new MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    new ViewReviews(
+                                builder: (BuildContext context) => new ViewReviews(
                                   value: '${widget.name}',
                                   image: '${widget.image}',
                                   reviewId: '${widget.reviewId}',
@@ -1271,14 +1260,27 @@ class _EditRatings extends State<EditRatings> {
 }
 
 class EditRating1 extends StatefulWidget {
-  String value, image;
 
-  EditRating1({Key key, this.value, this.image}) : super(key: key);
+  String name, logo, vendorId, review, reviewId;
+  List<Map> list;
+
+  EditRating1({Key key, this.name, this.logo, this.vendorId, this.review, this.list, this.reviewId}) : super(key: key);
   @override
   _EditRating1State createState() => _EditRating1State();
 }
 
 class _EditRating1State extends State<EditRating1> {
+
+  double finalRating;
+
+  void submit(double finalRating) {
+    var error = FirestoreService().updateRatings(user_id, widget.list,widget.vendorId, widget.review, widget.reviewId, finalRating);
+    if (error != null) {
+      print(error);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -1328,7 +1330,7 @@ class _EditRating1State extends State<EditRating1> {
               child: Column(
                 children: <Widget>[
                   Container(
-                      child: Text('${widget.value}',
+                      child: Text('${widget.name}',
                           style: TextStyle(fontSize: 20, color: Colors.black))),
                   Container(
                     alignment: Alignment(0.00, 0.0),
@@ -1336,7 +1338,7 @@ class _EditRating1State extends State<EditRating1> {
                     width: 200.0,
                     child: Padding(
                       padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                      child: Image.network('${widget.image}'),
+                      child: Image.network('${widget.logo}'),
                     ),
                   ),
                   new Divider(),
@@ -1351,7 +1353,7 @@ class _EditRating1State extends State<EditRating1> {
                         children: <Widget>[
                           RatingBar(
                             onRatingChanged: (rating) =>
-                                setState(() => rating = rating),
+                                setState(() => finalRating = rating),
                             filledIcon: Icons.star,
                             emptyIcon: Icons.star_border,
                             halfFilledIcon: Icons.star_half,
@@ -1384,9 +1386,10 @@ class _EditRating1State extends State<EditRating1> {
                   // )
                   Container(
                     child: Transform.translate(
-                        offset: Offset(0.0, 100.0),
+                        offset: Offset(0.0, 80.0),
                         child: RaisedButton(
                           onPressed: () {
+                            submit(finalRating);
                             AlertDialog(
                               content: Text(
                                 'Success!',
@@ -1524,22 +1527,20 @@ class _DoRatings extends State<DoRatings> {
 }
 
 class DoRatingFinal extends StatefulWidget {
-  String name, logo, vendorId;
+  String name, logo, vendorId, review;
   List<Map> list;
 
-  DoRatingFinal({this.name, this.logo, this.vendorId, this.list});
+  DoRatingFinal({this.name, this.logo, this.vendorId, this.list, this.review});
   @override
   _DoRatingFinalState createState() => _DoRatingFinalState();
 }
 
 class _DoRatingFinalState extends State<DoRatingFinal> {
-  String review;
   double finalRating;
-  List<Map> myRatingInfo = new List();
 
   void submit(double finalRating) {
     var error = FirestoreService().sendRatings(user_id, widget.list,
-        widget.name, widget.logo, widget.vendorId, review, finalRating);
+        widget.name, widget.logo, widget.vendorId, widget.review, finalRating);
     if (error != null) {
       print(error);
     }
@@ -1562,7 +1563,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                         alignment: Alignment.topLeft,
                         child: Padding(
                             padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('Edit Rating',
+                            child: Text('Rating a Vendor',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 28))),
                       )),
@@ -1630,26 +1631,9 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 150.0, width: 40.0),
-                  // Container(
-                  //   height: 70,
-                  //   width: 250,
-                  //   child: RaisedButton(
-                  //     shape: new RoundedRectangleBorder(
-                  //         borderRadius: new BorderRadius.circular(50.0),
-                  //         side: BorderSide(color: Colors.red),
-                  //         ),
-
-                  //     onPressed: () {},
-                  //     color: Colors.red,
-                  //     textColor: Colors.white,
-                  //     child: Text("Submit".toUpperCase(),
-                  //         style: TextStyle(fontSize: 18)),
-                  //   ),
-                  // )
                   Container(
                     child: Transform.translate(
-                        offset: Offset(0.0, 100.0),
+                        offset: Offset(0.0, 80.0),
                         child: RaisedButton(
                           onPressed: () {
                             submit(finalRating);
@@ -1660,6 +1644,11 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                                 style: TextStyle(fontSize: 22),
                               ),
                             );
+                            var route = new MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                ViewVendor(),
+                          );
+                          Navigator.of(context).push(route);
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(80.0)),
@@ -1695,9 +1684,9 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
 }
 
 class TopRatedItems extends StatefulWidget {
-  String value, image, vendorId;
+  String value, image, vendorId, vendorRating;
 
-  TopRatedItems({this.value, this.image, this.vendorId});
+  TopRatedItems({this.value, this.image, this.vendorId, this.vendorRating});
 
   @override
   _TopRatedItems createState() => new _TopRatedItems();
@@ -1769,7 +1758,7 @@ class _TopRatedItems extends State<TopRatedItems> {
                   children: <Widget>[
                     RatingBar.readOnly(
                       //Balaj chnage this line
-                      initialRating: double.parse('3.8'),
+                      initialRating: double.parse('${widget.vendorRating}'),
                       isHalfAllowed: true,
                       halfFilledIcon: Icons.star_half,
                       filledIcon: Icons.star,
@@ -1820,7 +1809,10 @@ class _TopRatedItems extends State<TopRatedItems> {
                           builder: (BuildContext context) =>
                               TopRatedItemsReviews(
                                   value: '${widget.value}',
-                                  image: '${widget.image}'),
+                                  image: '${widget.image}', 
+                                  vendorId: '${widget.vendorId}',
+                                  vendorRating: '${widget.vendorRating}',
+                              ),
                         );
                         Navigator.of(context).push(route);
                       },
@@ -1851,7 +1843,7 @@ class ChangeRatings extends StatefulWidget {
 }
 
 class _ChangeRatings extends State<ChangeRatings> {
-  double myrating;
+  List<Map> myEditedRating = new List();
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
@@ -1872,7 +1864,7 @@ class _ChangeRatings extends State<ChangeRatings> {
                               child: Padding(
                                   padding:
                                       EdgeInsets.only(bottom: 60.0, left: 10),
-                                  child: Text('${widget.value}',
+                                  child: Text('Edit Rating',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 28))),
                             )),
@@ -1909,53 +1901,19 @@ class _ChangeRatings extends State<ChangeRatings> {
                       child: Image.network('${widget.image}'),
                     ),
                   ),
-                  new Divider(),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(left: 5.0),
-                        child: Container(
-                            child: GestureDetector(
-                          onTap: () {},
-                          child: Container(
-                            width: 200.0,
-                            height: 50.0,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.topLeft,
-                                  colors: [
-                                    Color(0xFFAC0D57),
-                                    Color(0xFFFC4A1F),
-                                  ]),
-                              boxShadow: const [
-                                BoxShadow(blurRadius: 10),
-                              ],
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            padding: EdgeInsets.all(12.0),
-                            child: Center(
-                              child: Text('Top Rated Reviews',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18)),
-                            ),
-                          ),
-                        )),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                        child: Text('Reviews',
-                            style: TextStyle(color: Colors.red, fontSize: 22)),
-                      )
-                    ],
-                  ),
-                  EditMyRatingsItems(),
+                  Container(
+                    child: Center(
+                      child:Padding(
+                        padding: EdgeInsets.only(top: 0.0, bottom: 10.0),
+                        child: Text('${widget.value}',
+                            style: TextStyle(fontSize: 25, color: Colors.black))))),                  
+                  EditMyRatingsItems(list: myEditedRating,),
                   new Divider(),
                   Container(
                       height: 100.0,
                       width: 100.0,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 0.0),
+                        padding: EdgeInsets.only(bottom: 10.0),
                         child: GestureDetector(
                             child: Image.asset('asset/image/Group 55.png'),
                             onTap: () async {
@@ -1964,10 +1922,12 @@ class _ChangeRatings extends State<ChangeRatings> {
                               var route = new MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     new EditReviews(
-                                        value: '${widget.value}',
-                                        image: '${widget.image}',
+                                        name: widget.value,
+                                        logo: widget.image,
+                                        vendorId: widget.vendorId,
                                         review: review,
-                                        reviewId: '${widget.reviewId}'),
+                                        reviewId: widget.reviewId,
+                                        list: myEditedRating),
                               );
                               Navigator.of(context).push(route);
                             }),
@@ -1979,9 +1939,9 @@ class _ChangeRatings extends State<ChangeRatings> {
 }
 
 class TopRatedItemsReviews extends StatefulWidget {
-  String value, image, vendorId;
+  String value, image, vendorId, vendorRating;
 
-  TopRatedItemsReviews({this.value, this.image, this.vendorId});
+  TopRatedItemsReviews({this.value, this.image, this.vendorId, this.vendorRating});
 
   @override
   _TopRatedItemsReviews createState() => new _TopRatedItemsReviews();
@@ -1991,8 +1951,8 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
   double myrating;
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<Item>>.value(
-      value: FirestoreService().getItemInfo('${widget.vendorId}'),
+    return StreamProvider<List<Review>>.value(
+      value: FirestoreService().getAllVendorReviews('${widget.vendorId}'),
       child: Scaffold(
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(150.0),
@@ -2047,7 +2007,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                 ),
               ),
               RatingBar.readOnly(
-                initialRating: 3.5,
+                initialRating: double.parse('${widget.vendorRating}'),
                 filledIcon: Icons.star,
                 emptyIcon: Icons.star_border,
                 halfFilledIcon: Icons.star_half,
@@ -2107,143 +2067,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                   ))
                 ],
               ),
-              Row(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20.0, right: 30.0, left: 15.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                print("Upload Photo");
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30.0,
-                                child: Image.asset('asset/image/circular.png'),
-                              ))),
-                      Padding(
-                          padding:
-                              const EdgeInsets.only(top: 10.0, right: 10.0),
-                          child: Text('4.5/5'))
-                    ],
-                  ),
-                  SizedBox(
-                    width: 40.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 10.0),
-                    child: Container(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: 200.0,
-                          maxWidth: 200.0,
-                          minHeight: 30.0,
-                          maxHeight: 100.0,
-                        ),
-                        child: AutoSizeText(
-                          "The ambiance was Amazing. Good food. Good people. I would really like to come again",
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              new Divider(),
-              Row(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20.0, right: 30.0, left: 15.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                print("Upload Photo");
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30.0,
-                                child: Image.asset('asset/image/avatar.png'),
-                              ))),
-                      Padding(
-                          padding:
-                              const EdgeInsets.only(top: 10.0, right: 10.0),
-                          child: Text('2/5'))
-                    ],
-                  ),
-                  SizedBox(
-                    width: 40.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 10.0),
-                    child: Container(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: 200.0,
-                          maxWidth: 200.0,
-                          minHeight: 30.0,
-                          maxHeight: 100.0,
-                        ),
-                        child: AutoSizeText(
-                          "The chicken was a bit undercooked. The fries were not the way I wanted. Pls improve!",
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              new Divider(),
-              Row(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20.0, right: 30.0, left: 15.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                print("Upload Photo");
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30.0,
-                                child: Image.asset('asset/image/avatar1.png'),
-                              ))),
-                      Padding(
-                          padding:
-                              const EdgeInsets.only(top: 10.0, right: 10.0),
-                          child: Text('4.5/5'))
-                    ],
-                  ),
-                  SizedBox(
-                    width: 40.0,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 10.0),
-                    child: Container(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: 200.0,
-                          maxWidth: 200.0,
-                          minHeight: 30.0,
-                          maxHeight: 100.0,
-                        ),
-                        child: AutoSizeText(
-                          "Overall good service. I am satisfied.",
-                          style: TextStyle(fontSize: 15.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              ReviewFromDB(),
             ],
           )),
         ),
@@ -2253,9 +2077,9 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 }
 
 class ViewReviews extends StatefulWidget {
-  String value, image, reviewId, review;
+  String value, image, reviewId, review, vendorId;
 
-  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review})
+  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review, this.vendorId})
       : super(key: key);
 
   @override
@@ -2434,8 +2258,7 @@ class _ViewReviews extends State<ViewReviews> {
                                       minHeight: 30.0,
                                       maxHeight: 100.0,
                                     ),
-                                    child: AutoSizeText(
-                                      "The burger of McDonalds were juicy and tendor, the ambiance was great I would love to come again",
+                                    child: AutoSizeText( widget.review,
                                       style: TextStyle(fontSize: 18.0),
                                       textAlign: TextAlign.center,
                                     ),
@@ -2453,11 +2276,12 @@ class _ViewReviews extends State<ViewReviews> {
         backgroundColor: Color(0xFFFC4A1F),
         onPressed: () {
           var route = new MaterialPageRoute(
-            builder: (BuildContext context) => new EditReviews(
-                value: '${widget.value}',
-                image: '${widget.image}',
-                review: widget.review,
-                reviewId: '${widget.reviewId}'),
+            builder: (BuildContext context) => new ChangeRatings(
+                value: widget.value,
+                image: widget.image,
+                vendorId: widget.vendorId,
+                reviewId: '${widget.reviewId}', 
+                ),
           );
           Navigator.of(context).push(route);
         },
@@ -2467,9 +2291,10 @@ class _ViewReviews extends State<ViewReviews> {
 }
 
 class EditReviews extends StatefulWidget {
-  String value, image, reviewId, review;
+  String name, logo, reviewId, review, vendorId;
+  List<Map> list;
 
-  EditReviews({Key key, this.value, this.image, this.reviewId, this.review})
+  EditReviews({Key key, this.name, this.logo, this.vendorId,  this.reviewId, this.review, this.list})
       : super(key: key);
 
   @override
@@ -2513,7 +2338,7 @@ class _EditReviews extends State<EditReviews> {
                         alignment: Alignment.topLeft,
                         child: Padding(
                             padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('${widget.value}',
+                            child: Text('Edit Rating',
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 28))),
                       )),
@@ -2548,68 +2373,15 @@ class _EditReviews extends State<EditReviews> {
               width: 200.0,
               child: Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.network('${widget.image}'),
+                child: Image.network('${widget.logo}'),
               ),
             ),
-            RatingBar.readOnly(
-              initialRating: 3.5,
-              filledIcon: Icons.star,
-              emptyIcon: Icons.star_border,
-              halfFilledIcon: Icons.star_half,
-              isHalfAllowed: true,
-              filledColor: Colors.amber,
-              emptyColor: Colors.amber,
-              halfFilledColor: Colors.amber,
-              size: 40,
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('My Ratings',
-                        style: TextStyle(color: Colors.red, fontSize: 22)),
-                  ),
-                ),
-                SizedBox(
-                  width: 20.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 30.0),
-                  child: Container(
-                      child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 170.0,
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft,
-                            colors: [
-                              Color(0xFFAC0D57),
-                              Color(0xFFFC4A1F),
-                            ]),
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 10),
-                        ],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      padding: EdgeInsets.all(12.0),
-                      child: Center(
-                        child: Text('My Reviews',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
-                      ),
-                    ),
-                  )),
-                )
-              ],
-            ),
+            Container(
+                    child: Center(
+                      child:Padding(
+                        padding: EdgeInsets.only(top: 0.0, bottom: 10.0),
+                        child: Text('${widget.name}',
+                            style: TextStyle(fontSize: 25, color: Colors.black))))),
             Padding(
                 padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
                 child: Container(
@@ -2645,9 +2417,10 @@ class _EditReviews extends State<EditReviews> {
                               color: Colors.white,
                             ),
                             child: TextFormField(
+                                onChanged: (rev) => widget.review = rev,
                                 focusNode: myFocusNode,
                                 decoration: InputDecoration(
-                                    labelText: '//user review here',
+                                    labelText: widget.review,
                                     contentPadding: new EdgeInsets.symmetric(
                                         vertical: 25.0, horizontal: 10.0)),
                                 style: TextStyle(
@@ -2685,8 +2458,13 @@ class _EditReviews extends State<EditReviews> {
                       onTap: () {
                         var route = new MaterialPageRoute(
                           builder: (BuildContext context) => new EditRating1(
-                              value: '${widget.value}',
-                              image: '${widget.image}'),
+                              name: widget.name,
+                              logo: widget.logo,
+                              vendorId: widget.vendorId,
+                              review: widget.review,
+                              reviewId: widget.reviewId,
+                              list: widget.list,
+                              ),
                         );
                         Navigator.of(context).push(route);
                       }),
@@ -2709,7 +2487,8 @@ class DoReviews extends StatefulWidget {
 }
 
 class _DoReviews extends State<DoReviews> {
-  double myrating;
+  
+  String review;
 
   FocusNode myFocusNode;
 
@@ -2819,6 +2598,7 @@ class _DoReviews extends State<DoReviews> {
                               color: Colors.white,
                             ),
                             child: TextFormField(
+                                onChanged: (rev) => review = rev,
                                 focusNode: myFocusNode,
                                 decoration: InputDecoration(
                                     labelText: 'Write a new review...',
@@ -2864,6 +2644,7 @@ class _DoReviews extends State<DoReviews> {
                                   logo: '${widget.logo}',
                                   vendorId: '${widget.vendorId}',
                                   list: widget.list,
+                                  review: review,
                                 ));
                         Navigator.of(context).push(route);
                       }),

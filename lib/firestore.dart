@@ -212,12 +212,23 @@ class FirestoreService{
     return review;
   }
 
+  List<Review> _reviewListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return Review(
+        userId: doc.data['userId'] ?? '',
+        vendorId: doc.data['vendorId'] ?? '',
+        review: doc.data['review'] ?? '' ,
+        reviewId: doc.data['reviewId'] ?? '',
+      );
+    }).toList();
+  }
+
+  Stream<List<Review>> getAllVendorReviews(String vendorId){
+    return _reviewsCollectionReference.where('vendorId', isEqualTo: vendorId).snapshots()
+    .map(_reviewListFromSnapshot);
+  }
+
   // do ratings
-
-  // Future<QuerySnapshot> getReviewId(String userId, String vendorId){
-  //   return _reviewsCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments();
-  // }
-
   Future<String> sendRatings(String uid, List<Map> itemRatings, String vendorName, String vendorLogo, String vendorId, String review, double vendorRating) async {
     // convert all the data to JSON
     int noOfItems = itemRatings.length;
@@ -237,13 +248,6 @@ class FirestoreService{
 
         // add review Id:
         await _reviewsCollectionReference.document(reviewId).updateData({'reviewId': reviewId});
-
-        // // get reviewId
-        // await getReviewId(uid, vendorId).then((docs){
-        //   if (docs.documents.isNotEmpty){
-        //         reviewId = docs.documents[0].data['reviewId'];
-        //       }
-        // });
       }
       RatedVendor ven = RatedVendor(userId: uid, vendorId: vendorId, vendorName: vendorName, vendorLogo: vendorLogo, reviewId: reviewId, rating: vendorRating);
       try {
@@ -258,7 +262,7 @@ class FirestoreService{
         try {
           final resp = await _ratedItemCollectionReference.add(it.toJSON());
           String ratedItemId = resp.documentID;
-        await _ratedVendorCollectionReference.document(ratedItemId).updateData({'ratedItemId': ratedItemId});
+          await _ratedItemCollectionReference.document(ratedItemId).updateData({'ratedItemId': ratedItemId});
         } catch (e) {
           print(e.toString());
         }
@@ -273,17 +277,15 @@ class FirestoreService{
   // edit rating 
 
   // getting document ids
-  Future<List> getRatedVendorId(String userId, String vendorId) async {
+  Future<String> getRatedVendorId(String userId, String vendorId) async {
     String docId = '';
-    String reviewId = '';
     await _ratedVendorCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments()
     .then((docs){
       if (docs.documents.isNotEmpty){
         docId = docs.documents[0].data['ratedVendorId'];
-        reviewId = docs.documents[0].data['reviewId'];
       }
     });
-    return [docId, reviewId];
+    return docId;
   }
 
   Future<String> getRatedItemsDocumentId(String userId, String vendorId, String itemId) async {
@@ -297,24 +299,20 @@ class FirestoreService{
     return docId;
   }
 
-  void updateRatings(String uid, List<Map> itemRatings, String vendorId, String review, double vendorRating) async {
+  Future<String> updateRatings(String uid, List<Map> itemRatings, String vendorId, String review, String reviewId, double vendorRating) async {
     // convert all the data to JSON
     int noOfItems = itemRatings.length;
-    String reviewId = '';
     String ratedVendorId = '';
 
     // getting vendorId;
-    List<String> ids = await getRatedVendorId(uid, vendorId);
-    ratedVendorId = ids[0];
-    reviewId = ids[1];
-
+    ratedVendorId = await getRatedVendorId(uid, vendorId);
     // update review
     if (review.isNotEmpty){
       // update review 
       try{
         await _reviewsCollectionReference.document(reviewId).updateData({'review': review});
       }catch(e){
-        print(e.toString());
+        return e.toString();
       }
     }
 
@@ -322,7 +320,7 @@ class FirestoreService{
     try {
       await _ratedVendorCollectionReference.document(ratedVendorId).updateData({'myVendorRating': vendorRating});
     } catch (e) {
-      print(e.toString());
+      return e.toString();
     }
 
     // update rated item
@@ -333,10 +331,11 @@ class FirestoreService{
           String ratedItemId = await getRatedItemsDocumentId(uid, vendorId, item['itemId']);
           await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['givenRating']});
         } catch (e) {
-          print(e.toString());
+          return e.toString();
         }
       });
     }
+    return null;
   }
 
   // host it 
