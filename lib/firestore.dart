@@ -7,6 +7,7 @@ import 'vendor.dart';
 import 'user.dart';
 import 'item.dart';
 import 'my-rating.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class FirestoreService{
@@ -58,26 +59,42 @@ class FirestoreService{
   }
 
   Future<String> userRolePromise(String uid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     try{
       String userrole = '';
-      await Firestore.instance.collection("users").document(uid).get().then((value){
+      await Firestore.instance.collection("users").document(uid).get().then((value) {
         userrole = value.data['userRole'];
-        // writeContent(value.data);
+        // trying shared preferences now 
+        prefs.setString('uid', value.data['uid']);
+        prefs.setString('firstName', value.data['firstName']);
+        prefs.setString('lastName', value.data['lastName']);
+        prefs.setString('userRole', value.data['userRole']);
+        prefs.setString('gender', value.data['gender']);
+        prefs.setString('email', value.data['email']);
+        prefs.setString('profilePicture', value.data['profilePicture']);
       });
-      //print('called');
       return userrole;
     }catch(e){
       return "Error";
     }
   }
 
-
   Stream<String> get users  {
     return userRolePromise(uid).asStream();
   }
 
   Future normalSignOutPromise()  async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     try{
+      prefs.remove('uid');
+      prefs.remove('firstName');
+      prefs.remove('lastName');
+      prefs.remove('userRole');
+      prefs.remove('gender');
+      prefs.remove('profilePicture');
+      if (prefs.getBool('rememberMe') == false){
+        prefs.remove('email');
+      }
       return await FirebaseAuth.instance.signOut();
     }
     catch(e){
@@ -341,6 +358,11 @@ class FirestoreService{
 
   Stream<List<Event>> getEventInfo(String eventID) {
     return _eventCollectionReference.snapshots()
+    .map(_eventListFromSnapshot);
+  }
+
+  Stream<List<Event>> getEventsInfo(String userId){ //each vendor's all item query
+    return _eventCollectionReference.where('uid', isEqualTo: 'aDsAvwk0mbgV1CQSUI5wJbU75Zt2').snapshots()
     .map(_eventListFromSnapshot);
   }
 
