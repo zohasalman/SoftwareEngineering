@@ -366,4 +366,9 @@ class FirestoreService{
     .map(_eventListFromSnapshot);
   }
 
+  Stream<List<Event>> getEventsInfo(String userId){ //each vendor's all item query
+    return _eventCollectionReference.where('uid', isEqualTo: 'aDsAvwk0mbgV1CQSUI5wJbU75Zt2').snapshots()
+    .map(_eventListFromSnapshot);
+  }
+
 }

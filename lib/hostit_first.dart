@@ -153,9 +153,13 @@ class HostitHomescreen extends StatefulWidget {
 }
 
 class _HostitHomescreenState extends State<HostitHomescreen> {
+  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  var scaffoldKey=GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return StreamProvider<List<Event>>.value(
+      value: FirestoreService().getEventsInfo(Provider.of<User>(context, listen: false).uid.toString()),
+      child: Scaffold( 
       endDrawer: SideBar1(),
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
@@ -175,15 +179,19 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
                         ),
                       )
                   ),
-                  // leading: IconButton(
-                  //     icon: Icon(
-                  //       Icons.arrow_back,
-
-                  //     ),
-                  //     onPressed: (){
-                  //       Navigator.pop(context);
-                  //       //add code
-                  //     }),
+                  actions: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(right: 20.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          scaffoldKey.currentState.openEndDrawer();
+                        },
+                        child: Icon(
+                          Icons.menu,
+                        ),
+                      )
+                    ),
+                  ],
                   flexibleSpace: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -217,7 +225,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
         child: Icon(Icons.add),
         backgroundColor: Colors.red[600],
       ),
-    );
+    ),);
   }
 }
 

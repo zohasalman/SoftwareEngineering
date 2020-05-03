@@ -4095,7 +4095,7 @@ class EditItemState extends State<EditItem> {
                       validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
                       onChanged: (input)=> logo=input,
                       decoration: InputDecoration(
-                        hintText: 'Upload a logo for your vendor',
+                        hintText: 'Upload a logo for item',
                         suffixIcon: IconButton(
                           icon: Icon(Icons.clear),
                           onPressed: ()=>{
