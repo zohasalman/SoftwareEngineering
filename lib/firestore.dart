@@ -71,22 +71,6 @@ class FirestoreService{
     }
   }
 
-//   Future updateEventID(String eid) async {
-//     return await Firestore.instance.collection('Event').document(eid).setData({'eventID':eid});
-//   }
-
-//  Future<String> addEventPromise(Event data) async {
-//     try{
-//       String id='';
-//       await Firestore.instance.collection("Event").add(data.toJSON()).then((eid){
-//         id=eid.toString();
-//         updateEventID(id);
-//       });
-//       return id;
-//     }catch(e){
-//       return "Error";
-//     }
-//   }
 
   Stream<String> get users  {
     return userRolePromise(uid).asStream();

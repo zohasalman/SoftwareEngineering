@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'item.dart';
+import 'hostit.dart';
 import 'userRedirection.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rating_bar/rating_bar.dart' ;
 
 class ListItem extends StatefulWidget {
@@ -87,6 +89,72 @@ class _ListItemState extends State<ListItem> {
               ],
             );
       });
+    }
+  }
+}
+
+
+class ListItemHostIt extends StatefulWidget {
+  @override
+  _ListItemStateHostIt createState() => _ListItemStateHostIt();
+}
+
+class _ListItemStateHostIt extends State<ListItemHostIt> {
+  
+  @override
+  Widget build(BuildContext context) {
+
+    final items = Provider.of<List<Item>>(context);
+    if (items == null){
+      return LoadingScreen();
+    }
+    else{
+      return Container(
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length,
+          itemBuilder: (context, index){
+            return Card(
+              child:ListTile(
+                onTap: () {
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EditItem(itemData: items[index],)),);
+                },
+                onLongPress: () async {
+                  return await showDialog(
+                    context: context,
+                    builder: (BuildContext context){
+                      return AlertDialog(
+                        title: Text("Confirm"),
+
+                        content: Text("Are you sure you want to delete this vendor?"),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () async {
+                              await Firestore.instance.collection('item').document(items[index].itemId).delete();
+                              Navigator.of(context).pop(false);
+                            },
+                            child: Text("Delete"),
+                          ),
+                          FlatButton(
+                            onPressed: ()=>Navigator.of(context).pop(false),
+                            child: Text("Cancel"),
+                          )
+                        ],
+                      ); 
+                    },
+                  ); 
+                },
+                title: Text(items[index].name.trim()),
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage('${items[index].logo}'),
+                ),
+              )
+            );
+          }
+        ),
+      );
     }
   }
 }

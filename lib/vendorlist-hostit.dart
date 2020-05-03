@@ -41,14 +41,15 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
                 child:ListTile(
                   onTap: () {
                     //debugPrint('${vendors[index].name} is pressed!');
-                    var route = new MaterialPageRoute(
-                      builder: (BuildContext context) => new EditVen(
-                          //value: '${vendors[index].name}',
-                          //image: '${vendors[index].logo}', 
-                          //vendorId: '${vendors[index].vendorId}'
-                      ),
-                    );
-                    Navigator.of(context).push(route);
+                    // var route = new MaterialPageRoute(
+                    //   builder: (BuildContext context) => new EditVen(
+                    //       //value: '${vendors[index].name}',
+                    //       //image: '${vendors[index].logo}', 
+                    //       //vendorId: '${vendors[index].vendorId}'
+                    //   ),
+                    // );
+                    //Navigator.of(context).push(route);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen(vendorData: vendors[index], eventName: eventName,)),);
                   },
                   onLongPress: () async {
                     return await showDialog(
@@ -79,13 +80,11 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
                   leading: CircleAvatar(
                     backgroundImage: NetworkImage('${vendors[index].logo}'),
                   ),
-                  //trailing: Text('${vendors[index].aggregateRating}'),
                 )
               );
             }
           ),
         );
-      //],);
     }
   }
 }
