@@ -377,15 +377,17 @@ class AddEventState extends State<AddEvent> {
 class EventMenu extends StatefulWidget {
   final String eid;
   final String eventName;
-  EventMenu({this.eid,this.eventName});
+  final String inviteCode;
+  EventMenu({this.eid,this.eventName,this.inviteCode});
   @override 
-  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName ); 
+  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName,inviteCode: inviteCode ); 
 }
 
 class EventMenuState extends State<EventMenu> {
-  final String eid;
-  final String eventName;
-  EventMenuState({this.eid,this.eventName});
+  String eid;
+  String eventName;
+  String inviteCode;
+  EventMenuState({this.eid,this.eventName,this.inviteCode});
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
 
@@ -470,7 +472,7 @@ class EventMenuState extends State<EventMenu> {
                   child: RichText(
                     text: TextSpan(children: <TextSpan>[
                       TextSpan(text: "Invite code| ",style: TextStyle(color: Colors.grey[600], fontSize: 25)),
-                      TextSpan(text: " AB64z9 ",style: TextStyle(color: Colors.black, fontSize: 25 )),
+                      TextSpan(text: inviteCode,style: TextStyle(color: Colors.black, fontSize: 25 )),
                     ]) 
                   ),
                 ),
@@ -3130,8 +3132,12 @@ class ComprehensiveReport extends State<Comprehensive> {
           Padding(padding: EdgeInsets.all(10),),
           Container(
             child: InkWell(
-              onTap: (){
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+              onTap: ()async{
+                String inviteCode;
+                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                  inviteCode=val.data['invitecode'];
+                });
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
               },
               child: Center(
                 child:Container(
@@ -3246,8 +3252,12 @@ class ScreenQRselect extends State<QRselection> {
                         child: 
                           Container(
                             child: GestureDetector(
-                              onTap: () { //Change on Integration
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+                              onTap: ()async{
+                                String inviteCode;
+                                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                                  inviteCode=val.data['invitecode'];
+                                });
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3283,8 +3293,12 @@ class ScreenQRselect extends State<QRselection> {
                         child: 
                           Container(
                             child: GestureDetector(
-                              onTap: () { //Change on Integration
-                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+                              onTap: ()async{
+                                String inviteCode;
+                                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                                  inviteCode=val.data['invitecode'];
+                                });
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
                                 width: 250.0,
