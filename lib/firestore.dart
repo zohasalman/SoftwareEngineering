@@ -62,7 +62,7 @@ class FirestoreService{
       String userrole = '';
       await Firestore.instance.collection("users").document(uid).get().then((value){
         userrole = value.data['userRole'];
-        writeContent(value.data);
+        // writeContent(value.data);
       });
       //print('called');
       return userrole;
@@ -152,6 +152,7 @@ class FirestoreService{
 
   // For Rating
   Future<QuerySnapshot> getVendor(String vendorId){
+    print(vendorId);
     return _vendorCollectionReference.where('vendorId', isEqualTo: vendorId).getDocuments();
   }
 
@@ -198,11 +199,53 @@ class FirestoreService{
     .map(_ratedItemListFromSnapshot);
   }
 
-  // new view my rating
+  // do ratings
 
+  Future<QuerySnapshot> getReviewId(String userId, String vendorId){
+    return _reviewsCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments();
+  }
 
+  Future<String> sendRatings(String uid, List<Map> itemRatings, String vendorName, String vendorLogo, String vendorId, String review, double vendorRating) async {
+    // convert all the data to JSON
+    int noOfItems = itemRatings.length;
+    String reviewId = '';
 
-  
+    if (noOfItems > 0){
+      if (review.isNotEmpty){
+        // send review 
+        Review rev = Review(userId: uid, vendorId: vendorId, review: review);
+        try{
+          await _reviewsCollectionReference.add(rev.toJSON());
+        }catch(e){
+          print(e.toString());
+        }
+
+        // get reviewId
+        await getReviewId(uid, vendorId).then((docs){
+          if (docs.documents.isNotEmpty){
+                reviewId = docs.documents[0].data['reviewId'];
+              }
+        });
+      }
+      RatedVendor ven = RatedVendor(userId: uid, vendorId: vendorId, vendorName: vendorName, vendorLogo: vendorLogo, reviewId: reviewId, rating: vendorRating);
+      try {
+        await _ratedVendorCollectionReference.add(ven.toJSON());
+      } catch (e) {
+        print(e.toString());
+      }
+      itemRatings.forEach((item) async{
+        RatedItem it = RatedItem(userId: uid, vendorId: vendorId, itemId: item['itemId'], itemName: item['name'], itemLogo: item['logo'], rating: item['givenRating']);
+        try {
+          await _ratedItemCollectionReference.add(it.toJSON());
+        } catch (e) {
+          print(e.toString());
+        }
+      });
+    }
+    else{
+      return 'No items were rated.';
+    }
+  }
 
   // host it 
   List<Event> _eventListFromSnapshot(QuerySnapshot snapshot){
