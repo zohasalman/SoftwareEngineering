@@ -64,19 +64,6 @@ class FirestoreService{
       String userrole = '';
       await Firestore.instance.collection("users").document(uid).get().then((value) {
         userrole = value.data['userRole'];
-        // print(value.data);
-        // print('checkinggg');
-        // UserData user = UserData(
-        //   uid: value.data['uid'],  
-        //   firstName: value.data['firstName'], 
-        //   lastName : value.data['lastName'], 
-        //   gender : value.data['gender'], 
-        //   // dateOfBirth : value.data['dateOfBirth'], 
-        //   email : value.data['email'], 
-        //   userRole : value.data['userRole']
-        //   );
-        //   writeContent(user.toJSON());
-
         // trying shared preferences now 
         prefs.setString('uid', value.data['uid']);
         prefs.setString('firstName', value.data['firstName']);
@@ -86,20 +73,28 @@ class FirestoreService{
         prefs.setString('email', value.data['email']);
         prefs.setString('profilePicture', value.data['profilePicture']);
       });
-      //print('called');
       return userrole;
     }catch(e){
       return "Error";
     }
   }
 
-
   Stream<String> get users  {
     return userRolePromise(uid).asStream();
   }
 
   Future normalSignOutPromise()  async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     try{
+      prefs.remove('uid');
+      prefs.remove('firstName');
+      prefs.remove('lastName');
+      prefs.remove('userRole');
+      prefs.remove('gender');
+      prefs.remove('profilePicture');
+      if (prefs.getBool('rememberMe') == false){
+        prefs.remove('email');
+      }
       return await FirebaseAuth.instance.signOut();
     }
     catch(e){
