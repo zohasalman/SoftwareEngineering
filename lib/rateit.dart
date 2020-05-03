@@ -23,13 +23,11 @@ import 'ratedVendor.dart';
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// import 'package:barcode_scan/barcode_scan.dart';
-// import 'package:flutter/services.dart';
-// import 'package:camera/camera.dart';
-// import 'package:qrcode_reader/qrcode_reader.dart';
 DateTime _dateTime;
 String user_id;
+UserData myUserInfo;
 
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -70,11 +68,11 @@ class SideBarProperties2 extends State<SideBar2> {
             ),
             CircleAvatar(
               radius: 70,
-              backgroundImage: new NetworkImage('http://i.pravatar.cc/300'),
+              backgroundImage: new NetworkImage('${myUserInfo.profilePicture}'),
             ),
-            Text('Uzair Mustafa',
+            Text(myUserInfo.firstName + ' ' + myUserInfo.lastName,
                 style: TextStyle(fontSize: 30, color: Colors.black)),
-            Text('uzairmustafa@rateit.com',
+            Text(myUserInfo.email,
                 style: TextStyle(fontSize: 22, color: Colors.black)),
             Padding(
               padding: EdgeInsets.all(30),
@@ -363,6 +361,26 @@ class _RateItFirstScreen extends StatefulWidget {
 }
 
 class RateItFirstScreen extends State<_RateItFirstScreen> {
+  void getUserInfo() async {
+    // new method
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // getting locally stored data
+    String uid = prefs.getString('uid');
+    String firstName = prefs.getString('firstName');
+    String lastName = prefs.getString('lastName');
+    String email = prefs.getString('email');
+    String profilePicture = prefs.getString('profilePicture');
+    String gender = prefs.getString('gender');
+    // Storing data in user class object
+    myUserInfo = UserData(
+        uid: uid,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        gender: gender,
+        profilePicture: profilePicture);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -441,6 +459,7 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                     offset: Offset(0.0, -260.0),
                     child: RaisedButton(
                       onPressed: () {
+                        getUserInfo();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -699,19 +718,22 @@ class _EditProfile extends State<EditProfile> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     radius: 70.0,
-                                    child:
-                                        Image.asset('asset/image/circular.png'),
+                                    backgroundImage: NetworkImage(
+                                        '${myUserInfo.profilePicture}'),
                                   ))),
                           Padding(
                               padding: const EdgeInsets.only(top: 3.0),
-                              child: Text('Uzair Mustafa',
+                              child: Text(
+                                  myUserInfo.firstName +
+                                      ' ' +
+                                      myUserInfo.lastName,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20.0,
                                   ))),
                           Padding(
                               padding: const EdgeInsets.only(top: 3.0),
-                              child: Text('uzairmustafa@rateit.com',
+                              child: Text(myUserInfo.email,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
@@ -727,6 +749,51 @@ class _EditProfile extends State<EditProfile> {
               child: ListView(
                   //crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Edit Username',
+                              hintText: myUserInfo.firstName +
+                                  ' ' +
+                                  myUserInfo.lastName,
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {}),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.lock_outline,
+                              color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Change Password',
+                              hintText: '*********',
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {
+                            TextField();
+                          }),
+                    ),
+                    Card(
+                        child: ListTile(
+                            leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
+                            title: TextFormField(
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                labelText: 'Update Email',
+                                hintText: myUserInfo.email,
+                                labelStyle: TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                              ),
+                            ))),
                     Card(
                       child: ListTile(
                           leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
@@ -859,50 +926,32 @@ class _ViewVendor extends State<ViewVendor> {
   UserData userInfo;
   String qr = "";
 
-  // Future _scanQR() async{
-  //   try {
-  //     var qrResult = await BarcodeScanner.scan();
-  //     setState(() {
-  //       //
-  //     });
-
-  //   }on PlatformException catch (ex) {
-  //     if (ex.code == BarcodeScanner.cameraAccessDenied)
-  //     {
-  //       setState(() {
-  //         result = 'Camera permission was denied';
-  //       });
-
-  //     } else {
-  //       setState(() {
-  //         result = 'Unknown Error $ex';
-  //       });
-  //     }
-  //   } on FormatException {
-  //     setState(() {
-  //       result = 'You pressed the back without scanning anything';
-  //     });
-  //   } catch (ex) {
-  //     setState(() {
-  //       result = 'Unknown Error $ex';
-  //     });
-  //   }
-  // }
-
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  @override
-  void initState() {
-    super.initState();
-    // start of getting local stored user info
-    readContent().then((String value) {
-      Map userMap = jsonDecode(value);
-      var user = UserData.fromData(userMap);
-      userInfo = json.decode(value);
-    });
-    //print(userInfo);  // some error generated here
-    // end of it
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // start of getting local stored user info
+  // readContent().then((String value) {
+  //   // print(value);
+  //   var data = jsonDecode(value);
+  //   print('hii');
+  //   print(data);
+  //   userInfo = UserData(
+  //     uid: data['uid'],
+  //       firstName: data['firstName'],
+  //       lastName : data['lastName'],
+  //       gender : data['gender'],
+  //       // dateOfBirth : value.data['dateOfBirth'],
+  //       email : data['email'],
+  //       userRole : data['userRole'],
+  //   );
+  // });
+  // print('from rateit');
+  // print(userInfo);  // some error generated here
+
+  // end of it
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1060,10 +1109,10 @@ class _ViewMyRating extends State<ViewMyRating> {
 }
 
 class EditRatings extends StatefulWidget {
-
   String name, image, rating, vendorId, reviewId;
 
-  EditRatings({this.name, this.image, this.rating, this.vendorId, this.reviewId});
+  EditRatings(
+      {this.name, this.image, this.rating, this.vendorId, this.reviewId});
 
   @override
   _EditRatings createState() => new _EditRatings();
@@ -1073,8 +1122,8 @@ class _EditRatings extends State<EditRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-        value: FirestoreService().getMyRatedItem(user_id, '${widget.vendorId}'),
-        child: Scaffold(
+      value: FirestoreService().getMyRatedItem(user_id, '${widget.vendorId}'),
+      child: Scaffold(
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(150.0),
               child: ClipPath(
@@ -1118,102 +1167,106 @@ class _EditRatings extends State<EditRatings> {
           body: Padding(
               padding: EdgeInsets.all(5.0),
               child: Container(
-                  child: ListView(children: <Widget>[
-                Container(
-                  height: 200.0,
-                  width: 200.0,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                    child: Image.network('${widget.image}'),
-                  ),
-                ),
-                RatingBar.readOnly(
-                  initialRating: double.parse('${widget.rating}'),
-                  filledIcon: Icons.star,
-                  emptyIcon: Icons.star_border,
-                  halfFilledIcon: Icons.star_half,
-                  isHalfAllowed: true,
-                  filledColor: Colors.amber,
-                  emptyColor: Colors.amber,
-                  halfFilledColor: Colors.amber,
-                  size: 40,
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Row(
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                  child: Container(
-                child: GestureDetector(
-              onTap: () {
-              },
-              child: Container(
-                width: 200.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
-                  ],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('My Ratings',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                ),
-              ),
-            )),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  child: GestureDetector(
-                    onTap: ( ) async {
-                      // get review 
-                      String review = await FirestoreService().getReview(widget.reviewId);
-                      var route = new MaterialPageRoute(
-                          builder: (BuildContext context) => new ViewReviews(
-                              value: '${widget.name}',
-                              image: '${widget.image}',
-                              reviewId: '${widget.reviewId}',
-                              review: review,
+                child: ListView(
+                  children: <Widget>[
+                    Container(
+                      height: 200.0,
+                      width: 200.0,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                        child: Image.network('${widget.image}'),
+                      ),
+                    ),
+                    RatingBar.readOnly(
+                      initialRating: double.parse('${widget.rating}'),
+                      filledIcon: Icons.star,
+                      emptyIcon: Icons.star_border,
+                      halfFilledIcon: Icons.star_half,
+                      isHalfAllowed: true,
+                      filledColor: Colors.amber,
+                      emptyColor: Colors.amber,
+                      halfFilledColor: Colors.amber,
+                      size: 40,
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 5.0),
+                          child: Container(
+                              child: GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              width: 200.0,
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.topLeft,
+                                    colors: [
+                                      Color(0xFFAC0D57),
+                                      Color(0xFFFC4A1F),
+                                    ]),
+                                boxShadow: const [
+                                  BoxShadow(blurRadius: 10),
+                                ],
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              padding: EdgeInsets.all(12.0),
+                              child: Center(
+                                child: Text('My Ratings',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18)),
+                              ),
                             ),
-                        );
-                        Navigator.of(context).push(route);
-                    },
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                  ),
+                          )),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                          child: GestureDetector(
+                            onTap: () async {
+                              // get review
+                              String review = await FirestoreService()
+                                  .getReview(widget.reviewId);
+                              var route = new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    new ViewReviews(
+                                  value: '${widget.name}',
+                                  image: '${widget.image}',
+                                  reviewId: '${widget.reviewId}',
+                                  review: review,
+                                ),
+                              );
+                              Navigator.of(context).push(route);
+                            },
+                            child: Text('Reviews',
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 22)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    RatedItemList(),
+                  ],
                 ),
-              ],
-                ),
-                RatedItemList(),
-              ],
-            ),
-            
-            )
-          ),
-           floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.edit),
-        backgroundColor: Color(0xFFFC4A1F),
-        onPressed: () {
-          var route = new MaterialPageRoute(
-            builder: (BuildContext context) => new ChangeRatings(
-                value: '${widget.name}', image: '${widget.image}', vendorId: '${widget.vendorId}', reviewId: '${widget.reviewId}'),
-          );
-          Navigator.of(context).push(route);
-        },
-      )
-        ),
-      );
+              )),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.edit),
+            backgroundColor: Color(0xFFFC4A1F),
+            onPressed: () {
+              var route = new MaterialPageRoute(
+                builder: (BuildContext context) => new ChangeRatings(
+                    value: '${widget.name}',
+                    image: '${widget.image}',
+                    vendorId: '${widget.vendorId}',
+                    reviewId: '${widget.reviewId}'),
+              );
+              Navigator.of(context).push(route);
+            },
+          )),
+    );
   }
 }
 
@@ -1790,7 +1843,8 @@ class _TopRatedItems extends State<TopRatedItems> {
 class ChangeRatings extends StatefulWidget {
   String value, image, vendorId, reviewId;
 
-  ChangeRatings({Key key, this.value, this.image, this.vendorId, this.reviewId}) : super(key: key);
+  ChangeRatings({Key key, this.value, this.image, this.vendorId, this.reviewId})
+      : super(key: key);
 
   @override
   _ChangeRatings createState() => new _ChangeRatings();
@@ -1801,128 +1855,126 @@ class _ChangeRatings extends State<ChangeRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-      value: FirestoreService().getMyRatedItem(user_id, widget.vendorId),
-      child: Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(150.0),
-            child: ClipPath(
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  AppBar(
-                    centerTitle: true,
-                    bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.value}',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 28))),
+        value: FirestoreService().getMyRatedItem(user_id, widget.vendorId),
+        child: Scaffold(
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(150.0),
+                child: ClipPath(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      AppBar(
+                        centerTitle: true,
+                        bottom: PreferredSize(
+                            preferredSize: Size.fromHeight(0),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                  padding:
+                                      EdgeInsets.only(bottom: 60.0, left: 10),
+                                  child: Text('${widget.value}',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 28))),
+                            )),
+                        flexibleSpace: Container(
+                            decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.topLeft,
+                              colors: [
+                                Color(0xFFAC0D57),
+                                Color(0xFFFC4A1F),
+                              ]),
+                          image: DecorationImage(
+                            image: AssetImage(
+                              "asset/image/Chat.png",
+                            ),
+                            fit: BoxFit.fitWidth,
+                          ),
                         )),
-                    flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    )),
-                  )
-                ],
-              ),
-              clipper: Clipshape(),
-            )),
-      body: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Container(
-            child: ListView(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.network('${widget.image}'),
-              ),
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 5.0),
-                  child: Container(
-                      child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 200.0,
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft,
-                            colors: [
-                              Color(0xFFAC0D57),
-                              Color(0xFFFC4A1F),
-                            ]),
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 10),
-                        ],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      padding: EdgeInsets.all(12.0),
-                      child: Center(
-                        child: Text('Top Rated Reviews',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
-                      ),
+                      )
+                    ],
+                  ),
+                  clipper: Clipshape(),
+                )),
+            body: Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Container(
+                child: ListView(children: <Widget>[
+                  Container(
+                    height: 200.0,
+                    width: 200.0,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                      child: Image.network('${widget.image}'),
                     ),
-                  )),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                )
-              ],
-            ),
-        
-              EditMyRatingsItems(),
-              new Divider(),
-              Container(
-                  height: 100.0,
-                  width: 100.0,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 0.0),
-                    child: GestureDetector(
-                        child: Image.asset('asset/image/Group 55.png'),
-                        onTap: () async {
-                          String review = await FirestoreService().getReview(widget.reviewId);
-                          var route = new MaterialPageRoute(
-                            builder: (BuildContext context) => new EditReviews(
-                                value: '${widget.value}',
-                                image: '${widget.image}',
-                                review: review,
-                                reviewId: '${widget.reviewId}'),
-                          );
-                          Navigator.of(context).push(route);
-                        }),
-                  ))
-          ]
-            ),
-        ),
-      )
-      )
-    );
+                  ),
+                  new Divider(),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 5.0),
+                        child: Container(
+                            child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 200.0,
+                            height: 50.0,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.topLeft,
+                                  colors: [
+                                    Color(0xFFAC0D57),
+                                    Color(0xFFFC4A1F),
+                                  ]),
+                              boxShadow: const [
+                                BoxShadow(blurRadius: 10),
+                              ],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: EdgeInsets.all(12.0),
+                            child: Center(
+                              child: Text('Top Rated Reviews',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18)),
+                            ),
+                          ),
+                        )),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                        child: Text('Reviews',
+                            style: TextStyle(color: Colors.red, fontSize: 22)),
+                      )
+                    ],
+                  ),
+                  EditMyRatingsItems(),
+                  new Divider(),
+                  Container(
+                      height: 100.0,
+                      width: 100.0,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 0.0),
+                        child: GestureDetector(
+                            child: Image.asset('asset/image/Group 55.png'),
+                            onTap: () async {
+                              String review = await FirestoreService()
+                                  .getReview(widget.reviewId);
+                              var route = new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    new EditReviews(
+                                        value: '${widget.value}',
+                                        image: '${widget.image}',
+                                        review: review,
+                                        reviewId: '${widget.reviewId}'),
+                              );
+                              Navigator.of(context).push(route);
+                            }),
+                      ))
+                ]),
+              ),
+            )));
   }
 }
 
@@ -2201,20 +2253,18 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 }
 
 class ViewReviews extends StatefulWidget {
-
   String value, image, reviewId, review;
 
-  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review}) : super(key: key);
+  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review})
+      : super(key: key);
 
   @override
   _ViewReviews createState() => new _ViewReviews();
 }
 
 class _ViewReviews extends State<ViewReviews> {
-  
   double myrating;
 
- 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -2330,70 +2380,71 @@ class _ViewReviews extends State<ViewReviews> {
               ],
             ),
             Padding(
-              padding: EdgeInsets.only (top: 15.0, right: 45.0, left: 45.0),
-              child: Container(
-                width: 200.0,
-                
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                   gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        //Colors.white,
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                        
-                      ]),
-                  color: Colors.redAccent,
-                ),
-                alignment: Alignment.center,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 30.0),
-                      child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30.0,
-                                child: Image.asset('asset/image/circular.png'),
-                              )
+                padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
+                child: Container(
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            //Colors.white,
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      color: Colors.redAccent,
                     ),
-                    Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                ),
-                 child: Padding(
-                         padding: const EdgeInsets.only(
-                              top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(
-                                minWidth: 200.0,
-                                maxWidth: 270.0,
-                                minHeight: 30.0,
-                                maxHeight: 100.0,
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(top: 30.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30.0,
+                              child: Image.asset('asset/image/circular.png'),
+                            )),
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20.0,
+                                left: 20.0,
+                                right: 20.0,
+                                bottom: 10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
                               ),
-                              child: AutoSizeText(
-                                "The burger of McDonalds were juicy and tendor, the ambiance was great I would love to come again",
-                                style: TextStyle(fontSize: 18.0),
-                                textAlign: TextAlign.center,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 20.0,
+                                    left: 20.0,
+                                    right: 20.0,
+                                    bottom: 10.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                  ),
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth: 200.0,
+                                      maxWidth: 270.0,
+                                      minHeight: 30.0,
+                                      maxHeight: 100.0,
+                                    ),
+                                    child: AutoSizeText(
+                                      "The burger of McDonalds were juicy and tendor, the ambiance was great I would love to come again",
+                                      style: TextStyle(fontSize: 18.0),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                    )
-                    ),
+                            )),
                       ],
                     ))),
-            
           ],
         )),
       ),
@@ -2403,7 +2454,10 @@ class _ViewReviews extends State<ViewReviews> {
         onPressed: () {
           var route = new MaterialPageRoute(
             builder: (BuildContext context) => new EditReviews(
-                value: '${widget.value}', image: '${widget.image}', review: widget.review, reviewId: '${widget.reviewId}' ),
+                value: '${widget.value}',
+                image: '${widget.image}',
+                review: widget.review,
+                reviewId: '${widget.reviewId}'),
           );
           Navigator.of(context).push(route);
         },
@@ -2415,7 +2469,8 @@ class _ViewReviews extends State<ViewReviews> {
 class EditReviews extends StatefulWidget {
   String value, image, reviewId, review;
 
-  EditReviews({Key key, this.value, this.image, this. reviewId, this.review}) : super(key: key);
+  EditReviews({Key key, this.value, this.image, this.reviewId, this.review})
+      : super(key: key);
 
   @override
   _EditReviews createState() => new _EditReviews();
@@ -2424,9 +2479,9 @@ class EditReviews extends StatefulWidget {
 class _EditReviews extends State<EditReviews> {
   double myrating;
 
-   FocusNode myFocusNode;
+  FocusNode myFocusNode;
 
-   @override
+  @override
   void initState() {
     super.initState();
 
@@ -2440,6 +2495,7 @@ class _EditReviews extends State<EditReviews> {
 
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -2602,22 +2658,20 @@ class _EditReviews extends State<EditReviews> {
                         )
                       ],
                     ))),
-                     Container(
+            Container(
                 child: Transform.translate(
-                  offset: Offset(150.0, -30.0),
-                child: MaterialButton(
-              onPressed: () => myFocusNode.requestFocus(),
-              color: Color(0xFFFC4A1F),
-              textColor: Colors.white,
-              child: Icon(
-                Icons.edit,
-                size: 24,
-              ),
-              padding: EdgeInsets.all(16),
-              shape: CircleBorder(),
-            )
-                )
-            ),
+                    offset: Offset(150.0, -30.0),
+                    child: MaterialButton(
+                      onPressed: () => myFocusNode.requestFocus(),
+                      color: Color(0xFFFC4A1F),
+                      textColor: Colors.white,
+                      child: Icon(
+                        Icons.edit,
+                        size: 24,
+                      ),
+                      padding: EdgeInsets.all(16),
+                      shape: CircleBorder(),
+                    ))),
             SizedBox(
               height: 30.0,
             ),
@@ -2778,22 +2832,20 @@ class _DoReviews extends State<DoReviews> {
                         )
                       ],
                     ))),
-                    Container(
+            Container(
                 child: Transform.translate(
-                  offset: Offset(150.0, -30.0),
-                child: MaterialButton(
-              onPressed: () => myFocusNode.requestFocus(),
-              color: Color(0xFFFC4A1F),
-              textColor: Colors.white,
-              child: Icon(
-                Icons.edit,
-                size: 24,
-              ),
-              padding: EdgeInsets.all(16),
-              shape: CircleBorder(),
-            )
-                )
-            ),
+                    offset: Offset(150.0, -30.0),
+                    child: MaterialButton(
+                      onPressed: () => myFocusNode.requestFocus(),
+                      color: Color(0xFFFC4A1F),
+                      textColor: Colors.white,
+                      child: Icon(
+                        Icons.edit,
+                        size: 24,
+                      ),
+                      padding: EdgeInsets.all(16),
+                      shape: CircleBorder(),
+                    ))),
             SizedBox(
               height: 30.0,
             ),

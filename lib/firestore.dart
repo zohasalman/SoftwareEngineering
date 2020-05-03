@@ -7,6 +7,7 @@ import 'vendor.dart';
 import 'user.dart';
 import 'item.dart';
 import 'my-rating.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class FirestoreService{
@@ -58,11 +59,32 @@ class FirestoreService{
   }
 
   Future<String> userRolePromise(String uid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     try{
       String userrole = '';
-      await Firestore.instance.collection("users").document(uid).get().then((value){
+      await Firestore.instance.collection("users").document(uid).get().then((value) {
         userrole = value.data['userRole'];
-        // writeContent(value.data);
+        // print(value.data);
+        // print('checkinggg');
+        // UserData user = UserData(
+        //   uid: value.data['uid'],  
+        //   firstName: value.data['firstName'], 
+        //   lastName : value.data['lastName'], 
+        //   gender : value.data['gender'], 
+        //   // dateOfBirth : value.data['dateOfBirth'], 
+        //   email : value.data['email'], 
+        //   userRole : value.data['userRole']
+        //   );
+        //   writeContent(user.toJSON());
+
+        // trying shared preferences now 
+        prefs.setString('uid', value.data['uid']);
+        prefs.setString('firstName', value.data['firstName']);
+        prefs.setString('lastName', value.data['lastName']);
+        prefs.setString('userRole', value.data['userRole']);
+        prefs.setString('gender', value.data['gender']);
+        prefs.setString('email', value.data['email']);
+        prefs.setString('profilePicture', value.data['profilePicture']);
       });
       //print('called');
       return userrole;
