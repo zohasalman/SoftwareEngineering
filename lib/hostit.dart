@@ -46,6 +46,9 @@ class App extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return MaterialApp(
+    theme:  ThemeData(
+          primaryColor: Colors.pink,
+    ),
     debugShowCheckedModeBanner:  false,
     home:  AddEvent(coord: null),
     );
@@ -77,6 +80,10 @@ class AddEventState extends State<AddEvent> {
     );
     coord=updatedcoord;
   }
+
+  bool validate=false; 
+  bool error1=false; 
+  bool error2=false; 
 
   @override 
   Widget build(BuildContext context){
@@ -134,241 +141,259 @@ class AddEventState extends State<AddEvent> {
             clipper: ClipShape(),
           )
         ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
-        child: Column(children: <Widget>[
-          Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                padding:EdgeInsets.only( top: 10, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      validator: (input)=> input.isEmpty? 'Please enter a name': null,
-                      onChanged: (input)=> name=input,
-                      decoration: InputDecoration(
-                        labelText: 'Name of the event',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
-                      ),
-                    )
-                  ],
-                )
-          ),
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            child: Row(children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.75,
-                padding:EdgeInsets.only( top: 5, left: 20),
-                    child: TextFormField(
-                      validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
-                      //validator: (input)=> input.isEmpty? 'Please enter a valid location': nu//coord=LatLng(23.32, 65.1);
-                      decoration: InputDecoration(
-                        labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
-                      ),
-                    )
-              ),
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                    ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.add_location,
-                    color: Colors.white,),
-                    onPressed: () {
-                      getCoordinates();
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
-                    },
-                  ),
+        autovalidate: validate,
+        child: SingleChildScrollView(
+          child: Column(children: <Widget>[
+            Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                  padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        validator: (input)=> input.isEmpty? 'Please fill out this field': null,
+                        onChanged: (input)=> name=input,
+                        decoration: InputDecoration(
+                          labelText: 'Name of the event',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 19
+                          )
+                        ),
+                      )
+                    ],
+                  )
+            ),
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              child: Row(children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                  padding:EdgeInsets.only( top: 5, left: 20),
+                      child: TextFormField(
+                        validator: (tmp)=>coord==null?'Please fill out this field':null,
+                        //validator: (input)=> input.isEmpty? 'Please enter a valid location': nu//coord=LatLng(23.32, 65.1);
+                        decoration: InputDecoration(
+                          labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 19
+                          )
+                        ),
+                      )
                 ),
-              )
-            ],),
-          ),
-          
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onChanged: (input)=> eventNumber=int.parse(input),
-                  decoration: InputDecoration(
-                    labelText: 'Number of vendors',
-                    labelStyle: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 19
-                    )
-                    
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                  child: Ink(
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.add_location,
+                      color: Colors.white,),
+                      onPressed: () {
+                        getCoordinates();
+                        //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
+                      },
+                    ),
                   ),
                 )
-              ],
-            )
-          ),
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            child: Row(children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.75,
-                padding:EdgeInsets.only( top: 5, left: 20),
-                
-                    child: TextFormField(
+              ],),
+            ),
+            
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    validator: (input)=> input.isEmpty? 'Please enter a number': null,
+                    onChanged: (input)=> eventNumber=int.parse(input),
+                    decoration: InputDecoration(
+                      labelText: 'Number of vendors',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 19
+                      )
                       
-                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onChanged: (input)=> logo=input,
-                      decoration: InputDecoration(
-                        labelText: 'Upload a logo of your event',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
-                      ),
-                    )
-                  
-                
-              ),
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
                     ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.file_upload,
-                    color: Colors.white,),
-                    onPressed: () {},
-                  ),
-                ),
+                  )
+                ],
               )
-            ],),
-          ),
-          
-           Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
+            ),
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              child: Row(children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                  padding:EdgeInsets.only( top: 5, left: 20),
+                  
+                      child: TextFormField(
+                        
+                        validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                        onChanged: (input)=> logo=input,
+                        decoration: InputDecoration(
+                          labelText: 'Upload a logo of your event',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 19
+                          )
+                        ),
+                      )
                     
-                    TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
-                  ]
-                  )),
-
-              ),
-
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            child: Row(children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.75,
-                padding:EdgeInsets.only( top: 5, left: 20),
-                child: TextFormField( 
-                  validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                  onChanged: (input)=> photo=input,
-                  decoration: InputDecoration(
-                    labelText: 'Upload a photo of your event',
-                    labelStyle: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 19
-                    )
+                  
+                ),
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                  child: Ink(
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.file_upload,
+                      color: Colors.white,),
+                      onPressed: () {
+                        setState(() {
+                          error1=true; 
+                        });
+                      },
+                    ),
                   ),
                 )
-              ),
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                    ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.file_upload,
-                    color: Colors.white,),
-                    onPressed: () {},
-                  ),
-                ),
-              )
-            ],),
-          ),
-          
-          Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
-                  ]
-                  )),
+              ],),
+            ),
+            
+            Container(
+              child: error1? Container() : Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                  padding: EdgeInsets.only(top: 0, left: 20), 
+                  child: RichText(
+                    text: TextSpan(children: <TextSpan>[
+                      
+                      TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
+                    ]
+                    )),
 
-          ),
-          Padding(
-            padding: EdgeInsets.all(15),
-          ),
-          Center(child: Container(
-                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-                width:60,
-                height:60,
-                child: Ink(
+                ),
+            ),
+
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              child: Row(children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                  padding:EdgeInsets.only( top: 5, left: 20),
+                  child: TextFormField( 
+                    validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                    onChanged: (input)=> photo=input,
+                    decoration: InputDecoration(
+                      labelText: 'Upload a photo of your event',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 19
+                      )
+                    ),
+                  )
+                ),
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                  child: Ink(
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.file_upload,
+                      color: Colors.white,),
+                      onPressed: () {
+                        setState(() {
+                          error2=true; 
+                        });
+                      },
+                    ),
+                  ),
+                )
+              ],),
+            ),
+
+            Container(
+              child: error2? Container() : Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                  padding: EdgeInsets.only(top: 0, left: 20), 
+                  child: RichText(
+                    text: TextSpan(children: <TextSpan>[
+                      TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
+                    ]
+                    )),
+
+                ),
+            ),
+            
+
+            Padding(
+              padding: EdgeInsets.all(15),
+            ),
+            Center(child: Container(
+                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
                   width:60,
                   height:60,
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    color: null,
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                  child: Ink(
+                    width:60,
+                    height:60,
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: null,
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
                     ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    child: IconButton(
+                      alignment: Alignment.center,
+                      icon: Icon(Icons.arrow_forward,
+                      size: 45,
+                      color: Colors.white,),
+                      onPressed: () async {
+                        setState(() => validate=true);
+                        //if(coord!=null){
+                          GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
+                          String eventid;
+                          var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
+                          if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
+                            await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
+                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;});
+                            });
+                            Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
+                          }
+                      // }
+                      },
+                    ),
                   ),
-                  child: IconButton(
-                    alignment: Alignment.center,
-                    icon: Icon(Icons.arrow_forward,
-                    size: 45,
-                    color: Colors.white,),
-                    onPressed: () async {
-                      //if(coord!=null){
-                        GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                        String eventid;
-                        var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
-                        if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
-                          await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
-                              await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;});
-                          });
-                          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
-                        }
-                     // }
-                    },
-                  ),
-                ),
-          ),),
-        ],
-        )  
+            ),),
+          ],
+          )  
+        ),
       )
     ); 
   }
@@ -377,17 +402,20 @@ class AddEventState extends State<AddEvent> {
 class EventMenu extends StatefulWidget {
   final String eid;
   final String eventName;
-  EventMenu({this.eid,this.eventName});
+  final String inviteCode;
+  EventMenu({this.eid,this.eventName,this.inviteCode});
   @override 
-  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName ); 
+  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName,inviteCode: inviteCode ); 
 }
 
 class EventMenuState extends State<EventMenu> {
-  final String eid;
-  final String eventName;
-  EventMenuState({this.eid,this.eventName});
+  String eid;
+  String eventName;
+  String inviteCode;
+  EventMenuState({this.eid,this.eventName,this.inviteCode});
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
+  bool validate=false; 
 
   @override 
   Widget build(BuildContext context) {    
@@ -459,25 +487,28 @@ class EventMenuState extends State<EventMenu> {
           )
         ),
       body: Form(
-        key: _formKey, child: Center(
+        key: _formKey,
+        autovalidate: validate,
+        child: SingleChildScrollView(
+         child: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: <Widget>[
-            Container(
+            SafeArea(
               child: InkWell(
                 onTap: (){
                 },
-                child: new Container(
+                child: new SafeArea(
                   //padding: EdgeInsets.only(top: 130, left: 20), 
                   child: RichText(
                     text: TextSpan(children: <TextSpan>[
                       TextSpan(text: "Invite code| ",style: TextStyle(color: Colors.grey[600], fontSize: 25)),
-                      TextSpan(text: " AB64z9 ",style: TextStyle(color: Colors.black, fontSize: 25 )),
+                      TextSpan(text: inviteCode,style: TextStyle(color: Colors.black, fontSize: 25 )),
                     ]) 
                   ),
                 ),
               ),
             ),
 
-            Container(
+            SafeArea(
               child: Padding(
                 padding:EdgeInsets.only(top: 0, left: 0), 
                 child: Container(
@@ -488,36 +519,36 @@ class EventMenuState extends State<EventMenu> {
               
             ),
 
-            Container(
-                child: InkWell(
-                  onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> Comprehensive(eid:eid,eventName:eventName)),);
-                  },
-                  child: Container(
-                    height: 50,
-                    width: 350,
+            // Container(
+            //     child: InkWell(
+            //       onTap: (){
+            //         Navigator.push(context,MaterialPageRoute(builder: (context)=> Comprehensive(eid:eid,eventName:eventName)),);
+            //       },
+            //       child: Container(
+            //         height: 50,
+            //         width: 350,
                     
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: EdgeInsets.only(top: 15, left: 40), 
-                    child: Text("Generate Comprehensive Report",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+            //         decoration: BoxDecoration(
+            //           gradient: LinearGradient(
+            //             begin: Alignment.topRight,
+            //             end: Alignment.topLeft,
+            //             colors: [ 
+            //               Color(0xFFAC0D57),
+            //               Color(0xFFFC4A1F),
+            //             ]
+            //           ),
+            //           borderRadius: BorderRadius.circular(50),
+            //         ),
+            //         padding: EdgeInsets.only(top: 15, left: 40), 
+            //         child: Text("Generate Comprehensive Report",style: TextStyle(color: Colors.white, fontSize: 18 ))
+            //       ),
 
-                ),
+            //     ),
               
-            ),
+            // ),
 
             
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: () async{
                     return await showDialog(
@@ -537,9 +568,14 @@ class EventMenuState extends State<EventMenu> {
                       },
                     );
                   },
+
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 40), 
                   child: Container(
                     height: 50,
                     width: 350,
+                    
                     
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -554,13 +590,13 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 90), 
                     child: Text("Download QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),),
 
                 ),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: ()async{
                     return await showDialog(
@@ -581,6 +617,9 @@ class EventMenuState extends State<EventMenu> {
                     );
                     //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
                   child: Container(
                     height: 50,
                     width: 350,
@@ -598,17 +637,21 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 115), 
                     child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),),
 
                 ),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: (){
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty(eid: eid, eventName: eventName,)),);
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
+                  child: SafeArea(
                   child: Container(
                     height: 50,
                     width: 350,
@@ -626,17 +669,21 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 125), 
                     child: Text("Add Vendors",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),
 
-                ),
+                ),),),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: (){
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventName: eventName,eventID: eid,)),);  
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
+                  child: SafeArea(
                   child: Container(
                     height: 50,
                     width: 350,
@@ -654,13 +701,13 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 125), 
                     child: Text("Edit a Vendor",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),
 
-                ),
+                ),),),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: () async {
                     Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
@@ -672,6 +719,10 @@ class EventMenuState extends State<EventMenu> {
                     });
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
+                  child: SafeArea(
                   child: Container(
                     height: 50,
                     width: 350,
@@ -691,12 +742,12 @@ class EventMenuState extends State<EventMenu> {
                     child: Text("Edit Event",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
 
-                ),
+                ),),),),
               
             ),
           ],),
         )  
-      )
+      ),),
     );
   }
 }
@@ -3130,8 +3181,12 @@ class ComprehensiveReport extends State<Comprehensive> {
           Padding(padding: EdgeInsets.all(10),),
           Container(
             child: InkWell(
-              onTap: (){
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+              onTap: ()async{
+                String inviteCode;
+                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                  inviteCode=val.data['invitecode'];
+                });
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
               },
               child: Center(
                 child:Container(
@@ -3246,8 +3301,12 @@ class ScreenQRselect extends State<QRselection> {
                         child: 
                           Container(
                             child: GestureDetector(
-                              onTap: () { //Change on Integration
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+                              onTap: ()async{
+                                String inviteCode;
+                                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                                  inviteCode=val.data['invitecode'];
+                                });
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3283,8 +3342,12 @@ class ScreenQRselect extends State<QRselection> {
                         child: 
                           Container(
                             child: GestureDetector(
-                              onTap: () { //Change on Integration
-                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+                              onTap: ()async{
+                                String inviteCode;
+                                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                                  inviteCode=val.data['invitecode'];
+                                });
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3765,36 +3828,31 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
                                       color: Colors.white, fontSize: 28))),
                         )),
                     flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
                           begin: Alignment.topRight,
                           end: Alignment.topLeft,
                           colors: [
                             Color(0xFFAC0D57),
                             Color(0xFFFC4A1F),
                           ]),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "asset/image/Chat.png",
+                          ),
+                          fit: BoxFit.fitWidth,
                         ),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    )),
+                      )
+                    ),
                   )
                 ],
               ),
               clipper: Clipshape(),
             )),
         endDrawer: SideBar2(),
-        body:Column( children: <Widget>[
-          Container(
-            child: Text(
-              "Long Press to delete vendor",
-              style: TextStyle(color: Colors.pink[600], fontSize: 17),
-            ),
-          ), 
+        body://Column( children: <Widget>[
           VendorsListHostit(),
-        ]),
+        //]),
       ),
     );
   }

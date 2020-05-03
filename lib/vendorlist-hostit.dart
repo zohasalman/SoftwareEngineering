@@ -34,7 +34,7 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
         Container(
           child: ListView.builder(
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            //physics: const NeverScrollableScrollPhysics(),
             itemCount: vendors.length,
             itemBuilder: (context, index) {
               return Card(
