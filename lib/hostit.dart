@@ -492,11 +492,11 @@ class EventMenuState extends State<EventMenu> {
         child: SingleChildScrollView(
          child: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: <Widget>[
-            Container(
+            SafeArea(
               child: InkWell(
                 onTap: (){
                 },
-                child: new Container(
+                child: new SafeArea(
                   //padding: EdgeInsets.only(top: 130, left: 20), 
                   child: RichText(
                     text: TextSpan(children: <TextSpan>[
@@ -508,7 +508,7 @@ class EventMenuState extends State<EventMenu> {
               ),
             ),
 
-            Container(
+            SafeArea(
               child: Padding(
                 padding:EdgeInsets.only(top: 0, left: 0), 
                 child: Container(
@@ -548,7 +548,7 @@ class EventMenuState extends State<EventMenu> {
             // ),
 
             
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: () async{
                     return await showDialog(
@@ -568,9 +568,14 @@ class EventMenuState extends State<EventMenu> {
                       },
                     );
                   },
+
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 40), 
                   child: Container(
                     height: 50,
                     width: 350,
+                    
                     
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -585,13 +590,13 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 90), 
                     child: Text("Download QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),),
 
                 ),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: ()async{
                     return await showDialog(
@@ -612,6 +617,9 @@ class EventMenuState extends State<EventMenu> {
                     );
                     //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
                   child: Container(
                     height: 50,
                     width: 350,
@@ -629,17 +637,21 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 115), 
                     child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),),
 
                 ),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: (){
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty(eid: eid, eventName: eventName,)),);
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
+                  child: SafeArea(
                   child: Container(
                     height: 50,
                     width: 350,
@@ -657,17 +669,21 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 125), 
                     child: Text("Add Vendors",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),
 
-                ),
+                ),),),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: (){
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventName: eventName,eventID: eid,)),);  
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
+                  child: SafeArea(
                   child: Container(
                     height: 50,
                     width: 350,
@@ -685,13 +701,13 @@ class EventMenuState extends State<EventMenu> {
                     ),
                     padding: EdgeInsets.only(top: 15, left: 125), 
                     child: Text("Edit a Vendor",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),
+                  ),),
 
-                ),
+                ),),),
               
             ),
 
-            Container(
+            SafeArea(
                 child: InkWell(
                   onTap: () async {
                     Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
@@ -703,6 +719,10 @@ class EventMenuState extends State<EventMenu> {
                     });
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
                   },
+                  child: SafeArea(
+                  child: Container(
+                  padding: EdgeInsets.only(top: 20), 
+                  child: SafeArea(
                   child: Container(
                     height: 50,
                     width: 350,
@@ -722,7 +742,7 @@ class EventMenuState extends State<EventMenu> {
                     child: Text("Edit Event",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
 
-                ),
+                ),),),),
               
             ),
           ],),
