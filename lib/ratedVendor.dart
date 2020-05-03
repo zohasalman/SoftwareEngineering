@@ -28,12 +28,14 @@ class _RatedVendorListState extends State<RatedVendorList> {
           return Card(
             child: ListTile(
               onTap: () {
+                print('reviewId: ${myRatings[index].reviewId}');
                 var route = new MaterialPageRoute(
                   builder: (BuildContext context) => new EditRatings(
                       name: '${myRatings[index].vendorName}',
                       image: '${myRatings[index].vendorLogo}',
                       rating: myRatings[index].rating.toString(),
-                      vendorId:'${myRatings[index].vendorId}' ,
+                      vendorId:'${myRatings[index].vendorId}',
+                      reviewId:'${myRatings[index].reviewId}' ,
                       ),
                 );
                 Navigator.of(context).push(route);

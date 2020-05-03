@@ -1071,9 +1071,9 @@ class _ViewMyRating extends State<ViewMyRating> {
 
 class EditRatings extends StatefulWidget {
 
-  String name, image, rating, vendorId;
+  String name, image, rating, vendorId, reviewId;
 
-  EditRatings({this.name, this.image, this.rating, this.vendorId});
+  EditRatings({this.name, this.image, this.rating, this.vendorId, this.reviewId});
 
   @override
   _EditRatings createState() => new _EditRatings();
@@ -1186,11 +1186,15 @@ class _EditRatings extends State<EditRatings> {
                 Padding(
                   padding: EdgeInsets.only(right: 10.0, left: 60.0),
                   child: GestureDetector(
-                    onTap: ( ){
+                    onTap: ( ) async {
+                      // get review 
+                      String review = await FirestoreService().getReview(widget.reviewId);
                       var route = new MaterialPageRoute(
                           builder: (BuildContext context) => new ViewReviews(
                               value: '${widget.name}',
-                              image: '${widget.image}'),
+                              image: '${widget.image}',
+                              review: review,
+                            ),
                         );
                         Navigator.of(context).push(route);
                     },
@@ -1200,9 +1204,6 @@ class _EditRatings extends State<EditRatings> {
                 )
               ],
             ),
-
-            
-
               RatedItemList(),
             
             ]
@@ -2344,9 +2345,10 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 }
 
 class ViewReviews extends StatefulWidget {
-  String value, image;
 
-  ViewReviews({Key key, this.value, this.image}) : super(key: key);
+  String value, image, review;
+
+  ViewReviews({Key key, this.value, this.image, this.review}) : super(key: key);
 
   @override
   _ViewReviews createState() => new _ViewReviews();
@@ -2514,9 +2516,7 @@ class _ViewReviews extends State<ViewReviews> {
                           minHeight: 30.0,
                           maxHeight: 100.0,
                         ),
-                        child: AutoSizeText(
-                          "The burger of McDonalds were juicy and tendor, the ambiance was great I would love to come again",
-                          
+                        child: AutoSizeText('${widget.review}',
                           style: TextStyle(fontSize: 18.0),
                           textAlign: TextAlign.center,
                         ),
