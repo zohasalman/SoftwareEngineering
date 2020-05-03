@@ -21,6 +21,7 @@ import 'edit-profile.dart';
 import 'my-rating.dart';
 import 'ratedVendor.dart';
 
+
 //import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
@@ -629,11 +630,37 @@ class _EditProfile extends State<EditProfile> {
     // TODO: Send an alert that data updated
   }
 
+List<DropdownMenuItem<String>> n=[];
+  void loadData(){
+    n=[];
+    n.add(new DropdownMenuItem(
+      child: new Text('Male'),
+      value: 'Male')
+    ); 
+    n.add(new DropdownMenuItem(
+      child: new Text('Female'),
+      value: 'Female')
+    ); 
+     n.add(new DropdownMenuItem(
+      child: new Text('Other'),
+      value: 'Other')
+    ); 
+   
+  }
+
+  
+
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      
       home: Scaffold(
+        
+        resizeToAvoidBottomPadding: false,
+        resizeToAvoidBottomInset: true,
+        
         key: _formKey,
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(370.0),
@@ -709,173 +736,122 @@ class _EditProfile extends State<EditProfile> {
             )),
         endDrawer: SideBar2(),
         body: Container(
-          padding: const EdgeInsets.all(10.0),
           child: ListView(
+            //crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 10),
-              Align(
-                alignment: Alignment
-                    .centerLeft, // Align however you like (i.e .centerRight, centerLeft)
-                child: Text(
-                  "Account Info",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+              Card(
+              child: ListTile(
+                leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                title: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Edit Username',
+                    hintText: 'Uzair Mustafa',
+                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: <Widget>[
-                  Image.asset('asset/image/name.png'),
-                  SizedBox(width: 10),
-                  Flexible(
-                    child: TextFormField(
-                      onSaved: (input) => _name = input.trim(),
-                      decoration: InputDecoration(
-                        hintText: 'Enter a name',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Image.asset('asset/image/right arrow.png'),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: <Widget>[
-                  Image.asset('asset/image/email.png'),
-                  SizedBox(width: 10),
-                  Flexible(
-                    child: TextFormField(
-                      onSaved: (input) => _email = input.trim(),
-                      decoration: InputDecoration(
-                        hintText: 'Enter an email',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Image.asset('asset/image/right arrow.png'),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: <Widget>[
-                  Image.asset('asset/image/password.png'),
-                  SizedBox(width: 10),
-                  Flexible(
-                    child: TextFormField(
-                      onSaved: (input) => _password = input.trim(),
-                      decoration: InputDecoration(
-                        hintText: 'Enter a password',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Image.asset('asset/image/right arrow.png'),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: <Widget>[
-                  Image.asset('asset/image/gender.png'),
-                  SizedBox(width: 10),
-                  Flexible(
-                    child: TextFormField(
-                      onSaved: (input) => _gender = input.trim(),
-                      decoration: InputDecoration(
-                        hintText: 'Enter a Gender',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Image.asset('asset/image/right arrow.png'),
-                ],
-              ),
-              SizedBox(height: 10),
-              Container(
-                  child: Row(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(top: 20, left: 20),
-                    child: Text('Date of Birth',
-                        style:
-                            TextStyle(color: Colors.grey[600], fontSize: 19)),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 15, left: 20),
-                    child: RaisedButton(
-                      child: Text(
-                          _dateTime == null
-                              ? 'DD-MM-YYYY'
-                              : DateFormat('dd-MM-yyyy').format(_dateTime),
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 19)),
-                      onPressed: () {
-                        //print('here');
-                        showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(1950),
-                            lastDate: DateTime.now(),
-                            builder: (BuildContext context, Widget child) {
-                              return Theme(
-                                data: ThemeData(
-                                  primarySwatch: Colors.pink,
-                                  accentColor: Colors.deepOrange,
-                                  splashColor: Colors.deepOrange,
-                                ),
-                                child: child,
-                              );
-                            }).then((date) {
-                          setState(() {
-                            _dateTime = date;
-                          });
-                        });
-                      },
-                    ),
-                  )
-                ],
-              )),
-              SizedBox(height: 10),
-              SizedBox(height: 10),
-              Container(
-                  child: GestureDetector(
+                //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
                 onTap: () {
-                  print('Submit pressed');
-                  submit();
-                },
-                child: Container(
-                  width: 120.0,
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]),
-                    boxShadow: const [
-                      BoxShadow(blurRadius: 10),
-                    ],
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  padding: EdgeInsets.all(12.0),
-                  child: Center(
-                    child: Text('Submit',
-                        style: TextStyle(color: Colors.white, fontSize: 22)),
+                }
+              ),
+              ),
+              Card(
+              child: ListTile(
+                leading: Icon(Icons.lock_outline, color: Color(0xFFFC4A1F)),
+                title: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Change Password',
+                    hintText: '*********',
+                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
                   ),
                 ),
-              ))
-            ],
-          ),
-        ),
-      ),
+                //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                onTap: () {
+                  TextField(
+
+                  );
+                }
+              ),
+              ),
+               Card(
+              child: ListTile(
+                leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
+                title: TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Update Email',
+                    hintText: 'uzairmustufa@ratetit.com',
+                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
+                  ),
+                ),
+               // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                onTap: () {
+                }
+              ),
+              ),
+              
+              Card(
+              child: ListTile(
+                leading: Icon(Icons.hot_tub, color: Color(0xFFFC4A1F)),
+                title: Text('Gender'),
+                // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                onTap: () {
+                  DropdownButton<String>(
+                value: _gender, 
+                items:n, 
+                onChanged: (value){
+                  _gender =value; 
+                  //error1=false; 
+                  setState((){
+                  });
+                },
+                );
+                }
+              ),
+              ),
+              Card(
+              child: ListTile(
+                leading: Icon(Icons.calendar_today, color: Color(0xFFFC4A1F)),
+                title: RaisedButton(
+                  color: Colors.white,
+                  child:Text(_dateTime == null ? 'DD-MM-YYYY': DateFormat('dd-MM-yyyy').format(_dateTime), style: TextStyle(color: Colors.black, fontSize: 18) ),  
+                  onPressed: (){
+                    //print('here');
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1950),
+                      lastDate: DateTime.now(),
+                      builder: (BuildContext context, Widget child){
+                        return Theme(
+                          data: ThemeData(
+                            primarySwatch: Colors.pink,    
+                            accentColor: Colors.deepOrange,
+                            splashColor: Colors.deepOrange,
+                          ),
+                          child: child, 
+                          );
+                      }
+                    ).then((date) {
+                      setState(() {
+                        _dateTime = date;
+                      });
+                    });
+                  }
+                // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                // onTap: () {
+                      
+                // }
+              ),
+              ),
+            
+              )
+
+            ]
+              
+              ),
+
+          )
+        )
     );
   }
 }
@@ -1166,21 +1142,78 @@ class _EditRatings extends State<EditRatings> {
                 halfFilledColor: Colors.amber,
                 size: 40,
               ),
-              RatedItemList(),
-              FloatingActionButton(
-                child: Icon(Icons.edit),
-                onPressed: () {
-                  var route = new MaterialPageRoute(
-                    builder: (BuildContext context) => new ChangeRatings(
-                        value: '${widget.name}', image: '${widget.image}'),
-                  );
-                  Navigator.of(context).push(route);
-                },
+              SizedBox(
+              height: 10.0,
+            ),
+               Row(
+              children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                  child: Container(
+                child: GestureDetector(
+              onTap: () {
+              },
+              child: Container(
+                width: 200.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: Text('My Ratings',
+                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                ),
               ),
+            )),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                  child: GestureDetector(
+                    onTap: ( ){
+                      var route = new MaterialPageRoute(
+                          builder: (BuildContext context) => new ViewReviews(
+                              value: '${widget.name}',
+                              image: '${widget.image}'),
+                        );
+                        Navigator.of(context).push(route);
+                    },
+                  child: Text('Reviews',
+                      style: TextStyle(color: Colors.red, fontSize: 22)),
+                  ),
+                )
+              ],
+            ),
+
+            
+
+              RatedItemList(),
+            
             ]
             )
           )
         ),
+         floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.edit),
+        backgroundColor: Color(0xFFFC4A1F),
+        onPressed: () {
+          var route = new MaterialPageRoute(
+            builder: (BuildContext context) => new ChangeRatings(
+                value: '${widget.name}', image: '${widget.image}'),
+          );
+          Navigator.of(context).push(route);
+        },
+      ),
       )
     );
   }
@@ -1252,7 +1285,7 @@ class _EditRating1State extends State<EditRating1> {
                     width: 200.0,
                     child: Padding(
                       padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                      child: Image.asset('${widget.image}'),
+                      child: Image.network('${widget.image}'),
                     ),
                   ),
                   new Divider(),
@@ -1940,7 +1973,7 @@ class _ChangeRatings extends State<ChangeRatings> {
               width: 200.0,
               child: Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.asset('${widget.image}'),
+                child: Image.network('${widget.image}'),
               ),
             ),
             new Divider(),
@@ -2131,7 +2164,7 @@ class _ChangeRatings extends State<ChangeRatings> {
                       child: Image.asset('asset/image/Group 55.png'),
                       onTap: () {
                         var route = new MaterialPageRoute(
-                          builder: (BuildContext context) => new EditRating1(
+                          builder: (BuildContext context) => new EditReviews(
                               value: '${widget.value}',
                               image: '${widget.image}'),
                         );
@@ -2480,7 +2513,7 @@ class _ViewReviews extends State<ViewReviews> {
               width: 200.0,
               child: Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.asset('${widget.image}'),
+                child: Image.network('${widget.image}'),
               ),
             ),
             RatingBar.readOnly(
@@ -2684,7 +2717,7 @@ class _EditReviews extends State<EditReviews> {
               width: 200.0,
               child: Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.asset('${widget.image}'),
+                child: Image.network('${widget.image}'),
               ),
             ),
             RatingBar.readOnly(
