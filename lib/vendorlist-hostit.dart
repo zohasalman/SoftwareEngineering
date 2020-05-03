@@ -7,11 +7,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firestore.dart';
 
 class VendorsListHostit extends StatefulWidget {
+  final String eventName;
+  VendorsListHostit({this.eventName});
   @override
   _VendorsListStateHostIt createState() => _VendorsListStateHostIt();
 }
 
 class _VendorsListStateHostIt extends State<VendorsListHostit> {
+  final String eventName;
+  _VendorsListStateHostIt({this.eventName});
   @override
   Widget build(BuildContext context) {
 
@@ -57,9 +61,8 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
                           actions: <Widget>[
                             FlatButton(
                               onPressed: () async {
-                                await Firestore.instance.collection('Event').document(vendors[index].vendorId).delete();
-                                
-                                Navigator.of(context).pop(true);
+                                await Firestore.instance.collection('Vendor').document(vendors[index].vendorId).delete();
+                                Navigator.of(context).pop(false);
                               },
                               child: Text("Delete"),
                             ),

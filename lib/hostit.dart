@@ -613,7 +613,7 @@ class EventMenuState extends State<EventMenu> {
             Container(
                 child: InkWell(
                   onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);  
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventName: eventName,eventID: eid,)),);  
                   },
                   child: Container(
                     height: 50,
@@ -1042,6 +1042,7 @@ class AddVendorState extends State<AddVendor> {
           child: Column(
             children: <Widget>[
               TextFormField(
+                keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a stall ID': null,
                 onChanged: (input)=> stallid[i]= input,
                 decoration: InputDecoration(
@@ -1298,7 +1299,7 @@ class AddVendorState extends State<AddVendor> {
                   }
                   if (check){
                     for (var i=0; i<numVen; i++){
-                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventID' : eid, 'name' : name[i], 'stallNo' : stallid[i], 'logo':null }).then((vid) async{
+                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':null }).then((vid) async{
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);});
                         });
                     }
@@ -1889,18 +1890,19 @@ class EditVen extends StatefulWidget {
 }
 
 class EditVenState extends State<EditVen> {
-  String name,email, stallid,logo;
-  int item;
+  String name,email,logo;
+  int item,stallid;
   final dcontroller=new TextEditingController(); 
   final dcontroller2=new TextEditingController(); 
   final dcontroller3=new TextEditingController(); 
   final dcontroller4=new TextEditingController(); 
   final dcontroller5=new TextEditingController(); 
-  String inputname="Carbie", inputemail="zohasalman123@gmail.com", inputstallid="112344", inputimage="carbie.png", inputmenunumber="8";
-  int numVen;
-  String eid;
+  //String inputname="Carbie", inputemail="zohasalman123@gmail.com", inputstallid="112344", inputimage="carbie.png", inputmenunumber="8";
+  //int numVen;
+  //String eid;
+  Vendor vendorData;
   String eventName;
-  EditVenState({this.eventName,this.numVen,this.eid});
+  EditVenState({this.eventName,this.vendorData});
   bool value=false;
   bool check=false; 
 
@@ -1916,6 +1918,18 @@ class EditVenState extends State<EditVen> {
 
   @override 
   Widget build(BuildContext context){
+    name= vendorData.name;
+    logo= vendorData.logo;
+    email = vendorData.email;
+    stallid= vendorData.stallNo;
+    item=0;
+    dcontroller.text= vendorData.name;
+    dcontroller2.text= vendorData.email;
+    dcontroller3.text= vendorData.logo;
+    dcontroller4.text= vendorData.stallNo.toString();
+
+
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       //key: scaffoldKey,
@@ -2018,7 +2032,7 @@ class EditVenState extends State<EditVen> {
                 TextFormField(
                   controller: dcontroller,
                   validator: (input)=> input.isEmpty? 'Please enter vendor name': null,
-                  //onChanged: (input)=> savedName=input,
+                  onChanged: (input)=> name=input,
                   decoration: InputDecoration(
                     hintText: 'Stall Name',
                     suffixIcon: IconButton(
@@ -2041,16 +2055,16 @@ class EditVenState extends State<EditVen> {
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  controller: dcontroller,
+                  controller: dcontroller2,
                   validator: (input)=> input.isEmpty? 'Please enter vendor email': null,
-                  //onChanged: (input)=> savedName=input,
+                  onChanged: (input)=> email=input,
                   decoration: InputDecoration(
                     hintText: 'Email ID',
                     suffixIcon: IconButton(
                       icon: Icon(Icons.clear),
                       onPressed: ()=>{
                         setState((){
-                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller2.clear());
                           //dcontroller.clear();
                         }),
                       },
@@ -2066,16 +2080,16 @@ class EditVenState extends State<EditVen> {
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  controller: dcontroller,
+                  controller: dcontroller4,
                   validator: (input)=> input.isEmpty? 'Please enter stall id': null,
-                  //onChanged: (input)=> savedName=input,
+                  onChanged: (input)=> stallid=int.parse(input),
                   decoration: InputDecoration(
                     hintText: 'Stall ID',
                     suffixIcon: IconButton(
                       icon: Icon(Icons.clear),
                       onPressed: ()=>{
                         setState((){
-                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller4.clear());
                           //dcontroller.clear();
                         }),
                       },
@@ -2096,7 +2110,7 @@ class EditVenState extends State<EditVen> {
                     child: TextFormField(
                       controller: dcontroller3,
                       validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      //onChanged: (input)=> savedLogo=input,
+                      onChanged: (input)=> logo=input,
                       decoration: InputDecoration(
                         hintText: 'Upload a logo for your vendor',
                         suffixIcon: IconButton(
@@ -2164,7 +2178,7 @@ class EditVenState extends State<EditVen> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  //onChanged: (input)=> eventNumber=int.parse(input),
+                  onChanged: (input)=> item=int.parse(input),
                   decoration: InputDecoration(
                     labelText: 'Number of items',
                     labelStyle: TextStyle(
@@ -2189,7 +2203,11 @@ class EditVenState extends State<EditVen> {
                   child: IconButton(
                     icon: Icon(Icons.add,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () {
+                      if (item>0){//connect item here
+                        //Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
+                      }
+                    },
                   ),
                 ),
               )
@@ -2225,7 +2243,7 @@ class EditVenState extends State<EditVen> {
                   color: Colors.white,),
                   onPressed: () async {
                     //if(coord!=null){
-                    //await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true);
+                    await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true);
                     //}
                   //Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
                   }
@@ -3152,147 +3170,6 @@ class LostCount extends State<Comprehensive> {
   }
 }
 
-// class ViewVendorHostit extends StatefulWidget {
-
-// 	@override
-//   State<StatefulWidget> createState() {
-
-//     return _ViewVendorHostit();
-//   }
-// }
-
-// class _ViewVendorHostit extends State<ViewVendorHostit> {
-//   List<VendorList> vendors = [
-//     VendorList(vendorname: 'Cloud Naan', flag: 'cloudnaan.png'),
-//     VendorList(vendorname: 'KFC', flag: 'kfc.png'),
-//     VendorList(vendorname: 'McDonalds', flag: 'mcdonalds.png'),
-//     VendorList(vendorname: 'No Lies Fries', flag: 'noliesfries.png'),
-//     VendorList(vendorname: 'Caffe Parha', flag: 'caffeparha.png'),
-//     VendorList(vendorname: 'DOH', flag: 'doh.png'),
-//     VendorList(vendorname: 'Carbie', flag: 'carbie.png'),
-//     VendorList(vendorname: 'The Story', flag: 'thestory.png'),
-//     VendorList(vendorname: 'Meet the Cheese', flag: 'meetthecheese.png'),
-    
-//   ];
-//    var scaffoldKey=GlobalKey<ScaffoldState>();
-
-  
-//   @override 
-//   Widget build(BuildContext context) {
-//      return Scaffold(
-//         key: scaffoldKey,
-//         endDrawer:  SideBar(),
-//         appBar: PreferredSize(
-//           preferredSize: Size.fromHeight(150.0),
-//           child: ClipPath(
-//             child: Stack(
-//               fit: StackFit.expand,
-//               children: <Widget>[
-
-//                 AppBar(
-//                   centerTitle: true,
-//                   bottom: PreferredSize(
-//                     preferredSize: Size.fromHeight(0),
-//                     child: Align(
-//                       alignment: Alignment.topLeft,
-//                       child: Padding(
-//                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
-//                         child: Text('Vendor',style: TextStyle(color: Colors.white, fontSize: 28 ))
-//                         ),
-//                     )
-//                   ),
-//                   leading: IconButton(
-//                     icon: Icon(
-//                       Icons.arrow_back,
-                       
-//                       ), 
-//                     onPressed: (){
-//                       Navigator.pop(context);
-//                       }),
-//                   actions: <Widget>[
-//                        IconButton(
-//                         onPressed: () {                          
-//                           showSearch(
-//                             context: context,
-//                             delegate: MapSearchBar(),
-//                           );
-//                         },
-//                         icon: Icon(
-//                           Icons.search,
-                        
-//                         )
-//                       ),
-//                     Padding(
-//                       padding: EdgeInsets.only(right: 20.0, left: 10.0),
-//                       child: GestureDetector(
-//                         onTap: () {
-//                           scaffoldKey.currentState.openEndDrawer();
-//                           },
-//                         child: Icon(
-//                             Icons.menu,
-                          
-//                         ),
-//                       )
-//                     ),
-//                   ],
-//                   flexibleSpace: Container(
-//                   decoration: BoxDecoration(
-//                     gradient: LinearGradient(
-//                         begin: Alignment.topRight,
-//                         end: Alignment.topLeft,
-//                         colors: [ 
-//                           Color(0xFFAC0D57),
-//                           Color(0xFFFC4A1F),
-//                         ]
-//                     ),
-//                       image: DecorationImage(
-//                         image: AssetImage(
-//                           "asset/image/Chat.png",
-//                         ),
-//                         fit: BoxFit.fitWidth,
-//                     ),
-//                   )
-//                 ),
-//                 )
-//               ],
-//             ),
-//             clipper: ClipShape(),
-//           )
-//         ),
-//       body: Stack(
-//         children: <Widget>[
-//       Container(
-//         child: Transform.translate(
-//         offset: Offset(0,140),
-      
-//       child: ListView.builder(
-//         shrinkWrap: true,
-//         physics: const NeverScrollableScrollPhysics(),
-//         itemCount: vendors.length,
-//         itemBuilder: (context, index){
-//           return Card(
-//             child: ListTile(
-//               onLongPress: ()=> {},
-//               onTap: () {
-//                 debugPrint('${vendors[index].vendorname} is pressed!');
-//               },
-//               title: Text(vendors[index].vendorname),
-//               leading: CircleAvatar(
-//                 backgroundImage: AssetImage('asset/image/${vendors[index].flag}'),
-//               ),
-              
-//             ),
-//           );
-//         }
-//       ),),),
-
-
-//       ],
-//       ),
-//     );
-//   }
-// }
-
 class ViewVendor2 extends StatefulWidget {
 
 	@override
@@ -3791,165 +3668,6 @@ class MapsFunc extends State<Maps> {
   }
 }
 
-
-
-// class EditMaps extends StatefulWidget {
-//   //Maps(LatLng eid);
-
-//   @override
-//   EditMapsFunc createState() => EditMapsFunc();
-// }
-
-
-// class EditMapsFunc extends State<EditMaps> {
-//   LatLng coord;
-//   Completer<GoogleMapController> _controller = Completer();
-//   Marker marker=Marker(
-//     markerId: MarkerId("1"),
-//     draggable: true
-//   ); //storing position coordinates in the variable
-//   Set<Marker> markerSet={};
-//   var scaffoldKey=GlobalKey<ScaffoldState>();
-//   void _onMapCreated(GoogleMapController controller) {
-//     _controller.complete(controller);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         key: scaffoldKey,
-//         extendBodyBehindAppBar: true,
-//         endDrawer:  SideBar(),
-//         appBar: PreferredSize(
-//           preferredSize: Size.fromHeight(150.0),
-//           child: ClipPath(
-//             child: Stack(
-//               fit: StackFit.expand,
-//               children: <Widget>[
-
-//                 AppBar(
-//                   centerTitle: true,
-//                   bottom: PreferredSize(
-//                     preferredSize: Size.fromHeight(0),
-//                     child: Align(
-//                       alignment: Alignment.topLeft,
-//                       child: Padding(
-//                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
-//                         child: Text('Location',style: TextStyle(color: Colors.white, fontSize: 28 ))
-//                         ),
-//                     )
-//                   ),
-//                   leading: IconButton(
-//                     icon: Icon(
-//                       Icons.arrow_back,    
-//                       ), 
-//                     onPressed: (){
-//                       if (coord != null)
-//                         Navigator.pop(context, coord);
-//                       //coord=LatLng(23.32, 65.1);
-//                       //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid: eid,coord: coord)),);
-//                     }
-//                   ),
-//                   // actions: <Widget>[
-//                   //   IconButton(
-//                   //     onPressed: () {                     
-//                   //       showSearch(
-//                   //           context: context,
-//                   //           delegate: MapSearchBar(),
-//                   //       );
-//                   //     },
-//                   //     icon: Icon(
-//                   //       Icons.search,
-                      
-//                   //     )
-//                   //     ),
-//                   //   Padding(
-//                   //     padding: EdgeInsets.only(right: 20.0),
-//                   //     child: GestureDetector(
-//                   //       onTap: () {
-//                   //         scaffoldKey.currentState.openEndDrawer();
-//                   //         },
-//                   //       child: Icon(
-//                   //           Icons.menu,
-                          
-//                   //       ),
-//                   //     )
-//                   //   ),
-//                   //],
-//                   flexibleSpace: Container(
-//                   decoration: BoxDecoration(
-//                     gradient: LinearGradient(
-//                         begin: Alignment.topRight,
-//                         end: Alignment.topLeft,
-//                         colors: [ 
-//                           Color(0xFFAC0D57),
-//                           Color(0xFFFC4A1F),
-//                         ]
-//                     ),
-//                       image: DecorationImage(
-//                         image: AssetImage(
-//                           "asset/image/Chat.png",
-//                         ),
-//                         fit: BoxFit.fitWidth,
-//                     ),
-//                   )
-//                 ),
-//                 )
-//               ],
-//             ),
-//             clipper: ClipShape(),
-//           )
-//         ),
-
-//         body:     
-//         GoogleMap(
-//           onTap: (LatLng coordinates){
-//                 final Marker marker1 = Marker(
-//                   markerId: MarkerId('1'),
-//                   draggable: true,
-//                   position: coordinates,
-//                 );
-//                 setState(() {
-//                   markerSet.clear();
-//                   markerSet.add(marker1);
-//                   marker=marker1;
-//                   coord=coordinates;
-//                 });
-//           },
-//           markers: markerSet,
-//           onMapCreated: _onMapCreated,
-//           initialCameraPosition: CameraPosition(
-//             target: LatLng(30, 68),
-//             zoom: 5,
-//           ),
-//           mapType: MapType.hybrid,
-//           rotateGesturesEnabled: true,
-//           scrollGesturesEnabled: true,
-//           tiltGesturesEnabled: true,
-//           myLocationEnabled: true,          
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class MapSearchBar extends SearchDelegate<String>  {
 
    List<String> _list = const [
@@ -4230,12 +3948,20 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
                 children: <Widget>[
                   AppBar(
                     centerTitle: true,
+                    leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,    
+                      ), 
+                    onPressed: (){
+                      Navigator.pop(context);
+                    }
+                  ),
                     bottom: PreferredSize(
                         preferredSize: Size.fromHeight(0),
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Padding(
-                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              padding: EdgeInsets.only(bottom: 40.0, left: 10),
                               child: Text('${widget.eventName}',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
