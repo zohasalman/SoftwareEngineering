@@ -162,62 +162,75 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
       value: FirestoreService().getEventsInfo(Provider.of<User>(context, listen: false).uid.toString()),
       child: Scaffold( 
       endDrawer: SideBar1(),
+      key: scaffoldKey,
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                            child: Text('My Events',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                      )
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                          padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                          child: Text('My Events',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                    )
+                ),
+                actions: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 20.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        scaffoldKey.currentState.openEndDrawer();
+                      },
+                      child: Icon(
+                        Icons.menu,
+                      ),
+                    )
                   ),
-                  actions: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          scaffoldKey.currentState.openEndDrawer();
-                        },
-                        child: Icon(
-                          Icons.menu,
+                ],
+                flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]
+                      ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
                         ),
-                      )
-                    ),
-                  ],
-                  flexibleSpace: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft,
-                            colors: [
-                              Color(0xFFAC0D57),
-                              Color(0xFFFC4A1F),
-                            ]
-                        ),
-                        image: DecorationImage(
-                          image: AssetImage(
-                            "asset/image/Chat.png",
-                          ),
-                          fit: BoxFit.fitWidth,
-                        ),
-                      )
-                  ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )
+                ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
       ),
-      body: EventsListHostit(),
+      body: Column( 
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Container(
+            child: Text(
+              "Long Press to delete event",
+              style: TextStyle(color: Colors.pink[600], fontSize: 17),
+            ),
+          ), 
+          EventsListHostit(),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           //add code
@@ -355,8 +368,9 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
     if (events == null){
       return LoadingScreen();
     }else{
-      return Container(
-          child: ListView.builder(
+      return Expanded(
+          child: 
+          ListView.builder(
             shrinkWrap: true,
             //physics: const NeverScrollableScrollPhysics(),
             itemCount: events.length,
@@ -372,7 +386,6 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                       builder: (BuildContext context){
                         return AlertDialog(
                           title: Text("Confirm"),
-
                           content: Text("Are you sure you want to delete this vendor?"),
                           actions: <Widget>[
                             FlatButton(

@@ -3808,36 +3808,31 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
                                       color: Colors.white, fontSize: 28))),
                         )),
                     flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
                           begin: Alignment.topRight,
                           end: Alignment.topLeft,
                           colors: [
                             Color(0xFFAC0D57),
                             Color(0xFFFC4A1F),
                           ]),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "asset/image/Chat.png",
+                          ),
+                          fit: BoxFit.fitWidth,
                         ),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    )),
+                      )
+                    ),
                   )
                 ],
               ),
               clipper: Clipshape(),
             )),
         endDrawer: SideBar2(),
-        body:Column( children: <Widget>[
-          Container(
-            child: Text(
-              "Long Press to delete vendor",
-              style: TextStyle(color: Colors.pink[600], fontSize: 17),
-            ),
-          ), 
+        body://Column( children: <Widget>[
           VendorsListHostit(),
-        ]),
+        //]),
       ),
     );
   }
