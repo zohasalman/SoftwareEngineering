@@ -22,6 +22,7 @@ import 'my-rating.dart';
 import 'ratedVendor.dart';
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
+import 'editMyRatingItems.dart';
 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:flutter/services.dart';
@@ -1193,6 +1194,7 @@ class _EditRatings extends State<EditRatings> {
                           builder: (BuildContext context) => new ViewReviews(
                               value: '${widget.name}',
                               image: '${widget.image}',
+                              reviewId: '${widget.reviewId}',
                               review: review,
                             ),
                         );
@@ -1216,7 +1218,7 @@ class _EditRatings extends State<EditRatings> {
         onPressed: () {
           var route = new MaterialPageRoute(
             builder: (BuildContext context) => new ChangeRatings(
-                value: '${widget.name}', image: '${widget.image}'),
+                value: '${widget.name}', image: '${widget.image}', vendorId: '${widget.vendorId}', reviewId: '${widget.reviewId}'),
           );
           Navigator.of(context).push(route);
         },
@@ -1805,9 +1807,9 @@ class _TopRatedItems extends State<TopRatedItems> {
 }
 
 class ChangeRatings extends StatefulWidget {
-  String value, image;
+  String value, image, vendorId, reviewId;
 
-  ChangeRatings({Key key, this.value, this.image}) : super(key: key);
+  ChangeRatings({Key key, this.value, this.image, this.vendorId, this.reviewId}) : super(key: key);
 
   @override
   _ChangeRatings createState() => new _ChangeRatings();
@@ -1817,27 +1819,74 @@ class _ChangeRatings extends State<ChangeRatings> {
   double myrating;
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(0),
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Text('${widget.value}',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 28))),
-                      )),
-                  flexibleSpace: Container(
-                      decoration: BoxDecoration(
+    return StreamProvider<List<RatedItem>>.value(
+      value: FirestoreService().getMyRatedItem(user_id, widget.vendorId),
+      child: Scaffold(
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              child: Text('${widget.value}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )),
+                  )
+                ],
+              ),
+              clipper: Clipshape(),
+            )),
+        body: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Container(
+              child: ListView(
+            children: <Widget>[
+              Container(
+                height: 200.0,
+                width: 200.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                  child: Image.network('${widget.image}'),
+                ),
+              ),
+              new Divider(),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Container(
+                  child: GestureDetector(
+                onTap: () {
+                },
+                child: Container(
+                  width: 200.0,
+                  height: 50.0,
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.topLeft,
@@ -1845,228 +1894,50 @@ class _ChangeRatings extends State<ChangeRatings> {
                           Color(0xFFAC0D57),
                           Color(0xFFFC4A1F),
                         ]),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "asset/image/Chat.png",
-                      ),
-                      fit: BoxFit.fitWidth,
-                    ),
-                  )),
-                )
-              ],
-            ),
-            clipper: Clipshape(),
+                    boxShadow: const [
+                      BoxShadow(blurRadius: 10),
+                    ],
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  padding: EdgeInsets.all(12.0),
+                  child: Center(
+                    child: Text('Top Rated Reviews',
+                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                  ),
+                ),
+              )),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                    child: Text('Reviews',
+                        style: TextStyle(color: Colors.red, fontSize: 22)),
+                  )
+                ],
+              ),
+              EditMyRatingsItems(),
+              new Divider(),
+              Container(
+                  height: 100.0,
+                  width: 100.0,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 0.0),
+                    child: GestureDetector(
+                        child: Image.asset('asset/image/Group 55.png'),
+                        onTap: () async {
+                          String review = await FirestoreService().getReview(widget.reviewId);
+                          var route = new MaterialPageRoute(
+                            builder: (BuildContext context) => new EditReviews(
+                                value: '${widget.value}',
+                                image: '${widget.image}',
+                                review: review,
+                                reviewId: '${widget.reviewId}'),
+                          );
+                          Navigator.of(context).push(route);
+                        }),
+                  ))
+            ],
           )),
-      body: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Container(
-            child: ListView(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.network('${widget.image}'),
-              ),
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 5.0),
-                  child: Container(
-                child: GestureDetector(
-              onTap: () {
-              },
-              child: Container(
-                width: 200.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
-                  ],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('Top Rated Reviews',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                ),
-              ),
-            )),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                )
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                        child: Image.asset('asset/image/bigmac.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('BigMac',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar(
-                          onRatingChanged: (rating) =>
-                              setState(() => rating = rating),
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 40,
-                        ),
-                        // Text(
-                        //   '$myrating/5',
-                        //   style: TextStyle(color: Colors.black, fontSize: 15),
-                        // )
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 0.0),
-                        child: Image.asset('asset/image/mcchicken.png'),
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(right: 0.0, left: 20.0),
-                          child: Text('McChicken',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar(
-                          onRatingChanged: (rating) =>
-                              setState(() => rating = rating),
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 40,
-                        ),
-                        // Text(
-                        //   '$myrating/5',
-                        //   style: TextStyle(color: Colors.black, fontSize: 15),
-                        // )
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(right: 0.0, left: 15.0),
-                        child: Image.asset('asset/image/McFries.png'),
-                      ),
-                      Padding(
-                          padding:
-                              EdgeInsets.only(right: 0.0, left: 20.0, top: 0.0),
-                          child: Text('Mc Fries',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 15)))
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar(
-                          onRatingChanged: (rating) =>
-                              setState(() => rating = rating),
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          halfFilledIcon: Icons.star_half,
-                          isHalfAllowed: true,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 40,
-                        ),
-                        // Text(
-                        //   '$myrating/5',
-                        //   style: TextStyle(color: Colors.black, fontSize: 15),
-                        // )
-                      ],
-                    ),
-                  ),
-                )),
-              ],
-            ),
-            new Divider(),
-            Container(
-                height: 100.0,
-                width: 100.0,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: 0.0),
-                  child: GestureDetector(
-                      child: Image.asset('asset/image/Group 55.png'),
-                      onTap: () {
-                        var route = new MaterialPageRoute(
-                          builder: (BuildContext context) => new EditReviews(
-                              value: '${widget.value}',
-                              image: '${widget.image}'),
-                        );
-                        Navigator.of(context).push(route);
-                      }),
-                ))
-          ],
-        )),
+        ),
       ),
     );
   }
@@ -2346,9 +2217,9 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 
 class ViewReviews extends StatefulWidget {
 
-  String value, image, review;
+  String value, image, reviewId, review;
 
-  ViewReviews({Key key, this.value, this.image, this.review}) : super(key: key);
+  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review}) : super(key: key);
 
   @override
   _ViewReviews createState() => new _ViewReviews();
@@ -2538,7 +2409,7 @@ class _ViewReviews extends State<ViewReviews> {
         onPressed: () {
           var route = new MaterialPageRoute(
             builder: (BuildContext context) => new EditReviews(
-                value: '${widget.value}', image: '${widget.image}'),
+                value: '${widget.value}', image: '${widget.image}', review: widget.review, reviewId: '${widget.reviewId}' ),
           );
           Navigator.of(context).push(route);
         },
@@ -2548,9 +2419,9 @@ class _ViewReviews extends State<ViewReviews> {
 }
 
 class EditReviews extends StatefulWidget {
-  String value, image;
+  String value, image, reviewId, review;
 
-  EditReviews({Key key, this.value, this.image}) : super(key: key);
+  EditReviews({Key key, this.value, this.image, this. reviewId, this.review}) : super(key: key);
 
   @override
   _EditReviews createState() => new _EditReviews();
@@ -2711,13 +2582,14 @@ class _EditReviews extends State<EditReviews> {
                   color: Colors.white,
 
                 ),
+                // display review that user has given before. Then add a pencil type button and then change it. 
+                // Can access the currently given review by widget.review.
     
                         child: TextFormField(    
-                        
                            decoration: InputDecoration(
                               labelText: 'Write a new review...',
                               contentPadding: new EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)
-                            ),                       
+                            ),
                           style: TextStyle(
                             fontSize: 14.0,
                             height: 2.0,

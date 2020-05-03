@@ -330,7 +330,7 @@ class FirestoreService{
         try {
           // get item id 
           String ratedItemId = await getRatedItemsDocumentId(uid, vendorId, item['itemId']);
-          await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['rating']});
+          await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['givenRating']});
         } catch (e) {
           print(e.toString());
         }
