@@ -6,8 +6,9 @@ class RatedVendor{
   final String vendorLogo;
   final double rating;
   final String reviewId;
+  final String ratedVendorId;
 
-  RatedVendor({this.userId, this.vendorId, this.vendorName, this.vendorLogo, this.rating, this.reviewId});
+  RatedVendor({this.userId, this.vendorId, this.vendorName, this.vendorLogo, this.rating, this.reviewId, this.ratedVendorId});
 
   Map<String, dynamic> toJSON(){
     return{
@@ -17,6 +18,7 @@ class RatedVendor{
       'vendorLogo' : vendorLogo,
       'myVendorRating' : rating,
       'vendorReviewId' : reviewId,
+      'ratedVendorId' : '',
     };
   }
 
@@ -29,9 +31,9 @@ class RatedItem{
   final String itemName;
   final String itemLogo;
   final double rating;
-  
+  final String ratedItemId;
 
-  RatedItem({this.userId, this.vendorId, this.itemId, this.itemName, this.itemLogo, this.rating});
+  RatedItem({this.userId, this.vendorId, this.itemId, this.itemName, this.itemLogo, this.rating, this.ratedItemId});
 
   Map<String, dynamic> toJSON(){
     return{
@@ -41,6 +43,7 @@ class RatedItem{
       'itemName' : itemName,
       'itemLogo' : itemLogo,
       'myItemRating' : rating,
+      'ratedItemId' : '',
     };
   }
 }

@@ -30,7 +30,8 @@ class _VendorsListState extends State<VendorsList> {
                     builder: (BuildContext context) => new TopRatedItems(
                         value: '${vendors[index].name}',
                         image: '${vendors[index].logo}', 
-                        vendorId: '${vendors[index].vendorId}'),
+                        vendorId: '${vendors[index].vendorId}',
+                        vendorRating:'${vendors[index].aggregateRating}' ,),
                   );
                   Navigator.of(context).push(route);
 

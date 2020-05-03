@@ -64,19 +64,6 @@ class FirestoreService{
       String userrole = '';
       await Firestore.instance.collection("users").document(uid).get().then((value) {
         userrole = value.data['userRole'];
-        // print(value.data);
-        // print('checkinggg');
-        // UserData user = UserData(
-        //   uid: value.data['uid'],  
-        //   firstName: value.data['firstName'], 
-        //   lastName : value.data['lastName'], 
-        //   gender : value.data['gender'], 
-        //   // dateOfBirth : value.data['dateOfBirth'], 
-        //   email : value.data['email'], 
-        //   userRole : value.data['userRole']
-        //   );
-        //   writeContent(user.toJSON());
-
         // trying shared preferences now 
         prefs.setString('uid', value.data['uid']);
         prefs.setString('firstName', value.data['firstName']);
@@ -86,20 +73,28 @@ class FirestoreService{
         prefs.setString('email', value.data['email']);
         prefs.setString('profilePicture', value.data['profilePicture']);
       });
-      //print('called');
       return userrole;
     }catch(e){
       return "Error";
     }
   }
 
-
   Stream<String> get users  {
     return userRolePromise(uid).asStream();
   }
 
   Future normalSignOutPromise()  async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     try{
+      prefs.remove('uid');
+      prefs.remove('firstName');
+      prefs.remove('lastName');
+      prefs.remove('userRole');
+      prefs.remove('gender');
+      prefs.remove('profilePicture');
+      if (prefs.getBool('rememberMe') == false){
+        prefs.remove('email');
+      }
       return await FirebaseAuth.instance.signOut();
     }
     catch(e){
@@ -217,12 +212,23 @@ class FirestoreService{
     return review;
   }
 
+  List<Review> _reviewListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return Review(
+        userId: doc.data['userId'] ?? '',
+        vendorId: doc.data['vendorId'] ?? '',
+        review: doc.data['review'] ?? '' ,
+        reviewId: doc.data['reviewId'] ?? '',
+      );
+    }).toList();
+  }
+
+  Stream<List<Review>> getAllVendorReviews(String vendorId){
+    return _reviewsCollectionReference.where('vendorId', isEqualTo: vendorId).snapshots()
+    .map(_reviewListFromSnapshot);
+  }
+
   // do ratings
-
-  // Future<QuerySnapshot> getReviewId(String userId, String vendorId){
-  //   return _reviewsCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments();
-  // }
-
   Future<String> sendRatings(String uid, List<Map> itemRatings, String vendorName, String vendorLogo, String vendorId, String review, double vendorRating) async {
     // convert all the data to JSON
     int noOfItems = itemRatings.length;
@@ -242,13 +248,6 @@ class FirestoreService{
 
         // add review Id:
         await _reviewsCollectionReference.document(reviewId).updateData({'reviewId': reviewId});
-
-        // // get reviewId
-        // await getReviewId(uid, vendorId).then((docs){
-        //   if (docs.documents.isNotEmpty){
-        //         reviewId = docs.documents[0].data['reviewId'];
-        //       }
-        // });
       }
       RatedVendor ven = RatedVendor(userId: uid, vendorId: vendorId, vendorName: vendorName, vendorLogo: vendorLogo, reviewId: reviewId, rating: vendorRating);
       try {
@@ -263,7 +262,7 @@ class FirestoreService{
         try {
           final resp = await _ratedItemCollectionReference.add(it.toJSON());
           String ratedItemId = resp.documentID;
-        await _ratedVendorCollectionReference.document(ratedItemId).updateData({'ratedItemId': ratedItemId});
+          await _ratedItemCollectionReference.document(ratedItemId).updateData({'ratedItemId': ratedItemId});
         } catch (e) {
           print(e.toString());
         }
@@ -278,17 +277,15 @@ class FirestoreService{
   // edit rating 
 
   // getting document ids
-  Future<List> getRatedVendorId(String userId, String vendorId) async {
+  Future<String> getRatedVendorId(String userId, String vendorId) async {
     String docId = '';
-    String reviewId = '';
     await _ratedVendorCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments()
     .then((docs){
       if (docs.documents.isNotEmpty){
         docId = docs.documents[0].data['ratedVendorId'];
-        reviewId = docs.documents[0].data['reviewId'];
       }
     });
-    return [docId, reviewId];
+    return docId;
   }
 
   Future<String> getRatedItemsDocumentId(String userId, String vendorId, String itemId) async {
@@ -302,24 +299,20 @@ class FirestoreService{
     return docId;
   }
 
-  void updateRatings(String uid, List<Map> itemRatings, String vendorId, String review, double vendorRating) async {
+  Future<String> updateRatings(String uid, List<Map> itemRatings, String vendorId, String review, String reviewId, double vendorRating) async {
     // convert all the data to JSON
     int noOfItems = itemRatings.length;
-    String reviewId = '';
     String ratedVendorId = '';
 
     // getting vendorId;
-    List<String> ids = await getRatedVendorId(uid, vendorId);
-    ratedVendorId = ids[0];
-    reviewId = ids[1];
-
+    ratedVendorId = await getRatedVendorId(uid, vendorId);
     // update review
     if (review.isNotEmpty){
       // update review 
       try{
         await _reviewsCollectionReference.document(reviewId).updateData({'review': review});
       }catch(e){
-        print(e.toString());
+        return e.toString();
       }
     }
 
@@ -327,7 +320,7 @@ class FirestoreService{
     try {
       await _ratedVendorCollectionReference.document(ratedVendorId).updateData({'myVendorRating': vendorRating});
     } catch (e) {
-      print(e.toString());
+      return e.toString();
     }
 
     // update rated item
@@ -338,10 +331,11 @@ class FirestoreService{
           String ratedItemId = await getRatedItemsDocumentId(uid, vendorId, item['itemId']);
           await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['givenRating']});
         } catch (e) {
-          print(e.toString());
+          return e.toString();
         }
       });
     }
+    return null;
   }
 
   // host it 
@@ -363,6 +357,11 @@ class FirestoreService{
 
   Stream<List<Event>> getEventInfo(String eventID) {
     return _eventCollectionReference.snapshots()
+    .map(_eventListFromSnapshot);
+  }
+
+  Stream<List<Event>> getEventsInfo(String userId){ //each vendor's all item query
+    return _eventCollectionReference.where('uid', isEqualTo: 'aDsAvwk0mbgV1CQSUI5wJbU75Zt2').snapshots()
     .map(_eventListFromSnapshot);
   }
 
