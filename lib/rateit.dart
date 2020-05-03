@@ -188,7 +188,6 @@ class SideBarProperties2 extends State<SideBar2> {
 }
 
 class InviteScreen extends StatefulWidget {
-
   InviteScreen({this.uid});
   final String uid;
 
@@ -362,11 +361,10 @@ class _RateItFirstScreen extends StatefulWidget {
 }
 
 class RateItFirstScreen extends State<_RateItFirstScreen> {
-
   void getUserInfo() async {
     // new method
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    // getting locally stored data 
+    // getting locally stored data
     String uid = prefs.getString('uid');
     String firstName = prefs.getString('firstName');
     String lastName = prefs.getString('lastName');
@@ -374,7 +372,13 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
     String profilePicture = prefs.getString('profilePicture');
     String gender = prefs.getString('gender');
     // Storing data in user class object
-    myUserInfo = UserData(uid: uid, firstName: firstName, lastName: lastName, email: email, gender: gender, profilePicture: profilePicture);
+    myUserInfo = UserData(
+        uid: uid,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        gender: gender,
+        profilePicture: profilePicture);
   }
 
   @override
@@ -642,231 +646,263 @@ class _EditProfile extends State<EditProfile> {
 
   void submit() {
     _formKey.currentState.save();
-    _updateData.update(user_id, _name, _email, _password, _gender, _dateOfBirth);
+    _updateData.update(
+        user_id, _name, _email, _password, _gender, _dateOfBirth);
     // TODO: Send an alert that data updated
   }
 
-List<DropdownMenuItem<String>> n=[];
-  void loadData(){
-    n=[];
-    n.add(new DropdownMenuItem(
-      child: new Text('Male'),
-      value: 'Male')
-    ); 
-    n.add(new DropdownMenuItem(
-      child: new Text('Female'),
-      value: 'Female')
-    ); 
-     n.add(new DropdownMenuItem(
-      child: new Text('Other'),
-      value: 'Other')
-    ); 
-   
+  List<DropdownMenuItem<String>> n = [];
+  void loadData() {
+    n = [];
+    n.add(new DropdownMenuItem(child: new Text('Male'), value: 'Male'));
+    n.add(new DropdownMenuItem(child: new Text('Female'), value: 'Female'));
+    n.add(new DropdownMenuItem(child: new Text('Other'), value: 'Other'));
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      
-      home: Scaffold(
-        
-        resizeToAvoidBottomPadding: false,
-        resizeToAvoidBottomInset: true,
-        
-        key: _formKey,
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(370.0),
-            child: ClipPath(
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  AppBar(
-                    centerTitle: true,
-                    bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(bottom: 300.0, left: 18),
-                              child: Text('Edit Profile',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 28))),
-                        )),
-                    leading: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    )),
-                  ),
-                  Column(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+            resizeToAvoidBottomPadding: false,
+            resizeToAvoidBottomInset: true,
+            key: _formKey,
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(370.0),
+                child: ClipPath(
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(top: 110.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                print("Upload Photo");
-                              },
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 70.0,
-                                backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
-                              ))),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 3.0),
-                          child: Text(myUserInfo.firstName + ' ' + myUserInfo.lastName,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                              ))),
-                      Padding(
-                          padding: const EdgeInsets.only(top: 3.0),
-                          child: Text(myUserInfo.email,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                              )))
-                    ],
-                  )
-                ],
-              ),
-              clipper: Clipshape(),
-            )),
-        endDrawer: SideBar2(),
-        body: Container(
-          child: ListView(
-            //crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Card(
-              child: ListTile(
-                leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
-                title: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Edit Username',
-                    hintText: myUserInfo.firstName + ' ' + myUserInfo.lastName,
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
-                  ),
-                ),
-                //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                onTap: () {
-                }
-              ),
-              ),
-              Card(
-              child: ListTile(
-                leading: Icon(Icons.lock_outline, color: Color(0xFFFC4A1F)),
-                title: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Change Password',
-                    hintText: '*********',
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
-                  ),
-                ),
-                //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                onTap: () {
-                  TextField(
-
-                  );
-                }
-              ),
-              ),
-               Card(
-              child: ListTile(
-                leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
-                title: TextFormField(
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Update Email',
-                    hintText: myUserInfo.email,
-                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
-                  ),
-                ),
-               // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                onTap: () {
-                }
-              ),
-              ),
-              
-              Card(
-              child: ListTile(
-                leading: Icon(Icons.hot_tub, color: Color(0xFFFC4A1F)),
-                title: Text('Gender'),
-                // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                onTap: () {
-                  DropdownButton<String>(
-                value: _gender, 
-                items:n, 
-                onChanged: (value){
-                  _gender =value; 
-                  //error1=false; 
-                  setState((){
-                  });
-                },
-                );
-                }
-              ),
-              ),
-              Card(
-              child: ListTile(
-                leading: Icon(Icons.calendar_today, color: Color(0xFFFC4A1F)),
-                title: RaisedButton(
-                  color: Colors.white,
-                  child:Text(_dateTime == null ? 'DD-MM-YYYY': DateFormat('dd-MM-yyyy').format(_dateTime), style: TextStyle(color: Colors.black, fontSize: 18) ),  
-                  onPressed: (){
-                    //print('here');
-                    showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(1950),
-                      lastDate: DateTime.now(),
-                      builder: (BuildContext context, Widget child){
-                        return Theme(
-                          data: ThemeData(
-                            primarySwatch: Colors.pink,    
-                            accentColor: Colors.deepOrange,
-                            splashColor: Colors.deepOrange,
+                      AppBar(
+                        centerTitle: true,
+                        bottom: PreferredSize(
+                            preferredSize: Size.fromHeight(0),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                  padding:
+                                      EdgeInsets.only(bottom: 300.0, left: 18),
+                                  child: Text('Edit Profile',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 28))),
+                            )),
+                        leading: IconButton(
+                          icon: Icon(Icons.arrow_back),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        flexibleSpace: Container(
+                            decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.topLeft,
+                              colors: [
+                                Color(0xFFAC0D57),
+                                Color(0xFFFC4A1F),
+                              ]),
+                          image: DecorationImage(
+                            image: AssetImage(
+                              "asset/image/Chat.png",
+                            ),
+                            fit: BoxFit.fitWidth,
                           ),
-                          child: child, 
-                          );
-                      }
-                    ).then((date) {
-                      setState(() {
-                        _dateTime = date;
-                      });
-                    });
-                  }
-                // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                // onTap: () {
-                      
-                // }
-              ),
-              ),
-            
-              )
+                        )),
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Padding(
+                              padding: const EdgeInsets.only(top: 110.0),
+                              child: GestureDetector(
+                                  onTap: () {
+                                    print("Upload Photo");
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor: Colors.white,
+                                    radius: 70.0,
+                                    backgroundImage: NetworkImage(
+                                        '${myUserInfo.profilePicture}'),
+                                  ))),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 3.0),
+                              child: Text(
+                                  myUserInfo.firstName +
+                                      ' ' +
+                                      myUserInfo.lastName,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20.0,
+                                  ))),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 3.0),
+                              child: Text(myUserInfo.email,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  )))
+                        ],
+                      )
+                    ],
+                  ),
+                  clipper: Clipshape(),
+                )),
+            endDrawer: SideBar2(),
+            body: Container(
+              child: ListView(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Edit Username',
+                              hintText: myUserInfo.firstName +
+                                  ' ' +
+                                  myUserInfo.lastName,
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {}),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.lock_outline,
+                              color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Change Password',
+                              hintText: '*********',
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {
+                            TextField();
+                          }),
+                    ),
+                    Card(
+                        child: ListTile(
+                            leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
+                            title: TextFormField(
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                labelText: 'Update Email',
+                                hintText: myUserInfo.email,
+                                labelStyle: TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                              ),
+                            ))),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Edit Username',
+                              hintText: 'Uzair Mustafa',
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {}),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.lock_outline,
+                              color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Change Password',
+                              hintText: '*********',
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {
+                            TextField();
+                          }),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: 'Update Email',
+                              hintText: 'uzairmustufa@ratetit.com',
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
+                          ),
+                          // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {}),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading:
+                              Icon(Icons.hot_tub, color: Color(0xFFFC4A1F)),
+                          title: Text('Gender'),
+                          // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {
+                            DropdownButton<String>(
+                              value: _gender,
+                              items: n,
+                              onChanged: (value) {
+                                _gender = value;
+                                //error1=false;
+                                setState(() {});
+                              },
+                            );
+                          }),
+                    ),
+                    Card(
+                      child: ListTile(
+                        leading: Icon(Icons.calendar_today,
+                            color: Color(0xFFFC4A1F)),
+                        title: RaisedButton(
+                            color: Colors.white,
+                            child: Text(
+                                _dateTime == null
+                                    ? 'DD-MM-YYYY'
+                                    : DateFormat('dd-MM-yyyy')
+                                        .format(_dateTime),
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18)),
+                            onPressed: () {
+                              //print('here');
+                              showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1950),
+                                  lastDate: DateTime.now(),
+                                  builder:
+                                      (BuildContext context, Widget child) {
+                                    return Theme(
+                                      data: ThemeData(
+                                        primarySwatch: Colors.pink,
+                                        accentColor: Colors.deepOrange,
+                                        splashColor: Colors.deepOrange,
+                                      ),
+                                      child: child,
+                                    );
+                                  }).then((date) {
+                                setState(() {
+                                  _dateTime = date;
+                                });
+                              });
+                            }
+                            // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                            // onTap: () {
 
-            ]
-              
-              ),
-
-          )
-        )
-    );
+                            // }
+                            ),
+                      ),
+                    )
+                  ]),
+            )));
   }
 }
 
@@ -896,26 +932,25 @@ class _ViewVendor extends State<ViewVendor> {
   // void initState() {
   //   super.initState();
   //   // start of getting local stored user info
-    // readContent().then((String value) {
-    //   // print(value);
-    //   var data = jsonDecode(value);
-    //   print('hii');
-    //   print(data);
-    //   userInfo = UserData(
-    //     uid: data['uid'],  
-    //       firstName: data['firstName'], 
-    //       lastName : data['lastName'], 
-    //       gender : data['gender'], 
-    //       // dateOfBirth : value.data['dateOfBirth'], 
-    //       email : data['email'], 
-    //       userRole : data['userRole'],
-    //   );
-    // });
-    // print('from rateit');
-    // print(userInfo);  // some error generated here
+  // readContent().then((String value) {
+  //   // print(value);
+  //   var data = jsonDecode(value);
+  //   print('hii');
+  //   print(data);
+  //   userInfo = UserData(
+  //     uid: data['uid'],
+  //       firstName: data['firstName'],
+  //       lastName : data['lastName'],
+  //       gender : data['gender'],
+  //       // dateOfBirth : value.data['dateOfBirth'],
+  //       email : data['email'],
+  //       userRole : data['userRole'],
+  //   );
+  // });
+  // print('from rateit');
+  // print(userInfo);  // some error generated here
 
-    
-    // end of it
+  // end of it
   // }
 
   @override
@@ -972,16 +1007,24 @@ class _ViewVendor extends State<ViewVendor> {
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
-            // String scanning = ""; 
+            // String scanning = "";
             // scanning  = await BarcodeScanner.scan();
             String name, logo;
-            await FirestoreService().getVendor('bSXeCJ7OEYV24U31fksL').then((docs){
-              if (docs.documents.isNotEmpty){
+            await FirestoreService()
+                .getVendor('bSXeCJ7OEYV24U31fksL')
+                .then((docs) {
+              if (docs.documents.isNotEmpty) {
                 name = docs.documents[0].data['name'];
                 logo = docs.documents[0].data['logo'];
               }
             });
-            Navigator.push(context, MaterialPageRoute(builder: (context) => DoRatings(name: name, logo: logo, vendorId: 'bSXeCJ7OEYV24U31fksL')));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DoRatings(
+                        name: name,
+                        logo: logo,
+                        vendorId: 'bSXeCJ7OEYV24U31fksL')));
           },
         ),
       ),
@@ -1051,13 +1094,13 @@ class _ViewMyRating extends State<ViewMyRating> {
         body: RatedVendorList(),
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.pink[800],
-          child: Image.asset("asset/image/Camera 1.png") ,
+          child: Image.asset("asset/image/Camera 1.png"),
           onPressed: () async {
-              //Navigator.of(context).pushNamed('/doratings');
-              String scanning ;//= await BarcodeScanner.scan(); 
-              setState(){
-                qr=scanning; 
-          }
+            //Navigator.of(context).pushNamed('/doratings');
+            String scanning; //= await BarcodeScanner.scan();
+            setState() {
+              qr = scanning;
+            }
           },
         ),
       ),
@@ -1066,10 +1109,10 @@ class _ViewMyRating extends State<ViewMyRating> {
 }
 
 class EditRatings extends StatefulWidget {
-
   String name, image, rating, vendorId, reviewId;
 
-  EditRatings({this.name, this.image, this.rating, this.vendorId, this.reviewId});
+  EditRatings(
+      {this.name, this.image, this.rating, this.vendorId, this.reviewId});
 
   @override
   _EditRatings createState() => new _EditRatings();
@@ -1078,147 +1121,151 @@ class EditRatings extends StatefulWidget {
 class _EditRatings extends State<EditRatings> {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider <List<RatedItem>>.value(
+    return StreamProvider<List<RatedItem>>.value(
       value: FirestoreService().getMyRatedItem(user_id, '${widget.vendorId}'),
       child: Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(150.0),
-            child: ClipPath(
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  AppBar(
-                    centerTitle: true,
-                    bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.name}',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 28))),
-                        )),
-                    flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
+          appBar: PreferredSize(
+              preferredSize: Size.fromHeight(150.0),
+              child: ClipPath(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    AppBar(
+                      centerTitle: true,
+                      bottom: PreferredSize(
+                          preferredSize: Size.fromHeight(0),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                                padding:
+                                    EdgeInsets.only(bottom: 60.0, left: 10),
+                                child: Text('${widget.name}',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 28))),
+                          )),
+                      flexibleSpace: Container(
+                          decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]),
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "asset/image/Chat.png",
+                          ),
+                          fit: BoxFit.fitWidth,
                         ),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    )),
-                  )
-                ],
-              ),
-              clipper: Clipshape(),
-            )),
-        body: Padding(
-          padding: EdgeInsets.all(5.0),
-          child: Container(
-              child: ListView(
-            children: <Widget>[
-              Container(
-                height: 200.0,
-                width: 200.0,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                  child: Image.network('${widget.image}'),
-                ),
-              ),
-              RatingBar.readOnly(
-                initialRating: double.parse('${widget.rating}'),
-                filledIcon: Icons.star,
-                emptyIcon: Icons.star_border,
-                halfFilledIcon: Icons.star_half,
-                isHalfAllowed: true,
-                filledColor: Colors.amber,
-                emptyColor: Colors.amber,
-                halfFilledColor: Colors.amber,
-                size: 40,
-              ),
-              SizedBox(
-              height: 10.0,
-            ),
-               Row(
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                  child: Container(
-                child: GestureDetector(
-              onTap: () {
-              },
-              child: Container(
-                width: 200.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
+                      )),
+                    )
                   ],
-                  borderRadius: BorderRadius.circular(30.0),
                 ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('My Ratings',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                ),
-              ),
-            )),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  child: GestureDetector(
-                    onTap: ( ) async {
-                      // get review 
-                      String review = await FirestoreService().getReview(widget.reviewId);
-                      var route = new MaterialPageRoute(
-                          builder: (BuildContext context) => new ViewReviews(
-                              value: '${widget.name}',
-                              image: '${widget.image}',
-                              reviewId: '${widget.reviewId}',
-                              review: review,
+                clipper: Clipshape(),
+              )),
+          body: Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Container(
+                child: ListView(
+                  children: <Widget>[
+                    Container(
+                      height: 200.0,
+                      width: 200.0,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                        child: Image.network('${widget.image}'),
+                      ),
+                    ),
+                    RatingBar.readOnly(
+                      initialRating: double.parse('${widget.rating}'),
+                      filledIcon: Icons.star,
+                      emptyIcon: Icons.star_border,
+                      halfFilledIcon: Icons.star_half,
+                      isHalfAllowed: true,
+                      filledColor: Colors.amber,
+                      emptyColor: Colors.amber,
+                      halfFilledColor: Colors.amber,
+                      size: 40,
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 5.0),
+                          child: Container(
+                              child: GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              width: 200.0,
+                              height: 50.0,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.topLeft,
+                                    colors: [
+                                      Color(0xFFAC0D57),
+                                      Color(0xFFFC4A1F),
+                                    ]),
+                                boxShadow: const [
+                                  BoxShadow(blurRadius: 10),
+                                ],
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              padding: EdgeInsets.all(12.0),
+                              child: Center(
+                                child: Text('My Ratings',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18)),
+                              ),
                             ),
-                        );
-                        Navigator.of(context).push(route);
-                    },
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.red, fontSize: 22)),
-                  ),
-                )
-              ],
-            ),
-              RatedItemList(),
-            
-            ]
-            )
-          )
-        ),
-         floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.edit),
-        backgroundColor: Color(0xFFFC4A1F),
-        onPressed: () {
-          var route = new MaterialPageRoute(
-            builder: (BuildContext context) => new ChangeRatings(
-                value: '${widget.name}', image: '${widget.image}', vendorId: '${widget.vendorId}', reviewId: '${widget.reviewId}'),
-          );
-          Navigator.of(context).push(route);
-        },
-      ),
-      )
+                          )),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                          child: GestureDetector(
+                            onTap: () async {
+                              // get review
+                              String review = await FirestoreService()
+                                  .getReview(widget.reviewId);
+                              var route = new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    new ViewReviews(
+                                  value: '${widget.name}',
+                                  image: '${widget.image}',
+                                  reviewId: '${widget.reviewId}',
+                                  review: review,
+                                ),
+                              );
+                              Navigator.of(context).push(route);
+                            },
+                            child: Text('Reviews',
+                                style:
+                                    TextStyle(color: Colors.red, fontSize: 22)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    RatedItemList(),
+                  ],
+                ),
+              )),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.edit),
+            backgroundColor: Color(0xFFFC4A1F),
+            onPressed: () {
+              var route = new MaterialPageRoute(
+                builder: (BuildContext context) => new ChangeRatings(
+                    value: '${widget.name}',
+                    image: '${widget.image}',
+                    vendorId: '${widget.vendorId}',
+                    reviewId: '${widget.reviewId}'),
+              );
+              Navigator.of(context).push(route);
+            },
+          )),
     );
   }
 }
@@ -1347,7 +1394,6 @@ class _EditRating1State extends State<EditRating1> {
                                 style: TextStyle(fontSize: 22),
                               ),
                             );
-                           
                           },
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(80.0)),
@@ -1383,10 +1429,10 @@ class _EditRating1State extends State<EditRating1> {
 }
 
 class DoRatings extends StatefulWidget {
-
   String name, logo, vendorId;
-  
-  DoRatings({this.name, this.logo, this.vendorId});
+  List<Map> list;
+
+  DoRatings({this.name, this.logo, this.vendorId, this.list});
 
   @override
   _DoRatings createState() => new _DoRatings();
@@ -1429,8 +1475,8 @@ class _DoRatings extends State<DoRatings> {
                           ]),
                       image: DecorationImage(
                         image: AssetImage(
-                        "asset/image/Chat.png",
-                      ),
+                          "asset/image/Chat.png",
+                        ),
                         fit: BoxFit.fitWidth,
                       ),
                     )),
@@ -1439,65 +1485,62 @@ class _DoRatings extends State<DoRatings> {
               ),
               clipper: Clipshape(),
             ),
-            ),
-            body: Padding(
+          ),
+          body: Padding(
               padding: EdgeInsets.all(5.0),
               child: Container(
-                  child: ListView(
-                children: <Widget>[
-                  Container(
-                    height: 200.0,
-                    width: 200.0,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                      child: Image.network('${widget.logo}')
-                    ),
-                  ),
-                  DisplayItems(list: myRatingInfo),
-                  Container(
-                  height: 100.0,
-                  width: 100.0,
+                  child: ListView(children: <Widget>[
+                Container(
+                  height: 200.0,
+                  width: 200.0,
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 0.0),
-                    child: GestureDetector(
-                        child: Image.asset('asset/image/Group 55.png'),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => DoRatingFinal(
-                              name: '${widget.name}', 
-                              image: '${widget.logo}',
-                              vendorId: '${widget.vendorId}',
-                              list: myRatingInfo,
-                              )));
-                        }),
-                    )
-                  )
-                ]
-              )
-            )
-          )
-        ),
+                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                      child: Image.network('${widget.logo}')),
+                ),
+                new Divider(),
+                DisplayItems(list: myRatingInfo),
+                Container(
+                    height: 100.0,
+                    width: 100.0,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 0.0),
+                      child: GestureDetector(
+                          child: Image.asset('asset/image/Group 55.png'),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DoReviews(
+                                          name: '${widget.name}',
+                                          logo: '${widget.logo}',
+                                          vendorId: '${widget.vendorId}',
+                                          list: myRatingInfo,
+                                        )));
+                          }),
+                    ))
+              ])))),
     );
   }
 }
 
 class DoRatingFinal extends StatefulWidget {
-  String name, image, vendorId;
-  List<Map> list;  
+  String name, logo, vendorId;
+  List<Map> list;
 
-  DoRatingFinal({this.name, this.image, this.vendorId, this.list});
+  DoRatingFinal({this.name, this.logo, this.vendorId, this.list});
   @override
   _DoRatingFinalState createState() => _DoRatingFinalState();
 }
 
 class _DoRatingFinalState extends State<DoRatingFinal> {
-
   String review;
   double finalRating;
+  List<Map> myRatingInfo = new List();
 
-  void submit(double finalRating){
-    var error = FirestoreService().sendRatings(user_id, widget.list, widget.name, widget.image, widget.vendorId, review, finalRating);
-    if (error != null){
+  void submit(double finalRating) {
+    var error = FirestoreService().sendRatings(user_id, widget.list,
+        widget.name, widget.logo, widget.vendorId, review, finalRating);
+    if (error != null) {
       print(error);
     }
   }
@@ -1559,7 +1602,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                     width: 200.0,
                     child: Padding(
                       padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                      child: Image.network('${widget.image}'),
+                      child: Image.network('${widget.logo}'),
                     ),
                   ),
                   new Divider(),
@@ -1638,7 +1681,6 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                               child: Text(
                                 "Submit",
                                 textAlign: TextAlign.center,
-                                
                                 style: TextStyle(
                                     fontSize: 20.0, color: Colors.white),
                               ),
@@ -1719,60 +1761,57 @@ class _TopRatedItems extends State<TopRatedItems> {
                   padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
                   child: Image.network('${widget.image}'),
                 ),
-                
-
-           
               ),
 
               Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 50.0),
-                    child: Column(
-                      children: <Widget>[
-                        RatingBar.readOnly(
-                          //Balaj chnage this line
-                          initialRating: double.parse('3.8'),
-                          isHalfAllowed: true,
-                          halfFilledIcon: Icons.star_half,
-                          filledIcon: Icons.star,
-                          emptyIcon: Icons.star_border,
-                          filledColor: Colors.amber,
-                          emptyColor: Colors.amber,
-                          halfFilledColor: Colors.amber,
-                          size: 30,
-                        ),
-                      ],
+                padding: EdgeInsets.only(right: 0.0, left: 50.0),
+                child: Column(
+                  children: <Widget>[
+                    RatingBar.readOnly(
+                      //Balaj chnage this line
+                      initialRating: double.parse('3.8'),
+                      isHalfAllowed: true,
+                      halfFilledIcon: Icons.star_half,
+                      filledIcon: Icons.star,
+                      emptyIcon: Icons.star_border,
+                      filledColor: Colors.amber,
+                      emptyColor: Colors.amber,
+                      halfFilledColor: Colors.amber,
+                      size: 30,
                     ),
-                  ),
+                  ],
+                ),
+              ),
               new Divider(),
               Row(
                 children: <Widget>[
-                   Container(
-                child: GestureDetector(
-              onTap: () {
-              },
-              child: Container(
-                width: 200.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
-                  ],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('Top Rated Items',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                ),
-              ),
-            )),
+                  Container(
+                      child: GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 200.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]),
+                        boxShadow: const [
+                          BoxShadow(blurRadius: 10),
+                        ],
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.all(12.0),
+                      child: Center(
+                        child: Text('Top Rated Items',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18)),
+                      ),
+                    ),
+                  )),
                   Padding(
                     padding: EdgeInsets.only(right: 10.0, left: 60.0),
                     child: GestureDetector(
@@ -1804,7 +1843,8 @@ class _TopRatedItems extends State<TopRatedItems> {
 class ChangeRatings extends StatefulWidget {
   String value, image, vendorId, reviewId;
 
-  ChangeRatings({Key key, this.value, this.image, this.vendorId, this.reviewId}) : super(key: key);
+  ChangeRatings({Key key, this.value, this.image, this.vendorId, this.reviewId})
+      : super(key: key);
 
   @override
   _ChangeRatings createState() => new _ChangeRatings();
@@ -1815,126 +1855,126 @@ class _ChangeRatings extends State<ChangeRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-      value: FirestoreService().getMyRatedItem(user_id, widget.vendorId),
-      child: Scaffold(
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(150.0),
-            child: ClipPath(
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  AppBar(
-                    centerTitle: true,
-                    bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.value}',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 28))),
+        value: FirestoreService().getMyRatedItem(user_id, widget.vendorId),
+        child: Scaffold(
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(150.0),
+                child: ClipPath(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      AppBar(
+                        centerTitle: true,
+                        bottom: PreferredSize(
+                            preferredSize: Size.fromHeight(0),
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                  padding:
+                                      EdgeInsets.only(bottom: 60.0, left: 10),
+                                  child: Text('${widget.value}',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 28))),
+                            )),
+                        flexibleSpace: Container(
+                            decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.topLeft,
+                              colors: [
+                                Color(0xFFAC0D57),
+                                Color(0xFFFC4A1F),
+                              ]),
+                          image: DecorationImage(
+                            image: AssetImage(
+                              "asset/image/Chat.png",
+                            ),
+                            fit: BoxFit.fitWidth,
+                          ),
                         )),
-                    flexibleSpace: Container(
-                        decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    )),
-                  )
-                ],
-              ),
-              clipper: Clipshape(),
-            )),
-        body: Padding(
-          padding: EdgeInsets.all(5.0),
-          child: Container(
-              child: ListView(
-            children: <Widget>[
-              Container(
-                height: 200.0,
-                width: 200.0,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                  child: Image.network('${widget.image}'),
-                ),
-              ),
-              new Divider(),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.0),
-                    child: Container(
-                  child: GestureDetector(
-                onTap: () {
-                },
-                child: Container(
-                  width: 200.0,
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]),
-                    boxShadow: const [
-                      BoxShadow(blurRadius: 10),
+                      )
                     ],
-                    borderRadius: BorderRadius.circular(30.0),
                   ),
-                  padding: EdgeInsets.all(12.0),
-                  child: Center(
-                    child: Text('Top Rated Reviews',
-                        style: TextStyle(color: Colors.white, fontSize: 18)),
+                  clipper: Clipshape(),
+                )),
+            body: Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Container(
+                child: ListView(children: <Widget>[
+                  Container(
+                    height: 200.0,
+                    width: 200.0,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                      child: Image.network('${widget.image}'),
+                    ),
                   ),
-                ),
-              )),
+                  new Divider(),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 5.0),
+                        child: Container(
+                            child: GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            width: 200.0,
+                            height: 50.0,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.topLeft,
+                                  colors: [
+                                    Color(0xFFAC0D57),
+                                    Color(0xFFFC4A1F),
+                                  ]),
+                              boxShadow: const [
+                                BoxShadow(blurRadius: 10),
+                              ],
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            padding: EdgeInsets.all(12.0),
+                            child: Center(
+                              child: Text('Top Rated Reviews',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18)),
+                            ),
+                          ),
+                        )),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                        child: Text('Reviews',
+                            style: TextStyle(color: Colors.red, fontSize: 22)),
+                      )
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                    child: Text('Reviews',
-                        style: TextStyle(color: Colors.red, fontSize: 22)),
-                  )
-                ],
+                  EditMyRatingsItems(),
+                  new Divider(),
+                  Container(
+                      height: 100.0,
+                      width: 100.0,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 0.0),
+                        child: GestureDetector(
+                            child: Image.asset('asset/image/Group 55.png'),
+                            onTap: () async {
+                              String review = await FirestoreService()
+                                  .getReview(widget.reviewId);
+                              var route = new MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    new EditReviews(
+                                        value: '${widget.value}',
+                                        image: '${widget.image}',
+                                        review: review,
+                                        reviewId: '${widget.reviewId}'),
+                              );
+                              Navigator.of(context).push(route);
+                            }),
+                      ))
+                ]),
               ),
-              EditMyRatingsItems(),
-              new Divider(),
-              Container(
-                  height: 100.0,
-                  width: 100.0,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 0.0),
-                    child: GestureDetector(
-                        child: Image.asset('asset/image/Group 55.png'),
-                        onTap: () async {
-                          String review = await FirestoreService().getReview(widget.reviewId);
-                          var route = new MaterialPageRoute(
-                            builder: (BuildContext context) => new EditReviews(
-                                value: '${widget.value}',
-                                image: '${widget.image}',
-                                review: review,
-                                reviewId: '${widget.reviewId}'),
-                          );
-                          Navigator.of(context).push(route);
-                        }),
-                  ))
-            ],
-          )),
-        ),
-      ),
-    );
+            )));
   }
 }
 
@@ -2023,9 +2063,11 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                   Padding(
                     padding: EdgeInsets.only(right: 10.0, left: 20.0),
                     child: GestureDetector(
-                      onTap: () {Navigator.pop(context);},
-                    child: Text('Top Rated Items',
-                        style: TextStyle(color: Colors.red, fontSize: 22)),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('Top Rated Items',
+                          style: TextStyle(color: Colors.red, fontSize: 22)),
                     ),
                   ),
                   SizedBox(
@@ -2037,32 +2079,32 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                   //       style: TextStyle(color: Colors.red, fontSize: 22)),
                   // )
                   Container(
-                child: GestureDetector(
-              onTap: () {
-              },
-              child: Container(
-                width: 170.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
-                  ],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('Reviews',
-                      style: TextStyle(color: Colors.white, fontSize: 20)),
-                ),
-              ),
-            ))
+                      child: GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 170.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]),
+                        boxShadow: const [
+                          BoxShadow(blurRadius: 10),
+                        ],
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.all(12.0),
+                      child: Center(
+                        child: Text('Reviews',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20)),
+                      ),
+                    ),
+                  ))
                 ],
               ),
               Row(
@@ -2211,10 +2253,10 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 }
 
 class ViewReviews extends StatefulWidget {
-
   String value, image, reviewId, review;
 
-  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review}) : super(key: key);
+  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review})
+      : super(key: key);
 
   @override
   _ViewReviews createState() => new _ViewReviews();
@@ -2222,6 +2264,7 @@ class ViewReviews extends StatefulWidget {
 
 class _ViewReviews extends State<ViewReviews> {
   double myrating;
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -2292,109 +2335,116 @@ class _ViewReviews extends State<ViewReviews> {
             Row(
               children: <Widget>[
                 Padding(
-                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                    child: GestureDetector(
-                      onTap: () {Navigator.pop(context);},
+                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                     child: Text('My Ratings',
                         style: TextStyle(color: Colors.red, fontSize: 22)),
-                    ),
                   ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: 30.0),
                   child: Container(
-                child: GestureDetector(
-              onTap: () {
-              },
-              child: Container(
-                width: 170.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
-                  ],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('My Reviews',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                ),
-              ),
-            )),
-                )
-                
-              ],
-            ),
-
-            Padding(
-              padding: EdgeInsets.only (top: 15.0, right: 45.0, left: 45.0),
-              child: Container(
-                width: 200.0,
-                
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                   gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        //Colors.white,
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                        
-                      ]),
-                  color: Colors.redAccent,
-                ),
-                alignment: Alignment.center,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 30.0),
-                      child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30.0,
-                                child: Image.asset('asset/image/circular.png'),
-                              )
-                    ),
-
-                    Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
+                      child: GestureDetector(
+                    onTap: () {},
                     child: Container(
+                      width: 170.0,
+                      height: 50.0,
                       decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-
-                ),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: 200.0,
-                          maxWidth: 270.0,
-                          minHeight: 30.0,
-                          maxHeight: 100.0,
-                        ),
-                        child: AutoSizeText('${widget.review}',
-                          style: TextStyle(fontSize: 18.0),
-                          textAlign: TextAlign.center,
-                        ),
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]),
+                        boxShadow: const [
+                          BoxShadow(blurRadius: 10),
+                        ],
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.all(12.0),
+                      child: Center(
+                        child: Text('My Reviews',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18)),
                       ),
                     ),
-                  )
-                  ],
+                  )),
                 )
-              )
-            )
-            
-                
+              ],
+            ),
+            Padding(
+                padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
+                child: Container(
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            //Colors.white,
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      color: Colors.redAccent,
+                    ),
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(top: 30.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30.0,
+                              child: Image.asset('asset/image/circular.png'),
+                            )),
+                        Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20.0,
+                                left: 20.0,
+                                right: 20.0,
+                                bottom: 10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 20.0,
+                                    left: 20.0,
+                                    right: 20.0,
+                                    bottom: 10.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white,
+                                  ),
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minWidth: 200.0,
+                                      maxWidth: 270.0,
+                                      minHeight: 30.0,
+                                      maxHeight: 100.0,
+                                    ),
+                                    child: AutoSizeText(
+                                      "The burger of McDonalds were juicy and tendor, the ambiance was great I would love to come again",
+                                      style: TextStyle(fontSize: 18.0),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )),
+                      ],
+                    ))),
           ],
         )),
       ),
@@ -2404,7 +2454,10 @@ class _ViewReviews extends State<ViewReviews> {
         onPressed: () {
           var route = new MaterialPageRoute(
             builder: (BuildContext context) => new EditReviews(
-                value: '${widget.value}', image: '${widget.image}', review: widget.review, reviewId: '${widget.reviewId}' ),
+                value: '${widget.value}',
+                image: '${widget.image}',
+                review: widget.review,
+                reviewId: '${widget.reviewId}'),
           );
           Navigator.of(context).push(route);
         },
@@ -2416,7 +2469,8 @@ class _ViewReviews extends State<ViewReviews> {
 class EditReviews extends StatefulWidget {
   String value, image, reviewId, review;
 
-  EditReviews({Key key, this.value, this.image, this. reviewId, this.review}) : super(key: key);
+  EditReviews({Key key, this.value, this.image, this.reviewId, this.review})
+      : super(key: key);
 
   @override
   _EditReviews createState() => new _EditReviews();
@@ -2424,6 +2478,24 @@ class EditReviews extends StatefulWidget {
 
 class _EditReviews extends State<EditReviews> {
   double myrating;
+
+  FocusNode myFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    myFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    myFocusNode.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -2494,114 +2566,116 @@ class _EditReviews extends State<EditReviews> {
             Row(
               children: <Widget>[
                 Padding(
-                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                    child: GestureDetector(
-                      onTap: () {Navigator.pop(context);},
+                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                     child: Text('My Ratings',
                         style: TextStyle(color: Colors.red, fontSize: 22)),
-                    ),
                   ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: 30.0),
                   child: Container(
-                child: GestureDetector(
-              onTap: () {
-              },
-              child: Container(
-                width: 170.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]),
-                  boxShadow: const [
-                    BoxShadow(blurRadius: 10),
-                  ],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: Text('My Reviews',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
-                ),
-              ),
-            )),
+                      child: GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      width: 170.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]),
+                        boxShadow: const [
+                          BoxShadow(blurRadius: 10),
+                        ],
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.all(12.0),
+                      child: Center(
+                        child: Text('My Reviews',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18)),
+                      ),
+                    ),
+                  )),
                 )
-                
               ],
             ),
-
             Padding(
-              padding: EdgeInsets.only (top: 15.0, right: 45.0, left: 45.0),
-              child: Container(
-                width: 200.0,
-                
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                   gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [
-                        //Colors.white,
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                        
-                      ]),
-                  color: Colors.redAccent,
-                ),
-                alignment: Alignment.center,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 30.0),
-                      child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: 30.0,
-                                child: Image.asset('asset/image/circular.png'),
-                              )
+                padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
+                child: Container(
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            //Colors.white,
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      color: Colors.redAccent,
                     ),
-
-                    Padding(
-                    padding: const EdgeInsets.only(
-                        top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-
-                ),
-                // display review that user has given before. Then add a pencil type button and then change it. 
-                // Can access the currently given review by widget.review.
-    
-                        child: TextFormField(    
-                           decoration: InputDecoration(
-                              labelText: 'Write a new review...',
-                              contentPadding: new EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(top: 30.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30.0,
+                              child: Image.asset('asset/image/circular.png'),
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
                             ),
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            height: 2.0,
-                            color: Colors.black                  
-                          )
-                        ),
-                      
-                    ),
-                  )
-                  ],
-                )
-              )
-            ),
+                            child: TextFormField(
+                                focusNode: myFocusNode,
+                                decoration: InputDecoration(
+                                    labelText: '//user review here',
+                                    contentPadding: new EdgeInsets.symmetric(
+                                        vertical: 25.0, horizontal: 10.0)),
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    height: 2.0,
+                                    color: Colors.black)),
+                          ),
+                        )
+                      ],
+                    ))),
+            Container(
+                child: Transform.translate(
+                    offset: Offset(150.0, -30.0),
+                    child: MaterialButton(
+                      onPressed: () => myFocusNode.requestFocus(),
+                      color: Color(0xFFFC4A1F),
+                      textColor: Colors.white,
+                      child: Icon(
+                        Icons.edit,
+                        size: 24,
+                      ),
+                      padding: EdgeInsets.all(16),
+                      shape: CircleBorder(),
+                    ))),
             SizedBox(
               height: 30.0,
             ),
-             Container(
+            Container(
                 height: 100.0,
                 width: 100.0,
                 child: Padding(
@@ -2617,12 +2691,186 @@ class _EditReviews extends State<EditReviews> {
                         Navigator.of(context).push(route);
                       }),
                 ))
-            
-                
           ],
         )),
       ),
-      
+    );
+  }
+}
+
+class DoReviews extends StatefulWidget {
+  String name, logo, vendorId;
+  List<Map> list;
+
+  DoReviews({this.name, this.logo, this.vendorId, this.list});
+
+  @override
+  _DoReviews createState() => new _DoReviews();
+}
+
+class _DoReviews extends State<DoReviews> {
+  double myrating;
+
+  FocusNode myFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+
+    myFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    myFocusNode.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                            child: Text('${widget.name}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 28))),
+                      )),
+                  flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]),
+                    image: DecorationImage(
+                      image: AssetImage(
+                        "asset/image/Chat.png",
+                      ),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )),
+                )
+              ],
+            ),
+            clipper: Clipshape(),
+          )),
+      body: Padding(
+        padding: EdgeInsets.all(5.0),
+        child: Container(
+            child: ListView(
+          children: <Widget>[
+            Container(
+              height: 200.0,
+              width: 200.0,
+              child: Padding(
+                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                child: Image.network('${widget.logo}'),
+              ),
+            ),
+            new Divider(),
+            Padding(
+                padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
+                child: Container(
+                    width: 200.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            //Colors.white,
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      color: Colors.redAccent,
+                    ),
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(top: 30.0),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: 30.0,
+                              child: Image.asset('asset/image/circular.png'),
+                            )),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: TextFormField(
+                                focusNode: myFocusNode,
+                                decoration: InputDecoration(
+                                    labelText: 'Write a new review...',
+                                    contentPadding: new EdgeInsets.symmetric(
+                                        vertical: 25.0, horizontal: 10.0)),
+                                style: TextStyle(
+                                    fontSize: 14.0,
+                                    height: 2.0,
+                                    color: Colors.black)),
+                          ),
+                        )
+                      ],
+                    ))),
+            Container(
+                child: Transform.translate(
+                    offset: Offset(150.0, -30.0),
+                    child: MaterialButton(
+                      onPressed: () => myFocusNode.requestFocus(),
+                      color: Color(0xFFFC4A1F),
+                      textColor: Colors.white,
+                      child: Icon(
+                        Icons.edit,
+                        size: 24,
+                      ),
+                      padding: EdgeInsets.all(16),
+                      shape: CircleBorder(),
+                    ))),
+            SizedBox(
+              height: 30.0,
+            ),
+            Container(
+                height: 100.0,
+                width: 100.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20.0, bottom: 0.0),
+                  child: GestureDetector(
+                      child: Image.asset('asset/image/Group 55.png'),
+                      onTap: () {
+                        var route = new MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                new DoRatingFinal(
+                                  name: '${widget.name}',
+                                  logo: '${widget.logo}',
+                                  vendorId: '${widget.vendorId}',
+                                  list: widget.list,
+                                ));
+                        Navigator.of(context).push(route);
+                      }),
+                )),
+          ],
+        )),
+      ),
     );
   }
 }
