@@ -23,13 +23,11 @@ import 'ratedVendor.dart';
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// import 'package:barcode_scan/barcode_scan.dart';
-// import 'package:flutter/services.dart';
-// import 'package:camera/camera.dart';
-// import 'package:qrcode_reader/qrcode_reader.dart';
 DateTime _dateTime;
 String user_id;
+UserData myUserInfo;
 
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -70,11 +68,11 @@ class SideBarProperties2 extends State<SideBar2> {
             ),
             CircleAvatar(
               radius: 70,
-              backgroundImage: new NetworkImage('http://i.pravatar.cc/300'),
+              backgroundImage: new NetworkImage('${myUserInfo.profilePicture}'),
             ),
-            Text('Uzair Mustafa',
+            Text(myUserInfo.firstName + ' ' + myUserInfo.lastName,
                 style: TextStyle(fontSize: 30, color: Colors.black)),
-            Text('uzairmustafa@rateit.com',
+            Text(myUserInfo.email,
                 style: TextStyle(fontSize: 22, color: Colors.black)),
             Padding(
               padding: EdgeInsets.all(30),
@@ -364,6 +362,21 @@ class _RateItFirstScreen extends StatefulWidget {
 }
 
 class RateItFirstScreen extends State<_RateItFirstScreen> {
+
+  void getUserInfo() async {
+    // new method
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // getting locally stored data 
+    String uid = prefs.getString('uid');
+    String firstName = prefs.getString('firstName');
+    String lastName = prefs.getString('lastName');
+    String email = prefs.getString('email');
+    String profilePicture = prefs.getString('profilePicture');
+    String gender = prefs.getString('gender');
+    // Storing data in user class object
+    myUserInfo = UserData(uid: uid, firstName: firstName, lastName: lastName, email: email, gender: gender, profilePicture: profilePicture);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -442,6 +455,7 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
                     offset: Offset(0.0, -260.0),
                     child: RaisedButton(
                       onPressed: () {
+                        getUserInfo();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -650,8 +664,6 @@ List<DropdownMenuItem<String>> n=[];
    
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     
@@ -714,18 +726,18 @@ List<DropdownMenuItem<String>> n=[];
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
                                 radius: 70.0,
-                                child: Image.asset('asset/image/circular.png'),
+                                backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
                               ))),
                       Padding(
                           padding: const EdgeInsets.only(top: 3.0),
-                          child: Text('Uzair Mustafa',
+                          child: Text(myUserInfo.firstName + ' ' + myUserInfo.lastName,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 20.0,
                               ))),
                       Padding(
                           padding: const EdgeInsets.only(top: 3.0),
-                          child: Text('uzairmustafa@rateit.com',
+                          child: Text(myUserInfo.email,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.0,
@@ -747,7 +759,7 @@ List<DropdownMenuItem<String>> n=[];
                 title: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Edit Username',
-                    hintText: 'Uzair Mustafa',
+                    hintText: myUserInfo.firstName + ' ' + myUserInfo.lastName,
                     labelStyle: TextStyle(fontSize: 15, color: Colors.black),
                   ),
                 ),
@@ -781,7 +793,7 @@ List<DropdownMenuItem<String>> n=[];
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: 'Update Email',
-                    hintText: 'uzairmustufa@ratetit.com',
+                    hintText: myUserInfo.email,
                     labelStyle: TextStyle(fontSize: 15, color: Colors.black),
                   ),
                 ),
@@ -878,50 +890,33 @@ class _ViewVendor extends State<ViewVendor> {
   UserData userInfo;
   String qr = "";
 
-  // Future _scanQR() async{
-  //   try {
-  //     var qrResult = await BarcodeScanner.scan();
-  //     setState(() {
-  //       //
-  //     });
-
-  //   }on PlatformException catch (ex) {
-  //     if (ex.code == BarcodeScanner.cameraAccessDenied)
-  //     {
-  //       setState(() {
-  //         result = 'Camera permission was denied';
-  //       });
-
-  //     } else {
-  //       setState(() {
-  //         result = 'Unknown Error $ex';
-  //       });
-  //     }
-  //   } on FormatException {
-  //     setState(() {
-  //       result = 'You pressed the back without scanning anything';
-  //     });
-  //   } catch (ex) {
-  //     setState(() {
-  //       result = 'Unknown Error $ex';
-  //     });
-  //   }
-  // }
-  
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  @override
-  void initState() {
-    super.initState();
-    // start of getting local stored user info
-    readContent().then((String value) {
-      Map userMap = jsonDecode(value);
-      var user = UserData.fromData(userMap);
-      userInfo = json.decode(value);
-    });
-    //print(userInfo);  // some error generated here
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   // start of getting local stored user info
+    // readContent().then((String value) {
+    //   // print(value);
+    //   var data = jsonDecode(value);
+    //   print('hii');
+    //   print(data);
+    //   userInfo = UserData(
+    //     uid: data['uid'],  
+    //       firstName: data['firstName'], 
+    //       lastName : data['lastName'], 
+    //       gender : data['gender'], 
+    //       // dateOfBirth : value.data['dateOfBirth'], 
+    //       email : data['email'], 
+    //       userRole : data['userRole'],
+    //   );
+    // });
+    // print('from rateit');
+    // print(userInfo);  // some error generated here
+
+    
     // end of it
-  }
+  // }
 
   @override
   Widget build(BuildContext context) {
