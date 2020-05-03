@@ -17,6 +17,9 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User>.value(
       value: AuthService().user,
       child: MaterialApp(
+      theme:  ThemeData(
+          primaryColor: Colors.pink,
+        ),
         home: Wrapper(), // decides to sbow login screen or homepage
       ),
     );

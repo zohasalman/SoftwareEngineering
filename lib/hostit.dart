@@ -17,6 +17,10 @@ import 'dart:convert';
 import 'VendorList.dart';
 import 'package:random_string/random_string.dart';
 import 'hostit_first.dart';
+import 'vendor.dart';
+import 'vendorlist-hostit.dart';
+import 'item.dart';
+import 'item-list.dart';
 
 void main2() => runApp(App());
 
@@ -64,6 +68,16 @@ class AddEventState extends State<AddEvent> {
   String name;
   String logo, photo;  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+
+  void getCoordinates() async {
+    final updatedcoord = await Navigator.push(
+      context,
+      CupertinoPageRoute(
+          fullscreenDialog: true, builder: (context) => Maps()),
+    );
+    coord=updatedcoord;
+  }
+
   @override 
   Widget build(BuildContext context){
     return Scaffold(
@@ -176,7 +190,8 @@ class AddEventState extends State<AddEvent> {
                     icon: Icon(Icons.add_location,
                     color: Colors.white,),
                     onPressed: () {
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
+                      getCoordinates();
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
                   ),
                 ),
@@ -364,18 +379,16 @@ class EventMenu extends StatefulWidget {
   final String eventName;
   EventMenu({this.eid,this.eventName});
   @override 
-  Screen39 createState()=> new Screen39(eid:eid,eventName:eventName ); 
+  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName ); 
 }
 
-class Screen39 extends State<EventMenu> {
+class EventMenuState extends State<EventMenu> {
   final String eid;
   final String eventName;
-  Screen39({this.eid,this.eventName});
-
-
-   
+  EventMenuState({this.eid,this.eventName});
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
+
   @override 
   Widget build(BuildContext context) {    
     return  Scaffold(
@@ -388,7 +401,6 @@ class Screen39 extends State<EventMenu> {
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-
                 AppBar(
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -417,8 +429,7 @@ class Screen39 extends State<EventMenu> {
                           scaffoldKey.currentState.openEndDrawer();
                         },
                         child: Icon(
-                            Icons.menu,
-                            
+                          Icons.menu,
                         ),
                       )
                     ),
@@ -450,27 +461,20 @@ class Screen39 extends State<EventMenu> {
       body: Form(
         key: _formKey, child: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: <Widget>[
-            
             Container(
               child: InkWell(
                 onTap: (){
-                
-              },
-              child: new Container(
-                //padding: EdgeInsets.only(top: 130, left: 20), 
-                child: RichText(
-                text: TextSpan(children: <TextSpan>[
-                  TextSpan(text: "Invite code| ",style: TextStyle(color: Colors.grey[600], fontSize: 25)),
-                  TextSpan(text: " AB64z9 ",style: TextStyle(color: Colors.black, fontSize: 25 )),
-
-                ]
-                )
-                
+                },
+                child: new Container(
+                  //padding: EdgeInsets.only(top: 130, left: 20), 
+                  child: RichText(
+                    text: TextSpan(children: <TextSpan>[
+                      TextSpan(text: "Invite code| ",style: TextStyle(color: Colors.grey[600], fontSize: 25)),
+                      TextSpan(text: " AB64z9 ",style: TextStyle(color: Colors.black, fontSize: 25 )),
+                    ]) 
+                  ),
+                ),
               ),
-                
-              ),
-              ),
-              
             ),
 
             Container(
@@ -487,7 +491,7 @@ class Screen39 extends State<EventMenu> {
             Container(
                 child: InkWell(
                   onTap: (){
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> Comprehensive(eid:eid,eventName:eventName)),);
                   },
                   child: Container(
                     height: 50,
@@ -515,8 +519,23 @@ class Screen39 extends State<EventMenu> {
             
             Container(
                 child: InkWell(
-                  onTap: (){
-                    
+                  onTap: () async{
+                    return await showDialog(
+                      context: context,
+                      builder: (BuildContext context){
+                        return AlertDialog(
+                          title: Text("Success!"),
+                          actions: <Widget>[
+                            Center(
+                              child: FlatButton(
+                                onPressed: ()=>Navigator.of(context).pop(false),
+                                child: Text("ok"),
+                              )
+                            )
+                          ],
+                        ); 
+                      },
+                    );
                   },
                   child: Container(
                     height: 50,
@@ -543,7 +562,23 @@ class Screen39 extends State<EventMenu> {
 
             Container(
                 child: InkWell(
-                  onTap: (){
+                  onTap: ()async{
+                    return await showDialog(
+                      context: context,
+                      builder: (BuildContext context){
+                        return AlertDialog(
+                          title: Text("Success!"),
+                          actions: <Widget>[
+                            Center(
+                              child: FlatButton(
+                                onPressed: ()=>Navigator.of(context).pop(false),
+                                child: Text("ok"),
+                              )
+                            )
+                          ],
+                        ); 
+                      },
+                    );
                     //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
                   },
                   child: Container(
@@ -600,7 +635,7 @@ class Screen39 extends State<EventMenu> {
             Container(
                 child: InkWell(
                   onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);  
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventName: eventName,eventID: eid,)),);  
                   },
                   child: Container(
                     height: 50,
@@ -891,12 +926,7 @@ class Screen41 extends State<AddVendorQty> {
       )
     ); 
   }
-
-
 }
-
-
-
 
 class AddVendor extends StatefulWidget {
   final int numVen;
@@ -1029,6 +1059,7 @@ class AddVendorState extends State<AddVendor> {
           child: Column(
             children: <Widget>[
               TextFormField(
+                keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a stall ID': null,
                 onChanged: (input)=> stallid[i]= input,
                 decoration: InputDecoration(
@@ -1285,7 +1316,7 @@ class AddVendorState extends State<AddVendor> {
                   }
                   if (check){
                     for (var i=0; i<numVen; i++){
-                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventID' : eid, 'name' : name[i], 'stallNo' : stallid[i], 'logo':null }).then((vid) async{
+                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':null }).then((vid) async{
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);});
                         });
                     }
@@ -1589,25 +1620,313 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
   }
 }
 
-class EditVen extends StatefulWidget {
+class AddItem2 extends StatefulWidget {
+  final String eid;
+  final List<String> vid;
+  final List<int> numVen;
+  final String eventName;
+  AddItem2({this.eid,this.numVen,this.vid,this.eventName});
+
   @override 
-  Screen46 createState()=> new Screen46(); 
+  AddItem2State createState()=> new AddItem2State(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
-class Screen46 extends State<EditVen> {
-  String name,email, stallid,item;
+class AddItem2State extends State<AddItem2> {
+  String eid;
+  String eventName;
+  List<String> vid;
+  List<int> numVen;
+  AddItem2State({this.eid,this.numVen,this.vid,this.eventName});
+  List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
+  //List<String> itemcoll = new List<String>();
+  bool value=false;
+  bool check=false; 
+  var n=int.parse(number); 
+
+  List<Widget> menu=[], menu2=[]; 
+  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+
+
+  void addvalue(i,j){
+    menu2=List.from(menu2)..add(
+      Container(
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              //keyboardType: TextInputType.number,
+              validator: (input)=> input.isEmpty? 'Please enter menu item': null,
+              onChanged: (input)=> itemname[i][j]=input,
+              decoration: InputDecoration(
+                labelText: 'Menu Item ${j+1}',
+                labelStyle: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 19
+                )
+              ),
+            ),
+          ],
+        )
+      ),
+    );
+    setState(() {
+        
+    });
+
+  }
+
+  void addvalue2(i,j){
+    menu2=List.from(menu2)..add(
+      Container(
+        width: MediaQuery.of(context).copyWith().size.width * 0.90,
+        child: Row(children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.75,
+            padding:EdgeInsets.only( top: 5, left: 20),
+            child: TextFormField(
+              //keyboardType: TextInputType.number,
+              validator: (input)=> input.isEmpty? 'Please upload a logo': null,
+              onChanged: (input)=> mlogo[i][j]=input,
+              decoration: InputDecoration(
+                labelText: 'Upload a logo of the menu item',
+                labelStyle: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 19
+                )
+              ),
+            )
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.10,
+            child: Ink(
+              decoration:  ShapeDecoration(
+                shape: CircleBorder(),
+                gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                ),
+                shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.file_upload,
+                color: Colors.white,),
+                onPressed: () {
+                  
+                },
+              ),
+            ),
+          )
+        ],),
+      ),
+    );
+    setState(() {
+    });
+  }
+  
+  void add2(i){
+    menu2=List.from(menu2)..add(
+      Container(
+        child: InkWell(
+        child: new Container(
+          child: RichText(
+          text: TextSpan(children: <TextSpan>[
+            TextSpan(text: "Vendor ${i+1}",style: TextStyle(color: Colors.black, fontSize: 22))
+          ]
+          )),
+        ),
+        ),
+      ),
+    );
+
+      setState(() {
+        
+      });
+
+  }
+ 
+ 
+var scaffoldKey=GlobalKey<ScaffoldState>();
+  @override 
+  Widget build(BuildContext context){
+    if (!check)
+    {
+      for (var i=0; i<numVen.length; i++)
+      {
+        add2(i); 
+        itemname.add([]);
+        mlogo.add([]);
+        for (var j=0; j<numVen[i]; j++){
+          itemname[i].add('');
+          mlogo[i].add('');
+          addvalue(i,j); 
+          addvalue2(i,j); 
+          //addvalue3(); 
+        }
+      }
+      check=true; 
+    }
+    
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+        key: scaffoldKey,
+        endDrawer:  SideBar(),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+
+                AppBar(
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                        child: Text('Add Menu',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                        ),
+                    )
+                  ),
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                       
+                    ), 
+                    onPressed: (){
+                      Navigator.pop(context);
+                    }
+                  ),
+                  actions: <Widget>[
+                       IconButton(
+                        onPressed: () {                          
+                          showSearch(
+                            context: context,
+                            delegate: MapSearchBar(),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.search,
+                          
+                        )
+                      ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          scaffoldKey.currentState.openEndDrawer();
+                          },
+                        child: Icon(
+                            Icons.menu,
+                            
+                        ),
+                      )
+                    ),
+                  ],
+                  flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [ 
+                          Color(0xFFAC0D57),
+                          Color(0xFFFC4A1F),
+                        ]
+                    ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                    ),
+                  )
+                ),
+                )
+              ],
+            ),
+            clipper: ClipShape(),
+          )
+        ),
+      body: SingleChildScrollView(
+        key: _formKey,
+        child: Center( 
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Column(
+                  children: menu2
+                ),
+              ), 
+              Container (
+                child: Ink(
+                  height: 100,
+                  width: 200,
+                  child: IconButton(
+                    icon: new Image.asset("asset/image/icon.png"),
+                    onPressed:() async {
+                      bool checkNext = true;
+                        //add eid from previous screen here to pass to QR to Event menu 
+                        for (var i=0; i<numVen.length; i++){
+                          for (var j=0; j<numVen[i]; j++){
+                            if(itemname[i][j]=='' ){
+                              checkNext=false;
+                            }
+                          }
+                        }
+                        if (checkNext){
+                          for (var i=0; i<numVen.length; i++){
+                            for (var j=0; j<numVen[i]; j++){
+                              //print(itemname[i][j]);
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){});//venId.add(vid.documentID);});
+                                });
+                            }
+                          }
+                          Navigator.pop(context);
+                          //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);   //Modify here to upload Event Data and then move on
+                        }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          )
+        )  
+      )
+    ); 
+  }
+}
+
+
+class EditVen extends StatefulWidget {
+  Vendor vendorData;
+  String eventName;
+  EditVen({this.eventName,this.vendorData});
+  @override 
+  EditVenState createState()=> new EditVenState(vendorData: vendorData,eventName: eventName); 
+}
+
+class EditVenState extends State<EditVen> {
+  String name,email,logo;
+  int item,stallid;
   final dcontroller=new TextEditingController(); 
   final dcontroller2=new TextEditingController(); 
   final dcontroller3=new TextEditingController(); 
   final dcontroller4=new TextEditingController(); 
   final dcontroller5=new TextEditingController(); 
-  String inputname="Carbie", inputemail="zohasalman123@gmail.com", inputstallid="112344", inputimage="carbie.png", inputmenunumber="8";
-  
-  bool value=false; 
-
-  var logo, mlogo;  
+  //String inputname="Carbie", inputemail="zohasalman123@gmail.com", inputstallid="112344", inputimage="carbie.png", inputmenunumber="8";
+  //int numVen;
+  //String eid;
+  Vendor vendorData;
+  String eventName;
+  EditVenState({this.eventName,this.vendorData});
+  bool value=false;
   bool check=false; 
-  var nu; 
+
+
 
   var n=int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
@@ -1619,11 +1938,19 @@ class Screen46 extends State<EditVen> {
 
   @override 
   Widget build(BuildContext context){
-     
-    
-        
+    name= vendorData.name;
+    logo= vendorData.logo;
+    email = vendorData.email;
+    stallid= vendorData.stallNo;
+    item=0;
+    dcontroller.text= vendorData.name;
+    dcontroller2.text= vendorData.email;
+    dcontroller3.text= vendorData.logo;
+    dcontroller4.text= vendorData.stallNo.toString();
+
+
+
     return Scaffold(
-     
       resizeToAvoidBottomPadding: false,
       //key: scaffoldKey,
       endDrawer:  SideBar(),
@@ -1633,7 +1960,6 @@ class Screen46 extends State<EditVen> {
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[
-
               AppBar(
                 centerTitle: true,
                 bottom: PreferredSize(
@@ -1643,30 +1969,31 @@ class Screen46 extends State<EditVen> {
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 40.0, left: 10),
                       child: Text('Edit Vendors',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                      ),
+                    ),
                   )
                 ),
                 leading: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
                       
-                    ), 
+                  ), 
                   onPressed: (){
                     Navigator.pop(context);
-                    }),
+                  }
+                ),
                 actions: <Widget>[
-                      IconButton(
-                      onPressed: () {                          
-                        showSearch(
-                          context: context,
-                          delegate: MapSearchBar(),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.search,
-                        
-                      )
-                    ),
+                  IconButton(
+                    onPressed: () {                          
+                      showSearch(
+                        context: context,
+                        delegate: MapSearchBar(),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.search,
+                      
+                    )
+                  ),
                 ],
                 flexibleSpace: Container(
                 decoration: BoxDecoration(
@@ -1678,11 +2005,11 @@ class Screen46 extends State<EditVen> {
                         Color(0xFFFC4A1F),
                       ]
                   ),
-                    image: DecorationImage(
-                      image: AssetImage(
-                        "asset/image/Chat.png",
-                      ),
-                      fit: BoxFit.fitWidth,
+                  image: DecorationImage(
+                    image: AssetImage(
+                      "asset/image/Chat.png",
+                    ),
+                    fit: BoxFit.fitWidth,
                   ),
                 )
               ),
@@ -1695,211 +2022,260 @@ class Screen46 extends State<EditVen> {
       body: SingleChildScrollView(
         key: _formKey,
         child: Column(children: <Widget>[
-
-          
           Container(
-            child: Column(
-            children: menu2),
-          ),
-
-                
-          Container(
-          child: Transform.translate(
-          offset: Offset(0,-50),
-          child: new Container(
-          padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: dcontroller,
-                validator: (input)=> input.isEmpty? 'Please enter a name': null,
-                onSaved: (input)=> name=input,
-                decoration: InputDecoration(
-                  hintText: inputname,
-                  suffixIcon: IconButton(
-                    onPressed: ()=> {
-                      setState((){
-                        dcontroller.clear();
-                      }),
-                    },
-                    icon: Icon(Icons.clear), 
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: InkWell(
+              child: new Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                //padding: EdgeInsets.only(top: 130, left: 20), 
+                child: RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "Vendor Details",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22
+                          ),
+                      ),
+                    ]
                   )
-
                 ),
-              )
-            ],
-          )
+              ),
+            ),
           ),
-          ),),
-
           Container(
-            child: Transform.translate(
-            offset: Offset(0,-30),
-            child: new Container(
-            padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding:EdgeInsets.only( top: 10, left: 20, right: 20),
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  controller: dcontroller2,
-                  validator: (input)=> input.isEmpty? 'Please enter an email': null,
-                  onSaved: (input)=> email=input,
+                  controller: dcontroller,
+                  validator: (input)=> input.isEmpty? 'Please enter vendor name': null,
+                  onChanged: (input)=> name=input,
                   decoration: InputDecoration(
-                    hintText: inputemail,
+                    hintText: 'Stall Name',
                     suffixIcon: IconButton(
-                      onPressed: ()=> {
+                      icon: Icon(Icons.clear),
+                      onPressed: ()=>{
                         setState((){
-                          dcontroller2.clear();
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
+                          //dcontroller.clear();
                         }),
                       },
-                      icon: Icon(Icons.clear), 
-                    )
-
+                    ),
                   ),
                 )
               ],
             )
           ),
-            ),),
-
-           Container(
-          child: Transform.translate(
-          offset: Offset(0,-10),
-          child: new Container(
-          padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                  controller: dcontroller3,
-                  validator: (input)=> input.isEmpty? 'Please enter a stall ID': null,
-                  onSaved: (input)=> stallid=input,
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: dcontroller2,
+                  validator: (input)=> input.isEmpty? 'Please enter vendor email': null,
+                  onChanged: (input)=> email=input,
                   decoration: InputDecoration(
-                    hintText: inputstallid,
+                    hintText: 'Email ID',
                     suffixIcon: IconButton(
-                      onPressed: ()=> {
+                      icon: Icon(Icons.clear),
+                      onPressed: ()=>{
                         setState((){
-                          dcontroller3.clear();
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller2.clear());
+                          //dcontroller.clear();
                         }),
                       },
-                      icon: Icon(Icons.clear), 
-                    )
-
+                    ),
                   ),
                 )
-                
-            
-            ],
-          )
-        ),
-          ),),
-
-        Container(
-          child: Transform.translate(
-          offset: Offset(0,10),
-          child: new Container(
-          padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-          child: Column(
-            children: <Widget>[
-              TextFormField(
+              ],
+            )
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
                   controller: dcontroller4,
-                  validator: (input)=> input.isEmpty? 'Please enter a logo': null,
-                  onSaved: (input)=>  logo=input,
+                  validator: (input)=> input.isEmpty? 'Please enter stall id': null,
+                  onChanged: (input)=> stallid=int.parse(input),
                   decoration: InputDecoration(
-                    hintText: inputimage,
+                    hintText: 'Stall ID',
                     suffixIcon: IconButton(
-                      onPressed: ()=> {
+                      icon: Icon(Icons.clear),
+                      onPressed: ()=>{
                         setState((){
-                          dcontroller4.clear();
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller4.clear());
+                          //dcontroller.clear();
                         }),
                       },
-                      icon: Icon(Icons.clear), 
-                    )
-
+                    ),
                   ),
                 )
-             
-            ],
-          )
-        ),
-          ),),
-
-        Container (
-          child: Transform.translate(
-          offset: Offset(162,-40),
-            child: Container(
-              height: 50,
-              width: 250,
-              child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-            ),
+              ],
+            )
           ),
-        ),
-          
-        Container(
-        child: Transform.translate(
-          offset: Offset(0,-35),
-            child: Container(
-              padding: EdgeInsets.only(top: 0, left: 20), 
-              child: RichText(
-                text: TextSpan(children: <TextSpan>[
+
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                
+                    child: TextFormField(
+                      controller: dcontroller3,
+                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                      onChanged: (input)=> logo=input,
+                      decoration: InputDecoration(
+                        hintText: 'Upload a logo for your vendor',
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: ()=>{
+                            setState((){
+                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller3.clear());
+                              //dcontroller3.clear();
+                            }),
+                          },
+                        ),
+                      ),
+                    )
                   
-                  TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
-                ]
-                )),
-
+                
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload,
+                    color: Colors.white,),
+                    onPressed: () {},
+                  ),
+                ),
+              )
+            ],),
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding: EdgeInsets.only(top: 0, left: 20), 
+            child: RichText(
+              text: TextSpan(children: <TextSpan>[
+                TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
+              ],),
             ),
           ),
-        ),
-
-        Container(
-        child: Transform.translate(
-        offset: Offset(0,-25),
-        child: new Container(
-        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-
-              keyboardType: TextInputType.number,
-              controller: dcontroller5,
+          Padding(
+            padding: EdgeInsets.all(5),
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding: EdgeInsets.only(top: 0, left: 20), 
+            child: RichText(
+              text: TextSpan(children: <TextSpan>[
+                TextSpan(text: "Enter a value to add more Items:",style: TextStyle(color: Colors.black,fontSize: 20))
+              ],),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onSaved: (input)=>  no=List.from(no)..add(nu),
+                  onChanged: (input)=> item=int.parse(input),
                   decoration: InputDecoration(
-                    hintText: inputmenunumber,
-                    suffixIcon: IconButton(
-                      onPressed: ()=> {
-                        setState((){
-                          dcontroller5.clear();
-                        }),
-                      },
-                      icon: Icon(Icons.clear), 
+                    labelText: 'Number of items',
+                    labelStyle: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 19
                     )
-
                   ),
                 )
-          
-          ],
-        )
-      ),
-        ),),
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.add,
+                    color: Colors.white,),
+                    onPressed: () {
+                      if (item>0){//connect item here
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddItem2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
+                      }
+                    },
+                  ),
+                ),
+              )
+            ],),
+          ),
 
 
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
-                height: 100,
-                width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
+          Padding(
+            padding: EdgeInsets.all(15),
+          ),
+          Center(
+            child: Container(
+              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+              width:60,
+              height:60,
+              child: Ink(
+                width:60,
+                height:60,
+                decoration:  ShapeDecoration(
+                  shape: CircleBorder(),
+                  color: null,
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                  ),
+                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                ),
+                child: IconButton(
+                  alignment: Alignment.center,
+                  icon: Icon(Icons.arrow_forward,
+                  size: 45,
+                  color: Colors.white,),
+                  onPressed: () async {
+                    //if(coord!=null){
+                    await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_)async{
+                        //await Firestore.instance.collection('Vendor').document(Firestore.instance.collection('Vendor').where('vendorId', isEqualTo: vendorData.vendorId).reference().).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true);
+                    });
+                    //}
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
+                  }
+                ),
               ),
             ),
           ),
-      
-
-          
         ],
         )  
       )
-
-      
     ); 
   }
 }
@@ -2067,27 +2443,15 @@ class Screen48 extends State<Edit> {
             addvalue(j+1); 
             addvalue2(); 
             addvalue3(); 
-
           }
-
-          
-          
         }
         check=true; 
-        
-
       }
-   
-
     }
     
-   
-    
-    
-    return Scaffold(
-     
+    return Scaffold( 
       resizeToAvoidBottomPadding: false,
-              //key: scaffoldKey,
+        //key: scaffoldKey,
         endDrawer:  SideBar(),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
@@ -2173,6 +2537,7 @@ class Screen48 extends State<Edit> {
 }
 
 
+
 class EditEvent extends StatefulWidget {
   final Event eventData;
   final LatLng coord;
@@ -2189,6 +2554,7 @@ class EditEventState extends State<EditEvent> {
   String savedName="", savedLogo="", savedCover="";
   GeoPoint savedLocation=null;
   EditEventState({this.eid,this.coord,this.eventData});
+
   String name, add, vendor, image, pic;
   final dcontroller=new TextEditingController(); 
   final dcontroller2=new TextEditingController(); 
@@ -2198,24 +2564,19 @@ class EditEventState extends State<EditEvent> {
 
   
   bool value=false; 
-
   var logo, mlogo;  
   bool check=false; 
   var nu; 
-
   var n=int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
-  
   int count=1; 
- 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
 
   void getCoordinates() async {
     final updatedcoord = await Navigator.push(
       context,
       CupertinoPageRoute(
-          fullscreenDialog: true, builder: (context) => EditMaps()),
+          fullscreenDialog: true, builder: (context) => Maps()),
     );
     coord=updatedcoord;
   }
@@ -2232,88 +2593,86 @@ class EditEventState extends State<EditEvent> {
     dcontroller4.text=eventData.coverimage;
 
     return Scaffold(
-     
       resizeToAvoidBottomPadding: false,
-              //key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text('Edit Event',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                    ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
+      //key: scaffoldKey,
+      endDrawer:  SideBar(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Edit Event',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
                   )
                 ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                  ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                  }
+                ),
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage(
+                      "asset/image/Chat.png",
+                    ),
+                    fit: BoxFit.fitWidth,
+                  ),
                 )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
       body: SingleChildScrollView(
         key: _formKey,
         child: Column(children: <Widget>[
           Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                padding:EdgeInsets.only( top: 10, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      controller: dcontroller,
-                      validator: (input)=> input.isEmpty? 'Please enter a name': null,
-                      onChanged: (input)=> savedName=input,
-                      decoration: InputDecoration(
-                        hintText: 'Enter your name',
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: ()=>{
-                            setState((){
-                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
-                              //dcontroller.clear();
-                            }),
-                          },
-                        ),
-                      ),
-                    )
-                  ],
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: dcontroller,
+                  validator: (input)=> input.isEmpty? 'Please enter event name': null,
+                  onChanged: (input)=> savedName=input,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Event Name',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: ()=>{
+                        setState((){
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
+                          //dcontroller.clear();
+                        }),
+                      },
+                    ),
+                  ),
                 )
+              ],
+            )
           ),
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -2322,11 +2681,7 @@ class EditEventState extends State<EditEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                     child: TextFormField(
-                      //controller: dcontroller,
-                      //validator: (tmp)=>coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
-                      //validator: (input)=> input.isEmpty? 'Please enter a valid location': nu//coord=LatLng(23.32, 65.1);
                       readOnly: true,
-                      //controller: dcontroller2,
                       decoration: InputDecoration(
                         labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
@@ -2510,7 +2865,7 @@ class EditEventState extends State<EditEvent> {
                     GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
                     await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true);
                     //}
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
                   }
                 ),
               ),
@@ -2525,14 +2880,14 @@ class EditEventState extends State<EditEvent> {
   }
 }
 
-class Screen extends StatefulWidget {
+class Success extends StatefulWidget {
   @override 
   SuccessScreen createState()=> new SuccessScreen(); 
 }
 
 
 
-class SuccessScreen extends State<Screen> {
+class SuccessScreen extends State<Success> {
   String event="Karachi Eat";
   var scaffoldKey=GlobalKey<ScaffoldState>();
  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -2660,29 +3015,30 @@ class SuccessScreen extends State<Screen> {
 }
 
 class Comprehensive extends StatefulWidget {
+  final String eid;
+  final String eventName;
+  Comprehensive({this.eid,this.eventName});
   @override 
-  LostCount createState()=> new LostCount(); 
+  ComprehensiveReport createState()=> new ComprehensiveReport(eid:eid,eventName: eventName); 
 }
 
+class ComprehensiveReport extends State<Comprehensive> {
+  String eventName;
+  String eid;
+  ComprehensiveReport({this.eid,this.eventName});
+  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
-
-class LostCount extends State<Comprehensive> {
-  String event="Karachi Eat"; 
- final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   @override 
-
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
         //key: scaffoldKey,
-        endDrawer:  SideBar(),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-
                 AppBar(
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -2691,18 +3047,10 @@ class LostCount extends State<Comprehensive> {
                       alignment: Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text(event,style: TextStyle(color: Colors.white, fontSize: 28 ))
+                        child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
                         ),
                     )
                   ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -2731,462 +3079,88 @@ class LostCount extends State<Comprehensive> {
         key: _formKey,
         child: Column(children: <Widget>[
           Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("asset/image/check.png")
-                    ),
-                ), 
-              ),
+            child: Container(
+              height: 200,
+              width: 200,
+              child:Icon(Icons.check_circle_outline,color: Colors.green[300],size: 200,), 
             ),
           ),
 
-          Container (
-            child: Transform.translate(
-            offset: Offset(-70,0),
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("asset/image/envelope.png")
+          //Container(
+            //width: MediaQuery.of(context).copyWith().size.width * 0.96,
+            //child:
+            Row( 
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Spacer(),
+                  Container(
+                    height: 50,
+                    width: 50,
+                    child:Icon(Icons.mail_outline,color: Colors.black,size: 50,),  
+                  ),
+                  Padding(padding: EdgeInsets.all(10)),
+                  Container(
+                    child: RichText(
+                      text: TextSpan(children: <TextSpan>[
+                        TextSpan(text: "Email Sent",style: TextStyle(color: Colors.black, fontSize: 30)),
+                      ]),
                     ),
-                ), 
+                  ),
+                  Spacer(),
+                ]
               ),
-            ),
-          ),
-          
-           Container(
-            child: Transform.translate(
-            offset: Offset(20,-65),
+            //),
+          //),
+          Center(
               child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
+                width: MediaQuery.of(context).copyWith().size.width * 0.96,
+                //padding: EdgeInsets.only(top: 0, left: 20), 
                 child: RichText(
+                  textAlign: TextAlign.center,
                   text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "Email Sent",style: TextStyle(color: Colors.black, fontSize: 22)),
-                  
-                  ]
-                  )),
-
-              ),
-            ),
-           ),
-
-          Container(
-            child: Transform.translate(
-            offset: Offset(20,-40),
-              child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "A comprehensive report has been successfully emailed to you.",style: TextStyle(color: Colors.black, fontSize: 17)),
-                    TextSpan(text: " Questions?",style: TextStyle(color: Colors.black, fontSize: 17)),
+                    TextSpan(text: "A comprehensive report has been successfully emailed to you.\n",style: TextStyle(color: Colors.black, fontSize: 17)),
+                    TextSpan(text: " Questions?\n",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: " Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
                     TextSpan(text: "help.rateit@gmail.com ",style: TextStyle(color: Colors.pink[800], fontSize: 17))
                   ]
                   )),
 
               ),
-            ),
           ),
-
-           
-            Container(
-              child: Transform.translate(
-              offset: Offset(0,20),
-              child: InkWell(
-                onTap: (){
-                  
-                },
-                child: Container(
-                  height: 50,
-                  width: 250,
-                  
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [ 
-                        Color(0xFFAC0D57),
-                        Color(0xFFFC4A1F),
-                      ]
-                    ),
-                    borderRadius: BorderRadius.circular(30),
+          Padding(padding: EdgeInsets.all(10),),
+          Container(
+            child: InkWell(
+              onTap: (){
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+              },
+              child: Center(
+                child:Container(
+                height: 50,
+                width: 250,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
                   ),
-                  padding: EdgeInsets.only(top: 15, left: 105), 
-                  child: Text("Done",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                  borderRadius: BorderRadius.circular(30),
+                ), 
+                child: Center(
+                  child:Text("Done",style: TextStyle(color: Colors.white, fontSize: 22 ))
                 ),
-
-              ),
+              ),),
             ),
           ),
-
-          
-         
-          
-        ],
-        )  
-      )
+        ],),  
+      ),
     ); 
   }
 }
 
-class ViewVendor extends StatefulWidget {
 
-	@override
-  State<StatefulWidget> createState() {
-
-    return _ViewVendor();
-  }
-}
-
-class _ViewVendor extends State<ViewVendor> {
-  List<VendorList> vendors = [
-    VendorList(vendorname: 'Cloud Naan', flag: 'cloudnaan.png'),
-    VendorList(vendorname: 'KFC', flag: 'kfc.png'),
-    VendorList(vendorname: 'McDonalds', flag: 'mcdonalds.png'),
-    VendorList(vendorname: 'No Lies Fries', flag: 'noliesfries.png'),
-    VendorList(vendorname: 'Caffe Parha', flag: 'caffeparha.png'),
-    VendorList(vendorname: 'DOH', flag: 'doh.png'),
-    VendorList(vendorname: 'Carbie', flag: 'carbie.png'),
-    VendorList(vendorname: 'The Story', flag: 'thestory.png'),
-    VendorList(vendorname: 'Meet the Cheese', flag: 'meetthecheese.png'),
-    
-  ];
-   var scaffoldKey=GlobalKey<ScaffoldState>();
-
-  
-  @override 
-  Widget build(BuildContext context) {
-     return Scaffold(
-        key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text('Vendor',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
-                  actions: <Widget>[
-                       IconButton(
-                        onPressed: () {                          
-                          showSearch(
-                            context: context,
-                            delegate: MapSearchBar(),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.search,
-                        
-                        )
-                      ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0, left: 10.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          scaffoldKey.currentState.openEndDrawer();
-                          },
-                        child: Icon(
-                            Icons.menu,
-                          
-                        ),
-                      )
-                    ),
-                  ],
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
-      body: Stack(
-        children: <Widget>[
-      Container(
-        child: Transform.translate(
-        offset: Offset(0,140),
-      
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: vendors.length,
-        itemBuilder: (context, index){
-          return Card(
-            child: ListTile(
-              onLongPress: ()=> {},
-              onTap: () {
-                debugPrint('${vendors[index].vendorname} is pressed!');
-              },
-              title: Text(vendors[index].vendorname),
-              leading: CircleAvatar(
-                backgroundImage: AssetImage('asset/image/${vendors[index].flag}'),
-              ),
-              
-            ),
-          );
-        }
-      ),),),
-
-
-      ],
-      ),
-    );
-  }
-}
-
-class ViewVendor2 extends StatefulWidget {
-
-	@override
-  State<StatefulWidget> createState() {
-
-    return _ViewVendor2();
-  }
-}
-
-class _ViewVendor2 extends State<ViewVendor2> {
-
-  var scaffoldKey=GlobalKey<ScaffoldState>();
-
-  List<VendorList> vendors = [
-    VendorList(vendorname: 'Cloud Naan', flag: 'cloudnaan.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'KFC', flag: 'kfc.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'McDonalds', flag: 'mcdonalds.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'No Lies Fries', flag: 'noliesfries.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'Caffe Parha', flag: 'caffeparha.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'DOH', flag: 'doh.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'Carbie', flag: 'carbie.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'The Story', flag: 'thestory.png', vendorrating: '4.5/5'),
-    VendorList(vendorname: 'Meet the Cheese', flag: 'meetthecheese.png', vendorrating: '4.5/5'),
-    
-  ];
-
-  
-  @override 
-  Widget build(BuildContext context) {
-    return Scaffold(
-        key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text('Delete Vendor',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
-                  actions: <Widget>[
-                       IconButton(
-                        onPressed: () {                          
-                          showSearch(
-                            context: context,
-                            delegate: MapSearchBar(),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          
-                        )
-                      ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          scaffoldKey.currentState.openEndDrawer();
-                          },
-                        child: Icon(
-                            Icons.menu,
-                            
-                        ),
-                      )
-                    ),
-                  ],
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
-      body: Stack(
-        children: <Widget>[
-          Container(
-            child: Transform.translate(
-            offset: Offset(120,170),
-              child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "Swipe to dismiss",style: TextStyle(color: Colors.pink[600], fontSize: 17)),
-                  ]
-                  )),
-              ),
-            ),
-          ),
-          
-
-      Container(
-        child: Transform.translate(
-        offset: Offset(0,190),
-      
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: vendors.length,
-        itemBuilder: (context, index){
-
-          return new Dismissible(
-            key: new Key(vendors[index].vendorname), 
-            onDismissed: (direction){
-
-              vendors.removeAt(index); 
-              Scaffold.of(context).showSnackBar(SnackBar(content: Text("Item dismissed")));
-              
-              
-            },
-            confirmDismiss: (DismissDirection direction) async {
-              return await showDialog(
-                context: context,
-                builder: (BuildContext context){
-                  return AlertDialog(
-                    title: Text("Confirm"),
-
-                    content: Text("Are you sure you want to delete this vendor?"),
-                    actions: <Widget>[
-                      FlatButton(
-                        onPressed: ()=>Navigator.of(context).pop(true),
-                        child: Text("Delete"),
-                      ),
-                      FlatButton(
-                        onPressed: ()=>Navigator.of(context).pop(false),
-                        child: Text("Cancel"),
-                      )
-                    ],
-                  ); 
-                },
-              ); 
-            },
-          
-          
-            child: ListTile(
-      
-              title: Text(vendors[index].vendorname),
-              leading: CircleAvatar(
-                backgroundImage: AssetImage('asset/image/${vendors[index].flag}'),
-              ),
-              
-            ),
-          );
-
-          
-
-         
-        }
-      ),),),
-
-
-      ],
-      ),
-    );
-  }
-}
-
-
-
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('HostIt'),
-        ),
-        body: Center(
-          child: Text('Remove this screen'),
-        ),
-      ),
-    );
-  }
-}
 
 class QRselection extends StatefulWidget {
   final String eid;
@@ -3273,7 +3247,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: () { //Change on Integration
-                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName)),);
                               },
                               child: Container(
                                 width: 250.0,
@@ -3405,7 +3379,8 @@ class MapsFunc extends State<Maps> {
                       ), 
                     onPressed: (){
                       //coord=LatLng(23.32, 65.1);
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
+                      Navigator.pop(context, coord);
+                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                     }
                   ),
                   // actions: <Widget>[
@@ -3490,165 +3465,6 @@ class MapsFunc extends State<Maps> {
     );
   }
 }
-
-
-
-class EditMaps extends StatefulWidget {
-  //Maps(LatLng eid);
-
-  @override
-  EditMapsFunc createState() => EditMapsFunc();
-}
-
-
-class EditMapsFunc extends State<EditMaps> {
-  LatLng coord;
-  Completer<GoogleMapController> _controller = Completer();
-  Marker marker=Marker(
-    markerId: MarkerId("1"),
-    draggable: true
-  ); //storing position coordinates in the variable
-  Set<Marker> markerSet={};
-  var scaffoldKey=GlobalKey<ScaffoldState>();
-  void _onMapCreated(GoogleMapController controller) {
-    _controller.complete(controller);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        key: scaffoldKey,
-        extendBodyBehindAppBar: true,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text('Location',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,    
-                      ), 
-                    onPressed: (){
-                      if (coord != null)
-                        Navigator.pop(context, coord);
-                      //coord=LatLng(23.32, 65.1);
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid: eid,coord: coord)),);
-                    }
-                  ),
-                  // actions: <Widget>[
-                  //   IconButton(
-                  //     onPressed: () {                     
-                  //       showSearch(
-                  //           context: context,
-                  //           delegate: MapSearchBar(),
-                  //       );
-                  //     },
-                  //     icon: Icon(
-                  //       Icons.search,
-                      
-                  //     )
-                  //     ),
-                  //   Padding(
-                  //     padding: EdgeInsets.only(right: 20.0),
-                  //     child: GestureDetector(
-                  //       onTap: () {
-                  //         scaffoldKey.currentState.openEndDrawer();
-                  //         },
-                  //       child: Icon(
-                  //           Icons.menu,
-                          
-                  //       ),
-                  //     )
-                  //   ),
-                  //],
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
-
-        body:     
-        GoogleMap(
-          onTap: (LatLng coordinates){
-                final Marker marker1 = Marker(
-                  markerId: MarkerId('1'),
-                  draggable: true,
-                  position: coordinates,
-                );
-                setState(() {
-                  markerSet.clear();
-                  markerSet.add(marker1);
-                  marker=marker1;
-                  coord=coordinates;
-                });
-          },
-          markers: markerSet,
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: LatLng(30, 68),
-            zoom: 5,
-          ),
-          mapType: MapType.hybrid,
-          rotateGesturesEnabled: true,
-          scrollGesturesEnabled: true,
-          tiltGesturesEnabled: true,
-          myLocationEnabled: true,          
-        ),
-      ),
-    );
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class MapSearchBar extends SearchDelegate<String>  {
 
@@ -3877,5 +3693,497 @@ class SideBarProperties extends State<SideBar>{
         ]
       ),
     );
+  }
+}
+
+
+class ViewVendorHostIt extends StatefulWidget {
+  ViewVendorHostIt({this.eventName, this.eventID});
+  final String eventName;
+  final String eventID;
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ViewVendorHostIt(eventName: eventName,eventID: eventID);
+  }
+}
+
+class _ViewVendorHostIt extends State<ViewVendorHostIt> {
+  _ViewVendorHostIt({this.eventName, this.eventID});
+  final String eventName;
+  final String eventID;
+  String result;
+  UserData userInfo;
+  
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // start of getting local stored user info
+    readContent().then((String value) {
+      Map userMap = jsonDecode(value);
+      var user = UserData.fromData(userMap);
+      userInfo = json.decode(value);
+    });
+    //print(userInfo);  // some error generated here
+    // end of it
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final vendorFromDB = Provider.of<List<Vendor>>(context);
+
+    return StreamProvider<List<Vendor>>.value(
+      value: FirestoreService().getVendorInfo(eventID),
+      child: Scaffold(
+        key: scaffoldKey,
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,    
+                      ), 
+                    onPressed: (){
+                      Navigator.pop(context);
+                    }
+                  ),
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                              child: Text('${widget.eventName}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )),
+                  )
+                ],
+              ),
+              clipper: Clipshape(),
+            )),
+        endDrawer: SideBar2(),
+        body:Column( children: <Widget>[
+          Container(
+            child: Text(
+              "Long Press to delete vendor",
+              style: TextStyle(color: Colors.pink[600], fontSize: 17),
+            ),
+          ), 
+          VendorsListHostit(),
+        ]),
+      ),
+    );
+  }
+}
+
+
+class ViewItemHostIt extends StatefulWidget {
+  ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+  final String eventName;
+  final String eventID;
+  final String vendorID;
+
+  @override
+  State<StatefulWidget> createState() {
+    return _ViewItemHostIt(eventName: eventName,eventID: eventID,vendorID: vendorID,);
+  }
+}
+
+class _ViewItemHostIt extends State<ViewItemHostIt> {
+  _ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+  String eventName;
+  String eventID;
+  String vendorID;
+  String result;
+  UserData userInfo;
+  
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // start of getting local stored user info
+    readContent().then((String value) {
+      Map userMap = jsonDecode(value);
+      var user = UserData.fromData(userMap);
+      userInfo = json.decode(value);
+    });
+    //print(userInfo);  // some error generated here
+    // end of it
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final vendorFromDB = Provider.of<List<Vendor>>(context);
+
+    return StreamProvider<List<Item>>.value(
+      value: FirestoreService().getItemInfo(vendorID),
+      child: Scaffold(
+        key: scaffoldKey,
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,    
+                      ), 
+                    onPressed: (){
+                      Navigator.pop(context);
+                    }
+                  ),
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                              child: Text('${widget.eventName}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )),
+                  )
+                ],
+              ),
+              clipper: Clipshape(),
+            )),
+        endDrawer: SideBar2(),
+        body:Column( children: <Widget>[
+          Container(
+            child: Text(
+              "Long Press to delete item",
+              style: TextStyle(color: Colors.pink[600], fontSize: 17),
+            ),
+          ), 
+          ListItemHostIt(),
+          Padding(
+            padding: EdgeInsets.all(15),
+          ),
+          Center(child: Container(
+                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+                width:60,
+                height:60,
+                child: Ink(
+                  width:60,
+                  height:60,
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    color: null,
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    alignment: Alignment.center,
+                    icon: Icon(Icons.arrow_forward,
+                    size: 45,
+                    color: Colors.white,),
+                    onPressed: () async {
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventID:eventID,eventName:eventName)),);
+                    },
+                  ),
+                ),
+          ),),
+        ]),
+      ),
+    );
+  }
+}
+
+class EditItem extends StatefulWidget {
+  final Item itemData;
+  EditItem({this.itemData});
+  @override 
+  EditItemState createState()=> new EditItemState(itemData: itemData,); 
+}
+
+class EditItemState extends State<EditItem> {
+  String name,logo;
+  final dcontroller=new TextEditingController();
+  final dcontroller3=new TextEditingController();
+  Item itemData;
+  EditItemState({this.itemData});
+  bool value=false;
+  bool check=false; 
+  var n=int.parse(number); 
+  List<Widget> menu=[], menu2=[]; 
+  
+  int count=1; 
+ 
+  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+
+
+  @override 
+  Widget build(BuildContext context){
+    name= itemData.name;
+    logo= itemData.logo;
+    dcontroller.text= itemData.name;
+    dcontroller3.text= itemData.logo;
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      //key: scaffoldKey,
+      endDrawer:  SideBar(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                      child: Text('Edit Item',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                    ),
+                  )
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                  ), 
+                  onPressed: (){
+                    Navigator.pop(context);
+                  }
+                ),
+                actions: <Widget>[
+                  IconButton(
+                    onPressed: () {                          
+                      showSearch(
+                        context: context,
+                        delegate: MapSearchBar(),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.search,
+                    )
+                  ),
+                ],
+                flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [ 
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage(
+                      "asset/image/Chat.png",
+                    ),
+                    fit: BoxFit.fitWidth,
+                  ),
+                )
+              ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
+      body: SingleChildScrollView(
+        key: _formKey,
+        child: Column(children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: InkWell(
+              child: new Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                //padding: EdgeInsets.only(top: 130, left: 20), 
+                child: RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: "Vendor Details",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22
+                          ),
+                      ),
+                    ]
+                  )
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  controller: dcontroller,
+                  validator: (input)=> input.isEmpty? 'Please enter item name': null,
+                  onChanged: (input)=> name=input,
+                  decoration: InputDecoration(
+                    hintText: 'Item Name',
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: ()=>{
+                        setState((){
+                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
+                          //dcontroller.clear();
+                        }),
+                      },
+                    ),
+                  ),
+                )
+              ],
+            )
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            child: Row(children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                padding:EdgeInsets.only( top: 5, left: 20),
+                
+                    child: TextFormField(
+                      controller: dcontroller3,
+                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
+                      onChanged: (input)=> logo=input,
+                      decoration: InputDecoration(
+                        hintText: 'Upload a logo for your vendor',
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: ()=>{
+                            setState((){
+                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller3.clear());
+                              //dcontroller3.clear();
+                            }),
+                          },
+                        ),
+                      ),
+                    )
+                  
+                
+              ),
+              Container(
+                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                child: Ink(
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    icon: Icon(Icons.file_upload,
+                    color: Colors.white,),
+                    onPressed: () {},
+                  ),
+                ),
+              )
+            ],),
+          ),
+          Container(
+            width: MediaQuery.of(context).copyWith().size.width * 0.90,
+            padding: EdgeInsets.only(top: 0, left: 20), 
+            child: RichText(
+              text: TextSpan(children: <TextSpan>[
+                TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
+              ],),
+            ),
+          ),
+
+
+          Padding(
+            padding: EdgeInsets.all(15),
+          ),
+          Center(
+            child: Container(
+              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+              width:60,
+              height:60,
+              child: Ink(
+                width:60,
+                height:60,
+                decoration: ShapeDecoration(
+                  shape: CircleBorder(),
+                  color: null,
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                  ),
+                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                ),
+                child: IconButton(
+                  alignment: Alignment.center,
+                  icon: Icon(Icons.arrow_forward,
+                  size: 45,
+                  color: Colors.white,),
+                  onPressed: () async {
+                    //if(coord!=null){
+                    await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
+                        //await Firestore.instance.collection('Vendor').document(Firestore.instance.collection('Vendor').where('vendorId', isEqualTo: vendorData.vendorId).reference().).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true);
+                    });
+                    //}
+                    Navigator.pop(context);
+                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
+                  }
+                ),
+              ),
+            ),
+          ),
+        ],
+        )  
+      )
+    ); 
   }
 }

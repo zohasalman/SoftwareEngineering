@@ -45,7 +45,7 @@ class RatedItem{
   }
 }
 
-class Review{
+class Review {
   final String userId;
   final String vendorId;
   final String reviewId;
