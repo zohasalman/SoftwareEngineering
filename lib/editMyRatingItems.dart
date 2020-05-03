@@ -54,7 +54,7 @@ class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
                         
                       ),
                       Padding(
-                          padding: EdgeInsets.only(top: 10,right: 0.0, left: 20.0),
+                          padding: EdgeInsets.only(top: 10,right: 0.0, left: 10.0),
                           child: Text('${myItems[index].itemName}',
                               style:
                                   TextStyle(color: Colors.black, fontSize: 18)))
@@ -66,7 +66,7 @@ class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
                 Expanded(
                     child: Container(
                   child: Padding(
-                    padding: EdgeInsets.only(right: 0.0, left: 65.0),
+                    padding: EdgeInsets.only(right: 0.0, left: 35.0),
                     child: Column(
                       children: <Widget>[
                         RatingBar(
@@ -79,8 +79,9 @@ class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
                           filledColor: Colors.amber,
                           emptyColor: Colors.amber,
                           halfFilledColor: Colors.amber,
-                          size: 40,
+                          size: 30,
                         ),
+                        
                         // Text(
                         //   '$myrating/5',
                         //   style: TextStyle(color: Colors.black, fontSize: 15),
