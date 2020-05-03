@@ -483,11 +483,13 @@ class SecondScreen extends State<SignScreen> {
             SafeArea(
               child:  Container(
               padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+              child: SafeArea(
               child: Row(
               children: <Widget>[
                 Text('Gender',style: TextStyle(color: Colors.grey[600], fontSize: 19)),
                 Container(
                 padding:EdgeInsets.only(left:80 ),
+                child: SafeArea(
                 child: DropdownButton<String>(
                   value:gender, 
                   items:n, 
@@ -501,8 +503,8 @@ class SecondScreen extends State<SignScreen> {
                   hint: Text(
                     'Please select an option'
                   ),
-                ),),],
-              ), ),
+                ),),),],
+              ), ),),
             ),
 
 
@@ -1071,7 +1073,7 @@ class FifthScreen extends State<ForgotScreen> {
                     alignment: Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                      child: Text('Forgot Password',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      child: Text('Forgot Password',style: TextStyle(color: Colors.white, fontSize: 25 ))
                       ),
                   )
                 ),
@@ -1182,8 +1184,8 @@ class FifthScreen extends State<ForgotScreen> {
                       ),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    padding: EdgeInsets.only(top: 15, left: 105), 
-                    child: Text("Send",style: TextStyle(color: Colors.white, fontSize: 22 ))
+                    child: Center(
+                    child: Text("Send",style: TextStyle(color: Colors.white, fontSize: 22 ))),
                   ),
 
                 ),
