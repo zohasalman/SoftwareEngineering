@@ -31,7 +31,7 @@ import 'dart:io';
 import 'reviewfromdb.dart';
 
 DateTime _dateTime;
-String user_id;
+String user_id, eName, eId;
 UserData myUserInfo;
 
 void main3() => runApp(MaterialApp(
@@ -1031,6 +1031,13 @@ class _ViewVendor extends State<ViewVendor> {
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+    eName = widget.eventName;
+    eId = widget.eventID;
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final vendorFromDB = Provider.of<List<Vendor>>(context);
 
@@ -1379,8 +1386,8 @@ class _EditRating1State extends State<EditRating1> {
     if (error != null) {
       print(error);
     }
+    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewVendor(eventName: eName,eventID: eId)));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -1488,6 +1495,7 @@ class _EditRating1State extends State<EditRating1> {
                    SafeArea(
                 child: InkWell(
                   onTap: () async{
+                    submit(finalRating);
                     return await showDialog(
                       context: context,
                       builder: (BuildContext context){
@@ -1652,6 +1660,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
     if (error != null) {
       print(error);
     }
+    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewVendor(eventName: eName,eventID: eId)));
   }
 
   @override
