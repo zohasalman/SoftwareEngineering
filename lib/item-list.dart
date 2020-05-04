@@ -109,11 +109,11 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
       return LoadingScreen();
     }
     else{
-      return Container(
+      return Expanded(
         child: ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          //physics: const NeverScrollableScrollPhysics(),
           itemCount: items.length,
           itemBuilder: (context, index){
             return Card(
@@ -127,12 +127,20 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
                     builder: (BuildContext context){
                       return AlertDialog(
                         title: Text("Confirm"),
-
-                        content: Text("Are you sure you want to delete this vendor?"),
+                        content: Text("Are you sure you want to delete ${items[index].name}?"),
                         actions: <Widget>[
                           FlatButton(
                             onPressed: () async {
-                              await Firestore.instance.collection('item').document(items[index].itemId).delete();
+                              String err;
+                              print(items[index].name);
+                              //await Firestore.instance.collection('item').document(items[index].itemId).delete();
+                              await Firestore.instance.collection('item').document(items[index].itemId).delete().then((_)async{
+                                await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: items[index].itemId).getDocuments().then((val) async{
+                                  val.documents.forEach((doc) async {
+                                    await Firestore.instance.collection('ratedItems').document(doc.documentID).delete().catchError((e){err=e.toString();});
+                                  });
+                                }).catchError((e){err=e.toString();});
+                              }).catchError((e){err=e.toString();});
                               Navigator.of(context).pop(false);
                             },
                             child: Text("Delete"),
