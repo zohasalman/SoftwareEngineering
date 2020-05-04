@@ -29,6 +29,9 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
 import 'reviewfromdb.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Pathway;  
+import 'package:image_cropper/image_cropper.dart';
 
 DateTime _dateTime;
 String user_id, eName, eId;
@@ -648,7 +651,16 @@ class _EditProfile extends State<EditProfile> {
   final genderSelected = TextEditingController();
   final formKey = new GlobalKey<FormState>();
 
+  String _uploadedFileURL = '';
+  File _image;
+  bool error1=true, error2=true;
+  bool validate=false; 
 
+  String  _firstName, _lastName, _email, _password, _gender, _profilePicture;
+  DateTime _dateOfBirth;
+
+  final _formKey = GlobalKey<FormState>();
+  final EditUserData _updateData = EditUserData();
 
   Future<void> _showChoiceDialogue(BuildContext context) {
     return showDialog(
@@ -675,8 +687,6 @@ class _EditProfile extends State<EditProfile> {
         });
   }
 
-  File _image;
-
   Future _openGallery(BuildContext context) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
@@ -687,7 +697,7 @@ class _EditProfile extends State<EditProfile> {
 
   Future _openCamera(BuildContext context) async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    String selectCity;
+    // String selectCity;
 
     setState(() {
       _image = image;
@@ -695,21 +705,47 @@ class _EditProfile extends State<EditProfile> {
     Navigator.of(context).pop();
   }
 
-   bool error1=true, error2=true;
-   bool validate=false; 
+  void _clear(){
+    setState(() {
+      _image = null;
+    });
+  }
 
-  String  _firstName, _lastName, _email, _password, _gender;
-  DateTime _dateOfBirth;
+  Future<void> _cropImage() async {
+    File cropped = await ImageCropper.cropImage(
+      sourcePath: _image.path,
+      );
+    setState(() {
+      _image = cropped ?? _image;
+    });
+  }
 
-  final _formKey = GlobalKey<FormState>();
-  final EditUserData _updateData = EditUserData();
 
-  void submit() {
+  Future uploadFile() async {    
+   StorageReference storageReference = FirebaseStorage.instance    
+       .ref()    
+       .child('UserData/${Pathway.basename(_image.path)}');    
+   StorageUploadTask uploadTask = storageReference.putFile(_image);    
+   await uploadTask.onComplete;    
+   print('File Uploaded');    
+   await storageReference.getDownloadURL().then((fileURL) {    
+     setState(() {    
+       _uploadedFileURL = fileURL;    
+       print(_uploadedFileURL);
+     });    
+   });    
+ }    
+
+  void submit() async {
+    
+    await uploadFile();
+    if (_uploadedFileURL.isNotEmpty){
+      _profilePicture = _uploadedFileURL;
+    }
     _formKey.currentState.save();
-    print(_firstName);
-    _updateData.update(
-        user_id, _firstName, _lastName, _email, _password, _gender, _dateOfBirth);
-    // TODO: Send an alert that data updated
+    _updateData.update(user_id, _firstName, _lastName, _email, _password, _gender, _profilePicture, _dateOfBirth);
+    // Storing data in user class object
+    myUserInfo.update(_firstName, _lastName,_email, _gender, _profilePicture);
   }
 
   List<DropdownMenuItem<String>> n = [];
@@ -779,8 +815,7 @@ class _EditProfile extends State<EditProfile> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     radius: 70.0,
-                                    backgroundImage: NetworkImage(
-                                        '${myUserInfo.profilePicture}'),
+                                    backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
                                   ))),
                           Container(
                               child: Transform.translate(
@@ -977,6 +1012,7 @@ class _EditProfile extends State<EditProfile> {
                      SafeArea(
                 child: InkWell(
                   onTap: () async{
+                    submit();
                     return await showDialog(
                       context: context,
                       builder: (BuildContext context){
