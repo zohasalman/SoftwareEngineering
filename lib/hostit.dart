@@ -2142,7 +2142,8 @@ class EditVen extends StatefulWidget {
 }
 
 class EditVenState extends State<EditVen> {
-  String name,email,logo;
+  String name="",email="",logo="";
+ 
   int stallid;
   int item=0;
   final dcontroller=new TextEditingController(); 
@@ -2156,6 +2157,7 @@ class EditVenState extends State<EditVen> {
   bool value=false;
   bool check=false; 
   bool validate=false; 
+  String err;
 
 
 
@@ -2447,6 +2449,7 @@ class EditVenState extends State<EditVen> {
                     icon: Icon(Icons.add,
                     color: Colors.white,),
                     onPressed: () {
+                      
                       print(item);
                       if (item>0){//connect item here
                         Navigator.push(context,MaterialPageRoute(builder: (context)=> AddItem2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
@@ -2457,6 +2460,28 @@ class EditVenState extends State<EditVen> {
               )
             ],),
           ),
+
+          SafeArea(
+            child: err== null ? Container() : Container(
+              
+              padding:EdgeInsets.only( top: 5), 
+              child: Column(
+                children: <Widget>[
+                  
+                  Container(
+                    alignment: Alignment(-0.8,-0.9),
+                      child: Text(err,
+                      style: TextStyle(color: Colors.red)
+                      ),
+                  ),
+                ],
+              )                        
+            ),
+          ),
+
+          
+
+
 
 
           Padding(
@@ -2486,7 +2511,9 @@ class EditVenState extends State<EditVen> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
-                    String err;
+                    print(logo); 
+                    setState(() => validate=true);
+                    if ( !(name=="" || email==""|| stallid==0|| logo=="" || item==0|| name==null || email==null||  logo==null ) ){
                     //if(coord!=null){
                     await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
                       await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendorData.vendorId).getDocuments().then((val) async{
@@ -2496,7 +2523,7 @@ class EditVenState extends State<EditVen> {
                       }).catchError((e){err=e.toString();});
                     }).catchError((e){err=e.toString();});
                     //}
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);}
                   }
                 ),
               ),
@@ -2544,6 +2571,7 @@ class EditEventState extends State<EditEvent> {
   List<Widget> menu=[], menu2=[]; 
   int count=1; 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  String err;
 
   void getCoordinates() async {
     final updatedcoord = await Navigator.push(
@@ -2567,6 +2595,7 @@ class EditEventState extends State<EditEvent> {
   }
   @override 
   Widget build(BuildContext context){
+
 
 
     return Scaffold(
@@ -2802,6 +2831,25 @@ class EditEventState extends State<EditEvent> {
                   )),
 
           ),
+
+           SafeArea(
+                child: err== null ? Container() : Container(
+                  
+                  padding:EdgeInsets.only( top: 5), 
+                  child: Column(
+                    children: <Widget>[
+                      
+                      Container(
+                        alignment: Alignment(-0.8,-0.9),
+                          child: Text(err,
+                          style: TextStyle(color: Colors.red)
+                          ),
+                      ),
+                    ],
+                  )                        
+                ),
+              ),
+
           Padding(
             padding: EdgeInsets.all(15),
           ),
@@ -2831,7 +2879,7 @@ class EditEventState extends State<EditEvent> {
                   onPressed: () async {
                     //if(coord!=null){
                     GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                    String err;
+                    
                     await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
                     //}
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
