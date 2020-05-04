@@ -9,7 +9,7 @@ class VendorsListHostit extends StatefulWidget {
   final String eventName;
   VendorsListHostit({this.eventName});
   @override
-  _VendorsListStateHostIt createState() => _VendorsListStateHostIt();
+  _VendorsListStateHostIt createState() => _VendorsListStateHostIt(eventName: eventName);
 }
 
 class _VendorsListStateHostIt extends State<VendorsListHostit> {

@@ -378,12 +378,12 @@ class AddEventState extends State<AddEvent> {
                         setState(() => validate=true);
                         //if(coord!=null){
                           GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                          String eventid;
+                          String eventid,err;
                           var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
                           if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
                             await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
-                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;});
-                            });
+                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
+                            }).catchError((e){err=e.toString();});
                             Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
                           }
                       // }
@@ -710,13 +710,13 @@ class EventMenuState extends State<EventMenu> {
             SafeArea(
                 child: InkWell(
                   onTap: () async {
+                    String err;
                     Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
-                    //await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true);
                     await Firestore.instance.collection('Event').document(eid).get().then((value){
                       Event passEvent = new Event(uid:null, eventID:null, invitecode:null, location1:value.data['location1'], name:value.data['name'], logo:value.data['logo'], coverimage:value.data['coverimage']);
                       varEvent = passEvent;
                       //varEvent.logo = value.data['userRole'];
-                    });
+                    }).catchError((e){err=e.toString();});;
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
                   },
                   child: SafeArea(
@@ -1419,10 +1419,11 @@ class AddVendorState extends State<AddVendor> {
                     }
                   }
                   if (check){
+                    String err;
                     for (var i=0; i<numVen; i++){
                         await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':null }).then((vid) async{
-                            await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);});
-                        });
+                            await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
+                        }).catchError((e){err=e.toString();});
                     }
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> Add(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                   }
@@ -1702,12 +1703,13 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                         if (checkNext){
+                          String err;
                           for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){});//venId.add(vid.documentID);});
-                                });
+                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+                                }).catchError((e){err=e.toString();});
                             }
                           }
                           Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
@@ -1981,16 +1983,16 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                         if (checkNext){
+                          String err;
                           for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){});//venId.add(vid.documentID);});
-                                });
+                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+                                }).catchError((e){err=e.toString();});
                             }
                           }
                           Navigator.pop(context);
-                          //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);   //Modify here to upload Event Data and then move on
                         }
                     },
                   ),
@@ -2355,7 +2357,7 @@ class EditVenState extends State<EditVen> {
                       }).catchError((e){err=e.toString();});
                     }).catchError((e){err=e.toString();});
                     //}
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
                   }
                 ),
               ),
@@ -2964,10 +2966,10 @@ class ComprehensiveReport extends State<Comprehensive> {
           Container(
             child: InkWell(
               onTap: ()async{
-                String inviteCode;
+                String inviteCode,err;
                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                   inviteCode=val.data['invitecode'];
-                });
+                }).catchError((e){err=e.toString();});
                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
               },
               child: Center(
@@ -3084,10 +3086,10 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{
-                                String inviteCode;
+                                String inviteCode,err;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
-                                });
+                                }).catchError((e){err=e.toString();});
                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
@@ -3125,10 +3127,10 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{
-                                String inviteCode;
+                                String inviteCode,err;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
-                                });
+                                }).catchError((e){err=e.toString();});
                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
@@ -3625,7 +3627,7 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
             )),
         endDrawer: SideBar2(),
         body://Column( children: <Widget>[
-          VendorsListHostit(),
+          VendorsListHostit(eventName: eventName,),
         //]),
       ),
     );
@@ -3726,10 +3728,11 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
                 style: TextStyle(color: Colors.pink[600], fontSize: 17),
               ),
             ), 
+            //Expanded(
             ListItemHostIt(),
-            Padding(
-              padding: EdgeInsets.all(15),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.all(15),
+            // ),
             Center(
               child: Container(
                   //width: MediaQuery.of(context).copyWith().size.width * 0.20,
@@ -3759,7 +3762,7 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
                     ),
                   ),
               ),
-            ),
+            ),//),
           ]
         ),
       ),
