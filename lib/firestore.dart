@@ -23,7 +23,7 @@ class FirestoreService{
   final CollectionReference _ratedItemCollectionReference = Firestore.instance.collection('ratedItems');
   final CollectionReference _eventCollectionReference = Firestore.instance.collection('Event');
 
-  Future registerUser(UserData user) async{
+  Future<String> registerUser(UserData user) async{
     try {
       await _usersCollectionReference.document(user.uid).setData(user.toJSON());
     } catch (e) {
@@ -231,46 +231,51 @@ class FirestoreService{
   // do ratings
   Future<String> sendRatings(String uid, List<Map> itemRatings, String vendorName, String vendorLogo, String vendorId, String review, double vendorRating) async {
     // convert all the data to JSON
-    int noOfItems = itemRatings.length;
-    String reviewId = '';
+    String checkIfExists = await getRatedVendorId(uid, vendorId);
+      if(checkIfExists == ''){
+      int noOfItems = itemRatings.length;
+      String reviewId = '';
 
-    if (noOfItems > 0){
-      if (review.isNotEmpty){
-        // send review 
-        Review rev = Review(userId: uid, vendorId: vendorId, review: review);
-        try{
-          final resp = await _reviewsCollectionReference.add(rev.toJSON());
-          reviewId = resp.documentID;
-        }catch(e){
-          print(e.toString());
-          
+      if (noOfItems > 0){
+        if (review.isNotEmpty){
+          // send review 
+          Review rev = Review(userId: uid, vendorId: vendorId, review: review);
+          try{
+            final resp = await _reviewsCollectionReference.add(rev.toJSON());
+            reviewId = resp.documentID;
+          }catch(e){
+            print(e.toString());
+            
+          }
+
+          // add review Id:
+          await _reviewsCollectionReference.document(reviewId).updateData({'reviewId': reviewId});
         }
-
-        // add review Id:
-        await _reviewsCollectionReference.document(reviewId).updateData({'reviewId': reviewId});
-      }
-      RatedVendor ven = RatedVendor(userId: uid, vendorId: vendorId, vendorName: vendorName, vendorLogo: vendorLogo, reviewId: reviewId, rating: vendorRating);
-      try {
-        final resp = await _ratedVendorCollectionReference.add(ven.toJSON());
-        String ratedVendorId = resp.documentID;
-        await _ratedVendorCollectionReference.document(ratedVendorId).updateData({'ratedVendorId': ratedVendorId});
-      } catch (e) {
-        print(e.toString());
-      }
-      itemRatings.forEach((item) async{
-        RatedItem it = RatedItem(userId: uid, vendorId: vendorId, itemId: item['itemId'], itemName: item['name'], itemLogo: item['logo'], rating: item['givenRating']);
+        RatedVendor ven = RatedVendor(userId: uid, vendorId: vendorId, vendorName: vendorName, vendorLogo: vendorLogo, reviewId: reviewId, rating: vendorRating);
         try {
-          final resp = await _ratedItemCollectionReference.add(it.toJSON());
-          String ratedItemId = resp.documentID;
-          await _ratedItemCollectionReference.document(ratedItemId).updateData({'ratedItemId': ratedItemId});
+          final resp = await _ratedVendorCollectionReference.add(ven.toJSON());
+          String ratedVendorId = resp.documentID;
+          await _ratedVendorCollectionReference.document(ratedVendorId).updateData({'ratedVendorId': ratedVendorId});
         } catch (e) {
           print(e.toString());
         }
-      });
-      return null;
-    }
-    else{
-      return 'No items were rated.';
+        itemRatings.forEach((item) async{
+          RatedItem it = RatedItem(userId: uid, vendorId: vendorId, itemId: item['itemId'], itemName: item['name'], itemLogo: item['logo'], rating: item['givenRating']);
+          try {
+            final resp = await _ratedItemCollectionReference.add(it.toJSON());
+            String ratedItemId = resp.documentID;
+            await _ratedItemCollectionReference.document(ratedItemId).updateData({'ratedItemId': ratedItemId});
+          } catch (e) {
+            print(e.toString());
+          }
+        });
+        return null;
+      }
+      else{
+        return 'No items were rated.';
+      }
+    }else{
+      return 'Error: Add a rating failed. User has already rated the vendor';
     }
   }
 

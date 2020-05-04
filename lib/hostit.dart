@@ -26,6 +26,8 @@ import 'item.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
+
+UserData myUserInfo;
 void main2() => runApp(App());
 
 String number="8"; 
@@ -61,7 +63,8 @@ class App extends StatelessWidget{
 
 class AddEvent extends StatefulWidget {
   final LatLng coord;
-  AddEvent({this.coord});
+  UserData myUserInfo;
+  AddEvent({this.coord, this.myUserInfo});
   
   @override 
   AddEventState createState()=> new AddEventState(coord: coord); 
@@ -89,6 +92,13 @@ class AddEventState extends State<AddEvent> {
   bool error1=false; 
   bool error2=false; 
   String err;
+
+  @override
+  void initState() {
+    super.initState();
+    myUserInfo = widget.myUserInfo;
+    print(myUserInfo.firstName);
+  }
 
   @override 
   Widget build(BuildContext context){
@@ -177,10 +187,10 @@ class AddEventState extends State<AddEvent> {
                   width: MediaQuery.of(context).copyWith().size.width * 0.75,
                   padding:EdgeInsets.only( top: 5, left: 20),
                       child: TextFormField(
-                        validator: (tmp)=>coord==null?'Please fill out this field':null,
-                        //validator: (input)=> input.isEmpty? 'Please enter a valid location': nu//coord=LatLng(23.32, 65.1);
+                        validator: (_) => coord==null  ? 'Please Mark a Location': null,
+                        readOnly: true,
                         decoration: InputDecoration(
-                          labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
+                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -205,7 +215,6 @@ class AddEventState extends State<AddEvent> {
                       color: Colors.white,),
                       onPressed: () {
                         getCoordinates();
-                        //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                       },
                     ),
                   ),
@@ -242,11 +251,10 @@ class AddEventState extends State<AddEvent> {
                   padding:EdgeInsets.only( top: 5, left: 20),
                   
                       child: TextFormField(
-                        
-                        validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                        onChanged: (input)=> logo=input,
+                        validator: (_) => logo==null || logo =='' ? 'Please enter a valid image': null,
+                        readOnly: true,
                         decoration: InputDecoration(
-                          labelText: 'Upload a logo of your event',
+                          hintText: logo==null? 'Upload Logo Photo': 'Image Uploaded',
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -271,10 +279,24 @@ class AddEventState extends State<AddEvent> {
                     child: IconButton(
                       icon: Icon(Icons.file_upload,
                       color: Colors.white,),
-                      onPressed: () {
+                      onPressed: () async {
+                        String downloadUrl;
+                        
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        String filename='${DateTime.now()}${selected.absolute}.png';
+                        await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).putFile(selected).onComplete;
+                        downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).getDownloadURL();
+                        logo=downloadUrl;
                         setState(() {
-                          error1=true; 
+                          //error1=true; 
                         });
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text("Image Uploaded"),
+                          ),
+                          barrierDismissible: true,
+                        );
                       },
                     ),
                   ),
@@ -302,11 +324,11 @@ class AddEventState extends State<AddEvent> {
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.75,
                   padding:EdgeInsets.only( top: 5, left: 20),
-                  child: TextFormField( 
-                    validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                    onChanged: (input)=> photo=input,
+                  child: TextFormField(
+                    validator: (_) => photo==null || photo=='' ? 'Please enter a valid image': null,
+                    readOnly: true,
                     decoration: InputDecoration(
-                      labelText: 'Upload a photo of your event',
+                      hintText: photo==null? 'Upload Cover Photo': 'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19
@@ -329,9 +351,22 @@ class AddEventState extends State<AddEvent> {
                     child: IconButton(
                       icon: Icon(Icons.file_upload,
                       color: Colors.white,),
-                      onPressed: () {
+                      onPressed: () async {
+                        String downloadUrl;
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        String filename='${DateTime.now()}${selected.absolute}.png';
+                        await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
+                        downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
+                        photo=downloadUrl;
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text("Image Uploaded"),
+                          ),
+                          barrierDismissible: true,
+                        );
                         setState(() {
-                          error2=true; 
+                          //error2=true; 
                         });
                       },
                     ),
@@ -401,7 +436,7 @@ class AddEventState extends State<AddEvent> {
                         if(coord!=null){
                           GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
                           String eventid; 
-                          var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
+                          var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
                           if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
                             await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
                                 await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
@@ -422,12 +457,13 @@ class AddEventState extends State<AddEvent> {
 }
 
 class EventMenu extends StatefulWidget {
+  UserData userInfo;
   final String eid;
   final String eventName;
   final String inviteCode;
-  EventMenu({this.eid,this.eventName,this.inviteCode});
+  EventMenu({this.eid,this.eventName,this.inviteCode, this.userInfo});
   @override 
-  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName,inviteCode: inviteCode ); 
+  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName,inviteCode: inviteCode, userInfo: userInfo); 
 }
 
 class EventMenuState extends State<EventMenu> {
@@ -435,10 +471,23 @@ class EventMenuState extends State<EventMenu> {
   String eventName;
   String inviteCode;
   String err; 
-  EventMenuState({this.eid,this.eventName,this.inviteCode});
+  UserData userInfo;
+  EventMenuState({this.eid,this.eventName,this.inviteCode, this.userInfo});
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
   bool validate=false; 
+
+  @override
+  void initState() {
+    super.initState();
+    myUserInfo = UserData(
+        uid: widget.userInfo.uid,
+        firstName: widget.userInfo.firstName,
+        lastName: widget.userInfo.lastName,
+        email: widget.userInfo.email,
+        gender: widget.userInfo.gender,
+        profilePicture: widget.userInfo.profilePicture);
+  }
 
   @override 
   Widget build(BuildContext context) {    
@@ -870,8 +919,8 @@ class Screen41 extends State<AddVendorQty> {
 
   bool error1=true; 
   bool validate=false; 
-  int custom_val; 
-  String custom_valSave; 
+  int customVal; 
+  String customValSave; 
   
 
   @override 
@@ -1029,7 +1078,7 @@ class Screen41 extends State<AddVendorQty> {
                   TextFormField(
                     keyboardType: TextInputType.number,
                     validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                    onChanged: (input)=> custom_valSave=input,
+                    onChanged: (input)=> customValSave=input,
                     decoration: InputDecoration(
                       labelText: 'Number of Vendors',
                       labelStyle: TextStyle(
@@ -1062,11 +1111,11 @@ class Screen41 extends State<AddVendorQty> {
 
                   }
 
-                  else if (valSave=="Custom" && custom_valSave!=null)
+                  else if (valSave=="Custom" && customValSave!=null)
                   {
-                    custom_val=int.parse(custom_valSave),
+                    customVal=int.parse(customValSave),
                     //print(numVen),
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:custom_val, eid:eid, eventName:eventName)),)
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:customVal, eid:eid, eventName:eventName)),)
 
                   }
                   
@@ -1097,10 +1146,10 @@ class AddVendorState extends State<AddVendor> {
   String eventName;
   AddVendorState({this.eventName,this.numVen,this.eid});
   List<String> name = [];
-  List<String> email = new List<String>(), stallid = new List<String>();
+  List<String> email = new List<String>(), stallid = new List<String>(),logo = new List<String>();
   List<int> item = new List<int>();
   bool value=false; 
-  var logo, mlogo;  
+  //var logo, mlogo;  
   bool check=false; 
   var nu; 
   var n= int.parse(number); 
@@ -1245,10 +1294,10 @@ class AddVendorState extends State<AddVendor> {
                   padding:EdgeInsets.only( top: 5, left: 20),
                 
                   child: TextFormField(
-                    
-                    validator: (input)=> input.isEmpty? 'Please enter a logo': null,
+                    readOnly: true,
+                    validator: (_) => logo[i]==null || logo[i] =='' ? 'Please upload a valid image': null,
                     decoration: InputDecoration(
-                      labelText: 'Upload a logo of the vendor',
+                      hintText: logo[i]==null ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19
@@ -1271,9 +1320,20 @@ class AddVendorState extends State<AddVendor> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {
-                      //Add Upload image function here
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Add()),);
+                    onPressed: () async{
+                      String downloadUrl;
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      String filename='${DateTime.now()}${selected.absolute}.png';
+                      await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).putFile(selected).onComplete;
+                      downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).getDownloadURL();
+                      logo[i]=downloadUrl;
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text("Image Uploaded"),
+                        ),
+                        barrierDismissible: true,
+                      );
                     },
                   ),
                 ),
@@ -1498,7 +1558,7 @@ class AddVendorState extends State<AddVendor> {
                   if (check){
                     
                     for (var i=0; i<numVen; i++){
-                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':null }).then((vid) async{
+                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':logo[i] }).then((vid) async{
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
                         }).catchError((e){err=e.toString();});
                     }
@@ -1578,7 +1638,6 @@ class Screen45 extends State<Add> {
     setState(() {
         
     });
-
   }
   
 
@@ -1591,11 +1650,10 @@ class Screen45 extends State<Add> {
             width: MediaQuery.of(context).copyWith().size.width * 0.75,
             padding:EdgeInsets.only( top: 5, left: 20),
             child: TextFormField(
-              //keyboardType: TextInputType.number,
-              validator: (input)=> input.isEmpty? 'Please upload a logo': null,
-              onChanged: (input)=> mlogo[i][j]=input,
+              validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
+              readOnly: true,
               decoration: InputDecoration(
-                labelText: 'Upload a logo of the menu item',
+                hintText: 'Upload Logo Photo',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -1618,8 +1676,20 @@ class Screen45 extends State<Add> {
               child: IconButton(
                 icon: Icon(Icons.file_upload,
                 color: Colors.white,),
-                onPressed: () {
-                  
+                onPressed: () async{
+                  String downloadUrl;
+                  File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                  String filename='${DateTime.now()}${selected.absolute}.png';
+                  await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
+                  downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
+                  mlogo[i][j]=downloadUrl;
+                  showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text("Image Uploaded"),
+                    ),
+                    barrierDismissible: true,
+                  );                  
                 },
               ),
             ),
@@ -1896,11 +1966,10 @@ class AddItem2State extends State<AddItem2> {
             width: MediaQuery.of(context).copyWith().size.width * 0.75,
             padding:EdgeInsets.only( top: 5, left: 20),
             child: TextFormField(
-              //keyboardType: TextInputType.number,
-              validator: (input)=> input.isEmpty? 'Please upload a logo': null,
-              onChanged: (input)=> mlogo[i][j]=input,
+              validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
+              readOnly: true,
               decoration: InputDecoration(
-                labelText: 'Upload a logo of the menu item',
+                hintText: 'Upload Logo Photo',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -1923,8 +1992,20 @@ class AddItem2State extends State<AddItem2> {
               child: IconButton(
                 icon: Icon(Icons.file_upload,
                 color: Colors.white,),
-                onPressed: () {
-                  
+                onPressed: () async {
+                  String downloadUrl;
+                  File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                  String filename='${DateTime.now()}${selected.absolute}.png';
+                  await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
+                  downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
+                  mlogo[i][j]=downloadUrl;
+                  showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text("Image Uploaded"),
+                    ),
+                    barrierDismissible: true,
+                  ); 
                 },
               ),
             ),
@@ -2134,9 +2215,10 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
 
 
 class EditVen extends StatefulWidget {
+  UserData myUser;
   final Vendor vendorData;
   final String eventName;
-  EditVen({this.eventName,this.vendorData});
+  EditVen({this.myUser, this.eventName,this.vendorData});
   @override 
   EditVenState createState()=> new EditVenState(vendorData: vendorData,eventName: eventName); 
 }
@@ -2170,6 +2252,7 @@ class EditVenState extends State<EditVen> {
   @override
   void initState() {
     super.initState();
+    myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
     email = vendorData.email;
@@ -2248,7 +2331,6 @@ class EditVenState extends State<EditVen> {
             child: InkWell(
               child: new Container(
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                //padding: EdgeInsets.only(top: 130, left: 20), 
                 child: RichText(
                   text: TextSpan(
                     children: <TextSpan>[
@@ -2281,7 +2363,6 @@ class EditVenState extends State<EditVen> {
                       onPressed: ()=>{
                         setState((){
                           WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
-                          //dcontroller.clear();
                         }),
                       },
                     ),
@@ -2297,7 +2378,7 @@ class EditVenState extends State<EditVen> {
               children: <Widget>[
                 TextFormField(
                   controller: dcontroller2,
-                  validator: (input)=> input.isEmpty? 'Please enter vendor email': null,
+                  validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
                   onChanged: (input)=> email=input,
                   decoration: InputDecoration(
                     hintText: 'Email ID',
@@ -2306,7 +2387,6 @@ class EditVenState extends State<EditVen> {
                       onPressed: ()=>{
                         setState((){
                           WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller2.clear());
-                          //dcontroller.clear();
                         }),
                       },
                     ),
@@ -2331,7 +2411,6 @@ class EditVenState extends State<EditVen> {
                       onPressed: ()=>{
                         setState((){
                           WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller4.clear());
-                          //dcontroller.clear();
                         }),
                       },
                     ),
@@ -2347,26 +2426,16 @@ class EditVenState extends State<EditVen> {
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
-                
-                    child: TextFormField(
-                      controller: dcontroller3,
-                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onChanged: (input)=> logo=input,
-                      decoration: InputDecoration(
-                        hintText: 'Upload a logo for your vendor',
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: ()=>{
-                            setState((){
-                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller3.clear());
-                              //dcontroller3.clear();
-                            }),
-                          },
-                        ),
-                      ),
-                    )
-                  
-                
+                child: TextFormField(
+                  readOnly: true,
+                  validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
+                  decoration: InputDecoration(
+                    hintText: logo==null ? 'Upload Logo Photo':'Image Uploaded',
+                    labelStyle: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 19
+                    ),),
+                )
               ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.10,
@@ -2383,7 +2452,21 @@ class EditVenState extends State<EditVen> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () async {
+                      String downloadUrl;
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      String filename='${DateTime.now()}${selected.absolute}.png';
+                      await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).putFile(selected).onComplete;
+                      downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).getDownloadURL();
+                      logo=downloadUrl;
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text("Image Uploaded"),
+                        ),
+                        barrierDismissible: true,
+                      );
+                    },
                   ),
                 ),
               )
@@ -2479,11 +2562,6 @@ class EditVenState extends State<EditVen> {
             ),
           ),
 
-          
-
-
-
-
           Padding(
             padding: EdgeInsets.all(15),
           ),
@@ -2511,19 +2589,17 @@ class EditVenState extends State<EditVen> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
-                    print(logo); 
                     setState(() => validate=true);
-                    if ( !(name=="" || email==""|| stallid==0|| logo=="" || item==0|| name==null || email==null||  logo==null ) ){
-                    //if(coord!=null){
-                    await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
-                      await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendorData.vendorId).getDocuments().then((val) async{
-                          val.documents.forEach((doc) async {
-                             await Firestore.instance.collection('ratedVendor').document(doc.documentID).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).catchError((e){err=e.toString();});
-                          });
+                    if ( !(name=="" || email==""|| stallid==0|| logo=="" || item==0|| name==null || email==null || logo==null ) ){
+                      await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
+                        await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendorData.vendorId).getDocuments().then((val) async{
+                            val.documents.forEach((doc) async {
+                              await Firestore.instance.collection('ratedVendor').document(doc.documentID).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).catchError((e){err=e.toString();});
+                            });
+                        }).catchError((e){err=e.toString();});
                       }).catchError((e){err=e.toString();});
-                    }).catchError((e){err=e.toString();});
-                    //}
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);}
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                    }
                   }
                 ),
               ),
@@ -2554,6 +2630,7 @@ class EditEventState extends State<EditEvent> {
   String savedName="", savedLogo="", savedCover="";
   GeoPoint savedLocation;
   EditEventState({this.eid,this.coord,this.eventData});
+  bool validate=false; 
 
   String name, add, vendor, image, pic;
   final dcontroller=new TextEditingController(); 
@@ -2652,144 +2729,252 @@ class EditEventState extends State<EditEvent> {
           clipper: ClipShape(),
         )
       ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
-        child: Column(children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            padding:EdgeInsets.only( top: 10, left: 20, right: 20),
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  controller: dcontroller,
-                  validator: (input)=> input.isEmpty? 'Please enter event name': null,
-                  onChanged: (input)=> savedName=input,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Event Name',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: ()=>{
-                        setState((){
-                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
-                          //dcontroller.clear();
-                        }),
+        autovalidate: validate, 
+        child: SingleChildScrollView(
+          child: Column(children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    controller: dcontroller,
+                    validator: (input)=> input.isEmpty? 'Please enter event name': null,
+                    onChanged: (input)=> savedName=input,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Event Name',
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: ()=>{
+                          setState((){
+                            WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
+                          }),
+                        },
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ),
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              child: Row(children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                  padding:EdgeInsets.only( top: 5, left: 20),
+                      child: TextFormField(
+                        validator: (_) => coord==null ? 'Please Mark a Location': null,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',
+                          labelStyle: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 19
+                          )
+                        ),
+                      )
+                ),
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                  child: Ink(
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.add_location,
+                      color: Colors.white,),
+                      onPressed: () {
+                        getCoordinates();
                       },
                     ),
                   ),
                 )
-              ],
-            )
-          ),
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            child: Row(children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.75,
-                padding:EdgeInsets.only( top: 5, left: 20),
-                    child: TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
-                        labelStyle: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 19
-                        )
-                      ),
-                    )
-              ),
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                    ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.add_location,
-                    color: Colors.white,),
-                    onPressed: () {
-                      getCoordinates();
-                    },
-                  ),
-                ),
-              )
-            ],),
-          ),
-          
-
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            child: Row(children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.75,
-                padding:EdgeInsets.only( top: 5, left: 20),
-                
-                    child: TextFormField(
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: coord==null?'Please upload logo photo of your event':'Image Uploaded',
-                      ),
-                    )
+              ],),
+            ),
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding: EdgeInsets.only(top: 0, left: 20), 
+              child: RichText(
+                text: TextSpan(children: <TextSpan>[
                   
-                
-              ),
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                    ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.file_upload,
-                    color: Colors.white,),
-                    onPressed: () {},
-                  ),
-                ),
-              )
-            ],),
-          ),
-          
-           Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
+                  TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
+                ]
+                )),
+            ),
+
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              child: Row(children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                  padding:EdgeInsets.only( top: 5, left: 20),
+                  
+                      child: TextFormField(
+                        validator: (_) => savedLogo==null || savedLogo=='' ? 'Please upload a valid image': null,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: coord==null?'Upload Logo Photo':'Image Uploaded',
+                        ),
+                      )
                     
-                    TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
-                  ]
-                  )),
-
-              ),
-
-          Container(
-            width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            child: Row(children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.75,
-                padding:EdgeInsets.only( top: 5, left: 20),
-                child: TextFormField( 
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    hintText: coord==null?'Please upload cover photo of your event':'Image Uploaded',
+                  
+                ),
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                  child: Ink(
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.file_upload,
+                      color: Colors.white,),
+                      onPressed: () async{
+                        String downloadUrl;
+                        String filename='${DateTime.now()}${eventData.name}.png';
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).putFile(selected).onComplete;
+                        downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).getDownloadURL();
+                        savedLogo=downloadUrl;
+                        // setState(() {
+                        //   error1=true; 
+                        // });
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text("Image Uploaded"),
+                          ),
+                          barrierDismissible: true,
+                        );
+                      },
+                    ),
                   ),
                 )
+              ],),
+            ),
+            
+            Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                  padding: EdgeInsets.only(top: 0, left: 20), 
+                  child: RichText(
+                    text: TextSpan(children: <TextSpan>[
+                      
+                      TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
+                    ]
+                    )),
+
+            ),
+
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              child: Row(children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.75,
+                  padding:EdgeInsets.only( top: 5, left: 20),
+                  child: TextFormField( 
+                    validator: (_) => savedCover==null || savedCover=='' ? 'Please upload a valid image': null,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: coord==null?'Upload Cover Photo':'Image Uploaded',
+                    ),
+                  )
+                ),
+                Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.10,
+                  child: Ink(
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.file_upload,
+                      color: Colors.white,),
+                      onPressed: () async {
+                        String downloadUrl;
+                        String filename='${DateTime.now()}${eventData.name}.png';
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
+                        downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
+                        savedCover=downloadUrl;
+                        // savedCover=downloadUrl;
+                        // setState(() {
+                        //   error2=true; 
+                        // });
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text("Image Uploaded"),
+                          ),
+                          barrierDismissible: true,
+                        );
+                      },
+                    ),
+                  ),
+                )
+              ],),
+            ),
+            
+            Container(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
+                  padding: EdgeInsets.only(top: 0, left: 20), 
+                  child: RichText(
+                    text: TextSpan(children: <TextSpan>[
+                      TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
+                    ]
+                    )),
+
+            ),
+
+            SafeArea(
+              child: err== null ? Container() : Container(
+                
+                padding:EdgeInsets.only( top: 5), 
+                child: Column(
+                  children: <Widget>[
+                    
+                    Container(
+                      alignment: Alignment(-0.8,-0.9),
+                        child: Text(err,
+                        style: TextStyle(color: Colors.red)
+                        ),
+                    ),
+                  ],
+                )                        
               ),
-              Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.10,
+            ),
+
+            Padding(
+              padding: EdgeInsets.all(15),
+            ),
+            Center(
+              child: Container(
+                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+                width:60,
+                height:60,
                 child: Ink(
+                  width:60,
+                  height:60,
                   decoration:  ShapeDecoration(
                     shape: CircleBorder(),
+                    color: null,
                     gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.topLeft,
@@ -2798,92 +2983,28 @@ class EditEventState extends State<EditEvent> {
                     shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
                   ),
                   child: IconButton(
-                    icon: Icon(Icons.file_upload,
+                    alignment: Alignment.center,
+                    icon: Icon(Icons.arrow_forward,
+                    size: 45,
                     color: Colors.white,),
                     onPressed: () async {
-                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
-                      FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('images/${DateTime.now()}.png').putFile(selected);
-
-                    },
+                      setState(() => validate=true);
+                      if(coord!=null){
+                        if ( !(savedName==null || savedLogo==null || savedCover==null) ){
+                          GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                          await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName,inviteCode: eventData.invitecode,)),);
+                        }
+                      }
+                    }
                   ),
-                ),
-              )
-            ],),
-          ),
-          
-          Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
-                  ]
-                  )),
-
-          ),
-
-           SafeArea(
-                child: err== null ? Container() : Container(
-                  
-                  padding:EdgeInsets.only( top: 5), 
-                  child: Column(
-                    children: <Widget>[
-                      
-                      Container(
-                        alignment: Alignment(-0.8,-0.9),
-                          child: Text(err,
-                          style: TextStyle(color: Colors.red)
-                          ),
-                      ),
-                    ],
-                  )                        
-                ),
-              ),
-
-          Padding(
-            padding: EdgeInsets.all(15),
-          ),
-          Center(
-            child: Container(
-              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-              width:60,
-              height:60,
-              child: Ink(
-                width:60,
-                height:60,
-                decoration:  ShapeDecoration(
-                  shape: CircleBorder(),
-                  color: null,
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                  ),
-                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                ),
-                child: IconButton(
-                  alignment: Alignment.center,
-                  icon: Icon(Icons.arrow_forward,
-                  size: 45,
-                  color: Colors.white,),
-                  onPressed: () async {
-                    //if(coord!=null){
-                    GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                    
-                    await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
-                    //}
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
-                  }
                 ),
               ),
             ),
-          ),
-        ],
-        )  
-      )
-
-      
-    ); 
+          ],
+        ),  
+      ),
+    ),); 
   }
 }
 
@@ -3051,6 +3172,7 @@ class QRselection extends StatefulWidget {
 
 class ScreenQRselect extends State<QRselection> {
   String eid,eventName;
+  String err; 
   ScreenQRselect({this.eid,this.eventName});
   
   @override
@@ -3201,6 +3323,24 @@ class ScreenQRselect extends State<QRselection> {
                             )
                           ),
                       ),
+
+                      SafeArea(
+                      child: err== null ? Container() : Container(
+                        
+                        padding:EdgeInsets.only( top: 5), 
+                        child: Column(
+                          children: <Widget>[
+                            
+                            Container(
+                              alignment: Alignment(-0.8,-0.9),
+                                child: Text(err,
+                                style: TextStyle(color: Colors.red)
+                                ),
+                            ),
+                          ],
+                        )                        
+                      ),
+                    ),
                     ],
                   ),
               ),
@@ -3463,23 +3603,23 @@ class SideBarProperties extends State<SideBar>{
             Padding( padding: EdgeInsets.all(30),),
             CircleAvatar(
               radius:70, 
-              backgroundImage: AssetImage("asset/image/user.png"),
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
             ),
             Text((() {
-                if(variable==null){return "Aladin";}  // your code here
+                if(variable==null){return myUserInfo.firstName + ' ' + myUserInfo.lastName;}  // your code here
                 else{return "nadnvaf";}
               }()),
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
             Text(
-              'Aladin@hotmail.com', 
+              myUserInfo.email, 
               style: TextStyle(fontSize: 22, color: Colors.black)
             ),
           Padding( padding: EdgeInsets.all(30),),
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
               },
               child: Container(
                 width: 230.0,
@@ -3801,6 +3941,7 @@ class EditItemState extends State<EditItem> {
   int count=1; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  bool validate=false; 
 
   @override
   void initState() {
@@ -3813,10 +3954,6 @@ class EditItemState extends State<EditItem> {
 
   @override 
   Widget build(BuildContext context){
-    name= itemData.name;
-    logo= itemData.logo;
-    dcontroller.text= itemData.name;
-    dcontroller3.text= itemData.logo;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       //key: scaffoldKey,
@@ -3884,8 +4021,10 @@ class EditItemState extends State<EditItem> {
           clipper: ClipShape(),
         )
       ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Column(children: <Widget>[
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -3940,26 +4079,18 @@ class EditItemState extends State<EditItem> {
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
-                
-                    child: TextFormField(
-                      controller: dcontroller3,
-                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onChanged: (input)=> logo=input,
-                      decoration: InputDecoration(
-                        hintText: 'Upload a logo for item',
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: ()=>{
-                            setState((){
-                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller3.clear());
-                              //dcontroller3.clear();
-                            }),
-                          },
-                        ),
-                      ),
-                    )
-                  
-                
+                  child: TextFormField(
+
+                    validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: 'Upload Logo Photo',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 19
+                      )
+                    ),
+                  )
               ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.10,
@@ -3976,7 +4107,21 @@ class EditItemState extends State<EditItem> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () async {
+                      String downloadUrl;
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      String filename='${DateTime.now()}${selected.absolute}.png';
+                      await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
+                      downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
+                      logo=downloadUrl;
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text("Image Uploaded"),
+                        ),
+                        barrierDismissible: true,
+                      );   
+                    },
                   ),
                 ),
               )
@@ -4020,8 +4165,10 @@ class EditItemState extends State<EditItem> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
+                    setState(() => validate=true);
                     String err;
                     //if(coord!=null){
+                    if(!(logo==null || name==null))
                     await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
                       await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: itemData.itemId).getDocuments().then((val) async{
                           val.documents.forEach((doc) async {
@@ -4039,7 +4186,7 @@ class EditItemState extends State<EditItem> {
           ),
         ],
         )  
-      )
+      ),)
     ); 
   }
 }

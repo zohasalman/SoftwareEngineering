@@ -4,17 +4,20 @@ import 'vendor.dart';
 import 'userRedirection.dart';
 import 'hostit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'user.dart';
 
 class EventsListHostit extends StatefulWidget {
+  
+  UserData myUserInfo;
   final String eventName;
-  EventsListHostit({this.eventName});
+  
+  EventsListHostit({this.eventName, this.myUserInfo});
   @override
   _EventsListStateHostIt createState() => _EventsListStateHostIt();
 }
 
 class _EventsListStateHostIt extends State<EventsListHostit> {
-  final String eventName;
-  _EventsListStateHostIt({this.eventName});
+  
   @override
   Widget build(BuildContext context) {
 
@@ -48,7 +51,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                     //   ),
                     // );
                     //Navigator.of(context).push(route);
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen(vendorData: vendors[index], eventName: eventName,)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen(myUser: widget.myUserInfo,  vendorData: vendors[index], eventName: widget.eventName,)),);
                   },
                   onLongPress: () async {
                     return await showDialog(
