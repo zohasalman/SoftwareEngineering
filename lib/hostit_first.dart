@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,11 @@ import 'userRedirection.dart';
 import 'login.dart';
 import 'user.dart';
 import 'firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'rateit.dart';
+
+
+UserData myUserInfo;
 
 class HostitHomescreen extends StatefulWidget {
   @override
@@ -14,8 +20,37 @@ class HostitHomescreen extends StatefulWidget {
 }
 
 class _HostitHomescreenState extends State<HostitHomescreen> {
+
   //final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async{
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // getting locally stored data
+    String uid = prefs.getString('uid');
+    String firstName = prefs.getString('firstName');
+    String lastName = prefs.getString('lastName');
+    String email = prefs.getString('email');
+    String profilePicture = prefs.getString('profilePicture');
+    String gender = prefs.getString('gender');
+    // Storing data in user class object
+    myUserInfo = UserData(
+        uid: uid,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        gender: gender,
+        profilePicture: profilePicture);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Event>>.value(
@@ -94,7 +129,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           //add code
-          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: null,)),);
+          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(myUserInfo: myUserInfo, coord: null,)),);
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.red[600],
@@ -130,21 +165,21 @@ class SideBar1Properties extends State<SideBar1>{
             Padding( padding: EdgeInsets.all(30),),
             CircleAvatar(
               radius:70, 
-              backgroundImage: AssetImage("asset/image/user.png"),
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
             ),
             Text(
-              'Aladin', 
+              myUserInfo.firstName + ' ' + myUserInfo.lastName, 
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
             Text(
-              'Aladin@hotmail.com', 
+              myUserInfo.email, 
               style: TextStyle(fontSize: 22, color: Colors.black)
             ),
           Padding( padding: EdgeInsets.all(30),),
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
               },
               child: Container(
                 width: 230.0,
@@ -214,7 +249,6 @@ class SideBar1Properties extends State<SideBar1>{
 }
 
 class EventsListHostit extends StatefulWidget {
-
   @override
   _EventsListStateHostIt createState() => _EventsListStateHostIt();
 }
@@ -238,7 +272,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
               return Card(
                 child: GestureDetector(
                   onTap: () async {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:events[index].eventID,eventName:events[index].name,inviteCode:events[index].invitecode ,)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:events[index].eventID,eventName:events[index].name,inviteCode:events[index].invitecode, userInfo: myUserInfo,)),);
                   },
                   onLongPress: ()async {
                     return await showDialog(

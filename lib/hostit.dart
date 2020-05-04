@@ -26,6 +26,8 @@ import 'item.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
+
+UserData myUserInfo;
 void main2() => runApp(App());
 
 String number="8"; 
@@ -61,7 +63,8 @@ class App extends StatelessWidget{
 
 class AddEvent extends StatefulWidget {
   final LatLng coord;
-  AddEvent({this.coord});
+  UserData myUserInfo;
+  AddEvent({this.coord, this.myUserInfo});
   
   @override 
   AddEventState createState()=> new AddEventState(coord: coord); 
@@ -89,6 +92,13 @@ class AddEventState extends State<AddEvent> {
   bool error1=false; 
   bool error2=false; 
   String err;
+
+  @override
+  void initState() {
+    super.initState();
+    myUserInfo = widget.myUserInfo;
+    print(myUserInfo.firstName);
+  }
 
   @override 
   Widget build(BuildContext context){
@@ -422,12 +432,13 @@ class AddEventState extends State<AddEvent> {
 }
 
 class EventMenu extends StatefulWidget {
+  UserData userInfo;
   final String eid;
   final String eventName;
   final String inviteCode;
-  EventMenu({this.eid,this.eventName,this.inviteCode});
+  EventMenu({this.eid,this.eventName,this.inviteCode, this.userInfo});
   @override 
-  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName,inviteCode: inviteCode ); 
+  EventMenuState createState()=> new EventMenuState(eid:eid,eventName:eventName,inviteCode: inviteCode, userInfo: userInfo); 
 }
 
 class EventMenuState extends State<EventMenu> {
@@ -435,10 +446,23 @@ class EventMenuState extends State<EventMenu> {
   String eventName;
   String inviteCode;
   String err; 
-  EventMenuState({this.eid,this.eventName,this.inviteCode});
+  UserData userInfo;
+  EventMenuState({this.eid,this.eventName,this.inviteCode, this.userInfo});
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
   bool validate=false; 
+
+  @override
+  void initState() {
+    super.initState();
+    myUserInfo = UserData(
+        uid: widget.userInfo.uid,
+        firstName: widget.userInfo.firstName,
+        lastName: widget.userInfo.lastName,
+        email: widget.userInfo.email,
+        gender: widget.userInfo.gender,
+        profilePicture: widget.userInfo.profilePicture);
+  }
 
   @override 
   Widget build(BuildContext context) {    
@@ -2134,9 +2158,10 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
 
 
 class EditVen extends StatefulWidget {
+  UserData myUser;
   final Vendor vendorData;
   final String eventName;
-  EditVen({this.eventName,this.vendorData});
+  EditVen({this.myUser, this.eventName,this.vendorData});
   @override 
   EditVenState createState()=> new EditVenState(vendorData: vendorData,eventName: eventName); 
 }
@@ -2168,6 +2193,7 @@ class EditVenState extends State<EditVen> {
   @override
   void initState() {
     super.initState();
+    myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
     email = vendorData.email;
@@ -3415,23 +3441,23 @@ class SideBarProperties extends State<SideBar>{
             Padding( padding: EdgeInsets.all(30),),
             CircleAvatar(
               radius:70, 
-              backgroundImage: AssetImage("asset/image/user.png"),
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
             ),
             Text((() {
-                if(variable==null){return "Aladin";}  // your code here
+                if(variable==null){return myUserInfo.firstName + ' ' + myUserInfo.lastName;}  // your code here
                 else{return "nadnvaf";}
               }()),
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
             Text(
-              'Aladin@hotmail.com', 
+              myUserInfo.email, 
               style: TextStyle(fontSize: 22, color: Colors.black)
             ),
           Padding( padding: EdgeInsets.all(30),),
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
               },
               child: Container(
                 width: 230.0,
