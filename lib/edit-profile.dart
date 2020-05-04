@@ -5,9 +5,14 @@ class EditUserData{
 
   final CollectionReference _updateCollectionReference = Firestore.instance.collection('users');
 
-  void update(String uid, String name, String email, String password, String gender, DateTime dateOfBirth){
-    if (name.isNotEmpty){
-      _updateName(uid, name);
+  void update(String uid, String firstName, String lastName, String email, String password, String gender, DateTime dateOfBirth){
+    print(uid);
+    print(firstName);
+    if (firstName.isNotEmpty){
+      _updateFirstName(uid, firstName);
+    }
+    if (lastName.isNotEmpty){
+      _updateLastName(uid, lastName);
     }
     if (email.isNotEmpty){
       _updateEmail(uid, email);
@@ -20,9 +25,14 @@ class EditUserData{
     }
   }
 
-  void _updateName(String uid, String name){
-    _updateCollectionReference.document(uid).updateData({'name': name});
-    print("Succesfull updated name");
+  void _updateFirstName(String uid, String name){
+    _updateCollectionReference.document(uid).updateData({'firstName': name});
+    print("Succesfull updated firstName");
+  }
+
+  void _updateLastName(String uid, String name){
+    _updateCollectionReference.document(uid).updateData({'lastName': name});
+    print("Succesfull updated lastName");
   }
 
   void _updateEmail(String uid, String email){

@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'dart:io';
 //import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rateit/login.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
@@ -21,8 +24,8 @@ import 'vendor.dart';
 import 'vendorlist-hostit.dart';
 import 'item.dart';
 import 'item-list.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
-
 void main2() => runApp(App());
 
 String number="8"; 
@@ -736,8 +739,10 @@ class EventMenuState extends State<EventMenu> {
                       Event passEvent = new Event(uid:null, eventID:null, invitecode:null, location1:value.data['location1'], name:value.data['name'], logo:value.data['logo'], coverimage:value.data['coverimage']);
                       varEvent = passEvent;
                       //varEvent.logo = value.data['userRole'];
-                    }).catchError((e){err=e.toString();});;
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
+                    }).catchError((e){err=e.toString();});
+                    if(varEvent!=null){
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
+                    }
                   },
                   child: SafeArea(
                   child: Container(
@@ -2642,7 +2647,7 @@ class EditEventState extends State<EditEvent> {
                     child: TextFormField(
                       readOnly: true,
                       decoration: InputDecoration(
-                        labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
+                        hintText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 19
@@ -2667,7 +2672,6 @@ class EditEventState extends State<EditEvent> {
                     color: Colors.white,),
                     onPressed: () {
                       getCoordinates();
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
                   ),
                 ),
@@ -2684,20 +2688,9 @@ class EditEventState extends State<EditEvent> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 
                     child: TextFormField(
-                      controller: dcontroller3,
-                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onChanged: (input)=> savedLogo=input,
+                      readOnly: true,
                       decoration: InputDecoration(
-                        hintText: 'Upload a logo of your event',
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: ()=>{
-                            setState((){
-                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller3.clear());
-                              //dcontroller3.clear();
-                            }),
-                          },
-                        ),
+                        hintText: coord==null?'Please upload logo photo of your event':'Image Uploaded',
                       ),
                     )
                   
@@ -2744,20 +2737,9 @@ class EditEventState extends State<EditEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField( 
-                  controller: dcontroller4,
-                  validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                  onChanged: (input)=> savedCover=input,
+                  readOnly: true,
                   decoration: InputDecoration(
-                    hintText: 'Upload a photo of your event',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: ()=>{
-                        setState((){
-                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller4.clear());
-                          //dcontroller4.clear();
-                        }),
-                      },
-                    ),
+                    hintText: coord==null?'Please upload cover photo of your event':'Image Uploaded',
                   ),
                 )
               ),
@@ -2776,7 +2758,9 @@ class EditEventState extends State<EditEvent> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () async {
+                      File seleced = await ImagePicker.pickImage(source:ImageSource.gallery);
+                    },
                   ),
                 ),
               )
@@ -3684,7 +3668,7 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
                           alignment: Alignment.topLeft,
                           child: Padding(
                               padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                              child: Text('${widget.eventName}',
+                              child: Text('Menu Items',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
                         )),
@@ -3711,7 +3695,7 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
             )),
         endDrawer: SideBar2(),
         body:Column( 
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Container(
@@ -3721,40 +3705,11 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
               ),
             ), 
             //Expanded(
-            ListItemHostIt(),
+            Container(child:ListItemHostIt(eventName: eventName,eventID: eventID,)),
             // Padding(
             //   padding: EdgeInsets.all(15),
             // ),
-            Center(
-              child: Container(
-                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-                  width:60,
-                  height:60,
-                  child: Ink(
-                    width:60,
-                    height:60,
-                    decoration:  ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: null,
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                      ),
-                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                    ),
-                    child: IconButton(
-                      alignment: Alignment.center,
-                      icon: Icon(Icons.arrow_forward,
-                      size: 45,
-                      color: Colors.white,),
-                      onPressed: () async {
-                        Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventID:eventID,eventName:eventName)),);
-                      },
-                    ),
-                  ),
-              ),
-            ),//),
+//),
           ]
         ),
       ),
