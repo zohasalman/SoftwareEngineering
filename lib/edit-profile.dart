@@ -1,27 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditUserData{
 
+  SharedPreferences prefs;
+  
+  void getPrefs() async{
+   prefs = await SharedPreferences.getInstance();
+  }
+    // getting locally stored data
+    
+
   final CollectionReference _updateCollectionReference = Firestore.instance.collection('users');
 
-  void update(String uid, String firstName, String lastName, String email, String password, String gender, DateTime dateOfBirth){
+  void update(String uid, String firstName, String lastName, String email, String password, String gender, String profilePicture, DateTime dateOfBirth){
     print(uid);
     print(firstName);
     if (firstName.isNotEmpty){
       _updateFirstName(uid, firstName);
+      prefs.setString('firstName', firstName);
     }
     if (lastName.isNotEmpty){
       _updateLastName(uid, lastName);
+      prefs.setString('lastName', lastName);
     }
     if (email.isNotEmpty){
       _updateEmail(uid, email);
+      prefs.setString('email', email);
     }
     if (password.isNotEmpty){
       _updatePassword(password);
+      if (prefs.getBool('rememberMe') == true){
+        prefs.setString('password', password);
+      }
     }
     if (gender.isNotEmpty){
       _updateGender(uid, gender);
+      prefs.setString('gender', gender);
+    }
+    if (profilePicture.isNotEmpty){
+      _updateProfilePicture(uid, profilePicture);
+      prefs.setString('profilePicture', profilePicture);
     }
   }
 
@@ -55,5 +75,10 @@ class EditUserData{
   void _updateGender(String uid, String gender){
     _updateCollectionReference.document(uid).updateData({'gender': gender});
     print("Succesfull updated gender");
+  }
+
+  void _updateProfilePicture(String uid, String profilePicture){
+    _updateCollectionReference.document(uid).updateData({'profilePicture' : profilePicture});
+    print('Profile Picture updated.');
   }
 }

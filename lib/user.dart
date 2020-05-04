@@ -5,14 +5,14 @@ class User{
 }
 
 class UserData{
-  final String uid;
-  final String firstName;
-  final String lastName;
-  final String gender;
-  final DateTime dateOfBirth;
-  final String email;
-  final String userRole;
-  final String profilePicture;
+  String uid;
+  String firstName;
+  String lastName;
+  String gender;
+  DateTime dateOfBirth;
+  String email;
+  String userRole;
+  String profilePicture;
 
   UserData({this.uid, this.firstName, this.lastName, this.gender, this.dateOfBirth, this.email, this.userRole, this. profilePicture});
 
@@ -36,5 +36,24 @@ class UserData{
       'email' : email, 
       'userRole' : userRole
     };
+  }
+
+  void update(String _firstName, String _lastName, String _email, String _gender, String _profilePicture){
+    if(_firstName.isNotEmpty){
+      this.firstName = _firstName;
+    }
+    if (_lastName.isNotEmpty){
+      this.lastName = _lastName;
+    }
+    if (_email.isNotEmpty){
+      this.email = _email;
+    }
+    if(_gender.isNotEmpty){
+      this.gender = _gender;
+    }
+    if(_profilePicture.isNotEmpty){
+      this.profilePicture = _profilePicture;
+    }
+
   }
 }
