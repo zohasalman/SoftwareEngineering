@@ -32,7 +32,6 @@ import 'dart:io';
 import 'reviewfromdb.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Pathway;
-import 'package:image_cropper/image_cropper.dart';
 
 DateTime _dateTime;
 String user_id, eName, eId;
@@ -713,21 +712,6 @@ class _EditProfile extends State<EditProfile> {
     Navigator.of(context).pop();
   }
 
-  void _clear() {
-    setState(() {
-      _image = null;
-    });
-  }
-
-  Future<void> _cropImage() async {
-    File cropped = await ImageCropper.cropImage(
-      sourcePath: _image.path,
-    );
-    setState(() {
-      _image = cropped ?? _image;
-    });
-  }
-
   Future uploadFile() async {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
@@ -744,11 +728,13 @@ class _EditProfile extends State<EditProfile> {
   }
 
   void submit() async {
-    await uploadFile();
-    if (_uploadedFileURL.isNotEmpty) {
-      _profilePicture = _uploadedFileURL;
+    if (_image != null){
+      await uploadFile();
+      if (_uploadedFileURL.isNotEmpty) {
+        _profilePicture = _uploadedFileURL;
+      }
     }
-    _formKey.currentState.save();
+    print('hii');
     _updateData.update(user_id, _firstName, _lastName, _email, _password,
         _gender, _profilePicture, _dateOfBirth);
     // Storing data in user class object
@@ -899,7 +885,7 @@ class _EditProfile extends State<EditProfile> {
                                 }
                                 else
                                 {
-                                _firstName = val.trim();
+                                  _firstName = val.trim();
                                 }
                               },
                               decoration: InputDecoration(
@@ -1054,11 +1040,10 @@ class _EditProfile extends State<EditProfile> {
                     SafeArea(
                       child: InkWell(
                         onTap: () async {
-                          submit();
                           setState(() {
                             validate = true;
                             
-                            if (!EmailValidator.validate(_email, true) || _password.length != 6)
+                            if (!EmailValidator.validate(myUserInfo.email, true))
                             {
                               check = false;
                             }
@@ -1096,10 +1081,11 @@ class _EditProfile extends State<EditProfile> {
                                             //myUserInfo.dateOfBirth = _dateOfBirth;
                                   
                                         });
-                                    
+
                                         print(_firstName);
                                         print(_lastName);
                                         print(_email);
+                                        submit();
                                         Navigator.of(context).pop(false);
                                         },                           
                                     child: Text("Ok"),
