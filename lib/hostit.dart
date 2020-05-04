@@ -2297,7 +2297,7 @@ class EditVenState extends State<EditVen> {
               children: <Widget>[
                 TextFormField(
                   controller: dcontroller2,
-                  validator: (input)=> input.isEmpty? 'Please enter vendor email': null,
+                  validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
                   onChanged: (input)=> email=input,
                   decoration: InputDecoration(
                     hintText: 'Email ID',
@@ -2554,6 +2554,7 @@ class EditEventState extends State<EditEvent> {
   String savedName="", savedLogo="", savedCover="";
   GeoPoint savedLocation;
   EditEventState({this.eid,this.coord,this.eventData});
+  bool validate=false; 
 
   String name, add, vendor, image, pic;
   final dcontroller=new TextEditingController(); 
@@ -2652,8 +2653,10 @@ class EditEventState extends State<EditEvent> {
           clipper: ClipShape(),
         )
       ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Column(children: <Widget>[
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -2867,12 +2870,14 @@ class EditEventState extends State<EditEvent> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
-                    //if(coord!=null){
+                    setState(() => validate=true);
+                    if(coord!=null){
                     GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
                     
                     await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
-                    //}
+                    
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
+                    }
                   }
                 ),
               ),
@@ -2880,7 +2885,7 @@ class EditEventState extends State<EditEvent> {
           ),
         ],
         )  
-      )
+      ),),
 
       
     ); 
@@ -3051,6 +3056,7 @@ class QRselection extends StatefulWidget {
 
 class ScreenQRselect extends State<QRselection> {
   String eid,eventName;
+  String err; 
   ScreenQRselect({this.eid,this.eventName});
   
   @override
@@ -3201,6 +3207,24 @@ class ScreenQRselect extends State<QRselection> {
                             )
                           ),
                       ),
+
+                      SafeArea(
+                      child: err== null ? Container() : Container(
+                        
+                        padding:EdgeInsets.only( top: 5), 
+                        child: Column(
+                          children: <Widget>[
+                            
+                            Container(
+                              alignment: Alignment(-0.8,-0.9),
+                                child: Text(err,
+                                style: TextStyle(color: Colors.red)
+                                ),
+                            ),
+                          ],
+                        )                        
+                      ),
+                    ),
                     ],
                   ),
               ),
@@ -3801,6 +3825,7 @@ class EditItemState extends State<EditItem> {
   int count=1; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  bool validate=false; 
 
   @override
   void initState() {
@@ -3884,8 +3909,10 @@ class EditItemState extends State<EditItem> {
           clipper: ClipShape(),
         )
       ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Column(children: <Widget>[
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -4020,6 +4047,7 @@ class EditItemState extends State<EditItem> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
+                    setState(() => validate=true);
                     String err;
                     //if(coord!=null){
                     await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
@@ -4039,7 +4067,7 @@ class EditItemState extends State<EditItem> {
           ),
         ],
         )  
-      )
+      ),)
     ); 
   }
 }
