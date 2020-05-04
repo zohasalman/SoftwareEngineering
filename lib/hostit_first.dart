@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -254,7 +254,8 @@ class EventsListHostit extends StatefulWidget {
 }
 
 class _EventsListStateHostIt extends State<EventsListHostit> {
-
+  String err;
+  
   @override
   Widget build(BuildContext context) {
 
@@ -284,7 +285,6 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                           actions: <Widget>[
                             FlatButton(
                               onPressed: () async {
-                                String err;
                                 await Firestore.instance.collection('Event').document(events[index].eventID).delete().then((_) async {
                                   await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: events[index].eventID).getDocuments().then((ven) async{
                                     ven.documents.forEach((vendoc) async {
@@ -385,7 +385,24 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                             ),
                           )
                         ],
-                      )
+                      ),
+                      SafeArea(
+                        child: err== null ? Container() : Container(
+                          
+                          padding:EdgeInsets.only( top: 5), 
+                          child: Column(
+                            children: <Widget>[
+                              
+                              Container(
+                                alignment: Alignment(-0.8,-0.9),
+                                  child: Text(err,
+                                  style: TextStyle(color: Colors.red)
+                                  ),
+                              ),
+                            ],
+                          )                        
+                        ),
+                      ),
                     ],
                   ),
                 ),

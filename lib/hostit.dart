@@ -63,7 +63,7 @@ class App extends StatelessWidget{
 
 class AddEvent extends StatefulWidget {
   final LatLng coord;
-  UserData myUserInfo;
+  final UserData myUserInfo;
   AddEvent({this.coord, this.myUserInfo});
   
   @override 
@@ -221,7 +221,17 @@ class AddEventState extends State<AddEvent> {
                 )
               ],),
             ),
-            
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding: EdgeInsets.only(top: 0, left: 20), 
+              child: RichText(
+                text: TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                  ]
+                )
+              ),
+            ),
             Container(
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding:EdgeInsets.only( top: 0, left: 20, right: 20),
@@ -457,7 +467,7 @@ class AddEventState extends State<AddEvent> {
 }
 
 class EventMenu extends StatefulWidget {
-  UserData userInfo;
+  final UserData userInfo;
   final String eid;
   final String eventName;
   final String inviteCode;
@@ -2215,7 +2225,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
 
 
 class EditVen extends StatefulWidget {
-  UserData myUser;
+  final UserData myUser;
   final Vendor vendorData;
   final String eventName;
   EditVen({this.myUser, this.eventName,this.vendorData});
@@ -2666,14 +2676,11 @@ class EditEventState extends State<EditEvent> {
     savedLogo=eventData.logo;
     savedCover=eventData.coverimage;
     dcontroller.text=eventData.name;
-    //dcontroller2.text='${eventData.location1.latitude},${eventData.location1.longitude}';
     dcontroller3.text=eventData.logo;
     dcontroller4.text=eventData.coverimage;
   }
   @override 
   Widget build(BuildContext context){
-
-
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -2803,13 +2810,13 @@ class EditEventState extends State<EditEvent> {
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding: EdgeInsets.only(top: 0, left: 20), 
               child: RichText(
-                text: TextSpan(children: <TextSpan>[
-                  
-                  TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
-                ]
-                )),
+                text: TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                  ]
+                )
+              ),
             ),
-
             Container(
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
@@ -3009,155 +3016,158 @@ class EditEventState extends State<EditEvent> {
 }
 
 
-class Comprehensive extends StatefulWidget {
-  final String eid;
-  final String eventName;
-  Comprehensive({this.eid,this.eventName});
-  @override 
-  ComprehensiveReport createState()=> new ComprehensiveReport(eid:eid,eventName: eventName); 
-}
+// class Comprehensive extends StatefulWidget {
+//   final String eid;
+//   final String eventName;
+//   Comprehensive({this.eid,this.eventName});
+//   @override 
+//   ComprehensiveReport createState()=> new ComprehensiveReport(eid:eid,eventName: eventName); 
+// }
 
-class ComprehensiveReport extends State<Comprehensive> {
-  String eventName;
-  String eid;
-  ComprehensiveReport({this.eid,this.eventName});
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
-  @override 
-  Widget build(BuildContext context){
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-        //key: scaffoldKey,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
-      body: Form(
-        key: _formKey,
-        child: Column(children: <Widget>[
-          Container (
-            child: Container(
-              height: 200,
-              width: 200,
-              child:Icon(Icons.check_circle_outline,color: Colors.green[300],size: 200,), 
-            ),
-          ),
+// class ComprehensiveReport extends State<Comprehensive> {
+//   String eventName;
+//   String eid;
+//   ComprehensiveReport({this.eid,this.eventName});
+//   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
-          //Container(
-            //width: MediaQuery.of(context).copyWith().size.width * 0.96,
-            //child:
-            Row( 
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Spacer(),
-                  Container(
-                    height: 50,
-                    width: 50,
-                    child:Icon(Icons.mail_outline,color: Colors.black,size: 50,),  
-                  ),
-                  Padding(padding: EdgeInsets.all(10)),
-                  Container(
-                    child: RichText(
-                      text: TextSpan(children: <TextSpan>[
-                        TextSpan(text: "Email Sent",style: TextStyle(color: Colors.black, fontSize: 30)),
-                      ]),
-                    ),
-                  ),
-                  Spacer(),
-                ]
-              ),
-            //),
-          //),
-          Center(
-              child: Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.96,
-                //padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "A comprehensive report has been successfully emailed to you.\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-                    TextSpan(text: " Questions?\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-                    TextSpan(text: " Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
-                    TextSpan(text: "help.rateit@gmail.com ",style: TextStyle(color: Colors.pink[800], fontSize: 17))
-                  ]
-                  )),
 
-              ),
-          ),
-          Padding(padding: EdgeInsets.all(10),),
-          Container(
-            child: InkWell(
-              onTap: ()async{
-                String inviteCode,err;
-                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
-                  inviteCode=val.data['invitecode'];
-                }).catchError((e){err=e.toString();});
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
-              },
-              child: Center(
-                child:Container(
-                height: 50,
-                width: 250,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.topLeft,
-                    colors: [ 
-                      Color(0xFFAC0D57),
-                      Color(0xFFFC4A1F),
-                    ]
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ), 
-                child: Center(
-                  child:Text("Done",style: TextStyle(color: Colors.white, fontSize: 22 ))
-                ),
-              ),),
-            ),
-          ),
-        ],),  
-      ),
-    ); 
-  }
-}
+
+//   @override 
+//   Widget build(BuildContext context){
+//     return Scaffold(
+//       resizeToAvoidBottomPadding: false,
+//         //key: scaffoldKey,
+//         appBar: PreferredSize(
+//           preferredSize: Size.fromHeight(150.0),
+//           child: ClipPath(
+//             child: Stack(
+//               fit: StackFit.expand,
+//               children: <Widget>[
+//                 AppBar(
+//                   centerTitle: true,
+//                   bottom: PreferredSize(
+//                     preferredSize: Size.fromHeight(0),
+//                     child: Align(
+//                       alignment: Alignment.topLeft,
+//                       child: Padding(
+//                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
+//                         child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
+//                         ),
+//                     )
+//                   ),
+//                   flexibleSpace: Container(
+//                   decoration: BoxDecoration(
+//                     gradient: LinearGradient(
+//                         begin: Alignment.topRight,
+//                         end: Alignment.topLeft,
+//                         colors: [ 
+//                           Color(0xFFAC0D57),
+//                           Color(0xFFFC4A1F),
+//                         ]
+//                     ),
+//                       image: DecorationImage(
+//                         image: AssetImage(
+//                           "asset/image/Chat.png",
+//                         ),
+//                         fit: BoxFit.fitWidth,
+//                     ),
+//                   )
+//                 ),
+//                 )
+//               ],
+//             ),
+//             clipper: ClipShape(),
+//           )
+//         ),
+//       body: Form(
+//         key: _formKey,
+//         child: Column(children: <Widget>[
+//           Container (
+//             child: Container(
+//               height: 200,
+//               width: 200,
+//               child:Icon(Icons.check_circle_outline,color: Colors.green[300],size: 200,), 
+//             ),
+//           ),
+
+//           //Container(
+//             //width: MediaQuery.of(context).copyWith().size.width * 0.96,
+//             //child:
+//             Row( 
+//                 crossAxisAlignment: CrossAxisAlignment.center,
+//                 children: <Widget>[
+//                   Spacer(),
+//                   Container(
+//                     height: 50,
+//                     width: 50,
+//                     child:Icon(Icons.mail_outline,color: Colors.black,size: 50,),  
+//                   ),
+//                   Padding(padding: EdgeInsets.all(10)),
+//                   Container(
+//                     child: RichText(
+//                       text: TextSpan(children: <TextSpan>[
+//                         TextSpan(text: "Email Sent",style: TextStyle(color: Colors.black, fontSize: 30)),
+//                       ]),
+//                     ),
+//                   ),
+//                   Spacer(),
+//                 ]
+//               ),
+//             //),
+//           //),
+//           Center(
+//               child: Container(
+//                 width: MediaQuery.of(context).copyWith().size.width * 0.96,
+//                 //padding: EdgeInsets.only(top: 0, left: 20), 
+//                 child: RichText(
+//                   textAlign: TextAlign.center,
+//                   text: TextSpan(children: <TextSpan>[
+//                     TextSpan(text: "A comprehensive report has been successfully emailed to you.\n",style: TextStyle(color: Colors.black, fontSize: 17)),
+//                     TextSpan(text: " Questions?\n",style: TextStyle(color: Colors.black, fontSize: 17)),
+//                     TextSpan(text: " Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
+//                     TextSpan(text: "help.rateit@gmail.com ",style: TextStyle(color: Colors.pink[800], fontSize: 17))
+//                   ]
+//                   )),
+
+//               ),
+//           ),
+//           Padding(padding: EdgeInsets.all(10),),
+//           Container(
+//             child: InkWell(
+//               onTap: ()async{
+//                 String inviteCode;//,err;
+//                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+//                   inviteCode=val.data['invitecode'];
+//                 }).catchError((e){err=e.toString();});
+//                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
+//               },
+//               child: Center(
+//                 child:Container(
+//                 height: 50,
+//                 width: 250,
+//                 decoration: BoxDecoration(
+//                   gradient: LinearGradient(
+//                     begin: Alignment.topRight,
+//                     end: Alignment.topLeft,
+//                     colors: [ 
+//                       Color(0xFFAC0D57),
+//                       Color(0xFFFC4A1F),
+//                     ]
+//                   ),
+//                   borderRadius: BorderRadius.circular(30),
+//                 ), 
+//                 child: Center(
+//                   child:Text("Done",style: TextStyle(color: Colors.white, fontSize: 22 ))
+//                 ),
+//               ),),
+//             ),
+//           ),
+//         ],),  
+//       ),
+//     ); 
+//   }
+// }
 
 
 
@@ -3247,7 +3257,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{
-                                String inviteCode,err;
+                                String inviteCode;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
                                 }).catchError((e){err=e.toString();});
@@ -3288,7 +3298,7 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{
-                                String inviteCode,err;
+                                String inviteCode;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
                                 }).catchError((e){err=e.toString();});
@@ -3343,6 +3353,22 @@ class ScreenQRselect extends State<QRselection> {
                     ),
                     ],
                   ),
+              ),
+              SafeArea(
+                child: err== null ? Container() : Container(
+                  padding:EdgeInsets.only( top: 5), 
+                  child: Column(
+                    children: <Widget>[
+                      
+                      Container(
+                        alignment: Alignment(-0.8,-0.9),
+                          child: Text(err,
+                          style: TextStyle(color: Colors.red)
+                          ),
+                      ),
+                    ],
+                  )                        
+                ),
               ),
             ],
           ),
@@ -3928,7 +3954,7 @@ class EditItem extends StatefulWidget {
 }
 
 class EditItemState extends State<EditItem> {
-  String name,logo;
+  String name,logo,err;
   final dcontroller=new TextEditingController();
   final dcontroller3=new TextEditingController();
   Item itemData;
@@ -4166,7 +4192,7 @@ class EditItemState extends State<EditItem> {
                   color: Colors.white,),
                   onPressed: () async {
                     setState(() => validate=true);
-                    String err;
+                    //String err;
                     //if(coord!=null){
                     if(!(logo==null || name==null))
                     await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
@@ -4182,6 +4208,22 @@ class EditItemState extends State<EditItem> {
                   }
                 ),
               ),
+            ),
+          ),
+          SafeArea(
+            child: err== null ? Container() : Container(
+              padding:EdgeInsets.only( top: 5), 
+              child: Column(
+                children: <Widget>[
+                  
+                  Container(
+                    alignment: Alignment(-0.8,-0.9),
+                      child: Text(err,
+                      style: TextStyle(color: Colors.red)
+                      ),
+                  ),
+                ],
+              )                        
             ),
           ),
         ],

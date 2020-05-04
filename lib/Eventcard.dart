@@ -8,7 +8,7 @@ import 'user.dart';
 
 class EventsListHostit extends StatefulWidget {
   
-  UserData myUserInfo;
+  final UserData myUserInfo;
   final String eventName;
   
   EventsListHostit({this.eventName, this.myUserInfo});
