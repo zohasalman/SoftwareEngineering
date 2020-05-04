@@ -2912,7 +2912,8 @@ class EditEventState extends State<EditEvent> {
                     
                     await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
                     //}
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName,inviteCode: eventData.invitecode,)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName,inviteCode: eventData.invitecode, userInfo: myUserInfo,)),);
+                    }
                   }
                 ),
               ),
