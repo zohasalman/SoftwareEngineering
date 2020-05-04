@@ -679,7 +679,6 @@ class _EditProfile extends State<EditProfile> {
 
   Future _openGallery(BuildContext context) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
     setState(() {
       _image = image;
     });
@@ -699,7 +698,7 @@ class _EditProfile extends State<EditProfile> {
    bool error1=true, error2=true;
    bool validate=false; 
 
-  String _name, _email, _password, _gender;
+  String  _firstName, _lastName, _email, _password, _gender;
   DateTime _dateOfBirth;
 
   final _formKey = GlobalKey<FormState>();
@@ -707,8 +706,9 @@ class _EditProfile extends State<EditProfile> {
 
   void submit() {
     _formKey.currentState.save();
+    print(_firstName);
     _updateData.update(
-        user_id, _name, _email, _password, _gender, _dateOfBirth);
+        user_id, _firstName, _lastName, _email, _password, _gender, _dateOfBirth);
     // TODO: Send an alert that data updated
   }
 
@@ -833,12 +833,30 @@ class _EditProfile extends State<EditProfile> {
                     Card(
                       child: ListTile(
                           leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                          title: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: TextFormField(
+                                  onSaved: (val) => _firstName = val.trim(),
+                                  decoration: InputDecoration(
+                                    labelText: 'Edit First Name',
+                                    hintText : myUserInfo.firstName,
+                                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
+                                  ),
+                                )
+                              )
+                            ]
+                          ),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {}),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
                           title: TextFormField(
                             decoration: InputDecoration(
-                              labelText: 'Edit Username',
-                              hintText: myUserInfo.firstName +
-                                  ' ' +
-                                  myUserInfo.lastName,
+                              labelText: 'Edit Last Name',
+                              hintText: myUserInfo.lastName,
                               labelStyle:
                                   TextStyle(fontSize: 15, color: Colors.black),
                             ),
