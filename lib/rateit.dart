@@ -13,6 +13,7 @@ import 'user.dart';
 import 'dart:convert';
 import 'vendor-list.dart';
 import 'vendor.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';
 import 'package:dropdownfield/dropdownfield.dart';
@@ -30,7 +31,7 @@ import 'dart:async';
 import 'dart:io';
 import 'reviewfromdb.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart' as Pathway;  
+import 'package:path/path.dart' as Pathway;
 import 'package:image_cropper/image_cropper.dart';
 
 DateTime _dateTime;
@@ -646,17 +647,24 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
-
   List<String> genders = ['Male', 'Female', 'Other'];
-  final genderSelected = TextEditingController();
+  final genderSelected = new TextEditingController();
+  final editfirstname = new TextEditingController();
+  final editlastname = new TextEditingController();
+  final editpw = new TextEditingController();
+  final editemail = new TextEditingController();
   final formKey = new GlobalKey<FormState>();
+  bool validate = false;
+
+  //bool validator = false;
 
   String _uploadedFileURL = '';
   File _image;
-  bool error1=true, error2=true;
-  bool validate=false; 
+  bool error1 = true, error2 = true;
+  bool check = true;
+ 
 
-  String  _firstName, _lastName, _email, _password, _gender, _profilePicture;
+  String _firstName, _lastName, _email, _password, _gender, _profilePicture;
   DateTime _dateOfBirth;
 
   final _formKey = GlobalKey<FormState>();
@@ -705,7 +713,7 @@ class _EditProfile extends State<EditProfile> {
     Navigator.of(context).pop();
   }
 
-  void _clear(){
+  void _clear() {
     setState(() {
       _image = null;
     });
@@ -714,38 +722,37 @@ class _EditProfile extends State<EditProfile> {
   Future<void> _cropImage() async {
     File cropped = await ImageCropper.cropImage(
       sourcePath: _image.path,
-      );
+    );
     setState(() {
       _image = cropped ?? _image;
     });
   }
 
-
-  Future uploadFile() async {    
-   StorageReference storageReference = FirebaseStorage.instance    
-       .ref()    
-       .child('UserData/${Pathway.basename(_image.path)}');    
-   StorageUploadTask uploadTask = storageReference.putFile(_image);    
-   await uploadTask.onComplete;    
-   print('File Uploaded');    
-   await storageReference.getDownloadURL().then((fileURL) {    
-     setState(() {    
-       _uploadedFileURL = fileURL;    
-       print(_uploadedFileURL);
-     });    
-   });    
- }    
+  Future uploadFile() async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('UserData/${Pathway.basename(_image.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(_image);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    await storageReference.getDownloadURL().then((fileURL) {
+      setState(() {
+        _uploadedFileURL = fileURL;
+        print(_uploadedFileURL);
+      });
+    });
+  }
 
   void submit() async {
-    
     await uploadFile();
-    if (_uploadedFileURL.isNotEmpty){
+    if (_uploadedFileURL.isNotEmpty) {
       _profilePicture = _uploadedFileURL;
     }
     _formKey.currentState.save();
-    _updateData.update(user_id, _firstName, _lastName, _email, _password, _gender, _profilePicture, _dateOfBirth);
+    _updateData.update(user_id, _firstName, _lastName, _email, _password,
+        _gender, _profilePicture, _dateOfBirth);
     // Storing data in user class object
-    myUserInfo.update(_firstName, _lastName,_email, _gender, _profilePicture);
+    myUserInfo.update(_firstName, _lastName, _email, _gender, _profilePicture);
   }
 
   List<DropdownMenuItem<String>> n = [];
@@ -815,7 +822,8 @@ class _EditProfile extends State<EditProfile> {
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
                                     radius: 70.0,
-                                    backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
+                                    backgroundImage: NetworkImage(
+                                        '${myUserInfo.profilePicture}'),
                                   ))),
                           Container(
                               child: Transform.translate(
@@ -861,27 +869,47 @@ class _EditProfile extends State<EditProfile> {
                   clipper: Clipshape(),
                 )),
             endDrawer: SideBar2(),
-            body: Container(
+            body: Form(
+              autovalidate: validate,
               child: ListView(
                   //crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Card(
                       child: ListTile(
                           leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
-                          title: Row(
-                            children: <Widget>[
-                              Expanded(
+                          title: Row(children: <Widget>[
+                            Expanded(
                                 child: TextFormField(
-                                  onSaved: (val) => _firstName = val.trim(),
-                                  decoration: InputDecoration(
-                                    labelText: 'Edit First Name',
-                                    hintText : myUserInfo.firstName,
-                                    labelStyle: TextStyle(fontSize: 15, color: Colors.black),
-                                  ),
-                                )
-                              )
-                            ]
-                          ),
+                              controller: editfirstname,
+                              validator: (val) 
+                              {
+                                if (val.isEmpty)
+                                {
+                                  val = myUserInfo.firstName;
+                                }
+                                else
+                                {
+                                  _firstName = val.trim();
+                                }
+                              },
+                              onChanged: (val) {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.firstName = myUserInfo.firstName;
+                                }
+                                else
+                                {
+                                _firstName = val.trim();
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Edit First Name',
+                                hintText: myUserInfo.firstName,
+                                labelStyle: TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                              ),
+                            ))
+                          ]),
                           //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
                           onTap: () {}),
                     ),
@@ -889,6 +917,18 @@ class _EditProfile extends State<EditProfile> {
                       child: ListTile(
                           leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
                           title: TextFormField(
+                            controller: editlastname,
+                             onChanged: (val)
+                            {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.lastName = myUserInfo.lastName;
+                                }
+                                else
+                                {
+                                _lastName = val.trim();
+                                }
+                              },
                             decoration: InputDecoration(
                               labelText: 'Edit Last Name',
                               hintText: myUserInfo.lastName,
@@ -904,6 +944,8 @@ class _EditProfile extends State<EditProfile> {
                           leading: Icon(Icons.lock_outline,
                               color: Color(0xFFFC4A1F)),
                           title: TextFormField(
+                             validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
+                            controller: editpw,
                             decoration: InputDecoration(
                               labelText: 'Change Password',
                               hintText: '*********',
@@ -920,33 +962,30 @@ class _EditProfile extends State<EditProfile> {
                         child: ListTile(
                             leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
                             title: TextFormField(
+                              validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
+                              controller: editemail,
                               keyboardType: TextInputType.emailAddress,
+
+                               onChanged: (val) 
+                               {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.email = myUserInfo.email;
+                                }
+                                else
+                                {
+                                _email = val.trim();
+                                }
+                              },
                               decoration: InputDecoration(
                                 labelText: 'Update Email',
                                 hintText: myUserInfo.email,
+                               
                                 labelStyle: TextStyle(
                                     fontSize: 15, color: Colors.black),
                               ),
                             ))),
-                    // Card(
-                    //   child: ListTile(
-                    //       leading:
-                    //           Icon(Icons.hot_tub, color: Color(0xFFFC4A1F)),
-                    //       title: Text('Gender'),
-                    //       // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                    //       onTap: () {
-                    //         DropdownButton<String>(
-                    //           value: _gender,
-                    //           items: n,
-                    //           onChanged: (value) {
-                    //             _gender = value;
-                    //             //error1=false;
-                    //             setState(() {});
-                    //           },
-                    //         );
-                    //       }),
-                    // ),
-                     
+
                     Card(
                       child: ListTile(
                         leading: Icon(Icons.calendar_today,
@@ -995,75 +1034,111 @@ class _EditProfile extends State<EditProfile> {
                           leading: Icon(Icons.lock_outline,
                               color: Color(0xFFFC4A1F)),
                           title: DropDownField(
-                          controller: genderSelected,
-                          hintText: 'Please select your Gender',
-                          enabled: true,
-                          items: genders,
-                          onValueChanged: (value)
+                              controller: genderSelected,
+                              hintText: myUserInfo.gender,
+                              enabled: true,
+                              items: genders,
+                              onValueChanged: (val) 
+                              {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.gender = myUserInfo.gender;
+                                }
+                                else
+                                {
+                                _gender = val.trim();
+                                }
+                              },
+                              )),
+                    ),
+                    SafeArea(
+                      child: InkWell(
+                        onTap: () async {
+                          submit();
+                          setState(() {
+                            validate = true;
+                            
+                            if (!EmailValidator.validate(_email, true) || _password.length != 6)
+                            {
+                              check = false;
+                            }
+                          });
+                          if (check)
                           {
-                            setState((){
-                             // selectCity = value;
-                            });
-                          }
+                          return await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                    "Details have been saved successfully!"),
+                                actions: <Widget>[
+                                  Center(
+                                      child: FlatButton(
+                                    onPressed: () {
+                                          setState ( () {
+                                            _gender = genderSelected.text;
+                                           
+                                            _firstName = editfirstname.text;
+                                            myUserInfo.firstName = _firstName;
+                                            
+                                            
+                                            _lastName = editlastname.text;
+                                            myUserInfo.lastName = myUserInfo.lastName;
+                                           
+                                            
+                                            _email = editemail.text;
+                                            myUserInfo.email = _email;
+  
+                                           
+                                            _gender= genderSelected.text;
+                                            myUserInfo.gender = _gender;
 
-                        )
+                                            //myUserInfo.dateOfBirth = _dateOfBirth;
+                                  
+                                        });
+                                    
+                                        print(_firstName);
+                                        print(_lastName);
+                                        print(_email);
+                                        Navigator.of(context).pop(false);
+                                        },                           
+                                    child: Text("Ok"),
+                                  ))
+                                ],
+                              );
+                            },
+                          );
+                          };
+                        },
+                        child: SafeArea(
+                          child: Container(
+                            padding: EdgeInsets.only(
+                                top: 40, right: 40.0, left: 40.0, bottom: 10.0),
+                            child: Container(
+                                height: 50,
+                                width: 350,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topRight,
+                                      end: Alignment.topLeft,
+                                      colors: [
+                                        Color(0xFFAC0D57),
+                                        Color(0xFFFC4A1F),
+                                      ]),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                padding: EdgeInsets.only(top: 15, left: 135, bottom: 10.0),
+                                child: Text("Submit",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 18))),
+                          ),
+                        ),
                       ),
                     ),
-                     SafeArea(
-                child: InkWell(
-                  onTap: () async{
-                    submit();
-                    return await showDialog(
-                      context: context,
-                      builder: (BuildContext context){
-                        return AlertDialog(
-                          title: Text("Details have been saved successfully!"),
-                          actions: <Widget>[
-                            Center(
-                              child: FlatButton(
-                                onPressed: ()=>Navigator.of(context).pop(false),
-                                child: Text("Ok"),
-                              )
-                            )
-                          ],
-                        ); 
-                      },
-                    );
-                  },
-
-                  child: SafeArea(
-                  child: Container(
-                  padding: EdgeInsets.only(top: 40, right: 40.0, left: 40.0), 
-                  child: Container(
-                    height: 50,
-                    width: 350,
-                    
-                    
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: EdgeInsets.only(top: 15, left: 135), 
-                    child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),),),
-
-                ),
-              
-            ),
-
                   ]),
             )));
   }
 }
-
-
 
 class ViewVendor extends StatefulWidget {
   ViewVendor({this.eventName, this.eventID});
@@ -1146,11 +1221,9 @@ class _ViewVendor extends State<ViewVendor> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning  = await BarcodeScanner.scan();
+            scanning = await BarcodeScanner.scan();
             String name, logo;
-            await FirestoreService()
-                .getVendor(scanning)
-                .then((docs) {
+            await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
                 name = docs.documents[0].data['name'];
                 logo = docs.documents[0].data['logo'];
@@ -1159,10 +1232,8 @@ class _ViewVendor extends State<ViewVendor> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DoRatings(
-                        name: name,
-                        logo: logo,
-                        vendorId: scanning)));
+                    builder: (context) =>
+                        DoRatings(name: name, logo: logo, vendorId: scanning)));
           },
         ),
       ),
@@ -1236,11 +1307,9 @@ class _ViewMyRating extends State<ViewMyRating> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning  = await BarcodeScanner.scan();
+            scanning = await BarcodeScanner.scan();
             String name, logo;
-            await FirestoreService()
-                .getVendor(scanning)
-                .then((docs) {
+            await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
                 name = docs.documents[0].data['name'];
                 logo = docs.documents[0].data['logo'];
@@ -1249,10 +1318,8 @@ class _ViewMyRating extends State<ViewMyRating> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DoRatings(
-                        name: name,
-                        logo: logo,
-                        vendorId: scanning)));
+                    builder: (context) =>
+                        DoRatings(name: name, logo: logo, vendorId: scanning)));
           },
         ),
       ),
@@ -1383,7 +1450,8 @@ class _EditRatings extends State<EditRatings> {
                               String review = await FirestoreService()
                                   .getReview(widget.reviewId);
                               var route = new MaterialPageRoute(
-                                builder: (BuildContext context) => new ViewReviews(
+                                builder: (BuildContext context) =>
+                                    new ViewReviews(
                                   value: '${widget.name}',
                                   image: '${widget.image}',
                                   reviewId: '${widget.reviewId}',
@@ -1422,25 +1490,35 @@ class _EditRatings extends State<EditRatings> {
 }
 
 class EditRating1 extends StatefulWidget {
-
   String name, logo, vendorId, review, reviewId;
   List<Map> list;
 
-  EditRating1({Key key, this.name, this.logo, this.vendorId, this.review, this.list, this.reviewId}) : super(key: key);
+  EditRating1(
+      {Key key,
+      this.name,
+      this.logo,
+      this.vendorId,
+      this.review,
+      this.list,
+      this.reviewId})
+      : super(key: key);
   @override
   _EditRating1State createState() => _EditRating1State();
 }
 
 class _EditRating1State extends State<EditRating1> {
-
   double finalRating;
 
   void submit(double finalRating) {
-    var error = FirestoreService().updateRatings(user_id, widget.list,widget.vendorId, widget.review, widget.reviewId, finalRating);
+    var error = FirestoreService().updateRatings(user_id, widget.list,
+        widget.vendorId, widget.review, widget.reviewId, finalRating);
     if (error != null) {
       print(error);
     }
-    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewVendor(eventName: eName,eventID: eId)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ViewVendor(eventName: eName, eventID: eId)));
   }
 
   @override
@@ -1546,55 +1624,51 @@ class _EditRating1State extends State<EditRating1> {
                   //         style: TextStyle(fontSize: 18)),
                   //   ),
                   // )
-                   SafeArea(
-                child: InkWell(
-                  onTap: () async{
-                    submit(finalRating);
-                    return await showDialog(
-                      context: context,
-                      builder: (BuildContext context){
-                        return AlertDialog(
-                          title: Text("Success!"),
-                          actions: <Widget>[
-                            Center(
-                              child: FlatButton(
-                                onPressed: ()=>Navigator.of(context).pop(false),
-                                child: Text("ok"),
-                              )
-                            )
-                          ],
-                        ); 
+                  SafeArea(
+                    child: InkWell(
+                      onTap: () async {
+                        submit(finalRating);
+                        return await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Success!"),
+                              actions: <Widget>[
+                                Center(
+                                    child: FlatButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: Text("ok"),
+                                ))
+                              ],
+                            );
+                          },
+                        );
                       },
-                    );
-                  },
-
-                  child: SafeArea(
-                  child: Container(
-                  padding: EdgeInsets.only(top: 40), 
-                  child: Container(
-                    height: 50,
-                    width: 350,
-                    
-                    
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
+                      child: SafeArea(
+                        child: Container(
+                          padding: EdgeInsets.only(top: 40),
+                          child: Container(
+                              height: 50,
+                              width: 350,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.topLeft,
+                                    colors: [
+                                      Color(0xFFAC0D57),
+                                      Color(0xFFFC4A1F),
+                                    ]),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              padding: EdgeInsets.only(top: 15, left: 140),
+                              child: Text("Submit",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18))),
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(50),
                     ),
-                    padding: EdgeInsets.only(top: 15, left: 140), 
-                    child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),),),
-
-                ),
-              
-            ),
-                  
+                  ),
                 ],
               ))),
     );
@@ -1714,7 +1788,10 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
     if (error != null) {
       print(error);
     }
-    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewVendor(eventName: eName,eventID: eId)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ViewVendor(eventName: eName, eventID: eId)));
   }
 
   @override
@@ -1819,54 +1896,50 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                   //         style: TextStyle(fontSize: 18)),
                   //   ),
                   // )
-                   SafeArea(
-                child: InkWell(
-                  onTap: () async{
-                    return await showDialog(
-                      context: context,
-                      builder: (BuildContext context){
-                        return AlertDialog(
-                          title: Text("Success!"),
-                          actions: <Widget>[
-                            Center(
-                              child: FlatButton(
-                                onPressed: ()=>Navigator.of(context).pop(false),
-                                child: Text("ok"),
-                              )
-                            )
-                          ],
-                        ); 
+                  SafeArea(
+                    child: InkWell(
+                      onTap: () async {
+                        return await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Success!"),
+                              actions: <Widget>[
+                                Center(
+                                    child: FlatButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: Text("ok"),
+                                ))
+                              ],
+                            );
+                          },
+                        );
                       },
-                    );
-                  },
-
-                  child: SafeArea(
-                  child: Container(
-                  padding: EdgeInsets.only(top: 40), 
-                  child: Container(
-                    height: 50,
-                    width: 350,
-                    
-                    
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
+                      child: SafeArea(
+                        child: Container(
+                          padding: EdgeInsets.only(top: 40),
+                          child: Container(
+                              height: 50,
+                              width: 350,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.topLeft,
+                                    colors: [
+                                      Color(0xFFAC0D57),
+                                      Color(0xFFFC4A1F),
+                                    ]),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              padding: EdgeInsets.only(top: 15, left: 140),
+                              child: Text("Submit",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18))),
+                        ),
                       ),
-                      borderRadius: BorderRadius.circular(50),
                     ),
-                    padding: EdgeInsets.only(top: 15, left: 140), 
-                    child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),),),
-
-                ),
-              
-            ),
-                  
+                  ),
                 ],
               ))),
     );
@@ -1998,11 +2071,11 @@ class _TopRatedItems extends State<TopRatedItems> {
                         var route = new MaterialPageRoute(
                           builder: (BuildContext context) =>
                               TopRatedItemsReviews(
-                                  value: '${widget.value}',
-                                  image: '${widget.image}', 
-                                  vendorId: '${widget.vendorId}',
-                                  vendorRating: '${widget.vendorRating}',
-                              ),
+                            value: '${widget.value}',
+                            image: '${widget.image}',
+                            vendorId: '${widget.vendorId}',
+                            vendorRating: '${widget.vendorRating}',
+                          ),
                         );
                         Navigator.of(context).push(route);
                       },
@@ -2092,12 +2165,15 @@ class _ChangeRatings extends State<ChangeRatings> {
                     ),
                   ),
                   Container(
-                    child: Center(
-                      child:Padding(
-                        padding: EdgeInsets.only(top: 0.0, bottom: 10.0),
-                        child: Text('${widget.value}',
-                            style: TextStyle(fontSize: 25, color: Colors.black))))),                  
-                  EditMyRatingsItems(list: myEditedRating,),
+                      child: Center(
+                          child: Padding(
+                              padding: EdgeInsets.only(top: 0.0, bottom: 10.0),
+                              child: Text('${widget.value}',
+                                  style: TextStyle(
+                                      fontSize: 25, color: Colors.black))))),
+                  EditMyRatingsItems(
+                    list: myEditedRating,
+                  ),
                   new Divider(),
                   Container(
                       height: 100.0,
@@ -2131,7 +2207,8 @@ class _ChangeRatings extends State<ChangeRatings> {
 class TopRatedItemsReviews extends StatefulWidget {
   String value, image, vendorId, vendorRating;
 
-  TopRatedItemsReviews({this.value, this.image, this.vendorId, this.vendorRating});
+  TopRatedItemsReviews(
+      {this.value, this.image, this.vendorId, this.vendorRating});
 
   @override
   _TopRatedItemsReviews createState() => new _TopRatedItemsReviews();
@@ -2269,7 +2346,13 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 class ViewReviews extends StatefulWidget {
   String value, image, reviewId, review, vendorId;
 
-  ViewReviews({Key key, this.value, this.image, this.reviewId, this.review, this.vendorId})
+  ViewReviews(
+      {Key key,
+      this.value,
+      this.image,
+      this.reviewId,
+      this.review,
+      this.vendorId})
       : super(key: key);
 
   @override
@@ -2448,7 +2531,8 @@ class _ViewReviews extends State<ViewReviews> {
                                       minHeight: 30.0,
                                       maxHeight: 100.0,
                                     ),
-                                    child: AutoSizeText( widget.review,
+                                    child: AutoSizeText(
+                                      widget.review,
                                       style: TextStyle(fontSize: 18.0),
                                       textAlign: TextAlign.center,
                                     ),
@@ -2467,11 +2551,11 @@ class _ViewReviews extends State<ViewReviews> {
         onPressed: () {
           var route = new MaterialPageRoute(
             builder: (BuildContext context) => new ChangeRatings(
-                value: widget.value,
-                image: widget.image,
-                vendorId: widget.vendorId,
-                reviewId: '${widget.reviewId}', 
-                ),
+              value: widget.value,
+              image: widget.image,
+              vendorId: widget.vendorId,
+              reviewId: '${widget.reviewId}',
+            ),
           );
           Navigator.of(context).push(route);
         },
@@ -2484,7 +2568,14 @@ class EditReviews extends StatefulWidget {
   String name, logo, reviewId, review, vendorId;
   List<Map> list;
 
-  EditReviews({Key key, this.name, this.logo, this.vendorId,  this.reviewId, this.review, this.list})
+  EditReviews(
+      {Key key,
+      this.name,
+      this.logo,
+      this.vendorId,
+      this.reviewId,
+      this.review,
+      this.list})
       : super(key: key);
 
   @override
@@ -2567,11 +2658,12 @@ class _EditReviews extends State<EditReviews> {
               ),
             ),
             Container(
-                    child: Center(
-                      child:Padding(
+                child: Center(
+                    child: Padding(
                         padding: EdgeInsets.only(top: 0.0, bottom: 10.0),
                         child: Text('${widget.name}',
-                            style: TextStyle(fontSize: 25, color: Colors.black))))),
+                            style: TextStyle(
+                                fontSize: 25, color: Colors.black))))),
             Padding(
                 padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
                 child: Container(
@@ -2648,13 +2740,13 @@ class _EditReviews extends State<EditReviews> {
                       onTap: () {
                         var route = new MaterialPageRoute(
                           builder: (BuildContext context) => new EditRating1(
-                              name: widget.name,
-                              logo: widget.logo,
-                              vendorId: widget.vendorId,
-                              review: widget.review,
-                              reviewId: widget.reviewId,
-                              list: widget.list,
-                              ),
+                            name: widget.name,
+                            logo: widget.logo,
+                            vendorId: widget.vendorId,
+                            review: widget.review,
+                            reviewId: widget.reviewId,
+                            list: widget.list,
+                          ),
                         );
                         Navigator.of(context).push(route);
                       }),
@@ -2677,7 +2769,6 @@ class DoReviews extends StatefulWidget {
 }
 
 class _DoReviews extends State<DoReviews> {
-  
   String review;
 
   FocusNode myFocusNode;
@@ -2845,7 +2936,3 @@ class _DoReviews extends State<DoReviews> {
     );
   }
 }
-
-
-
-
