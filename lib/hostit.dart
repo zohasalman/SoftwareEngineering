@@ -2724,7 +2724,14 @@ class EditEventState extends State<EditEvent> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () async{
+                      String downloadUrl;
+                      String filename='${DateTime.now()}.png';
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      StorageTaskSnapshot link = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).putFile(selected).onComplete;
+                      downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).getDownloadURL();
+                      savedLogo=downloadUrl;
+                    },
                   ),
                 ),
               )
@@ -2772,9 +2779,12 @@ class EditEventState extends State<EditEvent> {
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
                     onPressed: () async {
+                      String downloadUrl;
+                      String filename='${DateTime.now()}.png';
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
-                      FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('images/${DateTime.now()}.png').putFile(selected);
-
+                      StorageTaskSnapshot link = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
+                      downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
+                      savedCover=downloadUrl;
                     },
                   ),
                 ),
