@@ -95,12 +95,18 @@ class _ListItemState extends State<ListItem> {
 
 
 class ListItemHostIt extends StatefulWidget {
+  ListItemHostIt({this.eventName, this.eventID});
+  final String eventName;
+  final String eventID;
   @override
-  _ListItemStateHostIt createState() => _ListItemStateHostIt();
+  _ListItemStateHostIt createState() => _ListItemStateHostIt(eventID: eventID,eventName: eventName);
 }
 
 class _ListItemStateHostIt extends State<ListItemHostIt> {
-  
+  _ListItemStateHostIt({this.eventName, this.eventID});
+  final String eventName;
+  final String eventID;
+
   @override
   Widget build(BuildContext context) {
 
@@ -109,8 +115,9 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
       return LoadingScreen();
     }
     else{
-      return Expanded(
-        child: ListView.builder(
+      return Column(children:[
+        //child: 
+        Container(child:ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           //physics: const NeverScrollableScrollPhysics(),
@@ -160,8 +167,39 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
                 ),
               )
             );
-          }
+          },),
         ),
+            Center(
+              child: Container(
+                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+                  width:60,
+                  height:60,
+                  child: Ink(
+                    width:60,
+                    height:60,
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: null,
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    ),
+                    child: IconButton(
+                      alignment: Alignment.center,
+                      icon: Icon(Icons.arrow_forward,
+                      size: 45,
+                      color: Colors.white,),
+                      onPressed: () async {
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventID:eventID,eventName:eventName)),);
+                      },
+                    ),
+                  ),
+              ),
+            ),
+      ],
       );
     }
   }
