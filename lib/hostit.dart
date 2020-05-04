@@ -2023,7 +2023,8 @@ class EditVen extends StatefulWidget {
 
 class EditVenState extends State<EditVen> {
   String name,email,logo;
-  int item,stallid;
+  int stallid;
+  int item=0;
   final dcontroller=new TextEditingController(); 
   final dcontroller2=new TextEditingController(); 
   final dcontroller3=new TextEditingController(); 
@@ -2043,17 +2044,21 @@ class EditVenState extends State<EditVen> {
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
-  @override 
-  Widget build(BuildContext context){
+  @override
+  void initState() {
+    super.initState();
     name= vendorData.name;
     logo= vendorData.logo;
     email = vendorData.email;
     stallid= vendorData.stallNo;
-    item=0;
     dcontroller.text= vendorData.name;
     dcontroller2.text= vendorData.email;
     dcontroller3.text= vendorData.logo;
     dcontroller4.text= vendorData.stallNo.toString();
+  }
+
+  @override 
+  Widget build(BuildContext context){
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -2289,7 +2294,11 @@ class EditVenState extends State<EditVen> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onChanged: (input)=> item=int.parse(input),
+                  onChanged: (input) {
+                    //print(input);
+                    item=int.parse(input);
+                    //print(item);
+                  },
                   decoration: InputDecoration(
                     labelText: 'Number of items',
                     labelStyle: TextStyle(
@@ -2315,6 +2324,7 @@ class EditVenState extends State<EditVen> {
                     icon: Icon(Icons.add,
                     color: Colors.white,),
                     onPressed: () {
+                      print(item);
                       if (item>0){//connect item here
                         Navigator.push(context,MaterialPageRoute(builder: (context)=> AddItem2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
                       }
@@ -2420,9 +2430,9 @@ class EditEventState extends State<EditEvent> {
     );
     coord=updatedcoord;
   }
-
-  @override 
-  Widget build(BuildContext context){
+  @override
+  void initState() {
+    super.initState();
     savedName=eventData.name;
     savedLocation=GeoPoint(coord.latitude, coord.longitude);
     savedLogo=eventData.logo;
@@ -2431,6 +2441,10 @@ class EditEventState extends State<EditEvent> {
     //dcontroller2.text='${eventData.location1.latitude},${eventData.location1.longitude}';
     dcontroller3.text=eventData.logo;
     dcontroller4.text=eventData.coverimage;
+  }
+  @override 
+  Widget build(BuildContext context){
+
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -2635,7 +2649,9 @@ class EditEventState extends State<EditEvent> {
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
                     onPressed: () async {
-                      File seleced = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('images/${DateTime.now()}.png').putFile(selected);
+
                     },
                   ),
                 ),
@@ -3748,6 +3764,14 @@ class EditItemState extends State<EditItem> {
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
+  @override
+  void initState() {
+    super.initState();
+    name= itemData.name;
+    logo= itemData.logo;
+    dcontroller.text= itemData.name;
+    dcontroller3.text= itemData.logo;
+  }
 
   @override 
   Widget build(BuildContext context){
