@@ -4,7 +4,6 @@ import 'vendor.dart';
 import 'userRedirection.dart';
 import 'hostit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'firestore.dart';
 
 class EventsListHostit extends StatefulWidget {
   final String eventName;

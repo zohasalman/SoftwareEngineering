@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+//import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rateit/login.dart';
@@ -12,9 +12,9 @@ import 'package:provider/provider.dart';
 import 'localData.dart';
 import 'user.dart';
 import 'Event.dart';
-import 'userRedirection.dart';
+//import 'userRedirection.dart';
 import 'dart:convert';
-import 'VendorList.dart';
+//import 'VendorList.dart';
 import 'package:random_string/random_string.dart';
 import 'hostit_first.dart';
 import 'vendor.dart';
@@ -378,12 +378,12 @@ class AddEventState extends State<AddEvent> {
                         setState(() => validate=true);
                         //if(coord!=null){
                           GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                          String eventid;
+                          String eventid,err;
                           var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
                           if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
                             await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
-                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;});
-                            });
+                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
+                            }).catchError((e){err=e.toString();});
                             Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
                           }
                       // }
@@ -710,13 +710,13 @@ class EventMenuState extends State<EventMenu> {
             SafeArea(
                 child: InkWell(
                   onTap: () async {
+                    String err;
                     Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
-                    //await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true);
                     await Firestore.instance.collection('Event').document(eid).get().then((value){
                       Event passEvent = new Event(uid:null, eventID:null, invitecode:null, location1:value.data['location1'], name:value.data['name'], logo:value.data['logo'], coverimage:value.data['coverimage']);
                       varEvent = passEvent;
                       //varEvent.logo = value.data['userRole'];
-                    });
+                    }).catchError((e){err=e.toString();});;
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
                   },
                   child: SafeArea(
@@ -818,6 +818,11 @@ class Screen41 extends State<AddVendorQty> {
       value: 'Custom')
     ); 
   }
+
+  bool error1=true; 
+  bool validate=false; 
+  int custom_val; 
+  String custom_valSave; 
   
 
   @override 
@@ -880,22 +885,30 @@ class Screen41 extends State<AddVendorQty> {
       resizeToAvoidBottomPadding: false,
       body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Column(children: <Widget>[
-          Container(
+          SafeArea(
             child: Center(
-              child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
+              child: SafeArea(
+                child: Container(
+                padding: EdgeInsets.only(top: 40, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
                     TextSpan(text: "How many vendors would you like to add?",style: TextStyle(color: Colors.black, fontSize: 20))
                   ],),
                 ),
-              ),
+              ),),
             ),
           ),
 
-          Container (
+          SafeArea(
+            child: Container(
+
+            padding: EdgeInsets.only(top: 50), 
             child: Center(
+
+            child: SafeArea(
             
             child: Container(
               height: 50,
@@ -913,15 +926,17 @@ class Screen41 extends State<AddVendorQty> {
                 
               ), 
 
-              child: Container(
+              child: SafeArea(
                 child: Center(
                 
                   child:DropdownButton<String>(
                     value:valSave, 
                     items:n, 
                     onChanged: (value){
+                      error1=false; 
                       valSave=value; 
                       setState((){
+                        
                       });
                     },
                     underline: SizedBox(), 
@@ -930,22 +945,42 @@ class Screen41 extends State<AddVendorQty> {
                       style: TextStyle(fontSize: 22),
                     ),
                   ),
-                ), 
+                ), ),
               ), 
-            ), 
+            ), ),
             ),
           ),
 
+          SafeArea(
+              child: !(error1 && validate)? Container() : Container(
+                // print(error1),
+                // print(validate),
+                
+                padding:EdgeInsets.only( top: 5), 
+                child: Column(
+                  children: <Widget>[
+                    
+                    Container(
+                      alignment: Alignment(-0.8,-0.9),
+                        child: Text("Please select an option above",
+                        style: TextStyle(color: Colors.red)
+                        ),
+                    ),
+                  ],
+                )                        
+              ),
+            ),
+
          
-          Container(
+          SafeArea(
             child: valSave!="Custom"? Container() : Container(
-              padding:EdgeInsets.only( top: 80, left: 20, right: 20),
+              padding:EdgeInsets.only( top: 40, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
                   TextFormField(
                     keyboardType: TextInputType.number,
                     validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                    onChanged: (input)=> valSave=input,
+                    onChanged: (input)=> custom_valSave=input,
                     decoration: InputDecoration(
                       labelText: 'Number of Vendors',
                       labelStyle: TextStyle(
@@ -959,22 +994,40 @@ class Screen41 extends State<AddVendorQty> {
             ),
           ),
 
-          Expanded (
+          SafeArea (
+            child: Container(
+            padding:EdgeInsets.only( top: 50),
             child: Center(
             //offset: Offset(0,-50),
-              child: Container(
+              child: SafeArea(
+                child: Container(
                 height: 100,
                 width: 200,
                 child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
-                  numVen=int.parse(valSave),
+                   
+                  setState(() => validate = true),
+                  if (valSave!=null && valSave!="Custom"){
+                    numVen=int.parse(valSave),
                   //print(numVen),
                   Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:numVen, eid:eid, eventName:eventName)),)
+
+                  }
+
+                  else if (valSave=="Custom" && custom_valSave!=null)
+                  {
+                    custom_val=int.parse(custom_valSave),
+                    //print(numVen),
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:custom_val, eid:eid, eventName:eventName)),)
+
+                  }
+                  
+                  
                 } ),
-              ),
+              ),),
             ),
-          ),         
+          ), ),      
         ],),  
-      )
+      ),),
     ); 
   }
 }
@@ -1366,10 +1419,11 @@ class AddVendorState extends State<AddVendor> {
                     }
                   }
                   if (check){
+                    String err;
                     for (var i=0; i<numVen; i++){
                         await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':null }).then((vid) async{
-                            await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);});
-                        });
+                            await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
+                        }).catchError((e){err=e.toString();});
                     }
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> Add(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                   }
@@ -1649,12 +1703,13 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                         if (checkNext){
+                          String err;
                           for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){});//venId.add(vid.documentID);});
-                                });
+                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+                                }).catchError((e){err=e.toString();});
                             }
                           }
                           Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
@@ -1928,16 +1983,16 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                         if (checkNext){
+                          String err;
                           for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){});//venId.add(vid.documentID);});
-                                });
+                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+                                }).catchError((e){err=e.toString();});
                             }
                           }
                           Navigator.pop(context);
-                          //Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen()),);   //Modify here to upload Event Data and then move on
                         }
                     },
                   ),
@@ -1953,8 +2008,8 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
 
 
 class EditVen extends StatefulWidget {
-  Vendor vendorData;
-  String eventName;
+  final Vendor vendorData;
+  final String eventName;
   EditVen({this.eventName,this.vendorData});
   @override 
   EditVenState createState()=> new EditVenState(vendorData: vendorData,eventName: eventName); 
@@ -1968,9 +2023,6 @@ class EditVenState extends State<EditVen> {
   final dcontroller3=new TextEditingController(); 
   final dcontroller4=new TextEditingController(); 
   final dcontroller5=new TextEditingController(); 
-  //String inputname="Carbie", inputemail="zohasalman123@gmail.com", inputstallid="112344", inputimage="carbie.png", inputmenunumber="8";
-  //int numVen;
-  //String eid;
   Vendor vendorData;
   String eventName;
   EditVenState({this.eventName,this.vendorData});
@@ -1980,12 +2032,10 @@ class EditVenState extends State<EditVen> {
 
 
   var n=int.parse(number); 
-  List<Widget> menu=[], menu2=[]; 
-  
+  List<Widget> menu=[], menu2=[];   
   int count=1; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
 
   @override 
   Widget build(BuildContext context){
@@ -1999,12 +2049,10 @@ class EditVenState extends State<EditVen> {
     dcontroller3.text= vendorData.logo;
     dcontroller4.text= vendorData.stallNo.toString();
 
-
-
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       //key: scaffoldKey,
-      endDrawer:  SideBar(),
+      //endDrawer:  SideBar(),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(150.0),
         child: ClipPath(
@@ -2032,20 +2080,6 @@ class EditVenState extends State<EditVen> {
                     Navigator.pop(context);
                   }
                 ),
-                actions: <Widget>[
-                  IconButton(
-                    onPressed: () {                          
-                      showSearch(
-                        context: context,
-                        delegate: MapSearchBar(),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.search,
-                      
-                    )
-                  ),
-                ],
                 flexibleSpace: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -2313,12 +2347,17 @@ class EditVenState extends State<EditVen> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
+                    String err;
                     //if(coord!=null){
-                    await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_)async{
-                        //await Firestore.instance.collection('Vendor').document(Firestore.instance.collection('Vendor').where('vendorId', isEqualTo: vendorData.vendorId).reference().).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true);
-                    });
+                    await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
+                      await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendorData.vendorId).getDocuments().then((val) async{
+                          val.documents.forEach((doc) async {
+                             await Firestore.instance.collection('ratedVendor').document(doc.documentID).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).catchError((e){err=e.toString();});
+                          });
+                      }).catchError((e){err=e.toString();});
+                    }).catchError((e){err=e.toString();});
                     //}
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
                   }
                 ),
               ),
@@ -2327,262 +2366,6 @@ class EditVenState extends State<EditVen> {
         ],
         )  
       )
-    ); 
-  }
-}
-
-class Edit extends StatefulWidget {
-  @override 
-  Screen48 createState()=> new Screen48(); 
-}
-
-class Screen48 extends State<Edit> {
-  String name,email, stallid,item;
-  bool value=false; 
-  var logo, mlogo;  
-  bool check=false; 
-  var nu; 
-
-  var n=int.parse(number); 
-  List<Widget> menu=[], menu2=[]; 
-  
-  int count=1; 
- 
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
-  
-
-  void addvalue(j){
-    menu2=List.from(menu2)..add(
-       Container(
-        child: Transform.translate(
-        offset: Offset(0,-70),
-        child: new Container(
-        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              //keyboardType: TextInputType.number,
-              validator: (input)=> input.isEmpty? 'Please enter menu item': null,
-              onSaved: (input)=> item=input,
-              decoration: InputDecoration(
-                labelText: 'Menu Item $j',
-                labelStyle: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 19
-                )
-              ),
-            ),
-          ],
-        ),
-        ),
-        ),
-       )
-
-    
-      
-      );
-
-      setState(() {
-        
-      });
-
-  }
-
-    void addvalue2(){
-    menu2=List.from(menu2)..add(
-      Container(
-      child: Transform.translate(
-      offset: Offset(0,-60),
-      child: new Container(
-      padding:EdgeInsets.only( top: 0, left: 20, right: 20),
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            //keyboardType: TextInputType.number,
-            validator: (input)=> input.isEmpty? 'Please upload a logo': null,
-            onSaved: (input)=> mlogo=input,
-            decoration: InputDecoration(
-              labelText: 'Upload a logo of the menu item',
-              labelStyle: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 19
-              )
-            ),
-          )
-        ]),
-      ),
-      ),),
-
-     
-      
-      );
-
-      setState(() {
-        
-      });
-
-  }
-
-  void addvalue3(){
-    menu2=List.from(menu2)..add(
-     
-      Container (
-        child: Transform.translate(
-        offset: Offset(170,-110),
-          child: Container(
-            height: 50,
-            width: 250,
-            child: new IconButton(icon: new Image.asset("asset/image/upload.png"),onPressed:()=>{} ),
-          ),
-        ),
-      ),
-      
-      );
-
-      setState(() {
-        
-      });
-
-
-      
-
-  }
-
-  
-  void add2(i){
-    menu2=List.from(menu2)..add(
-     
-      Container(
-      child: Transform.translate(
-        offset: Offset(-140,-50),
-        child: InkWell(
-        child: new Container(
-          //padding: EdgeInsets.only(top: 130, left: 20), 
-          child: RichText(
-          text: TextSpan(children: <TextSpan>[
-            TextSpan(text: "Vendor $i",style: TextStyle(color: Colors.black, fontSize: 22))
-          ]
-          )),
-        ),
-        ),
-        ),
-      ),
-      
-      );
-
-      setState(() {
-        
-      });
-
-  }
- 
- 
-
-  @override 
-  Widget build(BuildContext context){
-
-    
-    
-    {
-       if (!check)
-      {
-        for (var i=0; i<n; i++)
-        {
-          add2(i+1);
-          for (var j=0; j<no[i]; j++){
-            addvalue(j+1); 
-            addvalue2(); 
-            addvalue3(); 
-          }
-        }
-        check=true; 
-      }
-    }
-    
-    return Scaffold( 
-      resizeToAvoidBottomPadding: false,
-        //key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text('Add Menu',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
-      body: SingleChildScrollView(
-        key: _formKey,
-        child: Column(children: <Widget>[
-          
-          Container(
-            child: Column(
-            children: menu2),
-          ),
-
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
-                height: 100,
-                width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{} ),
-              ),
-            ),
-          ),
-      
-
-
-          
-        ],
-        )  
-      )
-
-      
     ); 
   }
 }
@@ -2603,7 +2386,7 @@ class EditEventState extends State<EditEvent> {
   LatLng coord;
   String eid;
   String savedName="", savedLogo="", savedCover="";
-  GeoPoint savedLocation=null;
+  GeoPoint savedLocation;
   EditEventState({this.eid,this.coord,this.eventData});
 
   String name, add, vendor, image, pic;
@@ -2914,7 +2697,8 @@ class EditEventState extends State<EditEvent> {
                   onPressed: () async {
                     //if(coord!=null){
                     GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                    await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true);
+                    String err;
+                    await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
                     //}
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
                   }
@@ -3182,10 +2966,10 @@ class ComprehensiveReport extends State<Comprehensive> {
           Container(
             child: InkWell(
               onTap: ()async{
-                String inviteCode;
+                String inviteCode,err;
                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                   inviteCode=val.data['invitecode'];
-                });
+                }).catchError((e){err=e.toString();});
                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
               },
               child: Center(
@@ -3302,10 +3086,10 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{
-                                String inviteCode;
+                                String inviteCode,err;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
-                                });
+                                }).catchError((e){err=e.toString();});
                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
@@ -3343,10 +3127,10 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{
-                                String inviteCode;
+                                String inviteCode,err;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
-                                });
+                                }).catchError((e){err=e.toString();});
                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
                               },
                               child: Container(
@@ -3608,7 +3392,7 @@ class SideBar extends StatefulWidget {
 
 class SideBarProperties extends State<SideBar>{
   UserData variable;
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  //final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
  
   @override
@@ -3616,13 +3400,13 @@ class SideBarProperties extends State<SideBar>{
     super.initState();
     readContent().then((String value) {
       Map<String, dynamic> userMap = json.decode(value);
-      UserData final_object = UserData.fromData(userMap);
-      variable=final_object;
+      UserData finalObject = UserData.fromData(userMap);
+      variable=finalObject;
       //variable=user;
     });
   }
 
-  void NormalSignOut() async {
+  void normalSignOut() async {
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
@@ -3783,14 +3567,6 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
   @override
   void initState() {
     super.initState();
-    // start of getting local stored user info
-    readContent().then((String value) {
-      Map userMap = jsonDecode(value);
-      var user = UserData.fromData(userMap);
-      userInfo = json.decode(value);
-    });
-    //print(userInfo);  // some error generated here
-    // end of it
   }
 
   @override
@@ -3851,7 +3627,7 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
             )),
         endDrawer: SideBar2(),
         body://Column( children: <Widget>[
-          VendorsListHostit(),
+          VendorsListHostit(eventName: eventName,),
         //]),
       ),
     );
@@ -3884,14 +3660,6 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
   @override
   void initState() {
     super.initState();
-    // start of getting local stored user info
-    readContent().then((String value) {
-      Map userMap = jsonDecode(value);
-      var user = UserData.fromData(userMap);
-      userInfo = json.decode(value);
-    });
-    //print(userInfo);  // some error generated here
-    // end of it
   }
 
   @override
@@ -3950,46 +3718,53 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
               clipper: Clipshape(),
             )),
         endDrawer: SideBar2(),
-        body:Column( children: <Widget>[
-          Container(
-            child: Text(
-              "Long Press to delete item",
-              style: TextStyle(color: Colors.pink[600], fontSize: 17),
-            ),
-          ), 
-          ListItemHostIt(),
-          Padding(
-            padding: EdgeInsets.all(15),
-          ),
-          Center(child: Container(
-                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-                width:60,
-                height:60,
-                child: Ink(
+        body:Column( 
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Container(
+              child: Text(
+                "Long Press to delete item",
+                style: TextStyle(color: Colors.pink[600], fontSize: 17),
+              ),
+            ), 
+            //Expanded(
+            ListItemHostIt(),
+            // Padding(
+            //   padding: EdgeInsets.all(15),
+            // ),
+            Center(
+              child: Container(
+                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
                   width:60,
                   height:60,
-                  decoration:  ShapeDecoration(
-                    shape: CircleBorder(),
-                    color: null,
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                  child: Ink(
+                    width:60,
+                    height:60,
+                    decoration:  ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: null,
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                      ),
+                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
                     ),
-                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                    child: IconButton(
+                      alignment: Alignment.center,
+                      icon: Icon(Icons.arrow_forward,
+                      size: 45,
+                      color: Colors.white,),
+                      onPressed: () async {
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventID:eventID,eventName:eventName)),);
+                      },
+                    ),
                   ),
-                  child: IconButton(
-                    alignment: Alignment.center,
-                    icon: Icon(Icons.arrow_forward,
-                    size: 45,
-                    color: Colors.white,),
-                    onPressed: () async {
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventID:eventID,eventName:eventName)),);
-                    },
-                  ),
-                ),
-          ),),
-        ]),
+              ),
+            ),//),
+          ]
+        ),
       ),
     );
   }
@@ -4104,7 +3879,7 @@ class EditItemState extends State<EditItem> {
                   text: TextSpan(
                     children: <TextSpan>[
                       TextSpan(
-                        text: "Vendor Details",
+                        text: "Item Details",
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22
@@ -4227,10 +4002,15 @@ class EditItemState extends State<EditItem> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
+                    String err;
                     //if(coord!=null){
                     await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
-                        //await Firestore.instance.collection('Vendor').document(Firestore.instance.collection('Vendor').where('vendorId', isEqualTo: vendorData.vendorId).reference().).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true);
-                    });
+                      await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: itemData.itemId).getDocuments().then((val) async{
+                          val.documents.forEach((doc) async {
+                             await Firestore.instance.collection('ratedItems').document(doc.documentID).setData({'name':name, 'logo':logo,},merge: true).catchError((e){err=e.toString();});
+                          });
+                      }).catchError((e){err=e.toString();});
+                    }).catchError((e){err=e.toString();});
                     //}
                     Navigator.pop(context);
                     //Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
