@@ -2755,7 +2755,7 @@ class EditEventState extends State<EditEvent> {
                     color: Colors.white,),
                     onPressed: () async{
                       String downloadUrl;
-                      String filename='${DateTime.now()}.png';
+                      String filename='${DateTime.now()}${eventData.name}.png';
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                       StorageTaskSnapshot link = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).getDownloadURL();
@@ -2809,7 +2809,7 @@ class EditEventState extends State<EditEvent> {
                     color: Colors.white,),
                     onPressed: () async {
                       String downloadUrl;
-                      String filename='${DateTime.now()}.png';
+                      String filename='${DateTime.now()}${eventData.name}.png';
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                       StorageTaskSnapshot link = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
@@ -2882,7 +2882,7 @@ class EditEventState extends State<EditEvent> {
                     
                     await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
                     //}
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName,inviteCode: eventData.invitecode,)),);
                   }
                 ),
               ),
