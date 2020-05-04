@@ -818,6 +818,11 @@ class Screen41 extends State<AddVendorQty> {
       value: 'Custom')
     ); 
   }
+
+  bool error1=true; 
+  bool validate=false; 
+  int custom_val; 
+  String custom_valSave; 
   
 
   @override 
@@ -880,22 +885,30 @@ class Screen41 extends State<AddVendorQty> {
       resizeToAvoidBottomPadding: false,
       body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Column(children: <Widget>[
-          Container(
+          SafeArea(
             child: Center(
-              child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
+              child: SafeArea(
+                child: Container(
+                padding: EdgeInsets.only(top: 40, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
                     TextSpan(text: "How many vendors would you like to add?",style: TextStyle(color: Colors.black, fontSize: 20))
                   ],),
                 ),
-              ),
+              ),),
             ),
           ),
 
-          Container (
+          SafeArea(
+            child: Container(
+
+            padding: EdgeInsets.only(top: 50), 
             child: Center(
+
+            child: SafeArea(
             
             child: Container(
               height: 50,
@@ -913,15 +926,17 @@ class Screen41 extends State<AddVendorQty> {
                 
               ), 
 
-              child: Container(
+              child: SafeArea(
                 child: Center(
                 
                   child:DropdownButton<String>(
                     value:valSave, 
                     items:n, 
                     onChanged: (value){
+                      error1=false; 
                       valSave=value; 
                       setState((){
+                        
                       });
                     },
                     underline: SizedBox(), 
@@ -930,22 +945,42 @@ class Screen41 extends State<AddVendorQty> {
                       style: TextStyle(fontSize: 22),
                     ),
                   ),
-                ), 
+                ), ),
               ), 
-            ), 
+            ), ),
             ),
           ),
 
+          SafeArea(
+              child: !(error1 && validate)? Container() : Container(
+                // print(error1),
+                // print(validate),
+                
+                padding:EdgeInsets.only( top: 5), 
+                child: Column(
+                  children: <Widget>[
+                    
+                    Container(
+                      alignment: Alignment(-0.8,-0.9),
+                        child: Text("Please select an option above",
+                        style: TextStyle(color: Colors.red)
+                        ),
+                    ),
+                  ],
+                )                        
+              ),
+            ),
+
          
-          Container(
+          SafeArea(
             child: valSave!="Custom"? Container() : Container(
-              padding:EdgeInsets.only( top: 80, left: 20, right: 20),
+              padding:EdgeInsets.only( top: 40, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
                   TextFormField(
                     keyboardType: TextInputType.number,
                     validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                    onChanged: (input)=> valSave=input,
+                    onChanged: (input)=> custom_valSave=input,
                     decoration: InputDecoration(
                       labelText: 'Number of Vendors',
                       labelStyle: TextStyle(
@@ -959,22 +994,40 @@ class Screen41 extends State<AddVendorQty> {
             ),
           ),
 
-          Expanded (
+          SafeArea (
+            child: Container(
+            padding:EdgeInsets.only( top: 50),
             child: Center(
             //offset: Offset(0,-50),
-              child: Container(
+              child: SafeArea(
+                child: Container(
                 height: 100,
                 width: 200,
                 child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
-                  numVen=int.parse(valSave),
+                   
+                  setState(() => validate = true),
+                  if (valSave!=null && valSave!="Custom"){
+                    numVen=int.parse(valSave),
                   //print(numVen),
                   Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:numVen, eid:eid, eventName:eventName)),)
+
+                  }
+
+                  else if (valSave=="Custom" && custom_valSave!=null)
+                  {
+                    custom_val=int.parse(custom_valSave),
+                    //print(numVen),
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:custom_val, eid:eid, eventName:eventName)),)
+
+                  }
+                  
+                  
                 } ),
-              ),
+              ),),
             ),
-          ),         
+          ), ),      
         ],),  
-      )
+      ),),
     ); 
   }
 }
