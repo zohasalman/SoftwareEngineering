@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'dart:io';
 //import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rateit/login.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
@@ -21,7 +24,8 @@ import 'vendor.dart';
 import 'vendorlist-hostit.dart';
 import 'item.dart';
 import 'item-list.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:email_validator/email_validator.dart';
 void main2() => runApp(App());
 
 String number="8"; 
@@ -84,6 +88,7 @@ class AddEventState extends State<AddEvent> {
   bool validate=false; 
   bool error1=false; 
   bool error2=false; 
+  String err;
 
   @override 
   Widget build(BuildContext context){
@@ -348,6 +353,23 @@ class AddEventState extends State<AddEvent> {
                 ),
             ),
             
+              SafeArea(
+              child: err== null ? Container() : Container(
+                
+                padding:EdgeInsets.only( top: 5), 
+                child: Column(
+                  children: <Widget>[
+                    
+                    Container(
+                      alignment: Alignment(-0.8,-0.9),
+                        child: Text(err,
+                        style: TextStyle(color: Colors.red)
+                        ),
+                    ),
+                  ],
+                )                        
+              ),
+            ),
 
             Padding(
               padding: EdgeInsets.all(15),
@@ -376,9 +398,9 @@ class AddEventState extends State<AddEvent> {
                       color: Colors.white,),
                       onPressed: () async {
                         setState(() => validate=true);
-                        //if(coord!=null){
+                        if(coord!=null){
                           GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                          String eventid,err;
+                          String eventid; 
                           var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FLogo%2Fcokefest.png?alt=media&token=79d901a3-6308-40fa-8b4d-08c809e37691', coverimage:'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/EventData%2FCover%2Fcokefestcover.jpg?alt=media&token=7bbf5d5d-e5b8-4a31-a397-2d817e4dc347');
                           if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
                             await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
@@ -386,7 +408,7 @@ class AddEventState extends State<AddEvent> {
                             }).catchError((e){err=e.toString();});
                             Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
                           }
-                      // }
+                      }
                       },
                     ),
                   ),
@@ -412,6 +434,7 @@ class EventMenuState extends State<EventMenu> {
   String eid;
   String eventName;
   String inviteCode;
+  String err; 
   EventMenuState({this.eid,this.eventName,this.inviteCode});
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
@@ -710,14 +733,16 @@ class EventMenuState extends State<EventMenu> {
             SafeArea(
                 child: InkWell(
                   onTap: () async {
-                    String err;
+                    
                     Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
                     await Firestore.instance.collection('Event').document(eid).get().then((value){
                       Event passEvent = new Event(uid:null, eventID:null, invitecode:null, location1:value.data['location1'], name:value.data['name'], logo:value.data['logo'], coverimage:value.data['coverimage']);
                       varEvent = passEvent;
                       //varEvent.logo = value.data['userRole'];
-                    }).catchError((e){err=e.toString();});;
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
+                    }).catchError((e){err=e.toString();});
+                    if(varEvent!=null){
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
+                    }
                   },
                   child: SafeArea(
                   child: Container(
@@ -742,8 +767,31 @@ class EventMenuState extends State<EventMenu> {
                     child: Text("Edit Event",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),
 
-                ),),),),
+                ),),),
+                
+                
+                ),
+
+                
               
+            ),
+
+            SafeArea(
+              child: err== null ? Container() : Container(
+                
+                padding:EdgeInsets.only( top: 5), 
+                child: Column(
+                  children: <Widget>[
+                    
+                    Container(
+                      alignment: Alignment(-0.8,-0.9),
+                        child: Text(err,
+                        style: TextStyle(color: Colors.red)
+                        ),
+                    ),
+                  ],
+                )                        
+              ),
             ),
           ],),
         )  
@@ -766,6 +814,7 @@ class Screen41 extends State<AddVendorQty> {
   int numVen;
   String eventName;
   String valSave;
+  String err; 
   Screen41({this.eid,this.eventName});
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -1065,7 +1114,7 @@ class AddVendorState extends State<AddVendor> {
         child: InkWell(
           child: new Container(
           width: MediaQuery.of(context).copyWith().size.width * 0.90,
-            //padding: EdgeInsets.only(top: 130, left: 20), 
+            padding: EdgeInsets.only(top: 20), 
             child: RichText(
               text: TextSpan(
                 children: <TextSpan>[
@@ -1095,7 +1144,7 @@ class AddVendorState extends State<AddVendor> {
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
         child: new Container(
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
-        padding:EdgeInsets.only( top: 0, left: 20, right: 20),
+        padding:EdgeInsets.only( top: 10, left: 20, right: 20),
           child: Column(
             children: <Widget>[
               TextFormField(
@@ -1131,7 +1180,7 @@ class AddVendorState extends State<AddVendor> {
           child: Column(
             children: <Widget>[
               TextFormField(
-                validator: (input)=> input.isEmpty? 'Please enter an email ': null,
+                validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
                 onChanged: (input)=> email[i]= input,
                 decoration: InputDecoration(
                   labelText: 'Email ID',
@@ -1298,6 +1347,10 @@ class AddVendorState extends State<AddVendor> {
 
   }
 
+  bool validate=false; 
+  bool error1=false; 
+
+  String err;
   @override 
   Widget build(BuildContext context){
     
@@ -1378,16 +1431,39 @@ class AddVendorState extends State<AddVendor> {
             clipper: ClipShape(),
           )
         ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Column(children: <Widget>[  
           Center(
             child: Column(
             children: menu2),
           ),
+
+          SafeArea(
+            child: err== null ? Container() : Container(
+              
+              padding:EdgeInsets.only( top: 5), 
+              child: Column(
+                children: <Widget>[
+                  
+                  Container(
+                    alignment: Alignment(-0.8,-0.9),
+                      child: Text(err,
+                      style: TextStyle(color: Colors.red)
+                      ),
+                  ),
+                ],
+              )                        
+            ),
+          ),
+
           Padding(
             padding: EdgeInsets.all(15),
           ),
+
+
           Center(child: Container(
             //width: MediaQuery.of(context).copyWith().size.width * 0.20,
             width:60,
@@ -1411,15 +1487,16 @@ class AddVendorState extends State<AddVendor> {
                 size: 45,
                 color: Colors.white,),
                 onPressed: () async {
+                  setState(() => validate=true);
                   bool check =true;
                   List<String> venId = List<String>();
                   for(var i=0; i<numVen; i++){
-                    if(name[i]=='' || email[i]=='' || stallid[i]=='' || item[i]==0){
+                    if(name[i]=='' || email[i]=='' || stallid[i]=='' || item[i]==0|| !EmailValidator.validate(email[i], true)){
                       check=false;
                     }
                   }
                   if (check){
-                    String err;
+                    
                     for (var i=0; i<numVen; i++){
                         await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':null }).then((vid) async{
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
@@ -1438,7 +1515,7 @@ class AddVendorState extends State<AddVendor> {
           
         ],
         )  
-      )
+      ),),
 
       
     ); 
@@ -1461,6 +1538,7 @@ class Screen45 extends State<Add> {
   String eid;
   String eventName;
   List<String> vid;
+  bool validate=false; 
   List<int> numVen;
   Screen45({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
@@ -1471,6 +1549,7 @@ class Screen45 extends State<Add> {
   List<Widget> menu=[], menu2=[]; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  String err; 
 
 
   void addvalue(i,j){
@@ -1501,6 +1580,7 @@ class Screen45 extends State<Add> {
     });
 
   }
+  
 
   void addvalue2(i,j){
     menu2=List.from(menu2)..add(
@@ -1556,12 +1636,14 @@ class Screen45 extends State<Add> {
       Container(
         child: InkWell(
         child: new Container(
-          child: RichText(
-          text: TextSpan(children: <TextSpan>[
-            TextSpan(text: "Vendor ${i+1}",style: TextStyle(color: Colors.black, fontSize: 22))
-          ]
-          )),
-        ),
+          child: Align(
+            alignment: Alignment(-0.8,-1.0),
+            child: RichText(
+            text: TextSpan(children: <TextSpan>[
+              TextSpan(text: "Vendor ${i+1}",style: TextStyle(color: Colors.black, fontSize: 22))
+            ]
+            )),
+          ),),
         ),
       ),
     );
@@ -1676,8 +1758,10 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             clipper: ClipShape(),
           )
         ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Center( 
           child: Column(
             children: <Widget>[
@@ -1686,6 +1770,25 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   children: menu2
                 ),
               ), 
+
+                  
+              SafeArea(
+                child: err== null ? Container() : Container(
+                  
+                  padding:EdgeInsets.only( top: 5), 
+                  child: Column(
+                    children: <Widget>[
+                      
+                      Container(
+                        alignment: Alignment(-0.8,-0.9),
+                          child: Text(err,
+                          style: TextStyle(color: Colors.red)
+                          ),
+                      ),
+                    ],
+                  )                        
+                ),
+              ),
               Container (
                 child: Ink(
                   height: 100,
@@ -1693,6 +1796,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   child: IconButton(
                     icon: new Image.asset("asset/image/icon.png"),
                     onPressed:() async {
+                      setState(() => validate=true);
                       bool checkNext = true;
                         //add eid from previous screen here to pass to QR to Event menu 
                         for (var i=0; i<numVen.length; i++){
@@ -1703,7 +1807,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                         if (checkNext){
-                          String err;
+                          
                           for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
@@ -1721,7 +1825,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             ],
           )
         )  
-      )
+      ),),
     ); 
   }
 }
@@ -1742,6 +1846,7 @@ class AddItem2State extends State<AddItem2> {
   String eventName;
   List<String> vid;
   List<int> numVen;
+  bool validate=false; 
   AddItem2State({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
@@ -1851,6 +1956,7 @@ class AddItem2State extends State<AddItem2> {
       });
 
   }
+  String err;
  
  
 var scaffoldKey=GlobalKey<ScaffoldState>();
@@ -1956,8 +2062,10 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             clipper: ClipShape(),
           )
         ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Center( 
           child: Column(
             children: <Widget>[
@@ -1966,6 +2074,23 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   children: menu2
                 ),
               ), 
+              SafeArea(
+                child: err== null ? Container() : Container(
+                  
+                  padding:EdgeInsets.only( top: 5), 
+                  child: Column(
+                    children: <Widget>[
+                      
+                      Container(
+                        alignment: Alignment(-0.8,-0.9),
+                          child: Text(err,
+                          style: TextStyle(color: Colors.red)
+                          ),
+                      ),
+                    ],
+                  )                        
+                ),
+              ),
               Container (
                 child: Ink(
                   height: 100,
@@ -1973,6 +2098,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   child: IconButton(
                     icon: new Image.asset("asset/image/icon.png"),
                     onPressed:() async {
+                      setState(() => validate=true);
                       bool checkNext = true;
                         //add eid from previous screen here to pass to QR to Event menu 
                         for (var i=0; i<numVen.length; i++){
@@ -1983,7 +2109,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                         if (checkNext){
-                          String err;
+                          
                           for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
@@ -2001,7 +2127,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             ],
           )
         )  
-      )
+      ),),
     ); 
   }
 }
@@ -2017,7 +2143,8 @@ class EditVen extends StatefulWidget {
 
 class EditVenState extends State<EditVen> {
   String name,email,logo;
-  int item,stallid;
+  int stallid;
+  int item=0;
   final dcontroller=new TextEditingController(); 
   final dcontroller2=new TextEditingController(); 
   final dcontroller3=new TextEditingController(); 
@@ -2028,6 +2155,7 @@ class EditVenState extends State<EditVen> {
   EditVenState({this.eventName,this.vendorData});
   bool value=false;
   bool check=false; 
+  bool validate=false; 
 
 
 
@@ -2037,17 +2165,21 @@ class EditVenState extends State<EditVen> {
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
-  @override 
-  Widget build(BuildContext context){
+  @override
+  void initState() {
+    super.initState();
     name= vendorData.name;
     logo= vendorData.logo;
     email = vendorData.email;
     stallid= vendorData.stallNo;
-    item=0;
     dcontroller.text= vendorData.name;
     dcontroller2.text= vendorData.email;
     dcontroller3.text= vendorData.logo;
     dcontroller4.text= vendorData.stallNo.toString();
+  }
+
+  @override 
+  Widget build(BuildContext context){
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -2104,8 +2236,10 @@ class EditVenState extends State<EditVen> {
           clipper: ClipShape(),
         )
       ),
-      body: SingleChildScrollView(
+      body: Form(
         key: _formKey,
+        autovalidate: validate, 
+        child: SingleChildScrollView(
         child: Column(children: <Widget>[
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -2283,7 +2417,11 @@ class EditVenState extends State<EditVen> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                  onChanged: (input)=> item=int.parse(input),
+                  onChanged: (input) {
+                    //print(input);
+                    item=int.parse(input);
+                    //print(item);
+                  },
                   decoration: InputDecoration(
                     labelText: 'Number of items',
                     labelStyle: TextStyle(
@@ -2309,6 +2447,7 @@ class EditVenState extends State<EditVen> {
                     icon: Icon(Icons.add,
                     color: Colors.white,),
                     onPressed: () {
+                      print(item);
                       if (item>0){//connect item here
                         Navigator.push(context,MaterialPageRoute(builder: (context)=> AddItem2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
                       }
@@ -2365,7 +2504,7 @@ class EditVenState extends State<EditVen> {
           ),
         ],
         )  
-      )
+      ),),
     ); 
   }
 }
@@ -2414,9 +2553,9 @@ class EditEventState extends State<EditEvent> {
     );
     coord=updatedcoord;
   }
-
-  @override 
-  Widget build(BuildContext context){
+  @override
+  void initState() {
+    super.initState();
     savedName=eventData.name;
     savedLocation=GeoPoint(coord.latitude, coord.longitude);
     savedLogo=eventData.logo;
@@ -2425,6 +2564,10 @@ class EditEventState extends State<EditEvent> {
     //dcontroller2.text='${eventData.location1.latitude},${eventData.location1.longitude}';
     dcontroller3.text=eventData.logo;
     dcontroller4.text=eventData.coverimage;
+  }
+  @override 
+  Widget build(BuildContext context){
+
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -2517,7 +2660,7 @@ class EditEventState extends State<EditEvent> {
                     child: TextFormField(
                       readOnly: true,
                       decoration: InputDecoration(
-                        labelText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
+                        hintText: coord==null?'Please Mark a Location':'(${coord.latitude},${coord.longitude})',
                         labelStyle: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 19
@@ -2542,7 +2685,6 @@ class EditEventState extends State<EditEvent> {
                     color: Colors.white,),
                     onPressed: () {
                       getCoordinates();
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> Maps()),);
                     },
                   ),
                 ),
@@ -2559,20 +2701,9 @@ class EditEventState extends State<EditEvent> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 
                     child: TextFormField(
-                      controller: dcontroller3,
-                      validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                      onChanged: (input)=> savedLogo=input,
+                      readOnly: true,
                       decoration: InputDecoration(
-                        hintText: 'Upload a logo of your event',
-                        suffixIcon: IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: ()=>{
-                            setState((){
-                              WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller3.clear());
-                              //dcontroller3.clear();
-                            }),
-                          },
-                        ),
+                        hintText: coord==null?'Please upload logo photo of your event':'Image Uploaded',
                       ),
                     )
                   
@@ -2619,20 +2750,9 @@ class EditEventState extends State<EditEvent> {
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField( 
-                  controller: dcontroller4,
-                  validator: (input)=> input.isEmpty? 'Please enter a valid photo': null,
-                  onChanged: (input)=> savedCover=input,
+                  readOnly: true,
                   decoration: InputDecoration(
-                    hintText: 'Upload a photo of your event',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: ()=>{
-                        setState((){
-                          WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller4.clear());
-                          //dcontroller4.clear();
-                        }),
-                      },
-                    ),
+                    hintText: coord==null?'Please upload cover photo of your event':'Image Uploaded',
                   ),
                 )
               ),
@@ -2651,7 +2771,11 @@ class EditEventState extends State<EditEvent> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () {},
+                    onPressed: () async {
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('images/${DateTime.now()}.png').putFile(selected);
+
+                    },
                   ),
                 ),
               )
@@ -2715,139 +2839,6 @@ class EditEventState extends State<EditEvent> {
   }
 }
 
-class Success extends StatefulWidget {
-  @override 
-  SuccessScreen createState()=> new SuccessScreen(); 
-}
-
-
-
-class SuccessScreen extends State<Success> {
-  String event="Karachi Eat";
-  var scaffoldKey=GlobalKey<ScaffoldState>();
- final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-  @override 
-
-  Widget build(BuildContext context){
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-        key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text(event,style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
-                  actions: <Widget>[
-                       IconButton(
-                        onPressed: () {                          
-                          showSearch(
-                            context: context,
-                            delegate: MapSearchBar(),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.search,
-                        
-                        )
-                      ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          scaffoldKey.currentState.openEndDrawer();
-                          },
-                        child: Icon(
-                            Icons.menu,
-                           
-                        ),
-                      )
-                    ),
-                  ],
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
-      body: Form(
-        key: _formKey,
-        child: Column(children: <Widget>[
-          Container (
-            child: Transform.translate(
-            offset: Offset(0,0),
-              child: Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("asset/image/check.png")
-                    ),
-                ), 
-              ),
-            ),
-          ),
-
-           Container(
-            child: Transform.translate(
-            offset: Offset(0,30),
-              child: Container(
-                padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "Success",style: TextStyle(color: Colors.black, fontSize: 52)),
-                  
-                  ]
-                  )),
-              ),
-            ),
-           ),
-        ],
-        )  
-      )
-    ); 
-  }
-}
 
 class Comprehensive extends StatefulWidget {
   final String eid;
@@ -3692,7 +3683,7 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
                           alignment: Alignment.topLeft,
                           child: Padding(
                               padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                              child: Text('${widget.eventName}',
+                              child: Text('Menu Items',
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
                         )),
@@ -3719,7 +3710,7 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
             )),
         endDrawer: SideBar2(),
         body:Column( 
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Container(
@@ -3729,40 +3720,11 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
               ),
             ), 
             //Expanded(
-            ListItemHostIt(),
+            Container(child:ListItemHostIt(eventName: eventName,eventID: eventID,)),
             // Padding(
             //   padding: EdgeInsets.all(15),
             // ),
-            Center(
-              child: Container(
-                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-                  width:60,
-                  height:60,
-                  child: Ink(
-                    width:60,
-                    height:60,
-                    decoration:  ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: null,
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                      ),
-                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                    ),
-                    child: IconButton(
-                      alignment: Alignment.center,
-                      icon: Icon(Icons.arrow_forward,
-                      size: 45,
-                      color: Colors.white,),
-                      onPressed: () async {
-                        Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventID:eventID,eventName:eventName)),);
-                      },
-                    ),
-                  ),
-              ),
-            ),//),
+//),
           ]
         ),
       ),
@@ -3792,6 +3754,14 @@ class EditItemState extends State<EditItem> {
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
 
+  @override
+  void initState() {
+    super.initState();
+    name= itemData.name;
+    logo= itemData.logo;
+    dcontroller.text= itemData.name;
+    dcontroller3.text= itemData.logo;
+  }
 
   @override 
   Widget build(BuildContext context){

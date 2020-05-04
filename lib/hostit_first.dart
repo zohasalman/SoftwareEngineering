@@ -313,7 +313,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                               height: 50,
                               padding: const EdgeInsets.all(0.2),
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: Colors.black38,
                                 shape:BoxShape.circle,
                               ),
                             ),
