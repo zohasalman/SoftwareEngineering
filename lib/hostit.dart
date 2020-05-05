@@ -3963,7 +3963,6 @@ class ViewVendorState extends State<ViewVendor> {
 
   @override
   Widget build(BuildContext context) {
-    // final vendorFromDB = Provider.of<List<Vendor>>(context);
 
     return StreamProvider<List<Vendor>>.value(
       value: FirestoreService().getVendorInfo(eventID),
@@ -4056,8 +4055,6 @@ class ViewMenuState extends State<ViewMenu> {
 
   @override
   Widget build(BuildContext context) {
-    // final vendorFromDB = Provider.of<List<Vendor>>(context);
-
     return StreamProvider<List<Item>>.value(
       value: FirestoreService().getItemInfo(vendorID),
       child: Scaffold(
@@ -4120,12 +4117,7 @@ class ViewMenuState extends State<ViewMenu> {
                 style: TextStyle(color: Colors.pink[600], fontSize: 17),
               ),
             ), 
-            //Expanded(
             Container(child:ListItemHostIt(eventName: eventName,eventID: eventID,)),
-            // Padding(
-            //   padding: EdgeInsets.all(15),
-            // ),
-//),
           ]
         ),
       ),
@@ -4244,7 +4236,7 @@ class EditItemState extends State<EditItem> {
             child: InkWell(
               child: new Container(
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                //padding: EdgeInsets.only(top: 130, left: 20), 
+                
                 child: RichText(
                   text: TextSpan(
                     children: <TextSpan>[
@@ -4277,7 +4269,7 @@ class EditItemState extends State<EditItem> {
                       onPressed: ()=>{
                         setState((){
                           WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
-                          //dcontroller.clear();
+                          
                         }),
                       },
                     ),
@@ -4356,7 +4348,7 @@ class EditItemState extends State<EditItem> {
           ),
           Center(
             child: Container(
-              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+           
               width:60,
               height:60,
               child: Ink(
@@ -4379,8 +4371,7 @@ class EditItemState extends State<EditItem> {
                   color: Colors.white,),
                   onPressed: () async {
                     setState(() => validate=true);
-                    //String err;
-                    //if(coord!=null){
+                   
                     if(!(logo==null || name==null))
                     await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
                       await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: itemData.itemId).getDocuments().then((val) async{
@@ -4389,9 +4380,7 @@ class EditItemState extends State<EditItem> {
                           });
                       }).catchError((e){err=e.toString();});
                     }).catchError((e){err=e.toString();});
-                    //}
                     Navigator.pop(context);
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
                   }
                 ),
               ),

@@ -1901,22 +1901,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                     ),
                   ),
                   SizedBox(height: 150.0, width: 40.0),
-                  // Container(
-                  //   height: 70,
-                  //   width: 250,
-                  //   child: RaisedButton(
-                  //     shape: new RoundedRectangleBorder(
-                  //         borderRadius: new BorderRadius.circular(50.0),
-                  //         side: BorderSide(color: Colors.red),
-                  //         ),
-
-                  //     onPressed: () {},
-                  //     color: Colors.red,
-                  //     textColor: Colors.white,
-                  //     child: Text("Submit".toUpperCase(),
-                  //         style: TextStyle(fontSize: 18)),
-                  //   ),
-                  // )
+                 
                   SafeArea(
                     child: InkWell(
                       onTap: () async {
