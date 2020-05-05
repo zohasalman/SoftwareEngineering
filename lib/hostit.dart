@@ -642,21 +642,7 @@ class EventMenuState extends State<EventMenu> {
                 child: InkWell(
                   onTap: () async{
                     print('ad');
-  //                   var pdf = pw.Document();
-  //                   //File('test.png').writeAsBytesSync(encodePng(image));
-  // // Fill it with a solid color (white)
-  //                   pdf.addPage(pw.Page(
-  //                         pageFormat: PdfPageFormat.a4,
-  //                         build: (pw.Context context) {
-  //                           return pw.Column(children: <pw.Widget>[ 
-  //                             pw.Center(
-  //                               child: pw.Text("Hello World"),
-  //                             ),
-  //                             pw.Container(
-  //                               child: pw.Text(pw.Barcode.qrCode().make('Hello World', width: 400, height: 400).toString()),
-  //                             ),
-  //                           ],); // Center
-  //                         }));
+
                             var qr = Barcode.qrCode().toSvg('Hello World');//.make('Hello World', width: 400, height: 400);
                             var output = await getExternalStorageDirectories(type: StorageDirectory.downloads);
                             print(output[0].path);
@@ -664,6 +650,29 @@ class EventMenuState extends State<EventMenu> {
                             await File("${output[0].path}/example.svg").writeAsString(qr);
                             //await file.writeAsBytes(qr);
                             print('ad');
+                            var pdf = pw.Document();
+                              var image = PdfImage.file(
+                              pdf.document,
+                              bytes: File("${output[0].path}/barcode.png").readAsBytesSync(),
+                            );
+                    
+                    //File('test.png').writeAsBytesSync(encodePng(image));
+  // Fill it with a solid color (white)
+//                     pdf.addPage(pw.Page(
+//                           pageFormat: PdfPageFormat.a4,
+//                           build: (pw.Context context) {
+//                             return pw.Column(children: <pw.Widget>[ 
+//                               pw.Center(
+//                                 child: pw.Text("Hello World"),
+//                               ),
+//                               pw.Center(
+//                                 child: pw.Image(image),
+//                               ),
+//                             ],); // Center
+//                           }));
+
+//                           final file = File("${output[0].path}/example.pdf");
+// await file.writeAsBytes(pdf.save());
                     // return await showDialog(
                     //   context: context,
                     //   builder: (BuildContext context){
