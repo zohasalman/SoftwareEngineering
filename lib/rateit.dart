@@ -36,7 +36,7 @@ import 'package:path/path.dart' as Pathway;
 import 'package:location/location.dart';
 
 DateTime _dateTime;
-String user_id, eName, eId;
+String userID, eName, eId;
 UserData myUserInfo;
 
 void main3() => runApp(MaterialApp(
@@ -58,10 +58,11 @@ class SideBar2 extends StatefulWidget {
 }
 
 class SideBarProperties2 extends State<SideBar2> {
-  void NormalSignOut() async {
+
+  void normalSignOut() async {
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
-    user_id = usr.uid;
+    userID = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
     LoginScreen();
   }
@@ -251,7 +252,7 @@ class _InviteScreen extends State<InviteScreen> {
           if(distance<=600){
             eventName = docs.documents[0].data['name'];
             eventID = docs.documents[0].data['eventID'];
-            user_id = '${widget.uid}';
+            userID = '${widget.uid}';
             print(eventName);
             print(eventID);
             Navigator.push(
@@ -769,7 +770,7 @@ class _EditProfile extends State<EditProfile> {
       }
     }
     print('hii');
-    _updateData.update(user_id, _firstName, _lastName, _email, _password,
+    _updateData.update(userID, _firstName, _lastName, _email, _password,
         _gender, _profilePicture, _dateOfBirth);
     // Storing data in user class object
     myUserInfo.update(_firstName, _lastName, _email, _gender, _profilePicture);
@@ -1128,7 +1129,7 @@ class _EditProfile extends State<EditProfile> {
                               );
                             },
                           );
-                          };
+                          }
                         },
                         child: SafeArea(
                           child: Container(
@@ -1164,7 +1165,7 @@ class ViewVendor extends StatefulWidget {
   ViewVendor({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
-  String qr = "";
+  // String qr = "";
 
   @override
   State<StatefulWidget> createState() {
@@ -1241,7 +1242,7 @@ class _ViewVendor extends State<ViewVendor> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            //scanning= await BarcodeScanner.scan();//TODO:Uncomment
+            //scanning= await BarcodeScanner.scan(); //TODO:Uncommentt
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -1278,7 +1279,7 @@ class _ViewMyRating extends State<ViewMyRating> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedVendor>>.value(
-      value: FirestoreService().getMyRatedVendor(user_id),
+      value: FirestoreService().getMyRatedVendor(userID),
       child: Scaffold(
         key: scaffoldKey,
         appBar: PreferredSize(
@@ -1348,7 +1349,7 @@ class _ViewMyRating extends State<ViewMyRating> {
 }
 
 class EditRatings extends StatefulWidget {
-  String name, image, rating, vendorId, reviewId;
+  final String name, image, rating, vendorId, reviewId;
 
   EditRatings(
       {this.name, this.image, this.rating, this.vendorId, this.reviewId});
@@ -1361,7 +1362,7 @@ class _EditRatings extends State<EditRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-      value: FirestoreService().getMyRatedItem(user_id, '${widget.vendorId}'),
+      value: FirestoreService().getMyRatedItem(userID, '${widget.vendorId}'),
       child: Scaffold(
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(150.0),
@@ -1510,8 +1511,8 @@ class _EditRatings extends State<EditRatings> {
 }
 
 class EditRating1 extends StatefulWidget {
-  String name, logo, vendorId, review, reviewId;
-  List<Map> list;
+  final String name, logo, vendorId, review, reviewId;
+  final List<Map> list;
 
   EditRating1(
       {Key key,
@@ -1530,7 +1531,7 @@ class _EditRating1State extends State<EditRating1> {
   double finalRating;
 
   void submit(double finalRating) {
-    var error = FirestoreService().updateRatings(user_id, widget.list,
+    var error = FirestoreService().updateRatings(userID, widget.list,
         widget.vendorId, widget.review, widget.reviewId, finalRating);
     if (error != null) {
       print(error);
@@ -1696,10 +1697,9 @@ class _EditRating1State extends State<EditRating1> {
 }
 
 class DoRatings extends StatefulWidget {
-  String name, logo, vendorId;
-  List<Map> list;
+  final String name, logo, vendorId;
 
-  DoRatings({this.name, this.logo, this.vendorId, this.list});
+  DoRatings({this.name, this.logo, this.vendorId});
 
   @override
   _DoRatings createState() => new _DoRatings();
@@ -1791,8 +1791,8 @@ class _DoRatings extends State<DoRatings> {
 }
 
 class DoRatingFinal extends StatefulWidget {
-  String name, logo, vendorId, review;
-  List<Map> list;
+  final String name, logo, vendorId, review;
+  final List<Map> list;
 
   DoRatingFinal({this.name, this.logo, this.vendorId, this.list, this.review});
   @override
@@ -1803,7 +1803,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
   double finalRating;
 
   void submit(double finalRating) {
-    var error = FirestoreService().sendRatings(user_id, widget.list,
+    var error = FirestoreService().sendRatings(userID, widget.list,
         widget.name, widget.logo, widget.vendorId, widget.review, finalRating);
     if (error != null) {
       print(error);
@@ -1952,7 +1952,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
 }
 
 class TopRatedItems extends StatefulWidget {
-  String value, image, vendorId, vendorRating;
+  final String value, image, vendorId, vendorRating;
 
   TopRatedItems({this.value, this.image, this.vendorId, this.vendorRating});
 
@@ -2101,7 +2101,7 @@ class _TopRatedItems extends State<TopRatedItems> {
 }
 
 class ChangeRatings extends StatefulWidget {
-  String value, image, vendorId, reviewId;
+  final String value, image, vendorId, reviewId;
 
   ChangeRatings({Key key, this.value, this.image, this.vendorId, this.reviewId})
       : super(key: key);
@@ -2115,7 +2115,7 @@ class _ChangeRatings extends State<ChangeRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-        value: FirestoreService().getMyRatedItem(user_id, widget.vendorId),
+        value: FirestoreService().getMyRatedItem(userID, widget.vendorId),
         child: Scaffold(
             appBar: PreferredSize(
                 preferredSize: Size.fromHeight(150.0),
@@ -2210,7 +2210,7 @@ class _ChangeRatings extends State<ChangeRatings> {
 }
 
 class TopRatedItemsReviews extends StatefulWidget {
-  String value, image, vendorId, vendorRating;
+  final String value, image, vendorId, vendorRating;
 
   TopRatedItemsReviews(
       {this.value, this.image, this.vendorId, this.vendorRating});
@@ -2349,7 +2349,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 }
 
 class ViewReviews extends StatefulWidget {
-  String value, image, reviewId, review, vendorId;
+  final String value, image, reviewId, review, vendorId;
 
   ViewReviews(
       {Key key,
@@ -2570,8 +2570,9 @@ class _ViewReviews extends State<ViewReviews> {
 }
 
 class EditReviews extends StatefulWidget {
-  String name, logo, reviewId, review, vendorId;
-  List<Map> list;
+  final String name, logo, reviewId, vendorId;
+  final List<Map> list;
+  String review;
 
   EditReviews(
       {Key key,
@@ -2588,8 +2589,8 @@ class EditReviews extends StatefulWidget {
 }
 
 class _EditReviews extends State<EditReviews> {
-  double myrating;
 
+  double myrating;
   FocusNode myFocusNode;
 
   @override
@@ -2764,8 +2765,8 @@ class _EditReviews extends State<EditReviews> {
 }
 
 class DoReviews extends StatefulWidget {
-  String name, logo, vendorId;
-  List<Map> list;
+  final String name, logo, vendorId;
+  final List<Map> list;
 
   DoReviews({this.name, this.logo, this.vendorId, this.list});
 
