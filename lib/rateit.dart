@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,7 @@ import 'reviewfromdb.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Pathway;
 import 'package:image_cropper/image_cropper.dart';
+import 'package:location/location.dart';
 
 DateTime _dateTime;
 String user_id, eName, eId;
@@ -212,23 +215,55 @@ class _InviteScreen extends State<InviteScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirestoreService();
 
-  void submitInviteCode() {
+  void submitInviteCode() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       String eventName = '';
       String eventID = '';
+      bool serviceCheck = await Location().serviceEnabled(), locationEnabled=true;
+      double currentLatitude;
+      double currentLongitude;
+      double eventLatitude;
+      double eventLongitude;
+      if(!serviceCheck) {
+        if( !(await Location().requestService()) ){
+          locationEnabled=false;
+        }
+      }
+      if( PermissionStatus.denied == await Location().hasPermission()) {
+        if( PermissionStatus.granted != await Location().requestPermission() ) {
+          locationEnabled=false;
+        }
+      }
+      if(locationEnabled) {
+        LocationData locationData = await Location().getLocation();
+        currentLatitude = locationData.latitude/(180/math.pi);
+        currentLongitude = locationData.longitude/(180/math.pi);
+      }
       _firestore.verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
-        if (docs.documents.isNotEmpty) {
-          eventName = docs.documents[0].data['name'];
-          eventID = docs.documents[0].data['eventID'];
-          user_id = '${widget.uid}';
-          print(eventName);
-          print(eventID);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => _RateItFirstScreen(
-                      eventName: eventName, eventID: eventID)));
+        if (docs.documents.isNotEmpty && locationEnabled) {
+          GeoPoint eventLocation = docs.documents[0].data['location1'];
+          eventLatitude = eventLocation.latitude/(180/math.pi);
+          eventLongitude = eventLocation.longitude/(180/math.pi);
+          double diffLatitudeHalf=(eventLatitude-currentLatitude)/2;
+          double diffLongitudeHalf=(eventLongitude-currentLongitude)/2;
+          double distance = 2*6371.0710*math.asin( math.sqrt( (math.sin(diffLatitudeHalf)*math.sin(diffLatitudeHalf)) + ( (math.sin(diffLongitudeHalf)*math.sin(diffLongitudeHalf))*math.cos(currentLatitude)*math.cos(currentLongitude) ) ) ) * 1000; //Haversine Formula to calculate difference between coordinates
+          //print('$distance,${eventLatitude*(180/math.pi)},${currentLatitude*(180/math.pi)}');
+
+          if(distance<=600){
+            eventName = docs.documents[0].data['name'];
+            eventID = docs.documents[0].data['eventID'];
+            user_id = '${widget.uid}';
+            print(eventName);
+            print(eventID);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => _RateItFirstScreen(
+                        eventName: eventName, eventID: eventID)));
+          } else {
+            errorMessage = 'You are out of the required event area.'; 
+          }
         } else {
           errorMessage = 'No such event invite code exists.';
         }
@@ -1221,7 +1256,9 @@ class _ViewVendor extends State<ViewVendor> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning = await BarcodeScanner.scan();
+            //ScanResult scan = await BarcodeScanner.scan();//TODO:check result
+            //scanning=scan.rawContent;
+            scanning= await BarcodeScanner.scan();
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -1307,7 +1344,9 @@ class _ViewMyRating extends State<ViewMyRating> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning = await BarcodeScanner.scan();
+            //ScanResult scan = await BarcodeScanner.scan();//TODO:check result
+            //scanning=scan.rawContent;
+            scanning= await BarcodeScanner.scan();
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
