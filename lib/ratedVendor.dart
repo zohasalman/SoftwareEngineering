@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'my-rating.dart';
 import 'rateit.dart';
-import 'hostit.dart';
+//import 'hostit.dart';
 
 class RatedVendorList extends StatefulWidget {
   @override

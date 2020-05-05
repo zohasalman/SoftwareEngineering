@@ -15,7 +15,7 @@ class EditMyRatingsItems extends StatefulWidget {
 
 class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
 
-  void ItemRating(double rating, String itemId){
+  void itemRating(double rating, String itemId){
     setState(() {
       var info = new Map();
       info['givenRating'] = rating;
@@ -27,7 +27,6 @@ class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
   @override
   Widget build(BuildContext context) {
 
-   double myRating = 0;
   final myItems = Provider.of<List<RatedItem>>(context);
 
    if (myItems == null){
@@ -71,7 +70,7 @@ class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
                       children: <Widget>[
                         RatingBar(
                           initialRating: double.parse('${myItems[index].rating}'),
-                          onRatingChanged: (rating){ItemRating(rating, myItems[index].itemId);},
+                          onRatingChanged: (rating){itemRating(rating, myItems[index].itemId);},
                           filledIcon: Icons.star,
                           emptyIcon: Icons.star_border,
                           halfFilledIcon: Icons.star_half,

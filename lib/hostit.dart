@@ -19,20 +19,19 @@ import 'Event.dart';
 import 'dart:convert';
 //import 'VendorList.dart';
 import 'package:random_string/random_string.dart';
-import 'hostit_first.dart';
 import 'vendor.dart';
 import 'vendorlist-hostit.dart';
 import 'item.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+//import 'package:pdf/pdf.dart';
+//import 'package:pdf/widgets.dart' as pw;
 //import 'package:barcode_image/barcode_image.dart';
 import 'package:barcode/barcode.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:image/image.dart' as image;
+//import 'package:image/image.dart' as image;
 //import 'package:image/image.dart';
 import 'userRedirection.dart';
 import 'login.dart';
@@ -81,8 +80,6 @@ class HostitHomescreen extends StatefulWidget {
 }
 
 class _HostitHomescreenState extends State<HostitHomescreen> {
-
-  //final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
 
   @override
