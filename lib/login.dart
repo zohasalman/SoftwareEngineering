@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+//import 'dart:math' as math;
 import 'package:rateit/auth.dart';
-import 'VendorList.dart';
-import 'hostit.dart';
+//import 'VendorList.dart';
+import 'Clipshape.dart';
 import 'userRedirection.dart';
 import 'package:intl/intl.dart';
 import 'package:email_validator/email_validator.dart';
@@ -361,7 +361,7 @@ class SignScreen extends StatefulWidget {
 
 
 class SecondScreen extends State<SignScreen> {
-  String firstName='', lastName='', gender, _errorMesage;
+  String firstName='', lastName='', gender; 
   bool error1=true, error2=true; 
 
   DateTime _dateTime; 

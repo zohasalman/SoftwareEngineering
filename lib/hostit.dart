@@ -17,45 +17,35 @@ import 'user.dart';
 import 'Event.dart';
 //import 'userRedirection.dart';
 import 'dart:convert';
-//import 'VendorList.dart';
+import 'Clipshape.dart';
 import 'package:random_string/random_string.dart';
-import 'hostit_first.dart';
 import 'vendor.dart';
 import 'vendorlist-hostit.dart';
 import 'item.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+//import 'package:pdf/pdf.dart';
+//import 'package:pdf/widgets.dart' as pw;
 //import 'package:barcode_image/barcode_image.dart';
 import 'package:barcode/barcode.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:image/image.dart' as image;
+//import 'package:image/image.dart' as image;
 //import 'package:image/image.dart';
+import 'userRedirection.dart';
+import 'login.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'rateit.dart';
 
 UserData myUserInfo;
 void main2() => runApp(App());
 
-String number="8"; 
-List<int> no=[2,3,4,5,6,7,8,9]; 
+String number=""; 
 
 
-class ClipShape extends CustomClipper<Path>{
-  @override
-  Path getClip(Size size) {
-    var clipline= new Path();
-    clipline.lineTo(0, size.height-0);
-    clipline.lineTo(size.width, size.height-100);
-    clipline.lineTo(size.width, 0);
-    return clipline;
-  }
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}
+
 class App extends StatelessWidget{
   @override
   Widget build(BuildContext context){
@@ -69,7 +59,407 @@ class App extends StatelessWidget{
   }
 }
 
-class AddEvent extends StatefulWidget {
+//UserData myUserInfo;
+
+class HostitHomescreen extends StatefulWidget {
+  @override
+  _HostitHomescreenState createState() => _HostitHomescreenState();
+}
+
+class _HostitHomescreenState extends State<HostitHomescreen> {
+  var scaffoldKey=GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async{
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // getting locally stored data
+    String uid = prefs.getString('uid');
+    String firstName = prefs.getString('firstName');
+    String lastName = prefs.getString('lastName');
+    String email = prefs.getString('email');
+    String profilePicture = prefs.getString('profilePicture');
+    String gender = prefs.getString('gender');
+    // Storing data in user class object
+    myUserInfo = UserData(
+        uid: uid,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        gender: gender,
+        profilePicture: profilePicture);
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<List<Event>>.value(
+      value: FirestoreService().getEventsInfo(Provider.of<User>(context, listen: false).uid.toString()),
+      child: Scaffold( 
+      endDrawer: SideBar1(),
+      key: scaffoldKey,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              AppBar(
+                centerTitle: true,
+                bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                          padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                          child: Text('My Events',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                    )
+                ),
+                actions: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 20.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        scaffoldKey.currentState.openEndDrawer();
+                      },
+                      child: Icon(
+                        Icons.menu,
+                      ),
+                    )
+                  ),
+                ],
+                flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]
+                      ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )
+                ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
+      body: Column( 
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Container(
+            child: Text(
+              "Long Press to delete event",
+              style: TextStyle(color: Colors.pink[600], fontSize: 17),
+            ),
+          ), 
+          EventsListHostit(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          //add code
+          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(myUserInfo: myUserInfo, coord: null,)),);
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.red[600],
+      ),
+    ),);
+  }
+}
+
+
+
+class SideBar1 extends StatefulWidget {
+  @override
+  SideBar1Properties createState() => new SideBar1Properties();
+}
+
+class SideBar1Properties extends State<SideBar1>{
+
+  void normalSignOut() async {
+    User usr = Provider.of<User>(context, listen: false);
+    String user = usr.uid;
+    await FirestoreService(uid: user).normalSignOutPromise();
+    LoginScreen();
+  
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: new Column(
+        
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+            Padding( padding: EdgeInsets.all(30),),
+            CircleAvatar(
+              radius:70, 
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
+            ),
+            Text(
+              myUserInfo.firstName + ' ' + myUserInfo.lastName, 
+              style: TextStyle(fontSize: 30, color: Colors.black)
+            ),
+            Text(
+              myUserInfo.email, 
+              style: TextStyle(fontSize: 22, color: Colors.black)
+            ),
+          Padding( padding: EdgeInsets.all(30),),
+          Container(
+            child: GestureDetector(
+              onTap: () { //Change on Integration
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Edit Profile',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
+            child: GestureDetector(
+              onTap:() async {await FirestoreService().normalSignOutPromise();},
+             // },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Sign Out',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+        ]
+      ),
+    );
+  }
+}
+
+class EventsListHostit extends StatefulWidget {
+  @override
+  _EventsListStateHostIt createState() => _EventsListStateHostIt();
+}
+
+class _EventsListStateHostIt extends State<EventsListHostit> {
+  String err;
+  
+  @override
+  Widget build(BuildContext context) {
+
+    final events = Provider.of<List<Event>>(context);
+    if (events == null){
+      return LoadingScreen();
+    }else{
+      return Expanded(
+          child: 
+          ListView.builder(
+            shrinkWrap: true,
+            //physics: const NeverScrollableScrollPhysics(),
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: GestureDetector(
+                  onTap: () async {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:events[index].eventID,eventName:events[index].name,inviteCode:events[index].invitecode, userInfo: myUserInfo,)),);
+                  },
+                  onLongPress: ()async {
+                    return await showDialog(
+                      context: context,
+                      builder: (BuildContext context){
+                        return AlertDialog(
+                          title: Text("Confirm"),
+                          content: Text("Are you sure you want to delete this vendor?"),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () async {
+                                await Firestore.instance.collection('Event').document(events[index].eventID).delete().then((_) async {
+                                  await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: events[index].eventID).getDocuments().then((ven) async{
+                                    ven.documents.forEach((vendoc) async {
+                                      await Firestore.instance.collection('Vendor').document(vendoc.documentID).delete().then((_)async{
+                                        await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendoc.documentID).getDocuments().then((val) async{
+                                          val.documents.forEach((doc) async {
+                                            await Firestore.instance.collection('ratedVendor').document(doc.documentID).delete().catchError((e){err=e.toString();});
+                                          });
+                                        }).catchError((e){err=e.toString();});
+                                        await Firestore.instance.collection('item').where('vendorId', isEqualTo: vendoc.documentID).getDocuments().then((val) async{
+                                          val.documents.forEach((doc) async {
+                                            await Firestore.instance.collection('item').document(doc.documentID).delete().catchError((e){err=e.toString();});
+                                          });
+                                        }).catchError((e){err=e.toString();});
+                                        await Firestore.instance.collection('ratedItems').where('vendorId', isEqualTo: vendoc.documentID).getDocuments().then((val) async{
+                                          val.documents.forEach((doc) async {
+                                            await Firestore.instance.collection('ratedItems').document(doc.documentID).delete().catchError((e){err=e.toString();});
+                                          });
+                                        }).catchError((e){err=e.toString();});
+                                      }).catchError((e){err=e.toString();});
+                                    });
+                                  }).catchError((e){err=e.toString();});
+
+                                });
+                                Navigator.of(context).pop(false);
+                              },
+                              child: Text("Delete"),
+                            ),
+                            FlatButton(
+                              onPressed: ()=>Navigator.of(context).pop(false),
+                              child: Text("Cancel"),
+                            )
+                          ],
+                        ); 
+                      },
+                    ); 
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 18,
+                                child: ClipOval(
+                                    child: Image.network(
+                                      '${events[index].logo}',
+                                    ),
+                                ),
+                              ),
+                              width: 50,
+                              height: 50,
+                              padding: const EdgeInsets.all(0.2),
+                              decoration: BoxDecoration(
+                                color: Colors.black38,
+                                shape:BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left:10.0),
+                            child: Text(
+                              events[index].name,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              child: Image(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(
+                                  events[index].coverimage,
+                                ),
+                                height: 200,
+                                width: 350,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SafeArea(
+                        child: err== null ? Container() : Container(
+                          
+                          padding:EdgeInsets.only( top: 5), 
+                          child: Column(
+                            children: <Widget>[
+                              
+                              Container(
+                                alignment: Alignment(-0.8,-0.9),
+                                  child: Text(err,
+                                  style: TextStyle(color: Colors.red)
+                                  ),
+                              ),
+                            ],
+                          )                        
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          ),
+        );
+    }
+  }
+}
+
+class AddEvent extends StatefulWidget {  //Add events screen which adds an event when clicked 
   final LatLng coord;
   final UserData myUserInfo;
   AddEvent({this.coord, this.myUserInfo});
@@ -79,30 +469,28 @@ class AddEvent extends StatefulWidget {
 }
 
 class AddEventState extends State<AddEvent> {
-  //AddEventState({this.eid});
   LatLng coord;
   AddEventState({this.coord});
   int eventNumber;
-  String name;
-  String logo, photo;  
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  String name,logo, photo;  
+  String err;
+  bool validate=false, error1=false, error2=false;
 
-  void getCoordinates() async {
+  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  
+  void getCoordinates() async {                   //returns the coordinates that have been inputted by the user from the location screen
     final updatedcoord = await Navigator.push(
       context,
       CupertinoPageRoute(
-          fullscreenDialog: true, builder: (context) => Maps()),
+          fullscreenDialog: true, builder: (context) => Maps()
+      ),
     );
     coord=updatedcoord;
   }
-
-  bool validate=false; 
-  bool error1=false; 
-  bool error2=false; 
-  String err;
-
+ 
+  
   @override
-  void initState() {
+  void initState() {                          //Sets the user information
     super.initState();
     myUserInfo = widget.myUserInfo;
     print(myUserInfo.firstName);
@@ -112,14 +500,13 @@ class AddEventState extends State<AddEvent> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-        //key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),                //Opening a side bar from right
+        appBar: PreferredSize(                
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
               fit: StackFit.expand,
-              children: <Widget>[
+              children: <Widget>[                           //AppBar displays the design bar of our screen
                 AppBar(
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -169,36 +556,36 @@ class AddEventState extends State<AddEvent> {
         autovalidate: validate,
         child: SingleChildScrollView(
           child: Column(children: <Widget>[
-            Container(
-                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                  padding:EdgeInsets.only( top: 10, left: 20, right: 20),
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        validator: (input)=> input.isEmpty? 'Please fill out this field': null,
-                        onChanged: (input)=> name=input,
-                        decoration: InputDecoration(
-                          labelText: 'Name of the event',
-                          labelStyle: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 19
-                          )
-                        ),
+            Container(                                                              //First field: Entering the name of the event at the top of the screen 
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    validator: (input)=> input.isEmpty? 'Please fill out this field': null,           //Validation checks to prevent null values 
+                    onChanged: (input)=> name=input,
+                    decoration: InputDecoration(
+                      labelText: 'Name of the event',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 19
                       )
-                    ],
+                    ),
                   )
+                ],
+              )
             ),
-            Container(
+            Container(                                                          //Getting event location field
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.75,
                   padding:EdgeInsets.only( top: 5, left: 20),
                       child: TextFormField(
-                        validator: (_) => coord==null  ? 'Please Mark a Location': null,
+                        validator: (_) => coord==null  ? 'Please Mark a Location': null,            //If not entered anything then message to input the value
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',
+                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',   
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -206,7 +593,7 @@ class AddEventState extends State<AddEvent> {
                         ),
                       )
                 ),
-                Container(
+                Container(                                                          //Location icon to direct to the location page
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -222,14 +609,14 @@ class AddEventState extends State<AddEvent> {
                       icon: Icon(Icons.add_location,
                       color: Colors.white,),
                       onPressed: () {
-                        getCoordinates();
+                        getCoordinates();       //Function that enables the coordinates from the map drawn 
                       },
                     ),
                   ),
                 )
               ],),
             ),
-            Container(
+            Container(                                    //User handling message to make it user friendly as only those users can rate the event if they near 200 m of the event location 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding: EdgeInsets.only(top: 0, left: 20), 
               child: RichText(
@@ -240,7 +627,7 @@ class AddEventState extends State<AddEvent> {
                 )
               ),
             ),
-            Container(
+            Container(                                                    //Next field used to input the value of the number of vendors at that particular event 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding:EdgeInsets.only( top: 0, left: 20, right: 20),
               child: Column(
@@ -261,7 +648,7 @@ class AddEventState extends State<AddEvent> {
                 ],
               )
             ),
-            Container(
+            Container(                                                          //Next field to incorporate the ask the user to upload the image of the event 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
@@ -272,7 +659,7 @@ class AddEventState extends State<AddEvent> {
                         validator: (_) => logo==null || logo =='' ? 'Please enter a valid image': null,
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: logo==null? 'Upload Logo Photo': 'Image Uploaded',
+                          hintText: logo==null? 'Upload Logo Photo': 'Image Uploaded',        //Displaying user friendly messages so that the user knows whats happening each time in our app
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -282,7 +669,7 @@ class AddEventState extends State<AddEvent> {
                     
                   
                 ),
-                Container(
+                Container(                                                    //Next button for uploading the image once you click on it  
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -308,7 +695,7 @@ class AddEventState extends State<AddEvent> {
                         setState(() {
                           //error1=true; 
                         });
-                        showDialog(
+                        showDialog(                             //Alert box to show the user once the image has been uploaded
                           context: context,
                           builder: (_) => AlertDialog(
                             title: Text("Image Uploaded"),
@@ -322,7 +709,7 @@ class AddEventState extends State<AddEvent> {
               ],),
             ),
             
-            Container(
+            Container(                              //Message to tell the user about the submission requirements of images 
               child: error1? Container() : Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.90,
                   padding: EdgeInsets.only(top: 0, left: 20), 
@@ -336,7 +723,7 @@ class AddEventState extends State<AddEvent> {
                 ),
             ),
 
-            Container(
+            Container(                                        //Uploading the image of the vendor that would be displayed on the homepage 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
@@ -354,7 +741,7 @@ class AddEventState extends State<AddEvent> {
                     ),
                   )
                 ),
-                Container(
+                Container(                                                    //The photo upload button to send image
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -376,7 +763,7 @@ class AddEventState extends State<AddEvent> {
                         await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
                         downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
                         photo=downloadUrl;
-                        showDialog(
+                        showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
                             title: Text("Image Uploaded"),
@@ -393,7 +780,7 @@ class AddEventState extends State<AddEvent> {
               ],),
             ),
 
-            Container(
+            Container(                              //Error message to inform the user about the requirements of the images
               child: error2? Container() : Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.90,
                   padding: EdgeInsets.only(top: 0, left: 20), 
@@ -406,7 +793,7 @@ class AddEventState extends State<AddEvent> {
                 ),
             ),
             
-              SafeArea(
+              SafeArea(                                   //Displaying if there is any error when fetching from firebase
               child: err== null ? Container() : Container(
                 
                 padding:EdgeInsets.only( top: 5), 
@@ -428,43 +815,42 @@ class AddEventState extends State<AddEvent> {
               padding: EdgeInsets.all(15),
             ),
             Center(child: Container(
-                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-                  width:60,
-                  height:60,
-                  child: Ink(
-                    width:60,
-                    height:60,
-                    decoration:  ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: null,
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                      ),
-                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                    ),
-                    child: IconButton(
-                      alignment: Alignment.center,
-                      icon: Icon(Icons.arrow_forward,
-                      size: 45,
-                      color: Colors.white,),
-                      onPressed: () async {
-                        setState(() => validate=true);
-                        if(coord!=null){
-                          GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                          String eventid; 
-                          var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
-                          if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
-                            await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
-                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
-                            }).catchError((e){err=e.toString();});
-                            Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
-                          }
-                      }
-                      },
-                    ),
+              width:60,
+              height:60,
+              child: Ink(
+                width:60,
+                height:60,
+                decoration:  ShapeDecoration(               
+                  shape: CircleBorder(),
+                  color: null,
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]    //Gradient colour combination and filling
                   ),
+                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                ),
+                child: IconButton(
+                  alignment: Alignment.center,
+                  icon: Icon(Icons.arrow_forward,
+                  size: 45,
+                  color: Colors.white,),
+                  onPressed: () async {
+                    setState(() => validate=true);
+                    if(coord!=null){                      //Moving forward only when the map coordinates have been defined
+                      GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                      String eventid; 
+                      var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
+                      if ( !(name==null || logo==null || photo==null || eventNumber==null) ){   //Adding values only when all validatation conditions have been fulfilled 
+                        await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
+                            await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
+                        }).catchError((e){err=e.toString();});
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
+                      }
+                    }
+                  },
+                ),
+              ),
             ),),
           ],
           )  
@@ -609,35 +995,7 @@ class EventMenuState extends State<EventMenu> {
               
             ),
 
-            // Container(
-            //     child: InkWell(
-            //       onTap: (){
-            //         Navigator.push(context,MaterialPageRoute(builder: (context)=> Comprehensive(eid:eid,eventName:eventName)),);
-            //       },
-            //       child: Container(
-            //         height: 50,
-            //         width: 350,
-                    
-            //         decoration: BoxDecoration(
-            //           gradient: LinearGradient(
-            //             begin: Alignment.topRight,
-            //             end: Alignment.topLeft,
-            //             colors: [ 
-            //               Color(0xFFAC0D57),
-            //               Color(0xFFFC4A1F),
-            //             ]
-            //           ),
-            //           borderRadius: BorderRadius.circular(50),
-            //         ),
-            //         padding: EdgeInsets.only(top: 15, left: 40), 
-            //         child: Text("Generate Comprehensive Report",style: TextStyle(color: Colors.white, fontSize: 18 ))
-            //       ),
-
-            //     ),
-              
-            // ),
-
-            
+       
             SafeArea(
                 child: InkWell(
                   onTap: () async{
@@ -736,8 +1094,7 @@ class EventMenuState extends State<EventMenu> {
                           ],
                         ); 
                       },
-                    );
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
+                    );  
                   },
                   child: SafeArea(
                   child: Container(
@@ -800,7 +1157,7 @@ class EventMenuState extends State<EventMenu> {
             SafeArea(
                 child: InkWell(
                   onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventName: eventName,eventID: eid,)),);  
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendor(eventName: eventName,eventID: eid,)),);  
                   },
                   child: SafeArea(
                   child: Container(
@@ -905,16 +1262,16 @@ class AddVendorQty extends StatefulWidget {
   AddVendorQty({this.eid,this.eventName});
 
   @override 
-  Screen41 createState()=> new Screen41(eid:eid,eventName:eventName); 
+  AddVendorQtyState createState()=> new AddVendorQtyState(eid:eid,eventName:eventName); 
 }
 
-class Screen41 extends State<AddVendorQty> {
+class AddVendorQtyState extends State<AddVendorQty> {
   final String eid;
   int numVen;
   String eventName;
   String valSave;
   String err; 
-  Screen41({this.eid,this.eventName});
+  AddVendorQtyState({this.eid,this.eventName});
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   List<DropdownMenuItem<String>> n=[];
@@ -1612,7 +1969,7 @@ class AddVendorState extends State<AddVendor> {
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
                         }).catchError((e){err=e.toString();});
                     }
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> Add(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                   }
                 },
               ),
@@ -1633,24 +1990,24 @@ class AddVendorState extends State<AddVendor> {
 }
 
 
-class Add extends StatefulWidget {
+class AddMenu extends StatefulWidget {
   final String eid;
   final List<String> vid;
   final List<int> numVen;
   final String eventName;
-  Add({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  Screen45 createState()=> new Screen45(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
+  AddMenuState createState()=> new AddMenuState(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
-class Screen45 extends State<Add> {
+class AddMenuState extends State<AddMenu> {
   String eid;
   String eventName;
   List<String> vid;
   bool validate=false; 
   List<int> numVen;
-  Screen45({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenuState({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
@@ -1950,24 +2307,24 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
   }
 }
 
-class AddItem2 extends StatefulWidget {
+class AddMenu2 extends StatefulWidget {
   final String eid;
   final List<String> vid;
   final List<int> numVen;
   final String eventName;
-  AddItem2({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu2({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  AddItem2State createState()=> new AddItem2State(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
+  AddMenu2State createState()=> new AddMenu2State(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
-class AddItem2State extends State<AddItem2> {
+class AddMenu2State extends State<AddMenu2> {
   String eid;
   String eventName;
   List<String> vid;
   List<int> numVen;
   bool validate=false; 
-  AddItem2State({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu2State({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
@@ -2585,7 +2942,7 @@ class EditVenState extends State<EditVen> {
                       
                       print(item);
                       if (item>0){//connect item here
-                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddItem2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
                       }
                     },
                   ),
@@ -2648,7 +3005,7 @@ class EditVenState extends State<EditVen> {
                             });
                         }).catchError((e){err=e.toString();});
                       }).catchError((e){err=e.toString();});
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewMenu(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
                     }
                   }
                 ),
@@ -3055,175 +3412,19 @@ class EditEventState extends State<EditEvent> {
   }
 }
 
-
-// class Comprehensive extends StatefulWidget {
-//   final String eid;
-//   final String eventName;
-//   Comprehensive({this.eid,this.eventName});
-//   @override 
-//   ComprehensiveReport createState()=> new ComprehensiveReport(eid:eid,eventName: eventName); 
-// }
-
-
-// class ComprehensiveReport extends State<Comprehensive> {
-//   String eventName;
-//   String eid;
-//   ComprehensiveReport({this.eid,this.eventName});
-//   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
-
-
-//   @override 
-//   Widget build(BuildContext context){
-//     return Scaffold(
-//       resizeToAvoidBottomPadding: false,
-//         //key: scaffoldKey,
-//         appBar: PreferredSize(
-//           preferredSize: Size.fromHeight(150.0),
-//           child: ClipPath(
-//             child: Stack(
-//               fit: StackFit.expand,
-//               children: <Widget>[
-//                 AppBar(
-//                   centerTitle: true,
-//                   bottom: PreferredSize(
-//                     preferredSize: Size.fromHeight(0),
-//                     child: Align(
-//                       alignment: Alignment.topLeft,
-//                       child: Padding(
-//                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
-//                         child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
-//                         ),
-//                     )
-//                   ),
-//                   flexibleSpace: Container(
-//                   decoration: BoxDecoration(
-//                     gradient: LinearGradient(
-//                         begin: Alignment.topRight,
-//                         end: Alignment.topLeft,
-//                         colors: [ 
-//                           Color(0xFFAC0D57),
-//                           Color(0xFFFC4A1F),
-//                         ]
-//                     ),
-//                       image: DecorationImage(
-//                         image: AssetImage(
-//                           "asset/image/Chat.png",
-//                         ),
-//                         fit: BoxFit.fitWidth,
-//                     ),
-//                   )
-//                 ),
-//                 )
-//               ],
-//             ),
-//             clipper: ClipShape(),
-//           )
-//         ),
-//       body: Form(
-//         key: _formKey,
-//         child: Column(children: <Widget>[
-//           Container (
-//             child: Container(
-//               height: 200,
-//               width: 200,
-//               child:Icon(Icons.check_circle_outline,color: Colors.green[300],size: 200,), 
-//             ),
-//           ),
-
-//           //Container(
-//             //width: MediaQuery.of(context).copyWith().size.width * 0.96,
-//             //child:
-//             Row( 
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 children: <Widget>[
-//                   Spacer(),
-//                   Container(
-//                     height: 50,
-//                     width: 50,
-//                     child:Icon(Icons.mail_outline,color: Colors.black,size: 50,),  
-//                   ),
-//                   Padding(padding: EdgeInsets.all(10)),
-//                   Container(
-//                     child: RichText(
-//                       text: TextSpan(children: <TextSpan>[
-//                         TextSpan(text: "Email Sent",style: TextStyle(color: Colors.black, fontSize: 30)),
-//                       ]),
-//                     ),
-//                   ),
-//                   Spacer(),
-//                 ]
-//               ),
-//             //),
-//           //),
-//           Center(
-//               child: Container(
-//                 width: MediaQuery.of(context).copyWith().size.width * 0.96,
-//                 //padding: EdgeInsets.only(top: 0, left: 20), 
-//                 child: RichText(
-//                   textAlign: TextAlign.center,
-//                   text: TextSpan(children: <TextSpan>[
-//                     TextSpan(text: "A comprehensive report has been successfully emailed to you.\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-//                     TextSpan(text: " Questions?\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-//                     TextSpan(text: " Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
-//                     TextSpan(text: "help.rateit@gmail.com ",style: TextStyle(color: Colors.pink[800], fontSize: 17))
-//                   ]
-//                   )),
-
-//               ),
-//           ),
-//           Padding(padding: EdgeInsets.all(10),),
-//           Container(
-//             child: InkWell(
-//               onTap: ()async{
-//                 String inviteCode;//,err;
-//                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
-//                   inviteCode=val.data['invitecode'];
-//                 }).catchError((e){err=e.toString();});
-//                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
-//               },
-//               child: Center(
-//                 child:Container(
-//                 height: 50,
-//                 width: 250,
-//                 decoration: BoxDecoration(
-//                   gradient: LinearGradient(
-//                     begin: Alignment.topRight,
-//                     end: Alignment.topLeft,
-//                     colors: [ 
-//                       Color(0xFFAC0D57),
-//                       Color(0xFFFC4A1F),
-//                     ]
-//                   ),
-//                   borderRadius: BorderRadius.circular(30),
-//                 ), 
-//                 child: Center(
-//                   child:Text("Done",style: TextStyle(color: Colors.white, fontSize: 22 ))
-//                 ),
-//               ),),
-//             ),
-//           ),
-//         ],),  
-//       ),
-//     ); 
-//   }
-// }
-
-
-
 class QRselection extends StatefulWidget {
   final String eid;
   final String eventName;
   QRselection({this.eid,this.eventName});
 
   @override
-  ScreenQRselect createState() => new ScreenQRselect(eid:eid,eventName:eventName);
+  QRselectionState createState() => new QRselectionState(eid:eid,eventName:eventName);
 }
 
-class ScreenQRselect extends State<QRselection> {
+class QRselectionState extends State<QRselection> {
   String eid,eventName;
   String err; 
-  ScreenQRselect({this.eid,this.eventName});
+  QRselectionState({this.eid,this.eventName});
   
   @override
   Widget build(BuildContext context) {
@@ -3475,32 +3676,7 @@ class MapsFunc extends State<Maps> {
                       //Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                     }
                   ),
-                  // actions: <Widget>[
-                  //   IconButton(
-                  //     onPressed: () {                     
-                  //       showSearch(
-                  //           context: context,
-                  //           delegate: MapSearchBar(),
-                  //       );
-                  //     },
-                  //     icon: Icon(
-                  //       Icons.search,
-                      
-                  //     )
-                  //     ),
-                  //   Padding(
-                  //     padding: EdgeInsets.only(right: 20.0),
-                  //     child: GestureDetector(
-                  //       onTap: () {
-                  //         scaffoldKey.currentState.openEndDrawer();
-                  //         },
-                  //       child: Icon(
-                  //           Icons.menu,
-                          
-                  //       ),
-                  //     )
-                  //   ),
-                  //],
+              
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3789,19 +3965,19 @@ class SideBarProperties extends State<SideBar>{
 }
 
 
-class ViewVendorHostIt extends StatefulWidget {
-  ViewVendorHostIt({this.eventName, this.eventID});
+class ViewVendor extends StatefulWidget {
+  ViewVendor({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
 
   @override
   State<StatefulWidget> createState() {
-    return _ViewVendorHostIt(eventName: eventName,eventID: eventID);
+    return ViewVendorState(eventName: eventName,eventID: eventID);
   }
 }
 
-class _ViewVendorHostIt extends State<ViewVendorHostIt> {
-  _ViewVendorHostIt({this.eventName, this.eventID});
+class ViewVendorState extends State<ViewVendor> {
+  ViewVendorState({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
   String result;
@@ -3880,20 +4056,20 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
 }
 
 
-class ViewItemHostIt extends StatefulWidget {
-  ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+class ViewMenu extends StatefulWidget {
+  ViewMenu({this.vendorID,this.eventName, this.eventID});
   final String eventName;
   final String eventID;
   final String vendorID;
 
   @override
   State<StatefulWidget> createState() {
-    return _ViewItemHostIt(eventName: eventName,eventID: eventID,vendorID: vendorID,);
+    return ViewMenuState(eventName: eventName,eventID: eventID,vendorID: vendorID,);
   }
 }
 
-class _ViewItemHostIt extends State<ViewItemHostIt> {
-  _ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+class ViewMenuState extends State<ViewMenu> {
+  ViewMenuState({this.vendorID,this.eventName, this.eventID});
   String eventName;
   String eventID;
   String vendorID;

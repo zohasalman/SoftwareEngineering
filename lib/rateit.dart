@@ -1,4 +1,4 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -8,11 +8,11 @@ import 'package:rateit/login.dart';
 import 'package:rateit/ratedItem.dart';
 import 'firestore.dart';
 import 'dart:math' as math;
-import 'VendorList.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart' as prefix;
-import 'localData.dart';
+//import 'VendorList.dart';
+//import 'package:flutter_rating_bar/flutter_rating_bar.dart' as prefix;
+//import 'localData.dart';
 import 'user.dart';
-import 'dart:convert';
+//import 'dart:convert';
 import 'vendor-list.dart';
 import 'vendor.dart';
 import 'package:email_validator/email_validator.dart';
