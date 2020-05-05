@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//Creating class of a particular event so it could be used by other screens and adding variables and assigning values to them 
+
 class Event{
   final String coverimage;
   final String eventID;

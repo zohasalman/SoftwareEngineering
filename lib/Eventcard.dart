@@ -26,13 +26,6 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
       return LoadingScreen();
     }else{
       return 
-      // Stack( children: <Widget>[
-      //   Container(
-      //     child: Text(
-      //       "Long Press to delete vendor",
-      //       style: TextStyle(color: Colors.pink[600], fontSize: 17),
-      //     ),
-      //   ),
         Container(
           child: ListView.builder(
             shrinkWrap: true,
@@ -42,15 +35,6 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
               return Card(
                 child:ListTile(
                   onTap: () {
-                    //debugPrint('${vendors[index].name} is pressed!');
-                    // var route = new MaterialPageRoute(
-                    //   builder: (BuildContext context) => new EditVen(
-                    //       //value: '${vendors[index].name}',
-                    //       //image: '${vendors[index].logo}', 
-                    //       //vendorId: '${vendors[index].vendorId}'
-                    //   ),
-                    // );
-                    //Navigator.of(context).push(route);
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen(myUser: widget.myUserInfo,  vendorData: vendors[index], eventName: widget.eventName,)),);
                   },
                   onLongPress: () async {
@@ -90,17 +74,3 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
     }
   }
 }
-
-
-
-// class EventCard {
-//   final String flowerName;
-//   final String description;
-//   final String imageURL;
-//   //Constructor
-//   const EventCard({
-//     this.flowerName,
-//     this.description,
-//     this.imageURL
-//   });
-// }
