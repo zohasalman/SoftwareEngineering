@@ -757,7 +757,7 @@ class EventMenuState extends State<EventMenu> {
             SafeArea(
                 child: InkWell(
                   onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventName: eventName,eventID: eid,)),);  
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendor(eventName: eventName,eventID: eid,)),);  
                   },
                   child: SafeArea(
                   child: Container(
@@ -1569,7 +1569,7 @@ class AddVendorState extends State<AddVendor> {
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
                         }).catchError((e){err=e.toString();});
                     }
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> Add(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                   }
                 },
               ),
@@ -3334,77 +3334,77 @@ class MapsFunc extends State<Maps> {
   }
 }
 
-// class MapSearchBar extends SearchDelegate<String>  {
+class MapSearchBar extends SearchDelegate<String>  {
 
-//    List<String> _list = const [
-//       'Igor Minar',
-//       'Brad Green',
-//       'Dave Geddes',
-//       'Naomi Black',
-//       'Greg Weber',
-//       'Dean Sofer',
-//       'Wes Alvaro',
-//       'John Scott',
-//       'Daniel Nadasi',
-//   ];
+   List<String> _list = const [
+      'Igor Minar',
+      'Brad Green',
+      'Dave Geddes',
+      'Naomi Black',
+      'Greg Weber',
+      'Dean Sofer',
+      'Wes Alvaro',
+      'John Scott',
+      'Daniel Nadasi',
+  ];
 
-//   @override
-//   String get searchFieldLabel => super.searchFieldLabel;
-//   @override
-//   ThemeData appBarTheme(BuildContext context){
-//     assert(context != null);
-//     final ThemeData theme = Theme.of(context);
-//     assert(theme != null);
-//     return theme.copyWith(
-//       primaryColorDark: Colors.white,
-//       primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
-//       primaryColorBrightness: Brightness.light,
-//       primaryTextTheme: theme.textTheme,
-//     );
-//   }
-//   @override
-//   List<Widget> buildActions(BuildContext context) {
-//     return [
-//       GestureDetector(
-//         onTap: () {query='';},
-//         child: Padding(
-//         padding: EdgeInsets.only(right: 20.0),
-//         child:  Icon(
-//             Icons.clear,
-//             size: 20,
-//           ),
-//         ),
-//     ),
-//     ];
-//   }
+  @override
+  String get searchFieldLabel => super.searchFieldLabel;
+  @override
+  ThemeData appBarTheme(BuildContext context){
+    assert(context != null);
+    final ThemeData theme = Theme.of(context);
+    assert(theme != null);
+    return theme.copyWith(
+      primaryColorDark: Colors.white,
+      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
+      primaryColorBrightness: Brightness.light,
+      primaryTextTheme: theme.textTheme,
+    );
+  }
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      GestureDetector(
+        onTap: () {query='';},
+        child: Padding(
+        padding: EdgeInsets.only(right: 20.0),
+        child:  Icon(
+            Icons.clear,
+            size: 20,
+          ),
+        ),
+    ),
+    ];
+  }
 
-//   @override
-//   Widget buildLeading(BuildContext context) {
-//     return IconButton(
-//       icon: new Icon(Icons.arrow_back_ios),
-//       onPressed:()=>Navigator.pop(context),
-//     );
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: new Icon(Icons.arrow_back_ios),
+      onPressed:()=>Navigator.pop(context),
+    );
       
-//   }
+  }
 
-//   @override
-//   Widget buildResults(BuildContext context) {
-//     return Text("Hi");
-//   }
+  @override
+  Widget buildResults(BuildContext context) {
+    return Text("Hi");
+  }
 
-//   @override
-//   Widget buildSuggestions(BuildContext context) {
-//     return ListView.builder(
-//       padding: EdgeInsets.all(10),
-//       itemCount: 5,
-//       itemBuilder: (context,index) {
-//         return ListTile(
-//             title: Text(_list[index]),
-//         );
-//       },
-//     );
-//   }
-// }
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(10),
+      itemCount: 5,
+      itemBuilder: (context,index) {
+        return ListTile(
+            title: Text(_list[index]),
+        );
+      },
+    );
+  }
+}
 
 class SideBar extends StatefulWidget {
   @override

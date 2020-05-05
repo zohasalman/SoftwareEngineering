@@ -193,7 +193,7 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
                   size: 45,
                   color: Colors.white,),
                   onPressed: () async {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventID:eventID,eventName:eventName)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendor(eventID:eventID,eventName:eventName)),);
                   },
                 ),
               ),
