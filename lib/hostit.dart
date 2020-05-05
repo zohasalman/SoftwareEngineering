@@ -38,8 +38,7 @@ import 'package:image/image.dart' as image;
 UserData myUserInfo;
 void main2() => runApp(App());
 
-String number="8"; 
-List<int> no=[2,3,4,5,6,7,8,9]; 
+String number=""; 
 
 
 class ClipShape extends CustomClipper<Path>{
@@ -69,7 +68,7 @@ class App extends StatelessWidget{
   }
 }
 
-class AddEvent extends StatefulWidget {
+class AddEvent extends StatefulWidget {  //Add events screen which adds an event when clicked 
   final LatLng coord;
   final UserData myUserInfo;
   AddEvent({this.coord, this.myUserInfo});
@@ -79,30 +78,28 @@ class AddEvent extends StatefulWidget {
 }
 
 class AddEventState extends State<AddEvent> {
-  //AddEventState({this.eid});
   LatLng coord;
   AddEventState({this.coord});
   int eventNumber;
-  String name;
-  String logo, photo;  
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  String name,logo, photo;  
+  String err;
+  bool validate=false, error1=false, error2=false;
 
-  void getCoordinates() async {
+  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  
+  void getCoordinates() async {                   //returns the coordinates that have been inputted by the user from the location screen
     final updatedcoord = await Navigator.push(
       context,
       CupertinoPageRoute(
-          fullscreenDialog: true, builder: (context) => Maps()),
+          fullscreenDialog: true, builder: (context) => Maps()
+      ),
     );
     coord=updatedcoord;
   }
-
-  bool validate=false; 
-  bool error1=false; 
-  bool error2=false; 
-  String err;
-
+ 
+  
   @override
-  void initState() {
+  void initState() {                          //Sets the user information
     super.initState();
     myUserInfo = widget.myUserInfo;
     print(myUserInfo.firstName);
@@ -112,14 +109,13 @@ class AddEventState extends State<AddEvent> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-        //key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),                //Opening a side bar from right
+        appBar: PreferredSize(                
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
               fit: StackFit.expand,
-              children: <Widget>[
+              children: <Widget>[                           //AppBar displays the design bar of our screen
                 AppBar(
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -169,36 +165,36 @@ class AddEventState extends State<AddEvent> {
         autovalidate: validate,
         child: SingleChildScrollView(
           child: Column(children: <Widget>[
-            Container(
-                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                  padding:EdgeInsets.only( top: 10, left: 20, right: 20),
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        validator: (input)=> input.isEmpty? 'Please fill out this field': null,
-                        onChanged: (input)=> name=input,
-                        decoration: InputDecoration(
-                          labelText: 'Name of the event',
-                          labelStyle: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 19
-                          )
-                        ),
+            Container(                                                              //First field: Entering the name of the event at the top of the screen 
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    validator: (input)=> input.isEmpty? 'Please fill out this field': null,           //Validation checks to prevent null values 
+                    onChanged: (input)=> name=input,
+                    decoration: InputDecoration(
+                      labelText: 'Name of the event',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 19
                       )
-                    ],
+                    ),
                   )
+                ],
+              )
             ),
-            Container(
+            Container(                                                          //Getting event location field
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.75,
                   padding:EdgeInsets.only( top: 5, left: 20),
                       child: TextFormField(
-                        validator: (_) => coord==null  ? 'Please Mark a Location': null,
+                        validator: (_) => coord==null  ? 'Please Mark a Location': null,            //If not entered anything then message to input the value
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',
+                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',   
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -206,7 +202,7 @@ class AddEventState extends State<AddEvent> {
                         ),
                       )
                 ),
-                Container(
+                Container(                                                          //Location icon to direct to the location page
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -222,14 +218,14 @@ class AddEventState extends State<AddEvent> {
                       icon: Icon(Icons.add_location,
                       color: Colors.white,),
                       onPressed: () {
-                        getCoordinates();
+                        getCoordinates();       //Function that enables the coordinates from the map drawn 
                       },
                     ),
                   ),
                 )
               ],),
             ),
-            Container(
+            Container(                                    //User handling message to make it user friendly as only those users can rate the event if they near 200 m of the event location 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding: EdgeInsets.only(top: 0, left: 20), 
               child: RichText(
@@ -240,7 +236,7 @@ class AddEventState extends State<AddEvent> {
                 )
               ),
             ),
-            Container(
+            Container(                                                    //Next field used to input the value of the number of vendors at that particular event 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding:EdgeInsets.only( top: 0, left: 20, right: 20),
               child: Column(
@@ -261,7 +257,7 @@ class AddEventState extends State<AddEvent> {
                 ],
               )
             ),
-            Container(
+            Container(                                                          //Next field to incorporate the ask the user to upload the image of the event 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
@@ -272,7 +268,7 @@ class AddEventState extends State<AddEvent> {
                         validator: (_) => logo==null || logo =='' ? 'Please enter a valid image': null,
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: logo==null? 'Upload Logo Photo': 'Image Uploaded',
+                          hintText: logo==null? 'Upload Logo Photo': 'Image Uploaded',        //Displaying user friendly messages so that the user knows whats happening each time in our app
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -282,7 +278,7 @@ class AddEventState extends State<AddEvent> {
                     
                   
                 ),
-                Container(
+                Container(                                                    //Next button for uploading the image once you click on it  
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -308,7 +304,7 @@ class AddEventState extends State<AddEvent> {
                         setState(() {
                           //error1=true; 
                         });
-                        showDialog(
+                        showDialog(                             //Alert box to show the user once the image has been uploaded
                           context: context,
                           builder: (_) => AlertDialog(
                             title: Text("Image Uploaded"),
@@ -322,7 +318,7 @@ class AddEventState extends State<AddEvent> {
               ],),
             ),
             
-            Container(
+            Container(                              //Message to tell the user about the submission requirements of images 
               child: error1? Container() : Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.90,
                   padding: EdgeInsets.only(top: 0, left: 20), 
@@ -336,7 +332,7 @@ class AddEventState extends State<AddEvent> {
                 ),
             ),
 
-            Container(
+            Container(                                        //Uploading the image of the vendor that would be displayed on the homepage 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
@@ -354,7 +350,7 @@ class AddEventState extends State<AddEvent> {
                     ),
                   )
                 ),
-                Container(
+                Container(                                                    //The photo upload button to send image
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -376,7 +372,7 @@ class AddEventState extends State<AddEvent> {
                         await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
                         downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
                         photo=downloadUrl;
-                        showDialog(
+                        showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
                             title: Text("Image Uploaded"),
@@ -393,7 +389,7 @@ class AddEventState extends State<AddEvent> {
               ],),
             ),
 
-            Container(
+            Container(                              //Error message to inform the user about the requirements of the images
               child: error2? Container() : Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.90,
                   padding: EdgeInsets.only(top: 0, left: 20), 
@@ -406,7 +402,7 @@ class AddEventState extends State<AddEvent> {
                 ),
             ),
             
-              SafeArea(
+              SafeArea(                                   //Displaying if there is any error when fetching from firebase
               child: err== null ? Container() : Container(
                 
                 padding:EdgeInsets.only( top: 5), 
@@ -428,43 +424,42 @@ class AddEventState extends State<AddEvent> {
               padding: EdgeInsets.all(15),
             ),
             Center(child: Container(
-                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-                  width:60,
-                  height:60,
-                  child: Ink(
-                    width:60,
-                    height:60,
-                    decoration:  ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: null,
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                      ),
-                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                    ),
-                    child: IconButton(
-                      alignment: Alignment.center,
-                      icon: Icon(Icons.arrow_forward,
-                      size: 45,
-                      color: Colors.white,),
-                      onPressed: () async {
-                        setState(() => validate=true);
-                        if(coord!=null){
-                          GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                          String eventid; 
-                          var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
-                          if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
-                            await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
-                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
-                            }).catchError((e){err=e.toString();});
-                            Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
-                          }
-                      }
-                      },
-                    ),
+              width:60,
+              height:60,
+              child: Ink(
+                width:60,
+                height:60,
+                decoration:  ShapeDecoration(               
+                  shape: CircleBorder(),
+                  color: null,
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]    //Gradient colour combination and filling
                   ),
+                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                ),
+                child: IconButton(
+                  alignment: Alignment.center,
+                  icon: Icon(Icons.arrow_forward,
+                  size: 45,
+                  color: Colors.white,),
+                  onPressed: () async {
+                    setState(() => validate=true);
+                    if(coord!=null){                      //Moving forward only when the map coordinates have been defined
+                      GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                      String eventid; 
+                      var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
+                      if ( !(name==null || logo==null || photo==null || eventNumber==null) ){   //Adding values only when all validatation conditions have been fulfilled 
+                        await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
+                            await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
+                        }).catchError((e){err=e.toString();});
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
+                      }
+                    }
+                  },
+                ),
+              ),
             ),),
           ],
           )  
@@ -609,35 +604,7 @@ class EventMenuState extends State<EventMenu> {
               
             ),
 
-            // Container(
-            //     child: InkWell(
-            //       onTap: (){
-            //         Navigator.push(context,MaterialPageRoute(builder: (context)=> Comprehensive(eid:eid,eventName:eventName)),);
-            //       },
-            //       child: Container(
-            //         height: 50,
-            //         width: 350,
-                    
-            //         decoration: BoxDecoration(
-            //           gradient: LinearGradient(
-            //             begin: Alignment.topRight,
-            //             end: Alignment.topLeft,
-            //             colors: [ 
-            //               Color(0xFFAC0D57),
-            //               Color(0xFFFC4A1F),
-            //             ]
-            //           ),
-            //           borderRadius: BorderRadius.circular(50),
-            //         ),
-            //         padding: EdgeInsets.only(top: 15, left: 40), 
-            //         child: Text("Generate Comprehensive Report",style: TextStyle(color: Colors.white, fontSize: 18 ))
-            //       ),
-
-            //     ),
-              
-            // ),
-
-            
+       
             SafeArea(
                 child: InkWell(
                   onTap: () async{
@@ -727,8 +694,7 @@ class EventMenuState extends State<EventMenu> {
                           ],
                         ); 
                       },
-                    );
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
+                    );  
                   },
                   child: SafeArea(
                   child: Container(
