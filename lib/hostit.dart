@@ -1488,11 +1488,9 @@ class AddVendorState extends State<AddVendor> {
   List<String> name = [];
   List<String> email = new List<String>(), stallid = new List<String>(),logo = new List<String>();
   List<int> item = new List<int>();
-  bool value=false; 
-  //var logo, mlogo;  
-  bool check=false; 
-  var nu; 
-  var n= int.parse(number); 
+  bool value=false;   
+  bool check=false;  
+  var n; 
   List<Widget> menu=[], menu2=[]; 
   int count=2; 
   //taking the data for each vendor
@@ -2579,14 +2577,12 @@ class EditVenState extends State<EditVen> {
   Vendor vendorData;
   String eventName;
   EditVenState({this.eventName,this.vendorData});
-  bool value=false;
   bool check=false; 
   bool validate=false; 
   String err;
 
 
 
-  var n=int.parse(number); 
   List<Widget> menu=[], menu2=[];   
   int count=1; 
  
@@ -2595,6 +2591,8 @@ class EditVenState extends State<EditVen> {
   @override
   void initState() {
     super.initState();
+    if(eventName==null)
+    print('adsdsaaaaaaa');
     myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
@@ -2682,7 +2680,7 @@ class EditVenState extends State<EditVen> {
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22
-                          ),
+                        ),
                       ),
                     ]
                   )
@@ -2844,7 +2842,7 @@ class EditVenState extends State<EditVen> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
-                  validator: (input)=> input.isEmpty? 'Please enter a number': null,  //validating whether input has been taken or not
+                  //validator: (input)=> input.isEmpty? 'Please enter a number': null,  //validating whether input has been taken or not
                   onChanged: (input) {
                     //print(input);
                     item=int.parse(input);
@@ -2933,7 +2931,7 @@ class EditVenState extends State<EditVen> {
                   color: Colors.white,),
                   onPressed: () async { //updating the vendor details in the firestore cloud
                     setState(() => validate=true);
-                    if ( !(name=="" || email==""|| stallid==0|| logo=="" || item==0|| name==null || email==null || logo==null ) ){
+                    if ( !(name=="" || email==""|| stallid==null|| logo=="" || name==null || email==null || logo==null ) ){
                       await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
                         await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendorData.vendorId).getDocuments().then((val) async{
                             val.documents.forEach((doc) async {
@@ -2942,6 +2940,8 @@ class EditVenState extends State<EditVen> {
                         }).catchError((e){err=e.toString();});
                       }).catchError((e){err=e.toString();});
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewMenu(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                    } else {
+                      print('error'+logo);
                     }
                   }
                 ),
