@@ -25,8 +25,8 @@ import 'item.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
-//import 'package:pdf/pdf.dart';
-//import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 //import 'package:barcode_image/barcode_image.dart';
 import 'package:barcode/barcode.dart';
 import 'package:barcode_widget/barcode_widget.dart';
@@ -35,7 +35,8 @@ import 'package:path_provider/path_provider.dart';
 //import 'package:image/image.dart';
 import 'userRedirection.dart';
 import 'login.dart';
-
+import 'package:permission_handler/permission_handler.dart';
+import 'package:file_utils/file_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'rateit.dart';
 
@@ -999,54 +1000,41 @@ class EventMenuState extends State<EventMenu> {
             SafeArea(
                 child: InkWell(
                   onTap: () async{
-                    print('ad');
-
-                            var qr = Barcode.qrCode().toSvg('Hello World');//.make('Hello World', width: 400, height: 400);
-                            var output = await getExternalStorageDirectories(type: StorageDirectory.downloads);
-                            print(output[0].path);
-                            //var file = File("${output[0].path}/example.pdf");
-                            await File("${output[0].path}/example.svg").writeAsString(qr);
-                            //await file.writeAsBytes(qr);
-                            print('ad');
-                            var pdf = pw.Document();
-                              var image = PdfImage.file(
-                              pdf.document,
-                              bytes: File("${output[0].path}/barcode.png").readAsBytesSync(),
-                            );
-                    
-                    //File('test.png').writeAsBytesSync(encodePng(image));
-  // Fill it with a solid color (white)
-//                     pdf.addPage(pw.Page(
-//                           pageFormat: PdfPageFormat.a4,
-//                           build: (pw.Context context) {
-//                             return pw.Column(children: <pw.Widget>[ 
-//                               pw.Center(
-//                                 child: pw.Text("Hello World"),
-//                               ),
-//                               pw.Center(
-//                                 child: pw.Image(image),
-//                               ),
-//                             ],); // Center
-//                           }));
-
-//                           final file = File("${output[0].path}/example.pdf");
-// await file.writeAsBytes(pdf.save());
-                    // return await showDialog(
-                    //   context: context,
-                    //   builder: (BuildContext context){
-                    //     return AlertDialog(
-                    //       title: Text("Success!"),
-                    //       actions: <Widget>[
-                    //         Center(
-                    //           child: FlatButton(
-                    //             onPressed: ()=>Navigator.of(context).pop(false),
-                    //             child: Text("ok"),
-                    //           )
-                    //         )
-                    //       ],
-                    //     ); 
-                    //   },
-                    // );
+                     String basePath='/storage/emulated/0/Download/RateIt!/';
+                    //Per
+                    await Permission.storage.request();
+                    if(await Permission.storage.isGranted){
+                      if( !(await Directory(basePath).exists()) ){ 
+                        await Directory(basePath).create(recursive: true);
+                      }
+                      if( !(await Directory(basePath+'${eventName}_$eid/').exists()) ){ 
+                        await Directory(basePath+'${eventName}_$eid/').create(recursive: true);
+                      }
+                      //promise for loop
+                      await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
+                        val.documents.forEach((doc) async {
+                          var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
+                          await File(basePath+"$eventName/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
+                        });
+                      }).catchError((e){err=e.toString();});
+                      showDialog(                 //User friendly error message when the screen has been displayed 
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                          content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
+                        ),
+                        barrierDismissible: true,
+                      );
+                    } else{
+                      showDialog(                 //User friendly error message when the screen has been displayed 
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text("Error: Please Enable Storage Permission",textAlign: TextAlign.center),
+                          content: Icon(Icons.highlight_off,color:Colors.red[300],size:80),
+                        ),
+                        barrierDismissible: true,
+                      );
+                    }
                   },
 
                   child: SafeArea(
@@ -1076,51 +1064,51 @@ class EventMenuState extends State<EventMenu> {
               
             ),
 
-            SafeArea(
-                child: InkWell(
-                  onTap: ()async{
-                    return await showDialog(
-                      context: context,
-                      builder: (BuildContext context){
-                        return AlertDialog(
-                          title: Text("Success!"),
-                          actions: <Widget>[
-                            Center(
-                              child: FlatButton(
-                                onPressed: ()=>Navigator.of(context).pop(false),
-                                child: Text("ok"),
-                              )
-                            )
-                          ],
-                        ); 
-                      },
-                    );  
-                  },
-                  child: SafeArea(
-                  child: Container(
-                  padding: EdgeInsets.only(top: 20), 
-                  child: Container(
-                    height: 50,
-                    width: 350,
+            // SafeArea(
+            //     child: InkWell(
+            //       onTap: ()async{
+            //         return await showDialog(
+            //           context: context,
+            //           builder: (BuildContext context){
+            //             return AlertDialog(
+            //               title: Text("Success!"),
+            //               actions: <Widget>[
+            //                 Center(
+            //                   child: FlatButton(
+            //                     onPressed: ()=>Navigator.of(context).pop(false),
+            //                     child: Text("ok"),
+            //                   )
+            //                 )
+            //               ],
+            //             ); 
+            //           },
+            //         );  
+            //       },
+            //       child: SafeArea(
+            //       child: Container(
+            //       padding: EdgeInsets.only(top: 20), 
+            //       child: Container(
+            //         height: 50,
+            //         width: 350,
                     
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: EdgeInsets.only(top: 15, left: 115), 
-                    child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),),),
+            //         decoration: BoxDecoration(
+            //           gradient: LinearGradient(
+            //             begin: Alignment.topRight,
+            //             end: Alignment.topLeft,
+            //             colors: [ 
+            //               Color(0xFFAC0D57),
+            //               Color(0xFFFC4A1F),
+            //             ]
+            //           ),
+            //           borderRadius: BorderRadius.circular(50),
+            //         ),
+            //         padding: EdgeInsets.only(top: 15, left: 115), 
+            //         child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
+            //       ),),),
 
-                ),
+            //     ),
               
-            ),
+            // ),
 
             SafeArea(
                 child: InkWell(
@@ -3501,8 +3489,43 @@ class QRselectionState extends State<QRselection> {
                                 String inviteCode;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
+                                }).catchError((e){err=e.toString();});                                
+                              String basePath='/storage/emulated/0/Download/RateIt!/';
+                              //Per
+                              await Permission.storage.request();
+                              if(await Permission.storage.isGranted){
+                                if( !(await Directory(basePath).exists()) ){ 
+                                  await Directory(basePath).create(recursive: true);
+                                }
+                                if( !(await Directory(basePath+'${eventName}_$eid/').exists()) ){ 
+                                  await Directory(basePath+'${eventName}_$eid/').create(recursive: true);
+                                }
+                                //promise for loop
+                                await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
+                                  val.documents.forEach((doc) async {
+                                    var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
+                                    await File(basePath+"$eventName/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
+                                  });
                                 }).catchError((e){err=e.toString();});
+                                showDialog(                 //User friendly error message when the screen has been displayed 
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                                    content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
+                                  ),
+                                  barrierDismissible: true,
+                                );
                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
+                              } else{
+                                showDialog(                 //User friendly error message when the screen has been displayed 
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Error: Please Enable Storage Permission",textAlign: TextAlign.center),
+                                    content: Icon(Icons.highlight_off,color:Colors.red[300],size:80),
+                                  ),
+                                  barrierDismissible: true,
+                                );
+                              }
                               },
                               child: Container(
                                 width: 250.0,
@@ -3533,47 +3556,47 @@ class QRselectionState extends State<QRselection> {
                             )
                           ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(25.0),
-                        child: 
-                          Container(
-                            child: GestureDetector(
-                              onTap: ()async{
-                                String inviteCode;
-                                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
-                                  inviteCode=val.data['invitecode'];
-                                }).catchError((e){err=e.toString();});
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
-                              },
-                              child: Container(
-                                width: 250.0,
-                                height: 120.0,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft,
-                                    colors: [ 
-                                      Color(0xFFAC0D57),
-                                      Color(0xFFFC4A1F),
-                                    ]
-                                  ),
-                                  boxShadow: const[BoxShadow(blurRadius: 10),],
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                padding: EdgeInsets.all(12.0),
-                                child:Center(
-                                  child: 
-                                    Text('Email QR Codes',
-                                      style: TextStyle(
-                                        color: Colors.white, 
-                                        fontSize: 22
-                                      ) 
-                                    ),
-                                ),
-                              ),
-                            )
-                          ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.all(25.0),
+                      //   child: 
+                      //     Container(
+                      //       child: GestureDetector(
+                      //         onTap: ()async{
+                      //           String inviteCode;
+                      //           await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                      //             inviteCode=val.data['invitecode'];
+                      //           }).catchError((e){err=e.toString();});
+                      //           Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
+                      //         },
+                      //         child: Container(
+                      //           width: 250.0,
+                      //           height: 120.0,
+                      //           decoration: BoxDecoration(
+                      //             gradient: LinearGradient(
+                      //               begin: Alignment.topRight,
+                      //               end: Alignment.topLeft,
+                      //               colors: [ 
+                      //                 Color(0xFFAC0D57),
+                      //                 Color(0xFFFC4A1F),
+                      //               ]
+                      //             ),
+                      //             boxShadow: const[BoxShadow(blurRadius: 10),],
+                      //             borderRadius: BorderRadius.circular(30.0),
+                      //           ),
+                      //           padding: EdgeInsets.all(12.0),
+                      //           child:Center(
+                      //             child: 
+                      //               Text('Email QR Codes',
+                      //                 style: TextStyle(
+                      //                   color: Colors.white, 
+                      //                   fontSize: 22
+                      //                 ) 
+                      //               ),
+                      //           ),
+                      //         ),
+                      //       )
+                      //     ),
+                      // ),
 
                       SafeArea(
                       child: err== null ? Container() : Container(
