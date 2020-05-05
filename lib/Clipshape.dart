@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+//This is used for the app bars in the functions to adjust the size and design of the top bar 
 
 
 class ClipShape extends CustomClipper<Path>{
