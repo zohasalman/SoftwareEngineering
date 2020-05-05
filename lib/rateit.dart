@@ -14,7 +14,6 @@ import 'dart:math' as math;
 import 'user.dart';
 //import 'dart:convert';
 import 'vendor-list.dart';
-import 'vendor.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'vendor.dart';
+import 'item.dart';
 import 'userRedirection.dart';
 import 'hostit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

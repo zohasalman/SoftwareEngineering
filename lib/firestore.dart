@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rateit/user.dart';
 import 'Event.dart';
-import 'vendor.dart';
 import 'user.dart';
 import 'item.dart';
 import 'my-rating.dart';
