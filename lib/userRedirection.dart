@@ -6,7 +6,6 @@ import 'package:rateit/vendorlist-hostit.dart';
 import 'firestore.dart';
 import 'hostit.dart';
 import 'Event.dart';
-import 'hostit_first.dart';
 import 'login.dart';
 import 'rateit.dart';
 import 'user.dart';
