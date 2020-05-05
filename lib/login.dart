@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 //import 'dart:math' as math;
 import 'package:rateit/auth.dart';
 //import 'VendorList.dart';
-import 'hostit.dart';
+import 'Clipshape.dart';
 import 'userRedirection.dart';
 import 'package:intl/intl.dart';
 import 'package:email_validator/email_validator.dart';
