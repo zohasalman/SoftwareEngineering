@@ -4,7 +4,6 @@ import 'package:rateit/user.dart';
 import 'Event.dart';
 import 'user.dart';
 import 'item.dart';
-import 'my-rating.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 

@@ -21,7 +21,6 @@ import 'package:dropdownfield/dropdownfield.dart';
 import 'item-list.dart';
 import 'item.dart';
 import 'edit-profile.dart';
-import 'my-rating.dart';
 import 'ratedVendor.dart';
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
