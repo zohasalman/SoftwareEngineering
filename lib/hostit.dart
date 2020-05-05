@@ -1,3 +1,4 @@
+//Import all the required libraries and the files
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +67,7 @@ class HostitHomescreen extends StatefulWidget {
   @override
   _HostitHomescreenState createState() => _HostitHomescreenState();
 }
-
+//homescreen of the hostit part of the application
 class _HostitHomescreenState extends State<HostitHomescreen> {
   var scaffoldKey=GlobalKey<ScaffoldState>();
 
@@ -102,7 +103,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
     return StreamProvider<List<Event>>.value(
       value: FirestoreService().getEventsInfo(Provider.of<User>(context, listen: false).uid.toString()),
       child: Scaffold( 
-      endDrawer: SideBar1(),
+      endDrawer: SideBar1(),          //calling the sidebar drawer widget
       key: scaffoldKey,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(150.0),
@@ -110,7 +111,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[
-              AppBar(
+              AppBar(                 //displays the design bar of the screen
                 centerTitle: true,
                 bottom: PreferredSize(
                     preferredSize: Size.fromHeight(0),
@@ -127,10 +128,10 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
                     padding: EdgeInsets.only(right: 20.0),
                     child: GestureDetector(
                       onTap: () {
-                        scaffoldKey.currentState.openEndDrawer();
+                        scaffoldKey.currentState.openEndDrawer();       //calling the enddrawer function to open the sidebar on clicking
                       },
                       child: Icon(
-                        Icons.menu,
+                        Icons.menu,       
                       ),
                     )
                   ),
@@ -164,7 +165,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Container(
-            child: Text(
+            child: Text(                //method to delete an event
               "Long Press to delete event",
               style: TextStyle(color: Colors.pink[600], fontSize: 17),
             ),
@@ -172,7 +173,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
           EventsListHostit(),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton(     //adding the floating button to navigate to the add event page
         onPressed: (){
           //add code
           Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(myUserInfo: myUserInfo, coord: null,)),);
@@ -185,7 +186,7 @@ class _HostitHomescreenState extends State<HostitHomescreen> {
 }
 
 
-
+//description and declaration of the sidebar widget
 class SideBar1 extends StatefulWidget {
   @override
   SideBar1Properties createState() => new SideBar1Properties();
@@ -193,7 +194,7 @@ class SideBar1 extends StatefulWidget {
 
 class SideBar1Properties extends State<SideBar1>{
 
-  void normalSignOut() async {
+  void normalSignOut() async {                   //function for the signout button
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
@@ -202,28 +203,28 @@ class SideBar1Properties extends State<SideBar1>{
   }
   @override
   Widget build(BuildContext context) {
-    return Drawer(
+    return Drawer(                                //the properties of the sidebar drawer
       child: new Column(
         
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
             Padding( padding: EdgeInsets.all(30),),
-            CircleAvatar(
+            CircleAvatar(                         //adding the profile image to the sidebar
               radius:70, 
               backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
             ),
-            Text(
+            Text(                                 //displaying the name on the sidebar
               myUserInfo.firstName + ' ' + myUserInfo.lastName, 
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
-            Text(
+            Text(                                 //displaying the user image on the sidebar
               myUserInfo.email, 
               style: TextStyle(fontSize: 22, color: Colors.black)
             ),
           Padding( padding: EdgeInsets.all(30),),
           Container(
-            child: GestureDetector(
+            child: GestureDetector(             //leading to the edit profile screen
               onTap: () { //Change on Integration
                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
               },
@@ -257,7 +258,7 @@ class SideBar1Properties extends State<SideBar1>{
           ),
           Padding( padding: EdgeInsets.all(20),),
           Container(
-            child: GestureDetector(
+            child: GestureDetector(             //signout from the application
               onTap:() async {await FirestoreService().normalSignOutPromise();},
              // },
               child: Container(
@@ -293,7 +294,7 @@ class SideBar1Properties extends State<SideBar1>{
     );
   }
 }
-
+//displaying the event list for the main screen of the host it application
 class EventsListHostit extends StatefulWidget {
   @override
   _EventsListStateHostIt createState() => _EventsListStateHostIt();
@@ -305,9 +306,9 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
   @override
   Widget build(BuildContext context) {
 
-    final events = Provider.of<List<Event>>(context);
+    final events = Provider.of<List<Event>>(context);//fetching the event infor for the applications
     if (events == null){
-      return LoadingScreen();
+      return LoadingScreen();                       //loading screen while the data is being fetched
     }else{
       return Expanded(
           child: 
@@ -317,11 +318,11 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
             itemCount: events.length,
             itemBuilder: (context, index) {
               return Card(
-                child: GestureDetector(
+                child: GestureDetector(               //lead to the event page 
                   onTap: () async {
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:events[index].eventID,eventName:events[index].name,inviteCode:events[index].invitecode, userInfo: myUserInfo,)),);
                   },
-                  onLongPress: ()async {
+                  onLongPress: ()async {              //prompting a dialogue box to delete the event
                     return await showDialog(
                       context: context,
                       builder: (BuildContext context){
@@ -330,7 +331,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                           content: Text("Are you sure you want to delete this vendor?"),
                           actions: <Widget>[
                             FlatButton(
-                              onPressed: () async {
+                              onPressed: () async {       //updating the direstore cloud in case of deletion
                                 await Firestore.instance.collection('Event').document(events[index].eventID).delete().then((_) async {
                                   await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: events[index].eventID).getDocuments().then((ven) async{
                                     ven.documents.forEach((vendoc) async {
@@ -359,7 +360,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                               },
                               child: Text("Delete"),
                             ),
-                            FlatButton(
+                            FlatButton(           //cancelling the deletion dialogue box
                               onPressed: ()=>Navigator.of(context).pop(false),
                               child: Text("Cancel"),
                             )
@@ -380,7 +381,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                           Align(
                             alignment: Alignment.topLeft,
                             child: Container(
-                              child: CircleAvatar(
+                              child: CircleAvatar(          //adding the event logo
                                 backgroundColor: Colors.white,
                                 radius: 18,
                                 child: ClipOval(
@@ -398,7 +399,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                               ),
                             ),
                           ),
-                          Padding(
+                          Padding(                      //displaying the event title
                             padding: EdgeInsets.only(left:10.0),
                             child: Text(
                               events[index].name,
@@ -423,7 +424,7 @@ class _EventsListStateHostIt extends State<EventsListHostit> {
                               child: Image(
                                 fit: BoxFit.fill,
                                 image: NetworkImage(
-                                  events[index].coverimage,
+                                  events[index].coverimage,       //displaying the event cover picture
                                 ),
                                 height: 200,
                                 width: 350,
@@ -860,7 +861,7 @@ class AddEventState extends State<AddEvent> {
     ); 
   }
 }
-
+//the event menu screen loaded when clicked on the event in the data
 class EventMenu extends StatefulWidget {
   final UserData userInfo;
   final String eid;
@@ -881,7 +882,7 @@ class EventMenuState extends State<EventMenu> {
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
   bool validate=false; 
-
+                                            //getting the data from the previous screen
   @override
   void initState() {
     super.initState();
@@ -899,8 +900,8 @@ class EventMenuState extends State<EventMenu> {
     return  Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),              //calling the sidebar drawer
+        appBar: PreferredSize(              //displaying the design bar of the screen
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -918,7 +919,7 @@ class EventMenuState extends State<EventMenu> {
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(          //adding the back button to the app bar to navigate to previous screen
                     icon: Icon(
                       Icons.arrow_back,
                        
@@ -929,7 +930,7 @@ class EventMenuState extends State<EventMenu> {
                   actions: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
+                      child: GestureDetector(         //adding the sidebar opening buttton
                         onTap: () {
                           scaffoldKey.currentState.openEndDrawer();
                         },
@@ -963,7 +964,7 @@ class EventMenuState extends State<EventMenu> {
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(                 //forming the screen with vendors
         key: _formKey,
         autovalidate: validate,
         child: SingleChildScrollView(
@@ -998,7 +999,7 @@ class EventMenuState extends State<EventMenu> {
 
        
             SafeArea(
-                child: InkWell(
+                child: InkWell(       //saving the data(QR code)
                   onTap: () async{
                      String basePath='/storage/emulated/0/Download/RateIt!/';
                     //Per
@@ -1056,7 +1057,7 @@ class EventMenuState extends State<EventMenu> {
                       ),
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    padding: EdgeInsets.only(top: 15, left: 90), 
+                    padding: EdgeInsets.only(top: 15, left: 90),    //the qr code downloading function 
                     child: Text("Download QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),),),
 
@@ -1112,7 +1113,7 @@ class EventMenuState extends State<EventMenu> {
 
             SafeArea(
                 child: InkWell(
-                  onTap: (){
+                  onTap: (){            //leading to add vendor page
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty(eid: eid, eventName: eventName,)),);
                   },
                   child: SafeArea(
@@ -1144,7 +1145,7 @@ class EventMenuState extends State<EventMenu> {
 
             SafeArea(
                 child: InkWell(
-                  onTap: (){
+                  onTap: (){          //leading to the vendor page to view their items
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendor(eventName: eventName,eventID: eid,)),);  
                   },
                   child: SafeArea(
@@ -1176,7 +1177,7 @@ class EventMenuState extends State<EventMenu> {
 
             SafeArea(
                 child: InkWell(
-                  onTap: () async {
+                  onTap: () async {     //getting information from the backend firestore cloud
                     
                     Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
                     await Firestore.instance.collection('Event').document(eid).get().then((value){
@@ -1184,7 +1185,7 @@ class EventMenuState extends State<EventMenu> {
                       varEvent = passEvent;
                       //varEvent.logo = value.data['userRole'];
                     }).catchError((e){err=e.toString();});
-                    if(varEvent!=null){
+                    if(varEvent!=null){         //leading to edit event page
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
                     }
                   },
@@ -1243,7 +1244,7 @@ class EventMenuState extends State<EventMenu> {
     );
   }
 }
-
+//the page for adding a specific number of events
 class AddVendorQty extends StatefulWidget {
   final String eid;
   final String eventName;
@@ -1263,7 +1264,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   List<DropdownMenuItem<String>> n=[];
-  void loadData(){
+  void loadData(){        //drop down menu for adding a specific number of vendors
     n=[];
     n.add(new DropdownMenuItem(
       child: new Text('1'),
@@ -1323,8 +1324,8 @@ class AddVendorQtyState extends State<AddVendorQty> {
     loadData(); 
     return Scaffold(
         //key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),            //calling the sidebar drawer widget
+        appBar: PreferredSize(            //displaying the design bar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -1343,7 +1344,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(          //adding the button to navigate to the previous page
                     icon: Icon(
                       Icons.arrow_back,
                       //size:24,
@@ -1380,7 +1381,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
-        child: Column(children: <Widget>[
+        child: Column(children: <Widget>[           //taking data for adding a specific number of vendors for a event
           SafeArea(
             child: Center(
               child: SafeArea(
@@ -1444,7 +1445,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
             ),
           ),
 
-          SafeArea(
+          SafeArea(               //validation that the required input has been added
               child: !(error1 && validate)? Container() : Container(
                 // print(error1),
                 // print(validate),
@@ -1465,7 +1466,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
             ),
 
          
-          SafeArea(
+          SafeArea(               //dealing with the scenario where user wants to add a custom number of vendors from the dropdown menu
             child: valSave!="Custom"? Container() : Container(
               padding:EdgeInsets.only( top: 40, left: 20, right: 20),
               child: Column(
@@ -1524,7 +1525,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
     ); 
   }
 }
-
+//add vendor screen where the details for the vendors are taken and added
 class AddVendor extends StatefulWidget {
   final int numVen;
   final String eid;
@@ -1550,6 +1551,7 @@ class AddVendorState extends State<AddVendor> {
   var n= int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
   int count=2; 
+  //taking the data for each vendor
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   void add2(i){
     menu2=List.from(menu2)..add(     
@@ -1562,7 +1564,7 @@ class AddVendorState extends State<AddVendor> {
             child: RichText(
               text: TextSpan(
                 children: <TextSpan>[
-                  TextSpan(
+                  TextSpan(                     //heading for the vendor number
                     text: "Vendor ${i+1}",
                     style: TextStyle(
                       color: Colors.black,
@@ -1595,7 +1597,7 @@ class AddVendorState extends State<AddVendor> {
                 validator: (input)=> input.isEmpty? 'Please enter a name': null,
                 onChanged: (input)=> name[i]= input,
                 decoration: InputDecoration(
-                  labelText: 'Stall Name',
+                  labelText: 'Stall Name',              //taking input for the name of the stall of the vendor
                   labelStyle: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 19
@@ -1627,7 +1629,7 @@ class AddVendorState extends State<AddVendor> {
                 validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
                 onChanged: (input)=> email[i]= input,
                 decoration: InputDecoration(
-                  labelText: 'Email ID',
+                  labelText: 'Email ID',                  //taking input of the vendor email address
                   labelStyle: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 19
@@ -1658,7 +1660,7 @@ class AddVendorState extends State<AddVendor> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a stall ID': null,
-                onChanged: (input)=> stallid[i]= input,
+                onChanged: (input)=> stallid[i]= input,                 //taking input for the stall id of the vendor
                 decoration: InputDecoration(
                   labelText: 'Stall ID',
                   labelStyle: TextStyle(
@@ -1691,7 +1693,7 @@ class AddVendorState extends State<AddVendor> {
                   child: TextFormField(
                     readOnly: true,
                     validator: (_) => logo[i]==null || logo[i] =='' ? 'Please upload a valid image': null,
-                    decoration: InputDecoration(
+                    decoration: InputDecoration(      //uploading a valid logo photo for the vendor
                       hintText: logo[i]==null ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
@@ -1715,7 +1717,7 @@ class AddVendorState extends State<AddVendor> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () async{
+                    onPressed: () async{    //uploading and extracting the URL of the picture from the firestore cloud
                       String downloadUrl;
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                       String filename='${DateTime.now()}${selected.absolute}.png';
@@ -1754,7 +1756,7 @@ class AddVendorState extends State<AddVendor> {
           padding: EdgeInsets.only(top: 0, left: 20), 
           child: RichText(
             text: TextSpan(children: <TextSpan>[
-              
+              //getting the user to add picture for vendor
               TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
             ]
             )),
@@ -1781,7 +1783,7 @@ class AddVendorState extends State<AddVendor> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                onChanged: (input)=> item[i]= int.parse(input),
+                onChanged: (input)=> item[i]= int.parse(input),     //taking input for the number of vendor menu items
                 decoration: InputDecoration(
                   labelText: 'Number of menu items', 
                   labelStyle: TextStyle(
@@ -1801,14 +1803,14 @@ class AddVendorState extends State<AddVendor> {
     });
 
   }
-
+  //testing that the data has been added to the relevant fields
   bool validate=false; 
   bool error1=false; 
 
   String err;
   @override 
   Widget build(BuildContext context){
-    
+    //building the widget for collecting the data regarding vendor details
     if (!check && numVen>0){
       Padding(padding: EdgeInsets.only(top: 15));
       for (var i=0 ; i<numVen ; i++){
@@ -1834,7 +1836,7 @@ class AddVendorState extends State<AddVendor> {
      
       resizeToAvoidBottomPadding: false,
               //key: scaffoldKey,
-        endDrawer:  SideBar(),
+        endDrawer:  SideBar(),    //Calling the sidebar drawer
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -1842,7 +1844,7 @@ class AddVendorState extends State<AddVendor> {
               fit: StackFit.expand,
               children: <Widget>[
 
-                AppBar(
+                AppBar(           //displaying the design bar of the application
                   centerTitle: true,
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(0),
@@ -1856,7 +1858,7 @@ class AddVendorState extends State<AddVendor> {
                   ),
                   leading: IconButton(
                     icon: Icon(
-                      Icons.arrow_back,
+                      Icons.arrow_back,       //adding the back button that will navigate to the precious screen
                        
                       ), 
                     onPressed: (){
@@ -1886,7 +1888,7 @@ class AddVendorState extends State<AddVendor> {
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(             //getting the details for the vendors using the functions defined above
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
@@ -1942,7 +1944,7 @@ class AddVendorState extends State<AddVendor> {
                 size: 45,
                 color: Colors.white,),
                 onPressed: () async {
-                  setState(() => validate=true);
+                  setState(() => validate=true);      //validation whether the data has been added to the required fields
                   bool check =true;
                   List<String> venId = List<String>();
                   for(var i=0; i<numVen; i++){
@@ -1952,11 +1954,12 @@ class AddVendorState extends State<AddVendor> {
                   }
                   if (check){
                     
-                    for (var i=0; i<numVen; i++){
+                    for (var i=0; i<numVen; i++){   //uploading the vendor data to the firestore
                         await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':logo[i] }).then((vid) async{
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
                         }).catchError((e){err=e.toString();});
                     }
+                    //navigating to the add menu item screen
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                   }
                 },
@@ -1977,7 +1980,7 @@ class AddVendorState extends State<AddVendor> {
   }
 }
 
-
+//making the add menu screen where details regarding menu items for each vendor will be added
 class AddMenu extends StatefulWidget {
   final String eid;
   final List<String> vid;
@@ -2016,8 +2019,8 @@ class AddMenuState extends State<AddMenu> {
           children: <Widget>[
             TextFormField(
               //keyboardType: TextInputType.number,
-              validator: (input)=> input.isEmpty? 'Please enter menu item': null,
-              onChanged: (input)=> itemname[i][j]=input,
+              validator: (input)=> input.isEmpty? 'Please enter menu item': null,     //fensuring name for the menu item is added 
+              onChanged: (input)=> itemname[i][j]=input,    //input for the menu item
               decoration: InputDecoration(
                 labelText: 'Menu Item ${j+1}',
                 labelStyle: TextStyle(
@@ -2041,7 +2044,7 @@ class AddMenuState extends State<AddMenu> {
       Container(
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
         child: Row(children: <Widget>[
-          Container(
+          Container(      //getting the image of the relevant menu item
             width: MediaQuery.of(context).copyWith().size.width * 0.75,
             padding:EdgeInsets.only( top: 5, left: 20),
             child: TextFormField(
@@ -2071,7 +2074,7 @@ class AddMenuState extends State<AddMenu> {
               child: IconButton(
                 icon: Icon(Icons.file_upload,
                 color: Colors.white,),
-                onPressed: () async{
+                onPressed: () async{      //uploading image and fetching the download URL link for storage in firebase
                   String downloadUrl;
                   File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                   String filename='${DateTime.now()}${selected.absolute}.png';
@@ -2144,8 +2147,8 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     return Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),            //calling the sidebar drawer
+        appBar: PreferredSize(            //displaying the designbar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -2164,7 +2167,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(          //adding the back button to navigate to previous page
                     icon: Icon(
                       Icons.arrow_back,
                        
@@ -2192,7 +2195,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         onTap: () {
                           scaffoldKey.currentState.openEndDrawer();
                           },
-                        child: Icon(
+                        child: Icon(                //button to open the sidebar drawer
                             Icons.menu,
                             
                         ),
@@ -2223,7 +2226,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(             //widget for getting menu items using the above functions
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
@@ -2273,7 +2276,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         }
                         if (checkNext){
                           
-                          for (var i=0; i<numVen.length; i++){
+                          for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
@@ -2281,6 +2284,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                                 }).catchError((e){err=e.toString();});
                             }
                           }
+                          //navigating to the QR image page
                           Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                         }
                     },
@@ -2294,7 +2298,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     ); 
   }
 }
-
+//updated add menu class for modified usage
 class AddMenu2 extends StatefulWidget {
   final String eid;
   final List<String> vid;
@@ -2332,8 +2336,8 @@ class AddMenu2State extends State<AddMenu2> {
           children: <Widget>[
             TextFormField(
               //keyboardType: TextInputType.number,
-              validator: (input)=> input.isEmpty? 'Please enter menu item': null,
-              onChanged: (input)=> itemname[i][j]=input,
+              validator: (input)=> input.isEmpty? 'Please enter menu item': null,     //validating whether name has been entered or not
+              onChanged: (input)=> itemname[i][j]=input,          //entering the menu item
               decoration: InputDecoration(
                 labelText: 'Menu Item ${j+1}',
                 labelStyle: TextStyle(
@@ -2352,7 +2356,7 @@ class AddMenu2State extends State<AddMenu2> {
 
   }
 
-  void addvalue2(i,j){
+  void addvalue2(i,j){    //function for getting the menu item image
     menu2=List.from(menu2)..add(
       Container(
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -2387,7 +2391,7 @@ class AddMenu2State extends State<AddMenu2> {
               child: IconButton(
                 icon: Icon(Icons.file_upload,
                 color: Colors.white,),
-                onPressed: () async {
+                onPressed: () async {       //uploading the image and fetching its download URL for later use
                   String downloadUrl;
                   File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                   String filename='${DateTime.now()}${selected.absolute}.png';
@@ -2459,8 +2463,8 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     return Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),          //calling the sidebar function
+        appBar: PreferredSize(          //displaying the design bar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -2479,7 +2483,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(        //back button to navigate to previous screen
                     icon: Icon(
                       Icons.arrow_back,
                        
@@ -2504,7 +2508,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                     Padding(
                       padding: EdgeInsets.only(right: 20.0),
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () {         //opening the sidebar drawer
                           scaffoldKey.currentState.openEndDrawer();
                           },
                         child: Icon(
@@ -2538,7 +2542,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(         //making the display for adding menu items using above defined functions
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
@@ -2586,7 +2590,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         }
                         if (checkNext){
                           
-                          for (var i=0; i<numVen.length; i++){
+                          for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
@@ -2608,7 +2612,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
   }
 }
 
-
+//the screen for editting the vendor details
 class EditVen extends StatefulWidget {
   final UserData myUser;
   final Vendor vendorData;
@@ -2643,7 +2647,7 @@ class EditVenState extends State<EditVen> {
   int count=1; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
+  //getting the required data into the screen
   @override
   void initState() {
     super.initState();
@@ -2665,7 +2669,7 @@ class EditVenState extends State<EditVen> {
       resizeToAvoidBottomPadding: false,
       //key: scaffoldKey,
       //endDrawer:  SideBar(),
-      appBar: PreferredSize(
+      appBar: PreferredSize(      //displaying the app bar of the application
         preferredSize: Size.fromHeight(150.0),
         child: ClipPath(
           child: Stack(
@@ -2721,7 +2725,7 @@ class EditVenState extends State<EditVen> {
         autovalidate: validate, 
         child: SingleChildScrollView(
         child: Column(children: <Widget>[
-          Container(
+          Container(      //displaying current details 
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             child: InkWell(
               child: new Container(
@@ -2749,8 +2753,8 @@ class EditVenState extends State<EditVen> {
               children: <Widget>[
                 TextFormField(
                   controller: dcontroller,
-                  validator: (input)=> input.isEmpty? 'Please enter vendor name': null,
-                  onChanged: (input)=> name=input,
+                  validator: (input)=> input.isEmpty? 'Please enter vendor name': null, //validating whether input has been given
+                  onChanged: (input)=> name=input,  //getting vendor name from the user
                   decoration: InputDecoration(
                     hintText: 'Stall Name',
                     suffixIcon: IconButton(
@@ -2771,7 +2775,7 @@ class EditVenState extends State<EditVen> {
             padding:EdgeInsets.only( top: 10, left: 20, right: 20),
             child: Column(
               children: <Widget>[
-                TextFormField(
+                TextFormField(//updating the email address of the vendor
                   controller: dcontroller2,
                   validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
                   onChanged: (input)=> email=input,
@@ -2790,7 +2794,7 @@ class EditVenState extends State<EditVen> {
               ],
             )
           ),
-          Container(
+          Container(        //updating the stall id of the vendor
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             padding:EdgeInsets.only( top: 10, left: 20, right: 20),
             child: Column(
@@ -2815,7 +2819,7 @@ class EditVenState extends State<EditVen> {
             )
           ),
 
-          Container(
+          Container(    //updating the imafe of the vendor
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             child: Row(children: <Widget>[
               Container(
@@ -2847,7 +2851,7 @@ class EditVenState extends State<EditVen> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () async {
+                    onPressed: () async {   //uploading the new image and fetching its download link for storage
                       String downloadUrl;
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                       String filename='${DateTime.now()}${selected.absolute}.png';
@@ -2879,7 +2883,7 @@ class EditVenState extends State<EditVen> {
           Padding(
             padding: EdgeInsets.all(5),
           ),
-          Container(
+          Container(    //updating the items of the vendors
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             padding: EdgeInsets.only(top: 0, left: 20), 
             child: RichText(
@@ -2896,7 +2900,7 @@ class EditVenState extends State<EditVen> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
-                  validator: (input)=> input.isEmpty? 'Please enter a number': null,
+                  validator: (input)=> input.isEmpty? 'Please enter a number': null,  //validating whether input has been taken or not
                   onChanged: (input) {
                     //print(input);
                     item=int.parse(input);
@@ -2927,7 +2931,7 @@ class EditVenState extends State<EditVen> {
                     icon: Icon(Icons.add,
                     color: Colors.white,),
                     onPressed: () {
-                      
+                      //leading to update menu item screen for adding more items
                       print(item);
                       if (item>0){//connect item here
                         Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
@@ -2983,7 +2987,7 @@ class EditVenState extends State<EditVen> {
                   icon: Icon(Icons.arrow_forward,
                   size: 45,
                   color: Colors.white,),
-                  onPressed: () async {
+                  onPressed: () async { //updating the vendor details in the firestore cloud
                     setState(() => validate=true);
                     if ( !(name=="" || email==""|| stallid==0|| logo=="" || item==0|| name==null || email==null || logo==null ) ){
                       await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
