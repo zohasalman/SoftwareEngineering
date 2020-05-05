@@ -862,16 +862,16 @@ class AddVendorQty extends StatefulWidget {
   AddVendorQty({this.eid,this.eventName});
 
   @override 
-  Screen41 createState()=> new Screen41(eid:eid,eventName:eventName); 
+  AddVendorQtyState createState()=> new AddVendorQtyState(eid:eid,eventName:eventName); 
 }
 
-class Screen41 extends State<AddVendorQty> {
+class AddVendorQtyState extends State<AddVendorQty> {
   final String eid;
   int numVen;
   String eventName;
   String valSave;
   String err; 
-  Screen41({this.eid,this.eventName});
+  AddVendorQtyState({this.eid,this.eventName});
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   List<DropdownMenuItem<String>> n=[];
@@ -1590,24 +1590,24 @@ class AddVendorState extends State<AddVendor> {
 }
 
 
-class Add extends StatefulWidget {
+class AddMenu extends StatefulWidget {
   final String eid;
   final List<String> vid;
   final List<int> numVen;
   final String eventName;
-  Add({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  Screen45 createState()=> new Screen45(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
+  AddMenuState createState()=> new AddMenuState(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
-class Screen45 extends State<Add> {
+class AddMenuState extends State<AddMenu> {
   String eid;
   String eventName;
   List<String> vid;
   bool validate=false; 
   List<int> numVen;
-  Screen45({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenuState({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
@@ -1907,24 +1907,24 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
   }
 }
 
-class AddItem2 extends StatefulWidget {
+class AddMenu2 extends StatefulWidget {
   final String eid;
   final List<String> vid;
   final List<int> numVen;
   final String eventName;
-  AddItem2({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu2({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  AddItem2State createState()=> new AddItem2State(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
+  AddMenu2State createState()=> new AddMenu2State(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
-class AddItem2State extends State<AddItem2> {
+class AddMenu2State extends State<AddMenu2> {
   String eid;
   String eventName;
   List<String> vid;
   List<int> numVen;
   bool validate=false; 
-  AddItem2State({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu2State({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
@@ -3012,175 +3012,19 @@ class EditEventState extends State<EditEvent> {
   }
 }
 
-
-// class Comprehensive extends StatefulWidget {
-//   final String eid;
-//   final String eventName;
-//   Comprehensive({this.eid,this.eventName});
-//   @override 
-//   ComprehensiveReport createState()=> new ComprehensiveReport(eid:eid,eventName: eventName); 
-// }
-
-
-// class ComprehensiveReport extends State<Comprehensive> {
-//   String eventName;
-//   String eid;
-//   ComprehensiveReport({this.eid,this.eventName});
-//   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
-
-
-//   @override 
-//   Widget build(BuildContext context){
-//     return Scaffold(
-//       resizeToAvoidBottomPadding: false,
-//         //key: scaffoldKey,
-//         appBar: PreferredSize(
-//           preferredSize: Size.fromHeight(150.0),
-//           child: ClipPath(
-//             child: Stack(
-//               fit: StackFit.expand,
-//               children: <Widget>[
-//                 AppBar(
-//                   centerTitle: true,
-//                   bottom: PreferredSize(
-//                     preferredSize: Size.fromHeight(0),
-//                     child: Align(
-//                       alignment: Alignment.topLeft,
-//                       child: Padding(
-//                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
-//                         child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
-//                         ),
-//                     )
-//                   ),
-//                   flexibleSpace: Container(
-//                   decoration: BoxDecoration(
-//                     gradient: LinearGradient(
-//                         begin: Alignment.topRight,
-//                         end: Alignment.topLeft,
-//                         colors: [ 
-//                           Color(0xFFAC0D57),
-//                           Color(0xFFFC4A1F),
-//                         ]
-//                     ),
-//                       image: DecorationImage(
-//                         image: AssetImage(
-//                           "asset/image/Chat.png",
-//                         ),
-//                         fit: BoxFit.fitWidth,
-//                     ),
-//                   )
-//                 ),
-//                 )
-//               ],
-//             ),
-//             clipper: ClipShape(),
-//           )
-//         ),
-//       body: Form(
-//         key: _formKey,
-//         child: Column(children: <Widget>[
-//           Container (
-//             child: Container(
-//               height: 200,
-//               width: 200,
-//               child:Icon(Icons.check_circle_outline,color: Colors.green[300],size: 200,), 
-//             ),
-//           ),
-
-//           //Container(
-//             //width: MediaQuery.of(context).copyWith().size.width * 0.96,
-//             //child:
-//             Row( 
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 children: <Widget>[
-//                   Spacer(),
-//                   Container(
-//                     height: 50,
-//                     width: 50,
-//                     child:Icon(Icons.mail_outline,color: Colors.black,size: 50,),  
-//                   ),
-//                   Padding(padding: EdgeInsets.all(10)),
-//                   Container(
-//                     child: RichText(
-//                       text: TextSpan(children: <TextSpan>[
-//                         TextSpan(text: "Email Sent",style: TextStyle(color: Colors.black, fontSize: 30)),
-//                       ]),
-//                     ),
-//                   ),
-//                   Spacer(),
-//                 ]
-//               ),
-//             //),
-//           //),
-//           Center(
-//               child: Container(
-//                 width: MediaQuery.of(context).copyWith().size.width * 0.96,
-//                 //padding: EdgeInsets.only(top: 0, left: 20), 
-//                 child: RichText(
-//                   textAlign: TextAlign.center,
-//                   text: TextSpan(children: <TextSpan>[
-//                     TextSpan(text: "A comprehensive report has been successfully emailed to you.\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-//                     TextSpan(text: " Questions?\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-//                     TextSpan(text: " Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
-//                     TextSpan(text: "help.rateit@gmail.com ",style: TextStyle(color: Colors.pink[800], fontSize: 17))
-//                   ]
-//                   )),
-
-//               ),
-//           ),
-//           Padding(padding: EdgeInsets.all(10),),
-//           Container(
-//             child: InkWell(
-//               onTap: ()async{
-//                 String inviteCode;//,err;
-//                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
-//                   inviteCode=val.data['invitecode'];
-//                 }).catchError((e){err=e.toString();});
-//                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
-//               },
-//               child: Center(
-//                 child:Container(
-//                 height: 50,
-//                 width: 250,
-//                 decoration: BoxDecoration(
-//                   gradient: LinearGradient(
-//                     begin: Alignment.topRight,
-//                     end: Alignment.topLeft,
-//                     colors: [ 
-//                       Color(0xFFAC0D57),
-//                       Color(0xFFFC4A1F),
-//                     ]
-//                   ),
-//                   borderRadius: BorderRadius.circular(30),
-//                 ), 
-//                 child: Center(
-//                   child:Text("Done",style: TextStyle(color: Colors.white, fontSize: 22 ))
-//                 ),
-//               ),),
-//             ),
-//           ),
-//         ],),  
-//       ),
-//     ); 
-//   }
-// }
-
-
-
 class QRselection extends StatefulWidget {
   final String eid;
   final String eventName;
   QRselection({this.eid,this.eventName});
 
   @override
-  ScreenQRselect createState() => new ScreenQRselect(eid:eid,eventName:eventName);
+  QRselectionState createState() => new QRselectionState(eid:eid,eventName:eventName);
 }
 
-class ScreenQRselect extends State<QRselection> {
+class QRselectionState extends State<QRselection> {
   String eid,eventName;
   String err; 
-  ScreenQRselect({this.eid,this.eventName});
+  QRselectionState({this.eid,this.eventName});
   
   @override
   Widget build(BuildContext context) {
@@ -3432,32 +3276,7 @@ class MapsFunc extends State<Maps> {
                       //Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                     }
                   ),
-                  // actions: <Widget>[
-                  //   IconButton(
-                  //     onPressed: () {                     
-                  //       showSearch(
-                  //           context: context,
-                  //           delegate: MapSearchBar(),
-                  //       );
-                  //     },
-                  //     icon: Icon(
-                  //       Icons.search,
-                      
-                  //     )
-                  //     ),
-                  //   Padding(
-                  //     padding: EdgeInsets.only(right: 20.0),
-                  //     child: GestureDetector(
-                  //       onTap: () {
-                  //         scaffoldKey.currentState.openEndDrawer();
-                  //         },
-                  //       child: Icon(
-                  //           Icons.menu,
-                          
-                  //       ),
-                  //     )
-                  //   ),
-                  //],
+              
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3515,77 +3334,77 @@ class MapsFunc extends State<Maps> {
   }
 }
 
-class MapSearchBar extends SearchDelegate<String>  {
+// class MapSearchBar extends SearchDelegate<String>  {
 
-   List<String> _list = const [
-      'Igor Minar',
-      'Brad Green',
-      'Dave Geddes',
-      'Naomi Black',
-      'Greg Weber',
-      'Dean Sofer',
-      'Wes Alvaro',
-      'John Scott',
-      'Daniel Nadasi',
-  ];
+//    List<String> _list = const [
+//       'Igor Minar',
+//       'Brad Green',
+//       'Dave Geddes',
+//       'Naomi Black',
+//       'Greg Weber',
+//       'Dean Sofer',
+//       'Wes Alvaro',
+//       'John Scott',
+//       'Daniel Nadasi',
+//   ];
 
-  @override
-  String get searchFieldLabel => super.searchFieldLabel;
-  @override
-  ThemeData appBarTheme(BuildContext context){
-    assert(context != null);
-    final ThemeData theme = Theme.of(context);
-    assert(theme != null);
-    return theme.copyWith(
-      primaryColorDark: Colors.white,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
-      primaryColorBrightness: Brightness.light,
-      primaryTextTheme: theme.textTheme,
-    );
-  }
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      GestureDetector(
-        onTap: () {query='';},
-        child: Padding(
-        padding: EdgeInsets.only(right: 20.0),
-        child:  Icon(
-            Icons.clear,
-            size: 20,
-          ),
-        ),
-    ),
-    ];
-  }
+//   @override
+//   String get searchFieldLabel => super.searchFieldLabel;
+//   @override
+//   ThemeData appBarTheme(BuildContext context){
+//     assert(context != null);
+//     final ThemeData theme = Theme.of(context);
+//     assert(theme != null);
+//     return theme.copyWith(
+//       primaryColorDark: Colors.white,
+//       primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
+//       primaryColorBrightness: Brightness.light,
+//       primaryTextTheme: theme.textTheme,
+//     );
+//   }
+//   @override
+//   List<Widget> buildActions(BuildContext context) {
+//     return [
+//       GestureDetector(
+//         onTap: () {query='';},
+//         child: Padding(
+//         padding: EdgeInsets.only(right: 20.0),
+//         child:  Icon(
+//             Icons.clear,
+//             size: 20,
+//           ),
+//         ),
+//     ),
+//     ];
+//   }
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: new Icon(Icons.arrow_back_ios),
-      onPressed:()=>Navigator.pop(context),
-    );
+//   @override
+//   Widget buildLeading(BuildContext context) {
+//     return IconButton(
+//       icon: new Icon(Icons.arrow_back_ios),
+//       onPressed:()=>Navigator.pop(context),
+//     );
       
-  }
+//   }
 
-  @override
-  Widget buildResults(BuildContext context) {
-    return Text("Hi");
-  }
+//   @override
+//   Widget buildResults(BuildContext context) {
+//     return Text("Hi");
+//   }
 
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(10),
-      itemCount: 5,
-      itemBuilder: (context,index) {
-        return ListTile(
-            title: Text(_list[index]),
-        );
-      },
-    );
-  }
-}
+//   @override
+//   Widget buildSuggestions(BuildContext context) {
+//     return ListView.builder(
+//       padding: EdgeInsets.all(10),
+//       itemCount: 5,
+//       itemBuilder: (context,index) {
+//         return ListTile(
+//             title: Text(_list[index]),
+//         );
+//       },
+//     );
+//   }
+// }
 
 class SideBar extends StatefulWidget {
   @override
@@ -3746,19 +3565,19 @@ class SideBarProperties extends State<SideBar>{
 }
 
 
-class ViewVendorHostIt extends StatefulWidget {
-  ViewVendorHostIt({this.eventName, this.eventID});
+class ViewVendor extends StatefulWidget {
+  ViewVendor({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
 
   @override
   State<StatefulWidget> createState() {
-    return _ViewVendorHostIt(eventName: eventName,eventID: eventID);
+    return ViewVendorState(eventName: eventName,eventID: eventID);
   }
 }
 
-class _ViewVendorHostIt extends State<ViewVendorHostIt> {
-  _ViewVendorHostIt({this.eventName, this.eventID});
+class ViewVendorState extends State<ViewVendor> {
+  ViewVendorState({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
   String result;
@@ -3837,20 +3656,20 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
 }
 
 
-class ViewItemHostIt extends StatefulWidget {
-  ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+class ViewMenu extends StatefulWidget {
+  ViewMenu({this.vendorID,this.eventName, this.eventID});
   final String eventName;
   final String eventID;
   final String vendorID;
 
   @override
   State<StatefulWidget> createState() {
-    return _ViewItemHostIt(eventName: eventName,eventID: eventID,vendorID: vendorID,);
+    return ViewMenuState(eventName: eventName,eventID: eventID,vendorID: vendorID,);
   }
 }
 
-class _ViewItemHostIt extends State<ViewItemHostIt> {
-  _ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+class ViewMenuState extends State<ViewMenu> {
+  ViewMenuState({this.vendorID,this.eventName, this.eventID});
   String eventName;
   String eventID;
   String vendorID;
