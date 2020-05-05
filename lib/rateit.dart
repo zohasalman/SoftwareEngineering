@@ -508,119 +508,6 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {
   }
 }
 
-// idk why this screen.
-// class _RateItSecondScreen extends StatefulWidget {
-
-//   _RateItSecondScreen({this.eventName});
-//   final String eventName;
-
-//   @override
-//   State<StatefulWidget> createState() {
-//     return RateItSecondScreen();
-//   }
-// }
-
-// class RateItSecondScreen extends State<_RateItSecondScreen> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         resizeToAvoidBottomPadding: false,
-//         body: Container(
-//             decoration: BoxDecoration(),
-//             child: Column(
-//               children: <Widget>[
-//                 Container(
-//                   child: Transform.scale(
-//                     scale: 1.5,
-//                     child: Transform.rotate(
-//                       angle: -math.pi / 18,
-//                       child: Transform.translate(
-//                         offset: Offset(0, -60),
-//                         child: Container(
-//                           height: 175,
-//                           width: 2000,
-//                           decoration: BoxDecoration(
-//                             gradient: LinearGradient(
-//                                 begin: Alignment.topRight,
-//                                 end: Alignment.topLeft,
-//                                 colors: [
-//                                   Color(0xFFAC0D57),
-//                                   Color(0xFFFC4A1F),
-//                                 ]),
-//                             image: DecorationImage(
-//                                 image: AssetImage("asset/image/Chat.png")),
-//                           ),
-//                           child: Transform.translate(
-//                             offset: Offset(0, 60),
-//                             child: Transform.rotate(
-//                                 angle: math.pi / 18,
-//                                 child: Stack(
-//                                   children: <Widget>[
-//                                     Positioned(
-//                                       child: Container(
-//                                           child: Padding(
-//                                               padding: EdgeInsets.only(
-//                                                   bottom: 50,
-//                                                   top: 78,
-//                                                   left: 80,
-//                                                   right: 80),
-//                                               child: Text('${widget.eventName}',
-//                                                   style: TextStyle(
-//                                                       color: Colors.white,
-//                                                       fontSize: 22)))),
-//                                     ),
-//                                   ],
-//                                 )),
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   child: Transform.translate(
-//                     offset: Offset(180, -140),
-//                     child: Container(
-//                       height: 50,
-//                       width: 250,
-//                       decoration: BoxDecoration(
-//                         image: DecorationImage(
-//                             image: AssetImage("asset/image/menu.png")),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   child: Transform.translate(
-//                     offset: Offset(180, -140),
-//                     child: Container(
-//                       height: 50,
-//                       width: 250,
-//                       decoration: BoxDecoration(
-//                         image: DecorationImage(
-//                             image: AssetImage("asset/image/search.png")),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(
-//                   child: Transform.translate(
-//                     offset: Offset(140, 250),
-//                     child: Container(
-//                       height: 250,
-//                       width: 250,
-//                       decoration: BoxDecoration(
-//                         image: DecorationImage(
-//                             image: AssetImage("asset/image/camera.png")),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             )));
-//   }
-// }
-
 class Clipshape extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -662,7 +549,6 @@ class _EditProfile extends State<EditProfile> {
   File _image;
   bool error1 = true, error2 = true;
   bool check = true;
- 
 
   String _firstName, _lastName, _email, _password, _gender, _profilePicture;
   DateTime _dateOfBirth;
@@ -871,271 +757,241 @@ class _EditProfile extends State<EditProfile> {
             endDrawer: SideBar2(),
             body: Form(
               autovalidate: validate,
-              child: ListView(
-                  //crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Card(
-                      child: ListTile(
-                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
-                          title: Row(children: <Widget>[
-                            Expanded(
-                                child: TextFormField(
-                              controller: editfirstname,
-                              validator: (val) 
-                              {
-                                if (val.isEmpty)
-                                {
-                                  val = myUserInfo.firstName;
-                                }
-                                else
-                                {
-                                  _firstName = val.trim();
-                                }
-                              },
-                              onChanged: (val) {
-                                if (val.isEmpty)
-                                {
-                                  myUserInfo.firstName = myUserInfo.firstName;
-                                }
-                                else
-                                {
-                                _firstName = val.trim();
-                                }
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Edit First Name',
-                                hintText: myUserInfo.firstName,
-                                labelStyle: TextStyle(
-                                    fontSize: 15, color: Colors.black),
-                              ),
-                            ))
-                          ]),
-                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                          onTap: () {}),
-                    ),
-                    Card(
-                      child: ListTile(
-                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
-                          title: TextFormField(
-                            controller: editlastname,
-                             onChanged: (val)
-                            {
-                                if (val.isEmpty)
-                                {
-                                  myUserInfo.lastName = myUserInfo.lastName;
-                                }
-                                else
-                                {
-                                _lastName = val.trim();
-                                }
-                              },
-                            decoration: InputDecoration(
-                              labelText: 'Edit Last Name',
-                              hintText: myUserInfo.lastName,
-                              labelStyle:
-                                  TextStyle(fontSize: 15, color: Colors.black),
-                            ),
-                          ),
-                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                          onTap: () {}),
-                    ),
-                    Card(
-                      child: ListTile(
-                          leading: Icon(Icons.lock_outline,
-                              color: Color(0xFFFC4A1F)),
-                          title: TextFormField(
-                             validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
-                            controller: editpw,
-                            decoration: InputDecoration(
-                              labelText: 'Change Password',
-                              hintText: '*********',
-                              labelStyle:
-                                  TextStyle(fontSize: 15, color: Colors.black),
-                            ),
-                          ),
-                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                          onTap: () {
-                            TextField();
-                          }),
-                    ),
-                    Card(
-                        child: ListTile(
-                            leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
-                            title: TextFormField(
-                              validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
-                              controller: editemail,
-                              keyboardType: TextInputType.emailAddress,
-
-                               onChanged: (val) 
-                               {
-                                if (val.isEmpty)
-                                {
-                                  myUserInfo.email = myUserInfo.email;
-                                }
-                                else
-                                {
-                                _email = val.trim();
-                                }
-                              },
-                              decoration: InputDecoration(
-                                labelText: 'Update Email',
-                                hintText: myUserInfo.email,
-                               
-                                labelStyle: TextStyle(
-                                    fontSize: 15, color: Colors.black),
-                              ),
-                            ))),
-
-                    Card(
-                      child: ListTile(
-                        leading: Icon(Icons.calendar_today,
-                            color: Color(0xFFFC4A1F)),
-                        title: RaisedButton(
-                            color: Colors.white,
-                            child: Text(
-                                _dateTime == null
-                                    ? 'DD-MM-YYYY'
-                                    : DateFormat('dd-MM-yyyy')
-                                        .format(_dateTime),
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 18)),
-                            onPressed: () {
-                              //print('here');
-                              showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime(1950),
-                                  lastDate: DateTime.now(),
-                                  builder:
-                                      (BuildContext context, Widget child) {
-                                    return Theme(
-                                      data: ThemeData(
-                                        primarySwatch: Colors.pink,
-                                        accentColor: Colors.deepOrange,
-                                        splashColor: Colors.deepOrange,
-                                      ),
-                                      child: child,
-                                    );
-                                  }).then((date) {
-                                setState(() {
-                                  _dateTime = date;
-                                });
-                              });
+              child: ListView(children: <Widget>[
+                Card(
+                  child: ListTile(
+                      leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                      title: Row(children: <Widget>[
+                        Expanded(
+                            child: TextFormField(
+                          controller: editfirstname,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              val = myUserInfo.firstName;
+                            } else {
+                              _firstName = val.trim();
                             }
-                            // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                            // onTap: () {
-
-                            // }
-                            ),
-                      ),
-                    ),
-                    Card(
-                      child: ListTile(
-                          leading: Icon(Icons.lock_outline,
-                              color: Color(0xFFFC4A1F)),
-                          title: DropDownField(
-                              controller: genderSelected,
-                              hintText: myUserInfo.gender,
-                              enabled: true,
-                              items: genders,
-                              onValueChanged: (val) 
-                              {
-                                if (val.isEmpty)
-                                {
-                                  myUserInfo.gender = myUserInfo.gender;
-                                }
-                                else
-                                {
-                                _gender = val.trim();
-                                }
-                              },
-                              )),
-                    ),
-                    SafeArea(
-                      child: InkWell(
-                        onTap: () async {
-                          submit();
-                          setState(() {
-                            validate = true;
-                            
-                            if (!EmailValidator.validate(_email, true) || _password.length != 6)
-                            {
-                              check = false;
+                          },
+                          onChanged: (val) {
+                            if (val.isEmpty) {
+                              myUserInfo.firstName = myUserInfo.firstName;
+                            } else {
+                              _firstName = val.trim();
                             }
-                          });
-                          if (check)
-                          {
-                          return await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(
-                                    "Details have been saved successfully!"),
-                                actions: <Widget>[
-                                  Center(
-                                      child: FlatButton(
-                                    onPressed: () {
-                                          setState ( () {
-                                            _gender = genderSelected.text;
-                                           
-                                            _firstName = editfirstname.text;
-                                            myUserInfo.firstName = _firstName;
-                                            
-                                            
-                                            _lastName = editlastname.text;
-                                            myUserInfo.lastName = myUserInfo.lastName;
-                                           
-                                            
-                                            _email = editemail.text;
-                                            myUserInfo.email = _email;
-  
-                                           
-                                            _gender= genderSelected.text;
-                                            myUserInfo.gender = _gender;
-
-                                            //myUserInfo.dateOfBirth = _dateOfBirth;
-                                  
-                                        });
-                                    
-                                        print(_firstName);
-                                        print(_lastName);
-                                        print(_email);
-                                        Navigator.of(context).pop(false);
-                                        },                           
-                                    child: Text("Ok"),
-                                  ))
-                                ],
-                              );
-                            },
-                          );
-                          };
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Edit First Name',
+                            hintText: myUserInfo.firstName,
+                            labelStyle:
+                                TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                        ))
+                      ]),
+                      //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                      onTap: () {}),
+                ),
+                Card(
+                  child: ListTile(
+                      leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                      title: TextFormField(
+                        controller: editlastname,
+                        onChanged: (val) {
+                          if (val.isEmpty) {
+                            myUserInfo.lastName = myUserInfo.lastName;
+                          } else {
+                            _lastName = val.trim();
+                          }
                         },
-                        child: SafeArea(
-                          child: Container(
-                            padding: EdgeInsets.only(
-                                top: 40, right: 40.0, left: 40.0, bottom: 10.0),
-                            child: Container(
-                                height: 50,
-                                width: 350,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topRight,
-                                      end: Alignment.topLeft,
-                                      colors: [
-                                        Color(0xFFAC0D57),
-                                        Color(0xFFFC4A1F),
-                                      ]),
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                padding: EdgeInsets.only(top: 15, left: 135, bottom: 10.0),
-                                child: Text("Submit",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18))),
-                          ),
+                        decoration: InputDecoration(
+                          labelText: 'Edit Last Name',
+                          hintText: myUserInfo.lastName,
+                          labelStyle:
+                              TextStyle(fontSize: 15, color: Colors.black),
                         ),
                       ),
+                      //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                      onTap: () {}),
+                ),
+                Card(
+                  child: ListTile(
+                      leading:
+                          Icon(Icons.lock_outline, color: Color(0xFFFC4A1F)),
+                      title: TextFormField(
+                        validator: (input) => input.length < 6
+                            ? 'Please enter a password with at least 6 characters'
+                            : null,
+                        controller: editpw,
+                        decoration: InputDecoration(
+                          labelText: 'Change Password',
+                          hintText: '*********',
+                          labelStyle:
+                              TextStyle(fontSize: 15, color: Colors.black),
+                        ),
+                      ),
+                      onTap: () {
+                        TextField();
+                      }),
+                ),
+                Card(
+                    child: ListTile(
+                        leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
+                        title: TextFormField(
+                          validator: (input) =>
+                              !EmailValidator.validate(input, true)
+                                  ? 'Please enter a valid email address'
+                                  : null,
+                          controller: editemail,
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (val) {
+                            if (val.isEmpty) {
+                              myUserInfo.email = myUserInfo.email;
+                            } else {
+                              _email = val.trim();
+                            }
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Update Email',
+                            hintText: myUserInfo.email,
+                            labelStyle:
+                                TextStyle(fontSize: 15, color: Colors.black),
+                          ),
+                        ))),
+                Card(
+                  child: ListTile(
+                    leading:
+                        Icon(Icons.calendar_today, color: Color(0xFFFC4A1F)),
+                    title: RaisedButton(
+                        color: Colors.white,
+                        child: Text(
+                            _dateTime == null
+                                ? 'DD-MM-YYYY'
+                                : DateFormat('dd-MM-yyyy').format(_dateTime),
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 18)),
+                        onPressed: () {
+                          //print('here');
+                          showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1950),
+                              lastDate: DateTime.now(),
+                              builder: (BuildContext context, Widget child) {
+                                return Theme(
+                                  data: ThemeData(
+                                    primarySwatch: Colors.pink,
+                                    accentColor: Colors.deepOrange,
+                                    splashColor: Colors.deepOrange,
+                                  ),
+                                  child: child,
+                                );
+                              }).then((date) {
+                            setState(() {
+                              _dateTime = date;
+                            });
+                          });
+                        }),
+                  ),
+                ),
+                Card(
+                  child: ListTile(
+                      leading:
+                          Icon(Icons.lock_outline, color: Color(0xFFFC4A1F)),
+                      title: DropDownField(
+                        controller: genderSelected,
+                        hintText: myUserInfo.gender,
+                        enabled: true,
+                        items: genders,
+                        onValueChanged: (val) {
+                          if (val.isEmpty) {
+                            myUserInfo.gender = myUserInfo.gender;
+                          } else {
+                            _gender = val.trim();
+                          }
+                        },
+                      )),
+                ),
+                SafeArea(
+                  child: InkWell(
+                    onTap: () async {
+                      submit();
+                      setState(() {
+                        validate = true;
+
+                        if (!EmailValidator.validate(_email, true) ||
+                            _password.length != 6) {
+                          check = false;
+                        }
+                      });
+                      if (check) {
+                        return await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title:
+                                  Text("Details have been saved successfully!"),
+                              actions: <Widget>[
+                                Center(
+                                    child: FlatButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _gender = genderSelected.text;
+
+                                      _firstName = editfirstname.text;
+                                      myUserInfo.firstName = _firstName;
+
+                                      _lastName = editlastname.text;
+                                      myUserInfo.lastName = myUserInfo.lastName;
+
+                                      _email = editemail.text;
+                                      myUserInfo.email = _email;
+
+                                      _gender = genderSelected.text;
+                                      myUserInfo.gender = _gender;
+
+                                      //myUserInfo.dateOfBirth = _dateOfBirth;
+                                    });
+
+                                    print(_firstName);
+                                    print(_lastName);
+                                    print(_email);
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text("Ok"),
+                                ))
+                              ],
+                            );
+                          },
+                        );
+                      }
+                      ;
+                    },
+                    child: SafeArea(
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            top: 40, right: 40.0, left: 40.0, bottom: 10.0),
+                        child: Container(
+                            height: 50,
+                            width: 350,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.topLeft,
+                                  colors: [
+                                    Color(0xFFAC0D57),
+                                    Color(0xFFFC4A1F),
+                                  ]),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            padding: EdgeInsets.only(
+                                top: 15, left: 135, bottom: 10.0),
+                            child: Text("Submit",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18))),
+                      ),
                     ),
-                  ]),
+                  ),
+                ),
+              ]),
             )));
   }
 }
