@@ -1,17 +1,13 @@
-//import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rateit/hostit.dart';
 import 'package:rateit/rateit.dart';
-//import 'package:rateit/vendorlist-hostit.dart';
 import 'firestore.dart';
 import 'hostit.dart';
-//import 'Event.dart';
 import 'login.dart';
 import 'rateit.dart';
 import 'user.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Redirection extends StatefulWidget{
 
@@ -52,7 +48,7 @@ class RedirectorState extends State<Redirector> {
       return InviteScreen(uid: '${widget.uid}');
     }
     else if(usr == 'management'){ 
-      return HostitHomescreen();//Comprehensive(eventName: 'add',eid: 'ppp',);//AddVendor(eid: 'cVgoRCSqbBCrjM6fg2Np',numVen:1,eventName: 'sdfasg',);//ViewVendorHostIt(eventName: 'hhhh',eventID: 'cVgoRCSqbBCrjM6fg2Np',);//EditEvent(eid:'da',eventData:Event( name: 'nme',logo: 'logo',coverimage: 'cover' ),coord: LatLng(23, 12), );//Add( eid:'eid', numVen:[2,1], vid:['lol','yop'], eventName:'nme');
+      return HostitHomescreen();
     }
     else if(usr == 'Error'){  //Failure to fetch Data, Firebase Error. 
     //TO DO Can be due to internet connection or wrong input, Display a Error Screen with firebase error stated in 
@@ -143,7 +139,6 @@ class ErrorSignInState extends State<ErrorSignIn> {
                 )
               ],
             ),
-            // clipper: ClipShape(),
           )
         ),
         body: Container(
