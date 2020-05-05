@@ -1,7 +1,5 @@
-//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//import 'package:rateit/firestore.dart';
 import 'package:rateit/item.dart';
 import 'package:rating_bar/rating_bar.dart' ;
 import 'userRedirection.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rateit/userRedirection.dart';
-import 'my-rating.dart';
+import 'item.dart';
 import 'package:rating_bar/rating_bar.dart' ;
  
 class EditMyRatingsItems extends StatefulWidget {

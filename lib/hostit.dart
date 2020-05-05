@@ -23,14 +23,11 @@ import 'item.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:barcode/barcode.dart';
 import 'package:barcode_widget/barcode_widget.dart';
-import 'package:path_provider/path_provider.dart';
 import 'userRedirection.dart';
 import 'login.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:file_utils/file_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'rateit.dart';
 
@@ -59,10 +56,10 @@ class App extends StatelessWidget{
 
 class HostitHomescreen extends StatefulWidget {
   @override
-  _HostitHomescreenState createState() => _HostitHomescreenState();
+  HostitHomescreenState createState() => HostitHomescreenState();
 }
 //homescreen of the hostit part of the application
-class _HostitHomescreenState extends State<HostitHomescreen> {
+class HostitHomescreenState extends State<HostitHomescreen> {
   var scaffoldKey=GlobalKey<ScaffoldState>();
 
   @override
@@ -291,10 +288,10 @@ class SideBar1Properties extends State<SideBar1>{
 //displaying the event list for the main screen of the host it application
 class EventsListHostit extends StatefulWidget {
   @override
-  _EventsListStateHostIt createState() => _EventsListStateHostIt();
+  EventsListStateHostItState createState() => EventsListStateHostItState();
 }
 
-class _EventsListStateHostIt extends State<EventsListHostit> {
+class EventsListStateHostItState extends State<EventsListHostit> {
   String err;
   
   @override
@@ -1059,52 +1056,6 @@ class EventMenuState extends State<EventMenu> {
               
             ),
 
-            // SafeArea(
-            //     child: InkWell(
-            //       onTap: ()async{
-            //         return await showDialog(
-            //           context: context,
-            //           builder: (BuildContext context){
-            //             return AlertDialog(
-            //               title: Text("Success!"),
-            //               actions: <Widget>[
-            //                 Center(
-            //                   child: FlatButton(
-            //                     onPressed: ()=>Navigator.of(context).pop(false),
-            //                     child: Text("ok"),
-            //                   )
-            //                 )
-            //               ],
-            //             ); 
-            //           },
-            //         );  
-            //       },
-            //       child: SafeArea(
-            //       child: Container(
-            //       padding: EdgeInsets.only(top: 20), 
-            //       child: Container(
-            //         height: 50,
-            //         width: 350,
-                    
-            //         decoration: BoxDecoration(
-            //           gradient: LinearGradient(
-            //             begin: Alignment.topRight,
-            //             end: Alignment.topLeft,
-            //             colors: [ 
-            //               Color(0xFFAC0D57),
-            //               Color(0xFFFC4A1F),
-            //             ]
-            //           ),
-            //           borderRadius: BorderRadius.circular(50),
-            //         ),
-            //         padding: EdgeInsets.only(top: 15, left: 115), 
-            //         child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
-            //       ),),),
-
-            //     ),
-              
-            // ),
-
             SafeArea(
                 child: InkWell(
                   onTap: (){            //leading to add vendor page
@@ -1750,7 +1701,7 @@ class AddVendorState extends State<AddVendor> {
           padding: EdgeInsets.only(top: 0, left: 20), 
           child: RichText(
             text: TextSpan(children: <TextSpan>[
-              //getting the user to add picture for vendor
+              //Displaying a message for user friendly code so user knows the size of image 
               TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
             ]
             )),

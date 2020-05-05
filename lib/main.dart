@@ -1,4 +1,3 @@
-//Copied code, delete during integration
 import 'package:flutter/material.dart';
 import 'package:rateit/wrapper.dart';
 import 'package:rateit/user.dart';
