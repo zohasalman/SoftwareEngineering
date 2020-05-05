@@ -24,7 +24,7 @@ import 'item.dart';
 import 'edit-profile.dart';
 import 'my-rating.dart';
 import 'ratedVendor.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+//import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +34,7 @@ import 'dart:io';
 import 'reviewfromdb.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Pathway;
-import 'package:image_cropper/image_cropper.dart';
+//import 'package:image_cropper/image_cropper.dart';
 import 'package:location/location.dart';
 
 DateTime _dateTime;
@@ -1243,9 +1243,7 @@ class _ViewVendor extends State<ViewVendor> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            //ScanResult scan = await BarcodeScanner.scan();//TODO:check result
-            //scanning=scan.rawContent;
-            scanning= await BarcodeScanner.scan();
+            //scanning= await BarcodeScanner.scan();//TODO:Uncomment
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -1331,9 +1329,7 @@ class _ViewMyRating extends State<ViewMyRating> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            //ScanResult scan = await BarcodeScanner.scan();//TODO:check result
-            //scanning=scan.rawContent;
-            scanning= await BarcodeScanner.scan();
+            //scanning= await BarcodeScanner.scan();//TODO:check result
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {

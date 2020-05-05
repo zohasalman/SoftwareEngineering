@@ -30,7 +30,7 @@ dependencies:
   flutter_spinkit: "^4.1.2"
   material_design_icons_flutter: ^2.3.50
   email_validator: '^1.0.0'
-  barcode_scan: ^2.0.2
+  #barcode_scan: ^2.0.2
   image_picker: ^0.6.5+3
   cupertino_icons: ^0.1.2
   flutter_google_places: ^0.2.4
@@ -46,7 +46,15 @@ dependencies:
   auto_size_text: ^2.1.0
   shared_preferences: ^0.5.7
   dropdownfield: ^1.0.0
+  location: ^3.0.2
+  barcode: ^1.9.1
+  pdf: ^1.7.1
+  barcode_image: ^1.0.2
+  barcode_widget: ^1.2.3
   
+
+
+
   # qr_utils: ^0.1.4
   # mailer: ^3.0.4
 

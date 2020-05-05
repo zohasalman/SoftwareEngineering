@@ -26,6 +26,14 @@ import 'item.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+//import 'package:barcode_image/barcode_image.dart';
+import 'package:barcode/barcode.dart';
+import 'package:barcode_widget/barcode_widget.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as image;
+//import 'package:image/image.dart';
 
 UserData myUserInfo;
 void main2() => runApp(App());
@@ -633,22 +641,45 @@ class EventMenuState extends State<EventMenu> {
             SafeArea(
                 child: InkWell(
                   onTap: () async{
-                    return await showDialog(
-                      context: context,
-                      builder: (BuildContext context){
-                        return AlertDialog(
-                          title: Text("Success!"),
-                          actions: <Widget>[
-                            Center(
-                              child: FlatButton(
-                                onPressed: ()=>Navigator.of(context).pop(false),
-                                child: Text("ok"),
-                              )
-                            )
-                          ],
-                        ); 
-                      },
-                    );
+                    print('ad');
+  //                   var pdf = pw.Document();
+  //                   //File('test.png').writeAsBytesSync(encodePng(image));
+  // // Fill it with a solid color (white)
+  //                   pdf.addPage(pw.Page(
+  //                         pageFormat: PdfPageFormat.a4,
+  //                         build: (pw.Context context) {
+  //                           return pw.Column(children: <pw.Widget>[ 
+  //                             pw.Center(
+  //                               child: pw.Text("Hello World"),
+  //                             ),
+  //                             pw.Container(
+  //                               child: pw.Text(pw.Barcode.qrCode().make('Hello World', width: 400, height: 400).toString()),
+  //                             ),
+  //                           ],); // Center
+  //                         }));
+                            var qr = Barcode.qrCode().toSvg('Hello World');//.make('Hello World', width: 400, height: 400);
+                            var output = await getExternalStorageDirectories(type: StorageDirectory.downloads);
+                            print(output[0].path);
+                            //var file = File("${output[0].path}/example.pdf");
+                            await File("${output[0].path}/example.svg").writeAsString(qr);
+                            //await file.writeAsBytes(qr);
+                            print('ad');
+                    // return await showDialog(
+                    //   context: context,
+                    //   builder: (BuildContext context){
+                    //     return AlertDialog(
+                    //       title: Text("Success!"),
+                    //       actions: <Widget>[
+                    //         Center(
+                    //           child: FlatButton(
+                    //             onPressed: ()=>Navigator.of(context).pop(false),
+                    //             child: Text("ok"),
+                    //           )
+                    //         )
+                    //       ],
+                    //     ); 
+                    //   },
+                    // );
                   },
 
                   child: SafeArea(

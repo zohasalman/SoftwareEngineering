@@ -50,13 +50,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  barcode_scan:
+  barcode:
     dependency: "direct main"
     description:
-      name: barcode_scan
+      name: barcode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "1.9.1"
+  barcode_image:
+    dependency: "direct main"
+    description:
+      name: barcode_image
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
+  barcode_widget:
+    dependency: "direct main"
+    description:
+      name: barcode_widget
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -548,6 +562,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  pdf:
+    dependency: "direct main"
+    description:
+      name: pdf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.7.1"
   pedantic:
     dependency: transitive
     description:
@@ -611,6 +632,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.5"
+  qr:
+    dependency: transitive
+    description:
+      name: qr
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   quiver:
     dependency: transitive
     description:
@@ -770,6 +798,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  utf:
+    dependency: transitive
+    description:
+      name: utf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.0+5"
   validate:
     dependency: transitive
     description:
