@@ -3,7 +3,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:intl/intl.dart';
 import 'package:dropdownfield/dropdownfield.dart';
 import 'user.dart';
-import 'edit-profile.dart';
+import 'EditProfileQueries.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
