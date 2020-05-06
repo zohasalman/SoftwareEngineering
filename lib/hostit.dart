@@ -620,7 +620,7 @@ class AddEventState extends State<AddEvent> {
               child: RichText(
                 text: TextSpan(
                   children: <TextSpan>[
-                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                    TextSpan(text: "*Only users within 600 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                 )
               ),
@@ -1494,11 +1494,9 @@ class AddVendorState extends State<AddVendor> {
   List<String> name = [];
   List<String> email = new List<String>(), stallid = new List<String>(),logo = new List<String>();
   List<int> item = new List<int>();
-  bool value=false; 
-  //var logo, mlogo;  
-  bool check=false; 
-  var nu; 
-  var n= int.parse(number); 
+  bool value=false;   
+  bool check=false;  
+  var n; 
   List<Widget> menu=[], menu2=[]; 
   int count=2; 
   //taking the data for each vendor
@@ -2229,7 +2227,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                 }).catchError((e){err=e.toString();});
                             }
@@ -2543,7 +2541,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                 }).catchError((e){err=e.toString();});
                             }
@@ -2585,14 +2583,12 @@ class EditVenState extends State<EditVen> {
   Vendor vendorData;
   String eventName;
   EditVenState({this.eventName,this.vendorData});
-  bool value=false;
   bool check=false; 
   bool validate=false; 
   String err;
 
 
 
-  var n=int.parse(number); 
   List<Widget> menu=[], menu2=[];   
   int count=1; 
  
@@ -2601,6 +2597,7 @@ class EditVenState extends State<EditVen> {
   @override
   void initState() {
     super.initState();
+    if(eventName==null)
     myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
@@ -2688,7 +2685,7 @@ class EditVenState extends State<EditVen> {
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22
-                          ),
+                        ),
                       ),
                     ]
                   )
@@ -2850,7 +2847,7 @@ class EditVenState extends State<EditVen> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
-                  validator: (input)=> input.isEmpty? 'Please enter a number': null,  //validating whether input has been taken or not
+                  //validator: (input)=> input.isEmpty? 'Please enter a number': null,  //validating whether input has been taken or not
                   onChanged: (input) {
                     //print(input);
                     item=int.parse(input);
@@ -2939,7 +2936,7 @@ class EditVenState extends State<EditVen> {
                   color: Colors.white,),
                   onPressed: () async { //updating the vendor details in the firestore cloud
                     setState(() => validate=true);
-                    if ( !(name=="" || email==""|| stallid==0|| logo=="" || item==0|| name==null || email==null || logo==null ) ){
+                    if ( !(name=="" || email==""|| stallid==null|| logo=="" || name==null || email==null || logo==null ) ){
                       await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
                         await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendorData.vendorId).getDocuments().then((val) async{
                             val.documents.forEach((doc) async {
@@ -2948,6 +2945,8 @@ class EditVenState extends State<EditVen> {
                         }).catchError((e){err=e.toString();});
                       }).catchError((e){err=e.toString();});
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewMenu(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                    } else {
+                      print('error'+logo);
                     }
                   }
                 ),
@@ -3151,7 +3150,7 @@ class EditEventState extends State<EditEvent> {
               child: RichText(
                 text: TextSpan(
                   children: <TextSpan>[
-                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                    TextSpan(text: "*Only users within 600 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                 )
               ),
