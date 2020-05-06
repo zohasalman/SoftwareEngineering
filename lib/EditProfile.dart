@@ -185,7 +185,7 @@ class _EditProfile extends State<EditProfile> {
                                     backgroundColor: Colors.white,
                                     radius: 70.0,
                                     backgroundImage: NetworkImage(
-                                        '${widget.userInfoRecieved.profilePicture}'),
+                                        '${widget.userInfoRecieved.profilePicture}' ?? ''),
                                   ))),
                           Container(
                               child: Transform.translate(
@@ -207,10 +207,7 @@ class _EditProfile extends State<EditProfile> {
                               padding: const EdgeInsets.only(top: 5.0),
                               child: Transform.translate(
                                   offset: Offset(0.0, -50.0),
-                                  child: Text(
-                                      widget.userInfoRecieved.firstName +
-                                          ' ' +
-                                          widget.userInfoRecieved.lastName,
+                                  child: Text( widget.userInfoRecieved.firstName +' ' + widget.userInfoRecieved.lastName ?? '',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 20.0,
@@ -219,7 +216,7 @@ class _EditProfile extends State<EditProfile> {
                               padding: const EdgeInsets.only(top: 3.0),
                               child: Transform.translate(
                                   offset: Offset(0.0, -50.0),
-                                  child: Text(widget.userInfoRecieved.email,
+                                  child: Text(widget.userInfoRecieved.email ?? '',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 16.0,
@@ -437,24 +434,24 @@ class _EditProfile extends State<EditProfile> {
                                       child: FlatButton(
                                     onPressed: () {
                                           setState ( () {
-                                            _gender = genderSelected.text;
-                                           
-                                            _firstName = editfirstname.text;
-                                            widget.userInfoRecieved.firstName = _firstName;
-                                            
-                                            
-                                            _lastName = editlastname.text;
-                                            widget.userInfoRecieved.lastName = widget.userInfoRecieved.lastName;
-                                           
-                                            
-                                            _email = editemail.text;
-                                            widget.userInfoRecieved.email = _email;
-  
-                                           
-                                            _gender= genderSelected.text;
-                                            widget.userInfoRecieved.gender = _gender;
-
-                                            //widget.userInfoRecieved.dateOfBirth = _dateOfBirth;
+                                            if(genderSelected.text.isNotEmpty){
+                                              _gender = genderSelected.text;
+                                            }
+                                            if(editfirstname.text.isNotEmpty){
+                                              _firstName = editfirstname.text;
+                                            }
+                                            if(editlastname.text.isNotEmpty){ 
+                                              _lastName = editlastname.text;
+                                            }
+                                            if(editemail.text.isNotEmpty){
+                                              _email = editemail.text;
+                                            }
+                                            if(editpw.text.isNotEmpty){
+                                              _password = editpw.text;
+                                            }
+                                            if(dateTime != null){
+                                              _dateOfBirth = dateTime;
+                                            }
                                   
                                         });
 

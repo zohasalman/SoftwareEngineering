@@ -44,6 +44,7 @@ class RedirectorState extends State<Redirector> {
   @override
   Widget build(BuildContext context) {
     final usr = Provider.of<String>(context);
+    print(usr);
     if (usr == 'user'){
       return InviteScreen(uid: '${widget.uid}');
     }

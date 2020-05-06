@@ -66,13 +66,13 @@ class FirestoreService{
       await Firestore.instance.collection("users").document(uid).get().then((value) {
         userrole = value.data['userRole'];
         // trying shared preferences now 
-        prefs.setString('uid', value.data['uid']);
-        prefs.setString('firstName', value.data['firstName']);
-        prefs.setString('lastName', value.data['lastName']);
-        prefs.setString('userRole', value.data['userRole']);
-        prefs.setString('gender', value.data['gender']);
-        prefs.setString('email', value.data['email']);
-        prefs.setString('profilePicture', value.data['profilePicture']);
+        prefs.setString('uid', value.data['uid'] ?? '');
+        prefs.setString('firstName', value.data['firstName'] ?? '');
+        prefs.setString('lastName', value.data['lastName'] ?? '');
+        prefs.setString('userRole', value.data['userRole'] ?? '');
+        prefs.setString('gender', value.data['gender'] ?? '');
+        prefs.setString('email', value.data['email'] ?? '');
+        prefs.setString('profilePicture', value.data['profilePicture'] ?? '');
       });
       return userrole;
     }catch(e){

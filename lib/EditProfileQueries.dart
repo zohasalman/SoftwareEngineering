@@ -4,20 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EditUserData{
 
-  SharedPreferences prefs;
-  
-  void getPrefs() async{
-   prefs = await SharedPreferences.getInstance();
-  }
-    // getting locally stored data
-    
+  SharedPreferences prefs;    
 
   final CollectionReference _updateCollectionReference = Firestore.instance.collection('users');
 
-  void update(String uid, String firstName, String lastName, String email, String password, String gender, String profilePicture, DateTime dateOfBirth){
-    print(uid);
-    print(firstName);
+  void update(String uid, String firstName, String lastName, String email, String password, String gender, String profilePicture, DateTime dateOfBirth) async {
 
+    prefs = await SharedPreferences.getInstance();
     //If the value is set up for the corresponding functions then set the values for all the corresponding fields 
     if (firstName.isNotEmpty){
       _updateFirstName(uid, firstName);
