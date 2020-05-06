@@ -1950,8 +1950,7 @@ class AddMenuState extends State<AddMenu> {
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
-  bool check=false; 
-  var n=int.parse(number); 
+  bool check=false;
   List<Widget> menu=[], menu2=[]; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -2268,8 +2267,7 @@ class AddMenu2State extends State<AddMenu2> {
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
-  bool check=false; 
-  var n=int.parse(number); 
+  bool check=false;
 
   List<Widget> menu=[], menu2=[]; 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -2991,8 +2989,6 @@ class EditEventState extends State<EditEvent> {
   bool value=false; 
   var logo, mlogo;  
   bool check=false; 
-  var nu; 
-  var n=int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
   int count=1; 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -4144,8 +4140,7 @@ class EditItemState extends State<EditItem> {
   Item itemData;
   EditItemState({this.itemData});
   bool value=false;
-  bool check=false; 
-  var n=int.parse(number); 
+  bool check=false;
   List<Widget> menu=[], menu2=[]; 
   
   int count=1; 
