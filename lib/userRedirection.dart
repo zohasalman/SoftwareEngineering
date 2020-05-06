@@ -45,7 +45,7 @@ class RedirectorState extends State<Redirector> {
   Widget build(BuildContext context) {
     final usr = Provider.of<String>(context);
     if (usr == 'user'){
-      return HostitHomescreen();//InviteScreen(uid: '${widget.uid}');
+      return InviteScreen(uid: '${widget.uid}');
     }
     else if(usr == 'management'){ 
       return HostitHomescreen();
