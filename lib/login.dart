@@ -42,6 +42,9 @@ class LoginScreenState extends State<LoginScreen> {
   bool rememberme=false;
   bool hasInfo = false;
 
+  final email_cont = TextEditingController();
+  final pw_cont = TextEditingController();
+
   final _formKey= GlobalKey<FormState>();                       //Validation error checks 
 
   
@@ -142,6 +145,7 @@ class LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                     padding:EdgeInsets.only( top: 30, left: 20, right: 20), 
                     child:TextFormField(
+                    controller: email_cont,
                     initialValue: hasInfo? _email: null,
                     validator: (input)=> input.isEmpty? null : null,
                     onSaved: (input)=> _email = input.trim(),
@@ -167,6 +171,7 @@ class LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                     padding:EdgeInsets.only( top: 0, left: 20, right: 20), 
                     child:TextFormField(
+                    controller: pw_cont,
                     initialValue: hasInfo? _password: null,
                     validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
                     onSaved: (input)=> _password = input.trim(),
@@ -225,8 +230,12 @@ class LoginScreenState extends State<LoginScreen> {
                           child: Checkbox(
                             value: rememberme,
                             checkColor: Colors.grey[800],
-                            activeColor: Colors.grey[600],
-                            onChanged: (value) => rememberme = value,
+                            activeColor: Color(0xFFFC4A1F),
+                            onChanged: (value) {
+                              setState(() {
+                                rememberme = value;
+                              });
+                            }
                             )
                         ),
                         Text('Remember Me?',
