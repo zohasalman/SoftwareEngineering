@@ -29,14 +29,13 @@ import 'login.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'rateit.dart';
+import 'EditProfile.dart';
 
 
 UserData myUserInfo;
 void main2() => runApp(App());
 
 String number=""; 
-
-
 
 class App extends StatelessWidget{
   @override
@@ -78,6 +77,13 @@ class HostitHomescreenState extends State<HostitHomescreen> {
     String profilePicture = prefs.getString('profilePicture');
     String gender = prefs.getString('gender');
     // Storing data in user class object
+    print(uid);
+    print(firstName);
+    print(lastName);
+    print(email);
+    print(profilePicture);
+    print(gender);
+
     myUserInfo = UserData(
         uid: uid,
         firstName: firstName,
@@ -216,7 +222,7 @@ class SideBar1Properties extends State<SideBar1>{
           Container(
             child: GestureDetector(             //leading to the edit profile screen
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile(userInfoRecieved: myUserInfo)),);
               },
               child: Container(
                 width: 230.0,
@@ -3832,7 +3838,7 @@ class SideBarProperties extends State<SideBar>{
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile(userInfoRecieved: myUserInfo)),);
               },
               child: Container(
                 width: 230.0,
