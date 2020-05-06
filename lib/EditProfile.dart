@@ -10,7 +10,6 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Pathway;
 import 'rateit.dart';
-import 'hostit.dart';
 
 class EditProfile extends StatefulWidget {
   EditProfile({Key key, this.title, this.userInfoRecieved}) : super(key: key);
