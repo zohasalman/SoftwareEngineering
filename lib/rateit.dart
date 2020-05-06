@@ -744,7 +744,7 @@ class _ViewVendor extends State<ViewVendor> {
           onPressed: () async {
             // Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning= await BarcodeScanner.scan(); //TODO:Uncommentt
+            scanning= await BarcodeScanner.scan(); 
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -830,7 +830,7 @@ class _ViewMyRating extends State<ViewMyRating> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            //scanning= await BarcodeScanner.scan();//TODO:check result
+            scanning= await BarcodeScanner.scan();
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
