@@ -33,7 +33,7 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
               return Card(
                 child:ListTile(
                   onTap: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVen(vendorData: vendors[index], eventName: eventName,)),);
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVendor(vendorData: vendors[index], eventName: eventName,)),);
                   },
                   onLongPress: () async {
                     return await showDialog(

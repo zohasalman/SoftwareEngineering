@@ -1,5 +1,3 @@
-//import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -8,17 +6,13 @@ import 'package:rateit/login.dart';
 import 'package:rateit/ratedItem.dart';
 import 'firestore.dart';
 import 'dart:math' as math;
-//import 'VendorList.dart';
-//import 'package:flutter_rating_bar/flutter_rating_bar.dart' as prefix;
-//import 'localData.dart';
 import 'user.dart';
-//import 'dart:convert';
 import 'vendor-list.dart';
 import 'package:rating_bar/rating_bar.dart';
 import 'item-list.dart';
 import 'item.dart';
 import 'ratedVendor.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+//import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -632,7 +626,7 @@ class _ViewVendor extends State<ViewVendor> {
           onPressed: () async {
             // Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning= await BarcodeScanner.scan(); 
+            //scanning= await BarcodeScanner.scan();//TODO:
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -718,7 +712,7 @@ class _ViewMyRating extends State<ViewMyRating> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning= await BarcodeScanner.scan();
+            //scanning= await BarcodeScanner.scan();//TODO:
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {

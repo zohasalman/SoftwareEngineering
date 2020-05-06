@@ -498,7 +498,6 @@ class AddEventState extends State<AddEvent> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-        endDrawer:  SideBar(),                //Opening a side bar from right
         appBar: PreferredSize(                
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -693,10 +692,11 @@ class AddEventState extends State<AddEvent> {
                         setState(() {
                           //error1=true; 
                         });
-                        showDialog(                             //Alert box to show the user once the image has been uploaded
+                        showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: Text("Image Uploaded"),
+                            title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                            content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                           ),
                           barrierDismissible: true,
                         );
@@ -764,7 +764,8 @@ class AddEventState extends State<AddEvent> {
                         showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: Text("Image Uploaded"),
+                            title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                            content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                           ),
                           barrierDismissible: true,
                         );
@@ -882,13 +883,13 @@ class EventMenuState extends State<EventMenu> {
   @override
   void initState() {
     super.initState();
-    myUserInfo = UserData(
-        uid: widget.userInfo.uid,
-        firstName: widget.userInfo.firstName,
-        lastName: widget.userInfo.lastName,
-        email: widget.userInfo.email,
-        gender: widget.userInfo.gender,
-        profilePicture: widget.userInfo.profilePicture);
+    // myUserInfo = UserData(
+    //     uid: widget.userInfo.uid,
+    //     firstName: widget.userInfo.firstName,
+    //     lastName: widget.userInfo.lastName,
+    //     email: widget.userInfo.email,
+    //     gender: widget.userInfo.gender,
+    //     profilePicture: widget.userInfo.profilePicture);
   }
 
   @override 
@@ -922,7 +923,8 @@ class EventMenuState extends State<EventMenu> {
                       ), 
                     onPressed: (){
                       Navigator.pop(context);
-                      }),
+                    }
+                  ),
                   actions: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 20.0),
@@ -1273,15 +1275,12 @@ class AddVendorQtyState extends State<AddVendorQty> {
   Widget build(BuildContext context){
     loadData(); 
     return Scaffold(
-        //key: scaffoldKey,
-        endDrawer:  SideBar(),            //calling the sidebar drawer widget
         appBar: PreferredSize(            //displaying the design bar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-
                 AppBar(
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -1301,7 +1300,8 @@ class AddVendorQtyState extends State<AddVendorQty> {
                     ), 
                     onPressed: (){
                       Navigator.pop(context);
-                      }),
+                    }
+                  ),
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -1437,39 +1437,70 @@ class AddVendorQtyState extends State<AddVendorQty> {
               )
             ),
           ),
-
-          SafeArea (
-            child: Container(
-            padding:EdgeInsets.only( top: 50),
-            child: Center(
-            //offset: Offset(0,-50),
-              child: SafeArea(
-                child: Container(
-                height: 100,
-                width: 200,
-                child: new IconButton(icon: new Image.asset("asset/image/icon.png"),onPressed:()=>{
-                   
-                  setState(() => validate = true),
-                  if (valSave!=null && valSave!="Custom"){
-                    numVen=int.parse(valSave),
-                  //print(numVen),
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:numVen, eid:eid, eventName:eventName)),)
-
-                  }
-
-                  else if (valSave=="Custom" && customValSave!=null)
-                  {
-                    customVal=int.parse(customValSave),
-                    //print(numVen),
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:customVal, eid:eid, eventName:eventName)),)
-
-                  }
-                  
-                  
-                } ),
-              ),),
-            ),
-          ), ),      
+          Padding(padding: EdgeInsets.all(30)),
+          SafeArea(
+            //child: SafeArea(
+              child: Container(
+                width:60,
+                height:60,
+                child: Ink(
+                  width:60,
+                  height:60,
+                  decoration:  ShapeDecoration(
+                    shape: CircleBorder(),
+                    color: null,
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                    shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                  ),
+                  child: IconButton(
+                    alignment: Alignment.center,
+                    icon: Icon(Icons.arrow_forward,
+                    size: 45,
+                    color: Colors.white,),
+                    onPressed: () async { //updating the vendor details in the firestore cloud
+                      setState(() => validate = true);
+                      if (valSave!=null && valSave!="Custom") {
+                        numVen=int.parse(valSave);
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:numVen, eid:eid, eventName:eventName)),);
+                      }
+                      else if (valSave=="Custom" && customValSave!=null) {
+                        customVal=int.parse(customValSave);
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:customVal, eid:eid, eventName:eventName)),);
+                      }
+                    }
+                  ),
+                ),
+              ),
+            //),
+          ),
+          // SafeArea (
+          //   child: Container(
+          //   padding:EdgeInsets.only( top: 50),
+          //   child: Center(
+          //   //offset: Offset(0,-50),
+          //     child: SafeArea(
+          //       child: Container(
+          //       height: 100,
+          //       width: 200,
+          //       child: new IconButton(icon: new Image.asset("asset/image/icon..png"),onPressed:()=>{
+          //         setState(() => validate = true),
+          //         if (valSave!=null && valSave!="Custom") {
+          //           numVen=int.parse(valSave),
+          //           Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:numVen, eid:eid, eventName:eventName)),)
+          //         }
+          //         else if (valSave=="Custom" && customValSave!=null) {
+          //           customVal=int.parse(customValSave),
+          //           Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:customVal, eid:eid, eventName:eventName)),)
+          //         }
+          //       } ),
+          //     ),
+          //     ),
+          //   ),
+          // ), ),      
         ],),  
       ),),
     ); 
@@ -1495,10 +1526,9 @@ class AddVendorState extends State<AddVendor> {
   List<String> email = new List<String>(), stallid = new List<String>(),logo = new List<String>();
   List<int> item = new List<int>();
   bool value=false;   
-  bool check=false;  
-  var n; 
+  bool check=false;
   List<Widget> menu=[], menu2=[]; 
-  int count=2; 
+  //int count=2; 
   //taking the data for each vendor
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   void add2(i){
@@ -1672,10 +1702,11 @@ class AddVendorState extends State<AddVendor> {
                       await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).getDownloadURL();
                       logo[i]=downloadUrl;
-                      showDialog(
+                      showDialog(                 //User friendly error message when the screen has been displayed 
                         context: context,
                         builder: (_) => AlertDialog(
-                          title: Text("Image Uploaded"),
+                          title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                          content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                         ),
                         barrierDismissible: true,
                       );
@@ -1707,7 +1738,8 @@ class AddVendorState extends State<AddVendor> {
               //Displaying a message for user friendly code so user knows the size of image 
               TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
             ]
-            )),
+            )
+          ),
         ),
       ),
     );
@@ -1765,6 +1797,7 @@ class AddVendorState extends State<AddVendor> {
         name.add('');
         email.add('');
         stallid.add('');
+        logo.add('');
         item.add(0);
         Padding(padding: EdgeInsets.only(top: 10));
         add2(i);
@@ -1783,15 +1816,12 @@ class AddVendorState extends State<AddVendor> {
     return Scaffold(
      
       resizeToAvoidBottomPadding: false,
-              //key: scaffoldKey,
-        endDrawer:  SideBar(),    //Calling the sidebar drawer
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-
                 AppBar(           //displaying the design bar of the application
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -1804,14 +1834,6 @@ class AddVendorState extends State<AddVendor> {
                       ),
                     )
                   ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,       //adding the back button that will navigate to the precious screen
-                       
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -1998,7 +2020,7 @@ class AddMenuState extends State<AddMenu> {
               validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: 'Upload Logo Photo',
+                hintText: mlogo[i][j]==null ? 'Upload Logo Photo':'Image Uploaded',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -2028,13 +2050,14 @@ class AddMenuState extends State<AddMenu> {
                   await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
                   downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
                   mlogo[i][j]=downloadUrl;
-                  showDialog(
+                  showDialog(                 //User friendly error message when the screen has been displayed 
                     context: context,
                     builder: (_) => AlertDialog(
-                      title: Text("Image Uploaded"),
+                      title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                      content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                     ),
                     barrierDismissible: true,
-                  );                  
+                  );                 
                 },
               ),
             ),
@@ -2094,7 +2117,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     return Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),            //calling the sidebar drawer
         appBar: PreferredSize(            //displaying the designbar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -2123,32 +2145,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                       Navigator.pop(context);
                     }
                   ),
-                  actions: <Widget>[
-                       IconButton(
-                        onPressed: () {                          
-                          showSearch(
-                            context: context,
-                            delegate: MapSearchBar(),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          
-                        )
-                      ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          scaffoldKey.currentState.openEndDrawer();
-                          },
-                        child: Icon(                //button to open the sidebar drawer
-                            Icons.menu,
-                            
-                        ),
-                      )
-                    ),
-                  ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -2185,8 +2181,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   children: menu2
                 ),
               ), 
-
-                  
               SafeArea(
                 child: err== null ? Container() : Container(
                   
@@ -2204,40 +2198,92 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   )                        
                 ),
               ),
-              Container (
-                child: Ink(
-                  height: 100,
-                  width: 200,
-                  child: IconButton(
-                    icon: new Image.asset("asset/image/icon.png"),
-                    onPressed:() async {
-                      setState(() => validate=true);
-                      bool checkNext = true;
-                        //add eid from previous screen here to pass to QR to Event menu 
-                        for (var i=0; i<numVen.length; i++){
-                          for (var j=0; j<numVen[i]; j++){
-                            if(itemname[i][j]=='' ){
-                              checkNext=false;
-                            }
-                          }
-                        }
-                        if (checkNext){
-                          
-                          for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
+              Padding(padding: EdgeInsets.all(30)),
+              Center(
+                child: SafeArea(
+                  child: Container(
+                    width:60,
+                    height:60,
+                    child: Ink(
+                      width:60,
+                      height:60,
+                      decoration:  ShapeDecoration(
+                        shape: CircleBorder(),
+                        color: null,
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                        ),
+                        shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                      ),
+                      child: IconButton(
+                        alignment: Alignment.center,
+                        icon: Icon(Icons.arrow_forward,
+                        size: 45,
+                        color: Colors.white,),
+                        onPressed: () async { //updating the vendor details in the firestore cloud
+                          setState(() => validate=true);
+                          bool checkNext = true;
+                          //add eid from previous screen here to pass to QR to Event menu 
+                          for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
-                              //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
-                                }).catchError((e){err=e.toString();});
+                              if(itemname[i][j]=='' ){
+                                checkNext=false;
+                              }
                             }
                           }
-                          //navigating to the QR image page
-                          Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
+                          if (checkNext){
+                            for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
+                              for (var j=0; j<numVen[i]; j++){
+                                //print(itemname[i][j]);
+                                  await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                      await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+                                  }).catchError((e){err=e.toString();});
+                              }
+                            }
+                            //navigating to the QR image page
+                            Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
+                          }
                         }
-                    },
+                      ),
+                    ),
                   ),
                 ),
               ),
+              // Container (
+              //   child: Ink(
+              //     height: 100,
+              //     width: 200,
+              //     child: IconButton(
+              //       icon: new Image.asset("asset/image/icon..png"),
+              //       onPressed:() async {
+              //         setState(() => validate=true);
+              //         bool checkNext = true;
+              //           //add eid from previous screen here to pass to QR to Event menu 
+              //           for (var i=0; i<numVen.length; i++){
+              //             for (var j=0; j<numVen[i]; j++){
+              //               if(itemname[i][j]=='' ){
+              //                 checkNext=false;
+              //               }
+              //             }
+              //           }
+              //           if (checkNext){
+              //             for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
+              //               for (var j=0; j<numVen[i]; j++){
+              //                 //print(itemname[i][j]);
+              //                   await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+              //                       await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+              //                   }).catchError((e){err=e.toString();});
+              //               }
+              //             }
+              //             //navigating to the QR image page
+              //             Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
+              //           }
+              //       },
+              //     ),
+              //   ),
+              // ),
             ],
           )
         )  
@@ -2314,7 +2360,7 @@ class AddMenu2State extends State<AddMenu2> {
               validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: 'Upload Logo Photo',
+                hintText: mlogo[i][j]==null ? 'Upload Logo Photo':'Image Uploaded',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -2344,13 +2390,14 @@ class AddMenu2State extends State<AddMenu2> {
                   await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
                   downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
                   mlogo[i][j]=downloadUrl;
-                  showDialog(
+                  showDialog(                 //User friendly error message when the screen has been displayed 
                     context: context,
                     builder: (_) => AlertDialog(
-                      title: Text("Image Uploaded"),
+                      title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                      content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                     ),
                     barrierDismissible: true,
-                  ); 
+                  );
                 },
               ),
             ),
@@ -2409,7 +2456,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     return Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),          //calling the sidebar function
         appBar: PreferredSize(          //displaying the design bar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -2429,41 +2475,14 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         ),
                     )
                   ),
-                  leading: IconButton(        //back button to navigate to previous screen
+                  leading: IconButton(
                     icon: Icon(
-                      Icons.arrow_back,
-                       
-                    ), 
+                      Icons.arrow_back,    
+                      ), 
                     onPressed: (){
                       Navigator.pop(context);
                     }
                   ),
-                  actions: <Widget>[
-                       IconButton(
-                        onPressed: () {                          
-                          showSearch(
-                            context: context,
-                            delegate: MapSearchBar(),
-                          );
-                        },
-                        icon: Icon(
-                          Icons.search,
-                          
-                        )
-                      ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
-                        onTap: () {         //opening the sidebar drawer
-                          scaffoldKey.currentState.openEndDrawer();
-                          },
-                        child: Icon(
-                            Icons.menu,
-                            
-                        ),
-                      )
-                    ),
-                  ],
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -2517,39 +2536,90 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   )                        
                 ),
               ),
-              Container (
-                child: Ink(
-                  height: 100,
-                  width: 200,
-                  child: IconButton(
-                    icon: new Image.asset("asset/image/icon.png"),
-                    onPressed:() async {
-                      setState(() => validate=true);
-                      bool checkNext = true;
-                        //add eid from previous screen here to pass to QR to Event menu 
-                        for (var i=0; i<numVen.length; i++){
-                          for (var j=0; j<numVen[i]; j++){
-                            if(itemname[i][j]=='' ){
-                              checkNext=false;
-                            }
-                          }
-                        }
-                        if (checkNext){
-                          
-                          for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
+              Padding(padding: EdgeInsets.all(30)),
+              Center(
+                child: SafeArea(
+                  child: Container(
+                    width:60,
+                    height:60,
+                    child: Ink(
+                      width:60,
+                      height:60,
+                      decoration:  ShapeDecoration(
+                        shape: CircleBorder(),
+                        color: null,
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                        ),
+                        shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                      ),
+                      child: IconButton(
+                        alignment: Alignment.center,
+                        icon: Icon(Icons.arrow_forward,
+                        size: 45,
+                        color: Colors.white,),
+                        onPressed: () async { //updating the vendor details in the firestore cloud
+                          setState(() => validate=true);
+                          bool checkNext = true;
+                          //add eid from previous screen here to pass to QR to Event menu 
+                          for (var i=0; i<numVen.length; i++){
                             for (var j=0; j<numVen[i]; j++){
-                              //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
-                                }).catchError((e){err=e.toString();});
+                              if(itemname[i][j]=='' ){
+                                checkNext=false;
+                              }
                             }
                           }
-                          Navigator.pop(context);
+                          if (checkNext){
+                            for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
+                              for (var j=0; j<numVen[i]; j++){
+                                //print(itemname[i][j]);
+                                  await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                      await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+                                  }).catchError((e){err=e.toString();});
+                              }
+                            }
+                            Navigator.pop(context);
+                          }
                         }
-                    },
+                      ),
+                    ),
                   ),
                 ),
               ),
+              // Container (
+              //   child: Ink(
+              //     height: 100,
+              //     width: 200,
+              //     child: IconButton(
+              //       icon: new Image.asset("asset/image/icon..png"),
+              //       onPressed:() async {
+              //         setState(() => validate=true);
+              //         bool checkNext = true;
+              //         //add eid from previous screen here to pass to QR to Event menu 
+              //         for (var i=0; i<numVen.length; i++){
+              //           for (var j=0; j<numVen[i]; j++){
+              //             if(itemname[i][j]=='' ){
+              //               checkNext=false;
+              //             }
+              //           }
+              //         }
+              //         if (checkNext){
+              //           for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
+              //             for (var j=0; j<numVen[i]; j++){
+              //               //print(itemname[i][j]);
+              //                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+              //                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+              //                 }).catchError((e){err=e.toString();});
+              //             }
+              //           }
+              //           Navigator.pop(context);
+              //         }
+              //       },
+              //     ),
+              //   ),
+              // ),
             ],
           )
         )  
@@ -2559,16 +2629,16 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
 }
 
 //the screen for editting the vendor details
-class EditVen extends StatefulWidget {
+class EditVendor extends StatefulWidget {
   final UserData myUser;
   final Vendor vendorData;
   final String eventName;
-  EditVen({this.myUser, this.eventName,this.vendorData});
+  EditVendor({this.myUser, this.eventName,this.vendorData});
   @override 
-  EditVenState createState()=> new EditVenState(vendorData: vendorData,eventName: eventName); 
+  EditVendorState createState()=> new EditVendorState(vendorData: vendorData,eventName: eventName); 
 }
 
-class EditVenState extends State<EditVen> {
+class EditVendorState extends State<EditVendor> {
   String name="",email="",logo="";
  
   int stallid;
@@ -2580,7 +2650,7 @@ class EditVenState extends State<EditVen> {
   final dcontroller5=new TextEditingController(); 
   Vendor vendorData;
   String eventName;
-  EditVenState({this.eventName,this.vendorData});
+  EditVendorState({this.eventName,this.vendorData});
   bool check=false; 
   bool validate=false; 
   String err;
@@ -2596,7 +2666,7 @@ class EditVenState extends State<EditVen> {
   void initState() {
     super.initState();
     if(eventName==null)
-    myUserInfo = widget.myUser;
+      myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
     email = vendorData.email;
@@ -2612,8 +2682,6 @@ class EditVenState extends State<EditVen> {
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      //key: scaffoldKey,
-      //endDrawer:  SideBar(),
       appBar: PreferredSize(      //displaying the app bar of the application
         preferredSize: Size.fromHeight(150.0),
         child: ClipPath(
@@ -2634,8 +2702,7 @@ class EditVenState extends State<EditVen> {
                 ),
                 leading: IconButton(
                   icon: Icon(
-                    Icons.arrow_back,
-                      
+                    Icons.arrow_back,   
                   ), 
                   onPressed: (){
                     Navigator.pop(context);
@@ -2803,10 +2870,11 @@ class EditVenState extends State<EditVen> {
                       await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).getDownloadURL();
                       logo=downloadUrl;
-                      showDialog(
+                      showDialog(                 //User friendly error message when the screen has been displayed 
                         context: context,
                         builder: (_) => AlertDialog(
-                          title: Text("Image Uploaded"),
+                          title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                          content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                         ),
                         barrierDismissible: true,
                       );
@@ -2877,7 +2945,6 @@ class EditVenState extends State<EditVen> {
                     color: Colors.white,),
                     onPressed: () {
                       //leading to update menu item screen for adding more items
-                      print(item);
                       if (item>0){//connect item here
                         Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
                       }
@@ -2911,7 +2978,6 @@ class EditVenState extends State<EditVen> {
           ),
           Center(
             child: Container(
-              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
               width:60,
               height:60,
               child: Ink(
@@ -3018,8 +3084,6 @@ class EditEventState extends State<EditEvent> {
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      //key: scaffoldKey,
-      endDrawer:  SideBar(),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(150.0),
         child: ClipPath(
@@ -3193,10 +3257,11 @@ class EditEventState extends State<EditEvent> {
                         // setState(() {
                         //   error1=true; 
                         // });
-                        showDialog(
+                        showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: Text("Image Uploaded"),
+                            title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                            content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                           ),
                           barrierDismissible: true,
                         );
@@ -3259,10 +3324,11 @@ class EditEventState extends State<EditEvent> {
                         // setState(() {
                         //   error2=true; 
                         // });
-                        showDialog(
+                        showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: Text("Image Uploaded"),
+                            title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                            content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                           ),
                           barrierDismissible: true,
                         );
@@ -3368,8 +3434,6 @@ class QRselectionState extends State<QRselection> {
     return MaterialApp(
       home: Scaffold(
         resizeToAvoidBottomPadding: false,
-        //key: scaffoldKey,
-        endDrawer:  SideBar(),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -3389,14 +3453,6 @@ class QRselectionState extends State<QRselection> {
                         ),
                     )
                   ),
-                  leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                      }),
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3456,7 +3512,7 @@ class QRselectionState extends State<QRselection> {
                                     await File(basePath+"$eventName/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
                                   });
                                 }).catchError((e){err=e.toString();});
-                                showDialog(                 //User friendly error message when the screen has been displayed 
+                                await showDialog(                 //User friendly error message when the screen has been displayed 
                                   context: context,
                                   builder: (_) => AlertDialog(
                                     title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
@@ -3592,7 +3648,6 @@ class QRselectionState extends State<QRselection> {
 }
 //adding to maps api to the application for the location info
 class Maps extends StatefulWidget {
-  //Maps(LatLng eid);
 
   @override
   MapsFunc createState() => MapsFunc();
@@ -3618,14 +3673,12 @@ class MapsFunc extends State<Maps> {
       home: Scaffold(
         key: scaffoldKey,
         extendBodyBehindAppBar: true,
-        endDrawer:  SideBar(),
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
               fit: StackFit.expand,
               children: <Widget>[
-
                 AppBar(     //displaying the design bar of the application
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -3643,12 +3696,9 @@ class MapsFunc extends State<Maps> {
                       Icons.arrow_back,    
                       ), 
                     onPressed: (){
-                      //coord=LatLng(23.32, 65.1);
                       Navigator.pop(context, coord);
-                      //Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                     }
                   ),
-              
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3705,78 +3755,7 @@ class MapsFunc extends State<Maps> {
     );
   }
 }
-//defining the properties of the map search bar widget
-class MapSearchBar extends SearchDelegate<String>  {
 
-   List<String> _list = const [
-      'Igor Minar',
-      'Brad Green',
-      'Dave Geddes',
-      'Naomi Black',
-      'Greg Weber',
-      'Dean Sofer',
-      'Wes Alvaro',
-      'John Scott',
-      'Daniel Nadasi',
-  ];
-
-  @override
-  String get searchFieldLabel => super.searchFieldLabel;
-  @override
-  ThemeData appBarTheme(BuildContext context){
-    assert(context != null);
-    final ThemeData theme = Theme.of(context);
-    assert(theme != null);
-    return theme.copyWith(
-      primaryColorDark: Colors.white,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
-      primaryColorBrightness: Brightness.light,
-      primaryTextTheme: theme.textTheme,
-    );
-  }
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      GestureDetector(
-        onTap: () {query='';},
-        child: Padding(
-        padding: EdgeInsets.only(right: 20.0),
-        child:  Icon(
-            Icons.clear,
-            size: 20,
-          ),
-        ),
-    ),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: new Icon(Icons.arrow_back_ios),
-      onPressed:()=>Navigator.pop(context),
-    );
-      
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    return Text("Hi");
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.all(10),
-      itemCount: 5,
-      itemBuilder: (context,index) {
-        return ListTile(
-            title: Text(_list[index]),
-        );
-      },
-    );
-  }
-}
 // defining the properties of the sidebar of the application
 class SideBar extends StatefulWidget {
   @override
@@ -3978,23 +3957,40 @@ class ViewVendorState extends State<ViewVendor> {
                   AppBar(
                     centerTitle: true,
                     leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,    
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                    }
-                  ),
+                      icon: Icon(
+                        Icons.arrow_back,    
+                        ), 
+                      onPressed: (){
+                        Navigator.pop(context);
+                      }
+                    ),
+                    actions: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: 20.0),
+                        child: GestureDetector(         //adding the sidebar opening buttton
+                          onTap: () {
+                            scaffoldKey.currentState.openEndDrawer();
+                          },
+                          child: Icon(
+                            Icons.menu,
+                          ),
+                        )
+                      ),
+                    ],
                     bottom: PreferredSize(
-                        preferredSize: Size.fromHeight(0),
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                              padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                              child: Text('${widget.eventName}',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 28))),
-                        )),
+                      preferredSize: Size.fromHeight(0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                          child: Text('${widget.eventName}',
+                            style: TextStyle(
+                              color: Colors.white, fontSize: 28
+                            ),
+                          ),
+                        ),
+                      )
+                    ),
                     flexibleSpace: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -4059,7 +4055,6 @@ class ViewMenuState extends State<ViewMenu> {
     return StreamProvider<List<Item>>.value(
       value: FirestoreService().getItemInfo(vendorID),
       child: Scaffold(
-        key: scaffoldKey,
         appBar: PreferredSize(      //displaying the design bar of the application
             preferredSize: Size.fromHeight(150.0),
             child: ClipPath(
@@ -4069,13 +4064,26 @@ class ViewMenuState extends State<ViewMenu> {
                   AppBar(
                     centerTitle: true,
                     leading: IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,    
-                      ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                    }
-                  ),
+                      icon: Icon(
+                        Icons.arrow_back,    
+                        ), 
+                      onPressed: (){
+                        Navigator.pop(context);
+                      }
+                    ),
+                    actions: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: 20.0),
+                        child: GestureDetector(         //adding the sidebar opening buttton
+                          onTap: () {
+                            scaffoldKey.currentState.openEndDrawer();
+                          },
+                          child: Icon(
+                            Icons.menu,
+                          ),
+                        )
+                      ),
+                    ],
                     bottom: PreferredSize(
                         preferredSize: Size.fromHeight(0),
                         child: Align(
@@ -4126,24 +4134,22 @@ class ViewMenuState extends State<ViewMenu> {
   }
 }
 //creating the edit item screen
-class EditItem extends StatefulWidget {
+class EditMenu extends StatefulWidget {
   final Item itemData;
-  EditItem({this.itemData});
+  EditMenu({this.itemData});
   @override 
-  EditItemState createState()=> new EditItemState(itemData: itemData,); 
+  EditMenuState createState()=> new EditMenuState(itemData: itemData,); 
 }
 
-class EditItemState extends State<EditItem> {
+class EditMenuState extends State<EditMenu> {
   String name,logo,err;
   final dcontroller=new TextEditingController();
   final dcontroller3=new TextEditingController();
   Item itemData;
-  EditItemState({this.itemData});
+  EditMenuState({this.itemData});
   bool value=false;
   bool check=false;
   List<Widget> menu=[], menu2=[]; 
-  
-  int count=1; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   bool validate=false; 
@@ -4161,8 +4167,6 @@ class EditItemState extends State<EditItem> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      //key: scaffoldKey,
-      endDrawer:  SideBar(),//calling the sidebar to execute the sidebar drawer of the screen
       appBar: PreferredSize(    //creating the designbar of the application
         preferredSize: Size.fromHeight(150.0),
         child: ClipPath(
@@ -4189,19 +4193,6 @@ class EditItemState extends State<EditItem> {
                     Navigator.pop(context);
                   }
                 ),
-                actions: <Widget>[
-                  IconButton(
-                    onPressed: () {                          
-                      showSearch(
-                        context: context,
-                        delegate: MapSearchBar(),
-                      );
-                    },
-                    icon: Icon(
-                      Icons.search,
-                    )
-                  ),
-                ],
                 flexibleSpace: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -4289,7 +4280,7 @@ class EditItemState extends State<EditItem> {
                     validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
                     readOnly: true,
                     decoration: InputDecoration(
-                      hintText: 'Upload Logo Photo',
+                      hintText: logo==null ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19
@@ -4319,13 +4310,14 @@ class EditItemState extends State<EditItem> {
                       await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
                       logo=downloadUrl;
-                      showDialog(
+                      showDialog(                 //User friendly error message when the screen has been displayed 
                         context: context,
                         builder: (_) => AlertDialog(
-                          title: Text("Image Uploaded"),
+                          title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                          content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
                         ),
                         barrierDismissible: true,
-                      );   
+                      );  
                     },
                   ),
                 ),

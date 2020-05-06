@@ -127,7 +127,7 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
             return Card(
               child:ListTile(
                 onTap: () {
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EditItem(itemData: items[index],)),);
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> EditMenu(itemData: items[index],)),);
                 },
                 onLongPress: () async {
                   return await showDialog(
