@@ -169,6 +169,7 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
             );
           },),
         ),
+        Padding(padding: EdgeInsets.all(30),),
         Center(
           child: Container(
               //width: MediaQuery.of(context).copyWith().size.width * 0.20,
@@ -201,7 +202,6 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
         ),
         SafeArea(
           child: err== null ? Container() : Container(
-            
             padding:EdgeInsets.only( top: 5), 
             child: Column(
               children: <Widget>[
