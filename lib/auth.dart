@@ -41,13 +41,14 @@ class AuthService {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       await _firestoreService.registerUser(UserData(
-        uid: result.user.uid,
-        firstName: firstName,
-        lastName: lastName,
-        gender: gender,
-        dateOfBirth: date,
-        email: email,
+        uid: result.user.uid ?? '',
+        firstName: firstName ?? '',
+        lastName: lastName ?? '',
+        gender: gender ?? '',
+        dateOfBirth: date ?? '',
+        email: email ?? '',
         userRole: 'user',
+        profilePicture: '',
         ));
       FirebaseUser user = result.user;
       try{
@@ -97,8 +98,14 @@ class AuthService {
 
       final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
       await _firestoreService.registerUser(UserData(
-        uid: user.uid,
+        uid: user.uid ?? '',
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        gender: 'NA',
+        dateOfBirth: DateTime.now(),
+        email: 'myemail@example.com',
         userRole: 'user',
+        profilePicture: '',
         ));
       print("signed in " + user.displayName);
 
@@ -121,9 +128,15 @@ class AuthService {
         );
         final FirebaseUser user = (await FirebaseAuth.instance.signInWithCredential(credential)).user;
         await _firestoreService.registerUser(UserData(
-          uid: user.uid,
+          uid: user.uid ?? '',
+          firstName: 'First Name',
+          lastName: 'Last Name',
+          gender: 'NA',
+          dateOfBirth: DateTime.now(),
+          email: 'myemail@example.com',
           userRole: 'user',
-        ));
+          profilePicture: '',
+          ));
         print('signed in ' + user.displayName);
         return user;
       }

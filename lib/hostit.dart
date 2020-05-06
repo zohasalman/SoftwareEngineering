@@ -69,12 +69,12 @@ class HostitHomescreenState extends State<HostitHomescreen> {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // getting locally stored data
-    String uid = prefs.getString('uid');
-    String firstName = prefs.getString('firstName');
-    String lastName = prefs.getString('lastName');
-    String email = prefs.getString('email');
-    String profilePicture = prefs.getString('profilePicture');
-    String gender = prefs.getString('gender');
+    String uid = prefs.getString('uid') ?? '';
+    String firstName = prefs.getString('firstName') ?? '';
+    String lastName = prefs.getString('lastName') ?? '';
+    String email = prefs.getString('email') ?? '';
+    String profilePicture = prefs.getString('profilePicture') ?? '';
+    String gender = prefs.getString('gender') ?? '';
     // Storing data in user class object
     print(uid);
     print(firstName);
@@ -84,12 +84,13 @@ class HostitHomescreenState extends State<HostitHomescreen> {
     print(gender);
 
     myUserInfo = UserData(
-        uid: uid,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        gender: gender,
-        profilePicture: profilePicture);
+        uid: uid ?? '',
+        firstName: firstName ?? '',
+        lastName: lastName ?? '',
+        email: email ?? '',
+        gender: gender ?? '',
+        profilePicture: profilePicture ?? ''
+        );
   }
 
 

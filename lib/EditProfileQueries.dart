@@ -4,46 +4,42 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EditUserData{
 
-  SharedPreferences prefs;
-  
-  void getPrefs() async{
-   prefs = await SharedPreferences.getInstance();
-  }
-    // getting locally stored data
-    
+  SharedPreferences prefs;    
 
   final CollectionReference _updateCollectionReference = Firestore.instance.collection('users');
 
-  void update(String uid, String firstName, String lastName, String email, String password, String gender, String profilePicture, DateTime dateOfBirth){
-    print(uid);
-    print(firstName);
-
+  void update(String uid, String firstName, String lastName, String email, String password, String gender, String profilePicture, DateTime dateOfBirth) async {
+    
+  
+    prefs = await SharedPreferences.getInstance();
     //If the value is set up for the corresponding functions then set the values for all the corresponding fields 
-    if (firstName.isNotEmpty){
+    if (firstName != null){
       _updateFirstName(uid, firstName);
       prefs.setString('firstName', firstName);
     }
-    if (lastName.isNotEmpty){
+    if (lastName != null){
       _updateLastName(uid, lastName);
       prefs.setString('lastName', lastName);
     }
-    if (email.isNotEmpty){
+    if (email != null){
       _updateEmail(uid, email);
       prefs.setString('email', email);
     }
-    if (password.isNotEmpty){
+    if (password != null){
       _updatePassword(password);
       if (prefs.getBool('rememberMe') == true){
         prefs.setString('password', password);
       }
     }
-    if (gender.isNotEmpty){
+    if (gender != null){
       _updateGender(uid, gender);
       prefs.setString('gender', gender);
     }
-    if (profilePicture.isNotEmpty){
+    if (profilePicture != null){
       _updateProfilePicture(uid, profilePicture);
-      prefs.setString('profilePicture', profilePicture);
+    }
+    if (dateOfBirth != null){
+      _updateDateOfBirth(uid, dateOfBirth);
     }
   }
 
@@ -85,5 +81,10 @@ class EditUserData{
   void _updateProfilePicture(String uid, String profilePicture){
     _updateCollectionReference.document(uid).updateData({'profilePicture' : profilePicture});
     print('Profile Picture updated.');
+  }
+
+  void _updateDateOfBirth(String uid, DateTime dateTime){
+    _updateCollectionReference.document(uid).updateData({'dateOfBirth' : dateTime});
+    print('Date of Birth updated.');
   }
 }

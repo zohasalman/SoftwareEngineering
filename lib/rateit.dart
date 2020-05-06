@@ -36,6 +36,68 @@ void main3() => runApp(MaterialApp(
           '/changeratings': (BuildContext context) => new ChangeRatings(),
         }));
 
+
+class SideBar1 extends StatefulWidget {
+  @override
+  SideBarProperties1 createState() => new SideBarProperties1();
+}
+
+class SideBarProperties1 extends State<SideBar1> { //SideBar class containing user info and buttons to editprofile
+  void normalSignOut() async {                     //viewuserratings and signout.
+    User usr = Provider.of<User>(context, listen: false);
+    String user = usr.uid;
+    userID = usr.uid;
+    await FirestoreService(uid: user).normalSignOutPromise();
+    LoginScreen();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: new Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(20),
+            ),
+            Container(                                        //button for Sign out 
+                child: GestureDetector(
+              onTap: () async {
+                await FirestoreService().normalSignOutPromise();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [
+                        Color(0xFFAC0D57),
+                        Color(0xFFFC4A1F),
+                      ]),
+                  boxShadow: const [
+                    BoxShadow(blurRadius: 10),
+                  ],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child: Center(
+                  child: Text('Sign Out',
+                      style: TextStyle(color: Colors.white, fontSize: 22)),
+                ),
+              ),
+            )),
+          ]),
+    );
+  }
+}        
+
 class SideBar2 extends StatefulWidget {
   @override
   SideBarProperties2 createState() => new SideBarProperties2();
@@ -62,7 +124,7 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
             ),
             CircleAvatar(
               radius: 70,
-              backgroundImage: new NetworkImage('${myUserInfo.profilePicture}'), //User Picture from databse
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}' ?? ''), //User Picture from databse
             ),
             Text(myUserInfo.firstName + ' ' + myUserInfo.lastName, //User Name coming from database
                 style: TextStyle(fontSize: 30, color: Colors.black)),
@@ -78,7 +140,7 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          EditProfile(userInfoRecieved: myUserInfo)),// Switching to Edit Profie screen
+                          new EditProfile(userInfoRecieved: myUserInfo)),// Switching to Edit Profie screen
                 );
               },
               child: Container(                                   //button for Edit Profile Screen
@@ -254,7 +316,32 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
     }
   }
 
+  void getUserInfo() async {
+    // new method
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // getting locally stored data
+    String uid = prefs.getString('uid') ?? '';
+    String firstName = prefs.getString('firstName') ?? '';
+    String lastName = prefs.getString('lastName') ?? '';
+    String email = prefs.getString('email') ?? '';
+    String profilePicture = prefs.getString('profilePicture') ?? '';
+    String gender = prefs.getString('gender') ?? '';
+    // Storing data in user class object
+    myUserInfo = UserData(
+        uid: uid ?? '',
+        firstName: firstName ?? '',
+        lastName: lastName ?? '',
+        email: email ?? '',
+        gender: gender ?? '',
+        profilePicture: profilePicture) ?? '';
+  }
+
+
   @override
+  void initState() {
+    super.initState();
+    getUserInfo();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -298,7 +385,7 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: SideBar2(),
+        endDrawer: SideBar1(),
         body: SafeArea(    
           child: Form(
             key: _formKey,
@@ -370,26 +457,7 @@ class _RateItFirstScreen extends StatefulWidget {
 }
 
 class RateItFirstScreen extends State<_RateItFirstScreen> {                   //Welcome Screen for the Food Event
-  void getUserInfo() async {
-    // new method
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // getting locally stored data
-    String uid = prefs.getString('uid');
-    String firstName = prefs.getString('firstName');
-    String lastName = prefs.getString('lastName');
-    String email = prefs.getString('email');
-    String profilePicture = prefs.getString('profilePicture');
-    String gender = prefs.getString('gender');
-    // Storing data in user class object
-    myUserInfo = UserData(
-        uid: uid,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        gender: gender,
-        profilePicture: profilePicture);
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -468,7 +536,6 @@ class RateItFirstScreen extends State<_RateItFirstScreen> {                   //
                     offset: Offset(0.0, -260.0),
                     child: RaisedButton(
                       onPressed: () {
-                        getUserInfo();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
