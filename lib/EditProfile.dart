@@ -103,18 +103,15 @@ class _EditProfile extends State<EditProfile> {
     });
   }
 
-  void submit() async {
+  Future<void> submit() async {
     if (_image != null){
       await uploadFile();
-      if (_uploadedFileURL.isNotEmpty) {
-        _profilePicture = _uploadedFileURL;
-      }
+      _profilePicture = _uploadedFileURL;
+      widget.userInfoRecieved.profilePicture = _profilePicture;
     }
-    print('hii');
     _updateData.update(widget.userInfoRecieved.uid, _firstName, _lastName, _email, _password,
         _gender, _profilePicture, _dateOfBirth);
-    // Storing data in user class object
-    widget.userInfoRecieved.update(_firstName, _lastName, _email, _gender, _profilePicture);
+    
   }
 
   List<DropdownMenuItem<String>> n = [];
@@ -432,7 +429,7 @@ class _EditProfile extends State<EditProfile> {
                                 actions: <Widget>[
                                   Center(
                                       child: FlatButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                           setState ( () {
                                             if(genderSelected.text.isNotEmpty){
                                               _gender = genderSelected.text;
@@ -452,13 +449,13 @@ class _EditProfile extends State<EditProfile> {
                                             if(dateTime != null){
                                               _dateOfBirth = dateTime;
                                             }
-                                  
+
                                         });
 
-                                        print(_firstName);
-                                        print(_lastName);
-                                        print(_email);
-                                        submit();
+                                        // print(_firstName);
+                                        // print(_lastName);
+                                        // print(_email);
+                                        await submit();
                                         Navigator.of(context).pop(false);
                                         },                           
                                     child: Text("Ok"),
