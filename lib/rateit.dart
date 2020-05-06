@@ -18,7 +18,7 @@ import 'package:rating_bar/rating_bar.dart';
 import 'item-list.dart';
 import 'item.dart';
 import 'ratedVendor.dart';
-//import 'package:barcode_scan/barcode_scan.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -742,9 +742,9 @@ class _ViewVendor extends State<ViewVendor> {
           backgroundColor: Colors.pink[800],
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
-            //Navigator.of(context).pushNamed('/doratings');
+            // Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            //scanning= await BarcodeScanner.scan(); //TODO:Uncommentt
+            scanning= await BarcodeScanner.scan(); //TODO:Uncommentt
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -1310,10 +1310,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
     if (error != null) {
       print(error);
     }
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ViewVendor(eventName: eName, eventID: eId)));
+    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewVendor(eventName: eName, eventID: eId)));
   }
 
   @override
@@ -1406,6 +1403,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                   SafeArea(
                     child: InkWell(
                       onTap: () async {
+                        submit(finalRating);
                         return await showDialog(
                           context: context,
                           builder: (BuildContext context) {
