@@ -619,7 +619,7 @@ class AddEventState extends State<AddEvent> {
               child: RichText(
                 text: TextSpan(
                   children: <TextSpan>[
-                    TextSpan(text: "*Only users within 600 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                    TextSpan(text: "*Only users within 20 kilometres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                 )
               ),
@@ -3100,7 +3100,7 @@ class EditEventState extends State<EditEvent> {
               child: RichText(
                 text: TextSpan(
                   children: <TextSpan>[
-                    TextSpan(text: "*Only users within 600 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                    TextSpan(text: "*Only users within 20 kilometres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                 )
               ),
