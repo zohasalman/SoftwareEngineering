@@ -90,7 +90,7 @@ class _DisplayItemsState extends State<DisplayItems> {
                 )),
                 Padding(
                   padding: EdgeInsets.only(top: 10,right: 0.0, left: 40.0),
-                  child: Text('myRating/5.0',
+                  child: Text('${'myRating'}/5.0',
                       style:
                           TextStyle(color: Colors.black, fontSize: 18)))
               

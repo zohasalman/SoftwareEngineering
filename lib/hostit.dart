@@ -29,14 +29,13 @@ import 'login.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'rateit.dart';
+import 'EditProfile.dart';
 
 
 UserData myUserInfo;
 void main2() => runApp(App());
 
 String number=""; 
-
-
 
 class App extends StatelessWidget{
   @override
@@ -78,6 +77,13 @@ class HostitHomescreenState extends State<HostitHomescreen> {
     String profilePicture = prefs.getString('profilePicture');
     String gender = prefs.getString('gender');
     // Storing data in user class object
+    print(uid);
+    print(firstName);
+    print(lastName);
+    print(email);
+    print(profilePicture);
+    print(gender);
+
     myUserInfo = UserData(
         uid: uid,
         firstName: firstName,
@@ -216,7 +222,7 @@ class SideBar1Properties extends State<SideBar1>{
           Container(
             child: GestureDetector(             //leading to the edit profile screen
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile(userInfoRecieved: myUserInfo)),);
               },
               child: Container(
                 width: 230.0,
@@ -614,7 +620,7 @@ class AddEventState extends State<AddEvent> {
               child: RichText(
                 text: TextSpan(
                   children: <TextSpan>[
-                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                    TextSpan(text: "*Only users within 600 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                 )
               ),
@@ -2221,7 +2227,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                 }).catchError((e){err=e.toString();});
                             }
@@ -2535,7 +2541,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                 }).catchError((e){err=e.toString();});
                             }
@@ -2592,7 +2598,6 @@ class EditVenState extends State<EditVen> {
   void initState() {
     super.initState();
     if(eventName==null)
-    print('adsdsaaaaaaa');
     myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
@@ -3145,7 +3150,7 @@ class EditEventState extends State<EditEvent> {
               child: RichText(
                 text: TextSpan(
                   children: <TextSpan>[
-                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                    TextSpan(text: "*Only users within 600 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
                   ]
                 )
               ),
@@ -3832,7 +3837,7 @@ class SideBarProperties extends State<SideBar>{
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile(userInfoRecieved: myUserInfo)),);
               },
               child: Container(
                 width: 230.0,

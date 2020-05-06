@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rateit/rateit.dart';
 import 'package:rateit/user.dart';
 import 'Event.dart';
 import 'user.dart';
@@ -229,6 +230,7 @@ class FirestoreService{
   // do ratings
   Future<String> sendRatings(String uid, List<Map> itemRatings, String vendorName, String vendorLogo, String vendorId, String review, double vendorRating) async {
     // convert all the data to JSON
+    // print('bc');
     String checkIfExists = await getRatedVendorId(uid, vendorId);
       if(checkIfExists == ''){
       int noOfItems = itemRatings.length;
@@ -245,7 +247,6 @@ class FirestoreService{
             print(e.toString());
             
           }
-
           // add review Id:
           await _reviewsCollectionReference.document(reviewId).updateData({'reviewId': reviewId});
         }
@@ -254,15 +255,30 @@ class FirestoreService{
           final resp = await _ratedVendorCollectionReference.add(ven.toJSON());
           String ratedVendorId = resp.documentID;
           await _ratedVendorCollectionReference.document(ratedVendorId).updateData({'ratedVendorId': ratedVendorId});
+          // print('done');
         } catch (e) {
           print(e.toString());
         }
+
+        try {
+          final resp2 = await _vendorCollectionReference.document(vendorId).collection('ratedVendor').add(ven.toJSON());
+          String vendorColratedVendorId = resp2.documentID;
+          await _vendorCollectionReference.document(vendorId).collection('ratedVendor').document(vendorColratedVendorId).updateData({'myId': vendorColratedVendorId});
+        } catch (e) {
+          print(e.toString());
+        }
+
         itemRatings.forEach((item) async{
           RatedItem it = RatedItem(userId: uid, vendorId: vendorId, itemId: item['itemId'], itemName: item['name'], itemLogo: item['logo'], rating: item['givenRating']);
           try {
             final resp = await _ratedItemCollectionReference.add(it.toJSON());
             String ratedItemId = resp.documentID;
             await _ratedItemCollectionReference.document(ratedItemId).updateData({'ratedItemId': ratedItemId});
+
+            final resp2 = await _itemCollectionReference.document(item['itemId']).collection('ratedItem').add(it.toJSON());
+            String itemColratedVendorId = resp2.documentID;
+            await _itemCollectionReference.document(item['itemId']).collection('ratedItem').document(itemColratedVendorId).updateData({'myId': itemColratedVendorId});
+
           } catch (e) {
             print(e.toString());
           }
@@ -280,6 +296,7 @@ class FirestoreService{
   // edit rating 
 
   // getting document ids
+
   Future<String> getRatedVendorId(String userId, String vendorId) async {
     String docId = '';
     await _ratedVendorCollectionReference.where('userId', isEqualTo: userId).where('vendorId', isEqualTo: vendorId).getDocuments()
@@ -302,13 +319,35 @@ class FirestoreService{
     return docId;
   }
 
+  Future<String> getVendorSubCollId(String uid, String vendorId) async {
+    String docId = '';
+    await Firestore.instance.collection('Vendor').document(vendorId).collection('ratedVendor').where('userId', isEqualTo: uid).getDocuments()
+    .then((docs){
+      if (docs.documents.isNotEmpty){
+        docId = docs.documents[0].data['myId'];
+      }
+    });
+    return docId;
+  }
+
+  Future<String> getItemSubCollId(String uid, String itemId) async {
+    String docId = '';
+    await Firestore.instance.collection('item').document(itemId).collection('itemVendor').where('userId', isEqualTo: uid).getDocuments()
+    .then((docs){
+      if (docs.documents.isNotEmpty){
+        docId = docs.documents[0].data['myId'];
+      }
+    });
+    return docId;
+  }
+
   Future<String> updateRatings(String uid, List<Map> itemRatings, String vendorId, String review, String reviewId, double vendorRating) async {
     // convert all the data to JSON
     int noOfItems = itemRatings.length;
-    String ratedVendorId = '';
-
+    
     // getting vendorId;
-    ratedVendorId = await getRatedVendorId(uid, vendorId);
+    String ratedVendorId = await getRatedVendorId(uid, vendorId);
+    String vendorColratedVendorId = await getVendorSubCollId(uid, vendorId);
     // update review
     if (review.isNotEmpty){
       // update review 
@@ -322,6 +361,7 @@ class FirestoreService{
     // update rated vendor
     try {
       await _ratedVendorCollectionReference.document(ratedVendorId).updateData({'myVendorRating': vendorRating});
+      await Firestore.instance.collection('Vendor').document(vendorId).collection('ratedVendor').document(vendorColratedVendorId).updateData({'myVendorRating': vendorRating});
     } catch (e) {
       return e.toString();
     }
@@ -332,7 +372,9 @@ class FirestoreService{
         try {
           // get item id 
           String ratedItemId = await getRatedItemsDocumentId(uid, vendorId, item['itemId']);
+          String itemColratedVendorId = await getItemSubCollId(uid, item['itemId']);
           await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['givenRating']});
+          await Firestore.instance.collection('item').document(item['itemId']).collection('itemVendor').document(itemColratedVendorId).updateData({'myItemRating': item['givenRating']});
           return null;
         } catch (e) {
           return e.toString();
