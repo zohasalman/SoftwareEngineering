@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rateit/rateit.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:rateit/user.dart';
 import 'Event.dart';
 import 'user.dart';
@@ -94,7 +96,9 @@ class FirestoreService{
       if (prefs.getBool('rememberMe') == false){
         prefs.remove('email');
       }
-      return await FirebaseAuth.instance.signOut();
+      return await FirebaseAuth.instance.signOut().then((_) async {
+        await Directory( (await getTemporaryDirectory()).path ).delete(recursive: true);
+      });
     }
     catch(e){
       return null;
