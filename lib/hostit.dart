@@ -1950,8 +1950,7 @@ class AddMenuState extends State<AddMenu> {
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
-  bool check=false; 
-  var n=int.parse(number); 
+  bool check=false;
   List<Widget> menu=[], menu2=[]; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -2268,8 +2267,7 @@ class AddMenu2State extends State<AddMenu2> {
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
-  bool check=false; 
-  var n=int.parse(number); 
+  bool check=false;
 
   List<Widget> menu=[], menu2=[]; 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -2961,7 +2959,7 @@ class EditVenState extends State<EditVen> {
 }
 
 
-
+// creating the edit event screen
 class EditEvent extends StatefulWidget {
   final Event eventData;
   final LatLng coord;
@@ -2991,8 +2989,6 @@ class EditEventState extends State<EditEvent> {
   bool value=false; 
   var logo, mlogo;  
   bool check=false; 
-  var nu; 
-  var n=int.parse(number); 
   List<Widget> menu=[], menu2=[]; 
   int count=1; 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
@@ -3000,7 +2996,7 @@ class EditEventState extends State<EditEvent> {
 
   void getCoordinates() async {
     final updatedcoord = await Navigator.push(
-      context,
+      context,        //changing the coordinates
       CupertinoPageRoute(
           fullscreenDialog: true, builder: (context) => Maps()),
     );
@@ -3030,7 +3026,7 @@ class EditEventState extends State<EditEvent> {
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[
-              AppBar(
+              AppBar(                 //displaying the designbar of the application
                 centerTitle: true,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(0),
@@ -3084,7 +3080,7 @@ class EditEventState extends State<EditEvent> {
               padding:EdgeInsets.only( top: 10, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
-                  TextFormField(
+                  TextFormField(                  //changing the name of the event
                     controller: dcontroller,
                     validator: (input)=> input.isEmpty? 'Please enter event name': null,
                     onChanged: (input)=> savedName=input,
@@ -3106,7 +3102,7 @@ class EditEventState extends State<EditEvent> {
             Container(
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
-                Container(
+                Container(                      //changing the location of the event
                   width: MediaQuery.of(context).copyWith().size.width * 0.75,
                   padding:EdgeInsets.only( top: 5, left: 20),
                       child: TextFormField(
@@ -3144,7 +3140,7 @@ class EditEventState extends State<EditEvent> {
                 )
               ],),
             ),
-            Container(
+            Container(            //changing the radius of the event
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding: EdgeInsets.only(top: 0, left: 20), 
               child: RichText(
@@ -3155,7 +3151,7 @@ class EditEventState extends State<EditEvent> {
                 )
               ),
             ),
-            Container(
+            Container(        //changing the picture of the event
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
@@ -3187,7 +3183,7 @@ class EditEventState extends State<EditEvent> {
                     child: IconButton(
                       icon: Icon(Icons.file_upload,
                       color: Colors.white,),
-                      onPressed: () async{
+                      onPressed: () async{          //updating the changed information to db
                         String downloadUrl;
                         String filename='${DateTime.now()}${eventData.name}.png';
                         File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
@@ -3252,7 +3248,7 @@ class EditEventState extends State<EditEvent> {
                     child: IconButton(
                       icon: Icon(Icons.file_upload,
                       color: Colors.white,),
-                      onPressed: () async {
+                      onPressed: () async {     //uploading the changed info to database
                         String downloadUrl;
                         String filename='${DateTime.now()}${eventData.name}.png';
                         File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
@@ -3327,7 +3323,7 @@ class EditEventState extends State<EditEvent> {
                     ),
                     shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
                   ),
-                  child: IconButton(
+                  child: IconButton(          //adding the forward button to navigate ahead
                     alignment: Alignment.center,
                     icon: Icon(Icons.arrow_forward,
                     size: 45,
@@ -3335,7 +3331,7 @@ class EditEventState extends State<EditEvent> {
                     onPressed: () async {
                       setState(() => validate=true);
                       if(coord!=null){
-                        if ( !(savedName==null || savedLogo==null || savedCover==null) ){
+                        if ( !(savedName==null || savedLogo==null || savedCover==null) ){     //getting data from the database
                           GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
                           await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
                           Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName,inviteCode: eventData.invitecode,)),);
@@ -3352,7 +3348,7 @@ class EditEventState extends State<EditEvent> {
     ),); 
   }
 }
-
+//Qr generation of the event
 class QRselection extends StatefulWidget {
   final String eid;
   final String eventName;
@@ -3381,7 +3377,7 @@ class QRselectionState extends State<QRselection> {
               fit: StackFit.expand,
               children: <Widget>[
 
-                AppBar(
+                AppBar(           //displaying the design bar of the application
                   centerTitle: true,
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(0),
@@ -3438,7 +3434,7 @@ class QRselectionState extends State<QRselection> {
                         child: 
                           Container(
                             child: GestureDetector(
-                              onTap: ()async{
+                              onTap: ()async{     //getting the data from the database
                                 String inviteCode;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
@@ -3496,7 +3492,7 @@ class QRselectionState extends State<QRselection> {
                                   borderRadius: BorderRadius.circular(30.0),
                                 ),
                                 padding: EdgeInsets.all(12.0),
-                                child:Center(
+                                child:Center(     //download QR codes to the gallery
                                   child: 
                                     Text('Download QR Codes',
                                       style: TextStyle(
@@ -3594,7 +3590,7 @@ class QRselectionState extends State<QRselection> {
     );
   }
 }
-
+//adding to maps api to the application for the location info
 class Maps extends StatefulWidget {
   //Maps(LatLng eid);
 
@@ -3630,7 +3626,7 @@ class MapsFunc extends State<Maps> {
               fit: StackFit.expand,
               children: <Widget>[
 
-                AppBar(
+                AppBar(     //displaying the design bar of the application
                   centerTitle: true,
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(0),
@@ -3679,7 +3675,7 @@ class MapsFunc extends State<Maps> {
         ),
 
         body:     
-        GoogleMap(
+        GoogleMap(          //using the google map api
           onTap: (LatLng coordinates){
                 final Marker marker1 = Marker(
                   markerId: MarkerId('1'),
@@ -3709,7 +3705,7 @@ class MapsFunc extends State<Maps> {
     );
   }
 }
-
+//defining the properties of the map search bar widget
 class MapSearchBar extends SearchDelegate<String>  {
 
    List<String> _list = const [
@@ -3781,7 +3777,7 @@ class MapSearchBar extends SearchDelegate<String>  {
     );
   }
 }
-
+// defining the properties of the sidebar of the application
 class SideBar extends StatefulWidget {
   @override
   SideBarProperties createState() => new SideBarProperties();
@@ -3803,7 +3799,7 @@ class SideBarProperties extends State<SideBar>{
     });
   }
 
-  void normalSignOut() async {
+  void normalSignOut() async {      //adding the signout button to the sidebar
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
@@ -3819,7 +3815,7 @@ class SideBarProperties extends State<SideBar>{
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
             Padding( padding: EdgeInsets.all(30),),
-            CircleAvatar(
+            CircleAvatar(           //displaying the image of the user
               radius:70, 
               backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
             ),
@@ -3830,7 +3826,7 @@ class SideBarProperties extends State<SideBar>{
               style: TextStyle(fontSize: 30, color: Colors.black)
             ),
             Text(
-              myUserInfo.email, 
+              myUserInfo.email, //displaying the email addres of the user
               style: TextStyle(fontSize: 22, color: Colors.black)
             ),
           Padding( padding: EdgeInsets.all(30),),
@@ -3857,7 +3853,7 @@ class SideBarProperties extends State<SideBar>{
                 padding: EdgeInsets.all(12.0),
                 child:Center(
                   child: 
-                    Text('Edit Profile',
+                    Text('Edit Profile',          //adding the edit profile button
                       style: TextStyle(
                         color: Colors.white, 
                         fontSize: 22
@@ -3891,7 +3887,7 @@ class SideBarProperties extends State<SideBar>{
                 padding: EdgeInsets.all(12.0),
                 child:Center(
                   child: 
-                    Text('View my Events',
+                    Text('View my Events',        //adding the view my events button
                       style: TextStyle(
                         color: Colors.white, 
                         fontSize: 22
@@ -3904,7 +3900,7 @@ class SideBarProperties extends State<SideBar>{
           Padding( padding: EdgeInsets.all(20),),
           Container(
             child: GestureDetector(
-              onTap:() async {await FirestoreService().normalSignOutPromise();},
+              onTap:() async {await FirestoreService().normalSignOutPromise();},    //executing the signout procedures
              // },
               child: Container(
                 width: 230.0,
@@ -3940,7 +3936,7 @@ class SideBarProperties extends State<SideBar>{
   }
 }
 
-
+//creating the view vendor screen of the application
 class ViewVendor extends StatefulWidget {
   ViewVendor({this.eventName, this.eventID});
   final String eventName;
@@ -3973,7 +3969,7 @@ class ViewVendorState extends State<ViewVendor> {
       value: FirestoreService().getVendorInfo(eventID),
       child: Scaffold(
         key: scaffoldKey,
-        appBar: PreferredSize(
+        appBar: PreferredSize(          //displaying the design bar of the application
             preferredSize: Size.fromHeight(150.0),
             child: ClipPath(
               child: Stack(
@@ -4023,14 +4019,14 @@ class ViewVendorState extends State<ViewVendor> {
             )),
         endDrawer: SideBar2(),
         body://Column( children: <Widget>[
-          VendorsListHostit(eventName: eventName,),
+          VendorsListHostit(eventName: eventName,),   //using a widget previously made to display the design and functionality of the screen
         //]),
       ),
     );
   }
 }
 
-
+//creating the view menu display of the screens
 class ViewMenu extends StatefulWidget {
   ViewMenu({this.vendorID,this.eventName, this.eventID});
   final String eventName;
@@ -4064,7 +4060,7 @@ class ViewMenuState extends State<ViewMenu> {
       value: FirestoreService().getItemInfo(vendorID),
       child: Scaffold(
         key: scaffoldKey,
-        appBar: PreferredSize(
+        appBar: PreferredSize(      //displaying the design bar of the application
             preferredSize: Size.fromHeight(150.0),
             child: ClipPath(
               child: Stack(
@@ -4111,7 +4107,7 @@ class ViewMenuState extends State<ViewMenu> {
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: SideBar2(),
+        endDrawer: SideBar2(),      //calling the sidebar widget to display the sidebar drawer
         body:Column( 
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -4129,7 +4125,7 @@ class ViewMenuState extends State<ViewMenu> {
     );
   }
 }
-
+//creating the edit item screen
 class EditItem extends StatefulWidget {
   final Item itemData;
   EditItem({this.itemData});
@@ -4144,8 +4140,7 @@ class EditItemState extends State<EditItem> {
   Item itemData;
   EditItemState({this.itemData});
   bool value=false;
-  bool check=false; 
-  var n=int.parse(number); 
+  bool check=false;
   List<Widget> menu=[], menu2=[]; 
   
   int count=1; 
@@ -4167,8 +4162,8 @@ class EditItemState extends State<EditItem> {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       //key: scaffoldKey,
-      endDrawer:  SideBar(),
-      appBar: PreferredSize(
+      endDrawer:  SideBar(),//calling the sidebar to execute the sidebar drawer of the screen
+      appBar: PreferredSize(    //creating the designbar of the application
         preferredSize: Size.fromHeight(150.0),
         child: ClipPath(
           child: Stack(
@@ -4246,7 +4241,7 @@ class EditItemState extends State<EditItem> {
                   text: TextSpan(
                     children: <TextSpan>[
                       TextSpan(
-                        text: "Item Details",
+                        text: "Item Details",     //displaying the item detail heading
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22
@@ -4263,7 +4258,7 @@ class EditItemState extends State<EditItem> {
             padding:EdgeInsets.only( top: 10, left: 20, right: 20),
             child: Column(
               children: <Widget>[
-                TextFormField(
+                TextFormField(      //allowing the item information to be changed
                   controller: dcontroller,
                   validator: (input)=> input.isEmpty? 'Please enter item name': null,
                   onChanged: (input)=> name=input,
@@ -4289,7 +4284,7 @@ class EditItemState extends State<EditItem> {
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.75,
                 padding:EdgeInsets.only( top: 5, left: 20),
-                  child: TextFormField(
+                  child: TextFormField(   //changing the logo of the item
 
                     validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
                     readOnly: true,
@@ -4317,7 +4312,7 @@ class EditItemState extends State<EditItem> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () async {
+                    onPressed: () async {   //uploading the new picture to db and fetching download link for later use
                       String downloadUrl;
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                       String filename='${DateTime.now()}${selected.absolute}.png';
@@ -4374,7 +4369,7 @@ class EditItemState extends State<EditItem> {
                   icon: Icon(Icons.arrow_forward,
                   size: 45,
                   color: Colors.white,),
-                  onPressed: () async {
+                  onPressed: () async {//updating the edited information to the database
                     setState(() => validate=true);
                    
                     if(!(logo==null || name==null))
