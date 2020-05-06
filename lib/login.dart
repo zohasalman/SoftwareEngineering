@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'package:rateit/auth.dart';
-import 'VendorList.dart';
-import 'hostit.dart';
+import 'Clipshape.dart';
 import 'userRedirection.dart';
 import 'package:intl/intl.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main1() => runApp(App());
 
@@ -26,16 +25,16 @@ class App extends StatelessWidget{
   }
 }
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {              //First sign in screen which comes after the welcome screen
   final Function toggleView;
   LoginScreen({this.toggleView});
   @override 
-  FirstScreen createState()=> new FirstScreen(); 
+  LoginScreenState createState()=> new LoginScreenState(); 
 }
 
 final AuthService _auth = AuthService();
 
-class FirstScreen extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
 
   String _email = '';
   String _password = '';
@@ -43,28 +42,28 @@ class FirstScreen extends State<LoginScreen> {
   bool rememberme=false;
   bool hasInfo = false;
 
-  final _formKey= GlobalKey<FormState>(); 
+  final _formKey= GlobalKey<FormState>();                       //Validation error checks 
 
   
-  void submit() async {
+  void submit() async {                                                         //Submit function for the end submission button
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() => _errorMessage = '');
+    setState(() => _errorMessage = '');                                     //Clearing error message each time submit is clicked to refresh the page 
     _formKey.currentState.save();
-    prefs.setBool('rememberMe', rememberme);
+    prefs.setBool('rememberMe', rememberme);                                          //When the user clicks remember me 
     if (rememberme == true){
       prefs.setString('email', _email);
       prefs.setString('password', _password);
     }
     dynamic result = await _auth.signInEmailAndPassword(_email, _password); 
-    if (result == null){
-      setState(() => _errorMessage = 'Invalid email or password combination.');
+    if (result == null){                                                                    
+      setState(() => _errorMessage = 'Invalid email or password combination.');                          //If the email and password do not match in firebase then display error on submit 
     }else{
       Redirection();
     }
   }
 
-  void autoLogIn() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  void autoLogIn() async {                                                            //Function for remember me as then username and password would be remembered by the user 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();  
     if (prefs.getBool('rememberMe') == true){
       final String emailId = prefs.getString('email');
       final String pw = prefs.getString('password');
@@ -95,7 +94,7 @@ class FirstScreen extends State<LoginScreen> {
             fit: StackFit.expand,
             children: <Widget>[
 
-              AppBar(
+              AppBar(                                                                             //App design top bar
                 centerTitle: true,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(0),
@@ -109,7 +108,7 @@ class FirstScreen extends State<LoginScreen> {
                 ),
                 flexibleSpace: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: LinearGradient(                                           //Setting colour gradient of raspberry jam and orange 
                       begin: Alignment.topRight,
                       end: Alignment.topLeft,
                       colors: [ 
@@ -119,7 +118,7 @@ class FirstScreen extends State<LoginScreen> {
                   ),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/Chat.png",
+                        "asset/image/Chat.png",                                 //Adding background image 
                       ),
                       fit: BoxFit.fitWidth,
                   ),
@@ -139,7 +138,7 @@ class FirstScreen extends State<LoginScreen> {
               child: Column(
                 children: <Widget>[
                   
-                  SafeArea(
+                  SafeArea(                                                             //Asking the user for the email address on sign in screen 
                     child: Padding(
                     padding:EdgeInsets.only( top: 30, left: 20, right: 20), 
                     child:TextFormField(
@@ -159,7 +158,7 @@ class FirstScreen extends State<LoginScreen> {
               )
             ),
 
-            SafeArea(
+            SafeArea(                                                                         //Asking the user for their password 
             
               child: Column(
                 children: <Widget>[
@@ -181,7 +180,7 @@ class FirstScreen extends State<LoginScreen> {
                     obscureText: true,
                   ),),),
 
-                  SafeArea(
+                  SafeArea(                                                                                                       //If the firebase does not authenticate the user then an error message is displayed in red 
                       child: _errorMessage != "Invalid email or password combination."? Container() : Container(
                         
                         padding:EdgeInsets.only( top: 5), 
@@ -199,7 +198,7 @@ class FirstScreen extends State<LoginScreen> {
                       ),
                     ),
 
-                  SizedBox(height: 7),
+                  SizedBox(height: 7),                                                                //Forgot password icon: If the user forgets their password they are redirected to the forgot password screens once they click on the option
                   InkWell(
                     onTap: (){
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> ForgotScreen()),); 
@@ -217,7 +216,7 @@ class FirstScreen extends State<LoginScreen> {
                     ),
                   ),
                   
-                  Container(
+                  Container(                                                                  //Remember me icon: if the user clicks on this icon then the username and password is remembered for the user 
                     height:20,
                     child: Row(
                       children: <Widget>[
@@ -237,11 +236,11 @@ class FirstScreen extends State<LoginScreen> {
 
                   ),
 
-                    SafeArea(
+                    SafeArea(                                                 //Submission button where the user signs up
                     child: Padding(
                       padding: EdgeInsets.only(top:40),
                       child: InkWell(
-                        onTap: submit,
+                        onTap: submit,                                  //If the user submits it checks from firebase and returns an error message or redirects 
                         child: Container(
                           height: 50,
                           width: 250,
@@ -267,7 +266,7 @@ class FirstScreen extends State<LoginScreen> {
 
                 
 
-                Container(
+                Container(                                                                  //If the user does not have an account then an option for signing up is also given: Once the user clicks on it redirected to sign up page
                   alignment: Alignment(0,0),
                   padding: EdgeInsets.only(top: 20, left: 0),
                   child: InkWell(
@@ -292,7 +291,7 @@ class FirstScreen extends State<LoginScreen> {
                     alignment: Alignment(0,0),
                     padding: EdgeInsets.only(top: 5, left: 20), 
                     child: InkWell(
-                      child: Text('Or',
+                      child: Text('Or',                                         //Another option of signing through fb or google is also provided 
                       style: TextStyle(color: Colors.grey[600] )
                       )
                     )
@@ -313,7 +312,7 @@ class FirstScreen extends State<LoginScreen> {
                     decoration: BoxDecoration(
                       
                       image: DecorationImage(
-                        image: AssetImage("asset/image/facebook.png")
+                        image: AssetImage("asset/image/facebook.png")                         //If the user decides to use facebook to sign in he/she is redirected to the facebook page 
                         ),
                     ),
                     child: InkWell(
@@ -329,7 +328,7 @@ class FirstScreen extends State<LoginScreen> {
                     width: 250,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage("asset/image/google.png")
+                        image: AssetImage("asset/image/google.png")                             //If the user decides to use google to sign in then he/she is redirected to the gmail page where they can enter their credentails 
                         ),
                     ),
                     child: InkWell(
@@ -350,35 +349,35 @@ class FirstScreen extends State<LoginScreen> {
   }
 }
 
-class SignScreen extends StatefulWidget {
+class SignScreen extends StatefulWidget {                   //Screen that appears on clicking the sign up option: 3 screens in sign up continuation this is the first one 
   
   final Function toggleView;
   SignScreen({this.toggleView});
 
   @override 
-  SecondScreen createState()=> new SecondScreen(); 
+  SignScreenState createState()=> new SignScreenState(); 
 }
 
 
-class SecondScreen extends State<SignScreen> {
-  String firstName='', lastName='', gender, _errorMesage;
+class SignScreenState extends State<SignScreen> {                  
+  String firstName='', lastName='', gender; 
   bool error1=true, error2=true; 
 
   DateTime _dateTime; 
 
-  bool validate=false; 
-  final _formKey= GlobalKey<FormState>(); 
+  bool validate=false;                //First false changed to true on the submit button 
+  final _formKey= GlobalKey<FormState>();               //Validation forms
 
-  void submit(){
+  void submit(){                                                      //Function is called when the user wants to go forward: It redirects user to next screen of sign up where email and password is asked 
     setState(() => validate=true);
     _formKey.currentState.save();
-    if (!error1 && !error2 && (firstName!='') && (lastName!='')) {
+    if (!error1 && !error2 && (firstName!='') && (lastName!='')) {                            //First it is ensured that all fields are checked before the user is redirected 
       Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign2Screen(firstName: firstName, lastName: lastName, gender: gender,date: _dateTime)));
     }
     
   }
 
-  List<DropdownMenuItem<String>> n=[];
+  List<DropdownMenuItem<String>> n=[];                    //Drop down button initialisation for gender 
   void loadData(){
     n=[];
     n.add(new DropdownMenuItem(
@@ -408,7 +407,7 @@ class SecondScreen extends State<SignScreen> {
             fit: StackFit.expand,
             children: <Widget>[
 
-              AppBar(
+              AppBar(                           //Appbar for top design 
                 centerTitle: true,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(0),
@@ -416,7 +415,7 @@ class SecondScreen extends State<SignScreen> {
                     alignment: Alignment.topLeft,
                     child: Padding(
                       padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                      child: Text('Sign Up',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      child: Text('Sign Up',style: TextStyle(color: Colors.white, fontSize: 28 ))           //Screen title 
                       ),
                   )
                 ),
@@ -432,14 +431,14 @@ class SecondScreen extends State<SignScreen> {
                   gradient: LinearGradient(
                       begin: Alignment.topRight,
                       end: Alignment.topLeft,
-                      colors: [ 
+                      colors: [                         //Gradient 
                         Color(0xFFAC0D57),
                         Color(0xFFFC4A1F),
                       ]
                   ),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/Chat.png",
+                        "asset/image/Chat.png",             //Background image 
                       ),
                       fit: BoxFit.fitWidth,
                   ),
@@ -453,10 +452,10 @@ class SecondScreen extends State<SignScreen> {
       ),
       body: Form(
         key: _formKey,
-        autovalidate: validate,
+        autovalidate: validate,                               //When clicked on submit form is validated to check for empty fields 
         child: SingleChildScrollView(
           child: Column(children: <Widget>[          
-            Container(
+            Container(                                                    //First field where the user is asked to enter their first name 
               padding:EdgeInsets.only( top: 1, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
@@ -475,7 +474,7 @@ class SecondScreen extends State<SignScreen> {
               )
             ),
 
-            Container(
+            Container(                                                    //Second field where the user is asked to enter their last name 
               padding:EdgeInsets.only( top: 10, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
@@ -493,7 +492,7 @@ class SecondScreen extends State<SignScreen> {
                 ],
               )
             ),
-            SafeArea(
+            SafeArea(                                                   //Next the user has to select their gender from their dropdown 
               child:  Container(
               padding:EdgeInsets.only( top: 10, left: 20, right: 20),
               child: SafeArea(
@@ -521,11 +520,8 @@ class SecondScreen extends State<SignScreen> {
             ),
 
 
-            SafeArea(
+            SafeArea(                                                       //If submit is clicked then have to make sure if the user clicks the dropdown: if the user hasnt selected an option from the dropdown then error message is displayed 
                 child: !(error1 && validate)? Container() : Container(
-                  // print(error1),
-                  // print(validate),
-                  
                   padding:EdgeInsets.only( top: 5), 
                   child: Column(
                     children: <Widget>[
@@ -541,7 +537,7 @@ class SecondScreen extends State<SignScreen> {
                 ),
               ),
           
-            Container(
+            Container(                                            //To help the user choose the date of birth option from the calendar 
               child: Row(
                 children: <Widget>[
                   Container(
@@ -551,7 +547,7 @@ class SecondScreen extends State<SignScreen> {
                   Container(
                   padding: EdgeInsets.only(top:15, left: 20),
                   child:RaisedButton(
-                    child:Text(_dateTime == null ? 'DD-MM-YYYY': DateFormat('dd-MM-yyyy').format(_dateTime), style: TextStyle(color: Colors.grey[600], fontSize: 19) ),  
+                    child:Text(_dateTime == null ? 'DD-MM-YYYY': DateFormat('dd-MM-yyyy').format(_dateTime), style: TextStyle(color: Colors.grey[600], fontSize: 19) ),  //If date not displayed then display format else display the date 
                     onPressed: (){
                       //print('here');
                       showDatePicker(
@@ -560,7 +556,7 @@ class SecondScreen extends State<SignScreen> {
                         firstDate: DateTime(1950),
                         lastDate: DateTime.now(),
                         builder: (BuildContext context, Widget child){
-                          return Theme(
+                          return Theme(                                         //Change the calender colour scheme 
                             data: ThemeData(
                               primarySwatch: Colors.pink,    
                               accentColor: Colors.deepOrange,
@@ -569,7 +565,7 @@ class SecondScreen extends State<SignScreen> {
                             child: child, 
                             );
                         }
-                      ).then((date) {
+                      ).then((date) {                           //Once date is selected: date is set up in a variable and a bool is declared for displaying error messages 
                         setState(() {
                           error2=false;
                           _dateTime = date;
@@ -583,11 +579,9 @@ class SecondScreen extends State<SignScreen> {
             ),
 
             
-            SafeArea(
+            SafeArea(                                                         //if date is not selected by the user and the form is validated then error message to display the error message 
                 child: !(error2 && validate)? Container() : Container(
-                  // print(error1),
-                  // print(validate),
-                  
+          
                   padding:EdgeInsets.only( top: 5), 
                   child: Column(
                     children: <Widget>[
@@ -604,7 +598,7 @@ class SecondScreen extends State<SignScreen> {
               ),
           
 
-            Container(
+            Container(                                                              //The submission button (next) when clicked it ensures the values are saved and the user moves to the next screen 
           
               child: Container(
                 height: 100,
@@ -624,7 +618,7 @@ class SecondScreen extends State<SignScreen> {
   }
 }
 
-class Sign2Screen extends StatefulWidget {
+class Sign2Screen extends StatefulWidget {                //Screen that appears on clicking the sign up option: 3 screens in sign up continuation this is the second one 
 
   Sign2Screen({this.firstName, this.lastName, this.gender, this.date});
 
@@ -632,11 +626,11 @@ class Sign2Screen extends StatefulWidget {
   final DateTime date;
 
   @override 
-  ThirdScreen createState()=> new ThirdScreen(); 
+  Sign2ScreenState createState()=> new Sign2ScreenState(); 
 }
 
 
-class ThirdScreen extends State<Sign2Screen> {
+class Sign2ScreenState extends State<Sign2Screen> {
   String email='', password='', confirmpassword='', _errorMessage; 
   bool validate=false; 
   bool error1=false, error2=false, error3=false; 
@@ -645,7 +639,7 @@ class ThirdScreen extends State<Sign2Screen> {
   void submit() async {
     setState(() => validate=true);
     _formKey.currentState.save();
-    dynamic result = await _auth.registerWithEmailAndPassword(widget.firstName, widget.lastName, widget.gender, widget.date, email, password); 
+    dynamic result = await _auth.registerWithEmailAndPassword(widget.firstName, widget.lastName, widget.gender, widget.date, email, password); //The user is registered and if the password and email are not authorised then the error message needs to be displayed 
     if (result == null){
       setState(() => _errorMessage = 'This email has already been registered');
     }else{
@@ -654,9 +648,8 @@ class ThirdScreen extends State<Sign2Screen> {
     print(email); 
     print(password); 
     print(confirmpassword); 
-    if (EmailValidator.validate(email, true) && (password.length<6) && (confirmpassword==password))
+    if (EmailValidator.validate(email, true) && (password.length<6) && (confirmpassword==password))                 //Once all the fields have been validated and the email is verified by the flutter plugin-Email validationthe user is redirected to the next screen wich is that of success 
     {
-      
         Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
     }
     
@@ -673,7 +666,7 @@ class ThirdScreen extends State<Sign2Screen> {
             fit: StackFit.expand,
             children: <Widget>[
 
-              AppBar(
+              AppBar(                                                                 //App bar design for the top bar of the screen 
                 centerTitle: true,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(0),
@@ -697,14 +690,14 @@ class ThirdScreen extends State<Sign2Screen> {
                   gradient: LinearGradient(
                       begin: Alignment.topRight,
                       end: Alignment.topLeft,
-                      colors: [ 
+                      colors: [                                                 //The color gradient is set up for the top bar screen 
                         Color(0xFFAC0D57),
                         Color(0xFFFC4A1F),
                       ]
                   ),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/Chat.png",
+                        "asset/image/Chat.png",                                     //Background screen is set up for login 
                       ),
                       fit: BoxFit.fitWidth,
                   ),
@@ -718,15 +711,15 @@ class ThirdScreen extends State<Sign2Screen> {
       ),
       body: Form(
         key: _formKey,
-        autovalidate: validate, 
+        autovalidate: validate,                           //set to true once the values are validated on clicking the submit button 
         child: SingleChildScrollView(
           child: Column(children: <Widget>[          
-            Container(
+            Container(                                                    //First field that of entering email address of the user 
               padding:EdgeInsets.only( top: 1, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
                   TextFormField(
-                    validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
+                    validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,             //Flutter plugin checks if the email address is of a valid format 
                     onSaved: (input)=> setState(() {
                       error1=true;
                       email=input.trim(); 
@@ -743,12 +736,12 @@ class ThirdScreen extends State<Sign2Screen> {
               )
             ),
 
-            Container(
+            Container(                                                    //Password field 
               padding:EdgeInsets.only( top: 10, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
                   TextFormField(
-                    validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
+                    validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,  //Checking if the password is more than 6 characters
                     onSaved: (input)=> setState(() {
                       error2=true;
                       password=input.trim(); 
@@ -768,18 +761,18 @@ class ThirdScreen extends State<Sign2Screen> {
             ),
 
 
-            Container(
+            Container(                                                        //Confirming passwords text box
               padding:EdgeInsets.only( top: 10, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
                   TextFormField(
-                    validator: (input)=> input!=password? 'Passwords do not match' : null,
+                    validator: (input)=> input!=password? 'Passwords do not match' : null,            //The password is checked from the password entered by the user above and checked if both the passwords match on clicking the submit button 
                     onSaved: (input)=> setState(() {
-                      error3=true;
+                      error3=true;                                                      //If not entered then the error message can be displayed 
                       confirmpassword=input.trim(); 
                     }),
                     decoration: InputDecoration(
-                      labelText: 'Confirm Password',
+                      labelText: 'Confirm Password',                       
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19
@@ -793,7 +786,7 @@ class ThirdScreen extends State<Sign2Screen> {
               )
             ),
 
-            SafeArea(
+            SafeArea(                                                                                           //Error message from the firebase if email has been registered only then error message is displayed in red 
               child: _errorMessage != 'This email has already been registered'? Container() : Container(
                 
                 padding:EdgeInsets.only( top: 5), 
@@ -810,7 +803,7 @@ class ThirdScreen extends State<Sign2Screen> {
                 )                        
               ),
             ),
-            Container(
+            Container(                                                //Submission sign up so the user can move ahead on the third screen: On submission it checks if all fields are valid 
               child: Padding(
                 padding: EdgeInsets.only(top:50),
                 child: InkWell(
@@ -842,7 +835,7 @@ class ThirdScreen extends State<Sign2Screen> {
 
             
 
-            Container(
+            Container(                                                                  //In case the user forgets that they might already have an account they can click on this sign in button and wouldbe redirected to the login screen 
             
               padding: EdgeInsets.only(top: 20), 
               child: InkWell(
@@ -872,13 +865,13 @@ class ThirdScreen extends State<Sign2Screen> {
   }
 }
 
-class Sign3Screen extends StatefulWidget {
+class Sign3Screen extends StatefulWidget {                                    //Screen that appears on clicking the sign up option: 3 screens in sign up continuation this is the last one 
   @override 
-  FourthScreen createState()=> new FourthScreen(); 
+  Sign3ScreenState createState()=> new Sign3ScreenState(); 
 }
 
 
-class FourthScreen extends State<Sign3Screen> {
+class Sign3ScreenState extends State<Sign3Screen> {
   
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   @override 
@@ -892,7 +885,7 @@ class FourthScreen extends State<Sign3Screen> {
             fit: StackFit.expand,
             children: <Widget>[
 
-              AppBar(
+              AppBar(                                                       //App bar for the top design 
                 centerTitle: true,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(0),
@@ -904,7 +897,7 @@ class FourthScreen extends State<Sign3Screen> {
                       ),
                   )
                 ),
-                leading: IconButton(
+                leading: IconButton(                              //Back arrow 
                   icon: Icon(
                     Icons.arrow_back,    
                     ), 
@@ -916,14 +909,14 @@ class FourthScreen extends State<Sign3Screen> {
                   gradient: LinearGradient(
                       begin: Alignment.topRight,
                       end: Alignment.topLeft,
-                      colors: [ 
+                      colors: [                                             //gradient colour 
                         Color(0xFFAC0D57),
                         Color(0xFFFC4A1F),
                       ]
                   ),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/Chat.png",
+                        "asset/image/Chat.png",                         //background image on the appbar 
                       ),
                       fit: BoxFit.fitWidth,
                   ),
@@ -940,12 +933,12 @@ class FourthScreen extends State<Sign3Screen> {
         child: SingleChildScrollView(
           child: Column(children: <Widget>[
             Container (
-              child: Container(
+              child: Container(                                               //Success tick mark on top of the screen 
                   height: 100,
                   width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage("asset/image/check.png")
+                      image: AssetImage("asset/image/check.png")                       
                       ),
                   ), 
                 ),
@@ -954,9 +947,9 @@ class FourthScreen extends State<Sign3Screen> {
 
             Container (
               child: Row(children: <Widget>[
-              Container(
+              Container(                                              //Message diplayed below 
               
-                child: Container(
+                child: Container(                                                   //Envelope image 
                   height: 100,
                   width: 100,
                   decoration: BoxDecoration(
@@ -970,7 +963,7 @@ class FourthScreen extends State<Sign3Screen> {
             
             Container(
               
-                child: Container(
+                child: Container(                                                       //Confirmation message of email sent to the user 
                   padding: EdgeInsets.only(top: 0, left: 20), 
                   child: RichText(
                     text: TextSpan(children: <TextSpan>[
@@ -989,7 +982,7 @@ class FourthScreen extends State<Sign3Screen> {
                 child: Center(
                   
                   child: RichText(
-                    text: TextSpan(children: <TextSpan>[
+                    text: TextSpan(children: <TextSpan>[                                          //Information for the user: User friendly 
                       TextSpan(text: "An account confirmation request has been sent to your email. ",style: TextStyle(color: Colors.black, fontSize: 17)),
                       TextSpan(text: "Click the link in the email to validate your email address.",style: TextStyle(color: Colors.black, fontSize: 17)),
                       TextSpan(text: "Questions?",style: TextStyle(color: Colors.black, fontSize: 17)),
@@ -1004,12 +997,12 @@ class FourthScreen extends State<Sign3Screen> {
             ),
 
             
-          Container(
+          Container(                                          //Sign in button at the bottom of the screen to redirect the user to login screen after account confirmation 
             padding: EdgeInsets.only(top: 50), 
               
               child: InkWell(
                 onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);                    
                 },
                 child: Container(
 
@@ -1020,7 +1013,7 @@ class FourthScreen extends State<Sign3Screen> {
                       gradient: LinearGradient(
                         begin: Alignment.topRight,
                         end: Alignment.topLeft,
-                        colors: [ 
+                        colors: [                                     //gradient colour for submission 
                           Color(0xFFAC0D57),
                           Color(0xFFFC4A1F),
                         ]
@@ -1042,13 +1035,13 @@ class FourthScreen extends State<Sign3Screen> {
   }
 }
 
-class ForgotScreen extends StatefulWidget {
+class ForgotScreen extends StatefulWidget {                                                 //Forgot password screen: when the user forgets their password then the user can click on the forgot password button to redirect to the next screen 
   @override 
-  FifthScreen createState()=> new FifthScreen(); 
+  ForgotScreenState createState()=> new ForgotScreenState(); 
 }
 
 
-class FifthScreen extends State<ForgotScreen> {
+class ForgotScreenState extends State<ForgotScreen> {                             //When the user checks for forget password: the original password stored in the database is sent to the user 
   String email; 
   String _errorMessage=''; 
   
@@ -1058,12 +1051,12 @@ class FifthScreen extends State<ForgotScreen> {
     setState(() => _errorMessage = '');
     _formKey.currentState.save();
     var error = await _auth.resetPassword(email);     
-    if (error != null){
+    if (error != null){                                                                         //If no account associated with email 
       setState(() => _errorMessage = "User record not found");
      
       print(error);
     }else{
-      Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),); 
+      Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),);         //Directed to the success screen 
     }
   }
 
@@ -1078,7 +1071,7 @@ class FifthScreen extends State<ForgotScreen> {
             fit: StackFit.expand,
             children: <Widget>[
 
-              AppBar(
+              AppBar(                                                                       //App bar for design at the top of the screen 
                 centerTitle: true,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(0),
@@ -1092,7 +1085,7 @@ class FifthScreen extends State<ForgotScreen> {
                 ),
                 leading: IconButton(
                   icon: Icon(
-                    Icons.arrow_back,    
+                    Icons.arrow_back,                                             //Back arrow 
                     ), 
                   onPressed: (){
                     Navigator.pop(context);
@@ -1102,14 +1095,14 @@ class FifthScreen extends State<ForgotScreen> {
                   gradient: LinearGradient(
                       begin: Alignment.topRight,
                       end: Alignment.topLeft,
-                      colors: [ 
+                      colors: [                                                   //Two different colours for the gradient 
                         Color(0xFFAC0D57),
                         Color(0xFFFC4A1F),
                       ]
                   ),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/Chat.png",
+                        "asset/image/Chat.png",                                 //Image background on top of the screen 
                       ),
                       fit: BoxFit.fitWidth,
                   ),
@@ -1130,7 +1123,7 @@ class FifthScreen extends State<ForgotScreen> {
                 child: Container(
                   padding: EdgeInsets.only(top: 0, left: 20), 
                   child: RichText(
-                    text: TextSpan(children: <TextSpan>[
+                    text: TextSpan(children: <TextSpan>[                                    //User friendly info 
                       TextSpan(text: "We'll send instructions on how to reset your password to the email address you have registered with us ",style: TextStyle(color: Colors.black, fontSize: 17)),
                     
                     ]
@@ -1141,12 +1134,12 @@ class FifthScreen extends State<ForgotScreen> {
             ),
 
             
-            Container(
+            Container(                                                        //Email field 
               padding:EdgeInsets.only( top: 30, left: 20, right: 20),
               child: Column(
                 children: <Widget>[
                   TextFormField(
-                    validator: (input)=> input.isEmpty? 'Please enter an email': null,
+                    validator: (input)=> input.isEmpty? 'Please enter an email': null,              //check if valid email 
                     onSaved: (input)=> email=input.trim(),
                     decoration: InputDecoration(
                       labelText: 'Email',
@@ -1160,7 +1153,7 @@ class FifthScreen extends State<ForgotScreen> {
               )
             ),
             SafeArea(
-              child: _errorMessage != "User record not found"? Container() : Container(
+              child: _errorMessage != "User record not found"? Container() : Container(                   //IF user not found in the databse then returns an error message 
                 
                 padding:EdgeInsets.only( top: 5), 
                 child: Column(
@@ -1177,7 +1170,7 @@ class FifthScreen extends State<ForgotScreen> {
               ),
             ),
 
-          Container(
+          Container(                                                        //Send option to send password to the user 
             padding: EdgeInsets.only(top: 50, left: 0), 
                 
                 child: InkWell(
@@ -1216,7 +1209,7 @@ class FifthScreen extends State<ForgotScreen> {
                 //padding: EdgeInsets.only(top: 130, left: 20), 
                 child: RichText(
                   text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "Don't have an account?",style: TextStyle(color: Colors.grey[600])),
+                    TextSpan(text: "Don't have an account?",style: TextStyle(color: Colors.grey[600])),                         //In case the user doesnt have an account and is trying to forget their password then an option is given to sign up
                     TextSpan(text: " Sign Up     ",style: TextStyle(color: Colors.black))
                   ]
                   )),
@@ -1234,14 +1227,14 @@ class FifthScreen extends State<ForgotScreen> {
   }
 }
 
-class Forgot2Screen extends StatefulWidget {
+class Forgot2Screen extends StatefulWidget {                //Success screen when the password is sent to the user when he clicks on forget password 
   @override 
-  SixthScreen createState()=> new SixthScreen(); 
+  Forgot2ScreenState createState()=> new Forgot2ScreenState(); 
 }
 
 
 
-class SixthScreen extends State<Forgot2Screen> {
+class Forgot2ScreenState extends State<Forgot2Screen> {             
  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   @override 
 
@@ -1255,7 +1248,7 @@ class SixthScreen extends State<Forgot2Screen> {
             fit: StackFit.expand,
             children: <Widget>[
 
-              AppBar(
+              AppBar(                                       //Appbar for top of the screen 
                 centerTitle: true,
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(0),
@@ -1286,7 +1279,7 @@ class SixthScreen extends State<Forgot2Screen> {
                   ),
                     image: DecorationImage(
                       image: AssetImage(
-                        "asset/image/Chat.png",
+                        "asset/image/Chat.png",                                       //Background image of appbar 
                       ),
                       fit: BoxFit.fitWidth,
                   ),
@@ -1306,12 +1299,12 @@ class SixthScreen extends State<Forgot2Screen> {
               child: Row(children: <Widget>[
               Container(
               
-                child: Container(
+                child: Container(                           //The image of the envelope at the top of the screen 
                   height: 100,
                   width: 100,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage("asset/image/envelope.png")
+                      image: AssetImage("asset/image/envelope.png")                       
                       ),
                   ), 
                 ),
@@ -1320,7 +1313,7 @@ class SixthScreen extends State<Forgot2Screen> {
             
             Container(
               
-                child: Container(
+                child: Container(                                               //User friendly info text to show that email for password recovery is sent to the user 
                   padding: EdgeInsets.only(top: 0, left: 20), 
                   child: RichText(
                     text: TextSpan(children: <TextSpan>[
@@ -1333,7 +1326,7 @@ class SixthScreen extends State<Forgot2Screen> {
               ),
             ]),),
 
-            Container(
+            Container(                                                              //User info -- describes additional contact info and the process that has happened at the backend 
               padding: EdgeInsets.only(top: 20, left: 20, right: 20), 
             
                 child: Center(
@@ -1352,7 +1345,7 @@ class SixthScreen extends State<Forgot2Screen> {
             ),
 
             
-          Container(
+          Container(                                                //Final submission button which redirects the user to the login screen so the user can see enter their credentials as sent by email to them 
             padding: EdgeInsets.only(top: 50), 
               
               child: InkWell(

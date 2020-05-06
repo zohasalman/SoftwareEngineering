@@ -1,3 +1,5 @@
+//import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +8,12 @@ import 'package:rateit/login.dart';
 import 'package:rateit/ratedItem.dart';
 import 'firestore.dart';
 import 'dart:math' as math;
-import 'VendorList.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart' as prefix;
-import 'localData.dart';
+//import 'VendorList.dart';
+//import 'package:flutter_rating_bar/flutter_rating_bar.dart' as prefix;
+//import 'localData.dart';
 import 'user.dart';
-import 'dart:convert';
+//import 'dart:convert';
 import 'vendor-list.dart';
-import 'vendor.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:intl/intl.dart';
 import 'package:rating_bar/rating_bar.dart';
@@ -20,9 +21,8 @@ import 'package:dropdownfield/dropdownfield.dart';
 import 'item-list.dart';
 import 'item.dart';
 import 'edit-profile.dart';
-import 'my-rating.dart';
 import 'ratedVendor.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+//import 'package:barcode_scan/barcode_scan.dart';
 import 'rate-body-items.dart';
 import 'editMyRatingItems.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,10 +32,11 @@ import 'dart:io';
 import 'reviewfromdb.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Pathway;
-import 'package:image_cropper/image_cropper.dart';
+//import 'package:image_cropper/image_cropper.dart';
+import 'package:location/location.dart';
 
 DateTime _dateTime;
-String user_id, eName, eId;
+String userID, eName, eId;
 UserData myUserInfo;
 
 void main3() => runApp(MaterialApp(
@@ -57,10 +58,11 @@ class SideBar2 extends StatefulWidget {
 }
 
 class SideBarProperties2 extends State<SideBar2> {
-  void NormalSignOut() async {
+
+  void normalSignOut() async {
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
-    user_id = usr.uid;
+    userID = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
     LoginScreen();
   }
@@ -212,23 +214,57 @@ class _InviteScreen extends State<InviteScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirestoreService();
 
-  void submitInviteCode() {
+  void submitInviteCode() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       String eventName = '';
       String eventID = '';
+      bool serviceCheck = await Location().serviceEnabled(), locationEnabled=true;
+      double currentLatitude;
+      double currentLongitude;
+      double eventLatitude;
+      double eventLongitude;
+      if(!serviceCheck) {
+        if( !(await Location().requestService()) ){
+          locationEnabled=false;
+        }
+      }
+      if( PermissionStatus.denied == await Location().hasPermission()) {
+        if( PermissionStatus.granted != await Location().requestPermission() ) {
+          locationEnabled=false;
+        }
+      }
+      if(locationEnabled) {
+        LocationData locationData = await Location().getLocation();
+        currentLatitude = locationData.latitude/(180/math.pi);
+        currentLongitude = locationData.longitude/(180/math.pi);
+      }
       _firestore.verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
-        if (docs.documents.isNotEmpty) {
-          eventName = docs.documents[0].data['name'];
-          eventID = docs.documents[0].data['eventID'];
-          user_id = '${widget.uid}';
-          print(eventName);
-          print(eventID);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => _RateItFirstScreen(
-                      eventName: eventName, eventID: eventID)));
+        if (docs.documents.isNotEmpty && locationEnabled) {
+          GeoPoint eventLocation = docs.documents[0].data['location1'];
+          eventLatitude = eventLocation.latitude/(180/math.pi);
+          eventLongitude = eventLocation.longitude/(180/math.pi);
+          double diffLatitudeHalf=(eventLatitude-currentLatitude)/2;
+          double diffLongitudeHalf=(eventLongitude-currentLongitude)/2;
+          double distance = 2*6371.0710*math.asin( math.sqrt( (math.sin(diffLatitudeHalf)*math.sin(diffLatitudeHalf)) + ( (math.sin(diffLongitudeHalf)*math.sin(diffLongitudeHalf))*math.cos(currentLatitude)*math.cos(currentLongitude) ) ) ) * 1000; //Haversine Formula to calculate difference between coordinates
+          //print('$distance,${eventLatitude*(180/math.pi)},${currentLatitude*(180/math.pi)}');
+
+          // if(distance<=600){
+            if (true)
+            {            
+            eventName = docs.documents[0].data['name'];
+            eventID = docs.documents[0].data['eventID'];
+            userID = '${widget.uid}';
+            print(eventName);
+            print(eventID);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => _RateItFirstScreen(
+                        eventName: eventName, eventID: eventID)));
+          } else {
+            errorMessage = 'You are out of the required event area.'; 
+          }
         } else {
           errorMessage = 'No such event invite code exists.';
         }
@@ -599,21 +635,6 @@ class _EditProfile extends State<EditProfile> {
     Navigator.of(context).pop();
   }
 
-  void _clear() {
-    setState(() {
-      _image = null;
-    });
-  }
-
-  Future<void> _cropImage() async {
-    File cropped = await ImageCropper.cropImage(
-      sourcePath: _image.path,
-    );
-    setState(() {
-      _image = cropped ?? _image;
-    });
-  }
-
   Future uploadFile() async {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
@@ -630,12 +651,14 @@ class _EditProfile extends State<EditProfile> {
   }
 
   void submit() async {
-    await uploadFile();
-    if (_uploadedFileURL.isNotEmpty) {
-      _profilePicture = _uploadedFileURL;
+    if (_image != null){
+      await uploadFile();
+      if (_uploadedFileURL.isNotEmpty) {
+        _profilePicture = _uploadedFileURL;
+      }
     }
-    _formKey.currentState.save();
-    _updateData.update(user_id, _firstName, _lastName, _email, _password,
+    print('hii');
+    _updateData.update(userID, _firstName, _lastName, _email, _password,
         _gender, _profilePicture, _dateOfBirth);
     // Storing data in user class object
     myUserInfo.update(_firstName, _lastName, _email, _gender, _profilePicture);
@@ -757,171 +780,195 @@ class _EditProfile extends State<EditProfile> {
             endDrawer: SideBar2(),
             body: Form(
               autovalidate: validate,
-              child: ListView(children: <Widget>[
-                Card(
-                  child: ListTile(
-                      leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
-                      title: Row(children: <Widget>[
-                        Expanded(
-                            child: TextFormField(
-                          controller: editfirstname,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              val = myUserInfo.firstName;
-                            } else {
-                              _firstName = val.trim();
-                            }
-                          },
-                          onChanged: (val) {
-                            if (val.isEmpty) {
-                              myUserInfo.firstName = myUserInfo.firstName;
-                            } else {
-                              _firstName = val.trim();
-                            }
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Edit First Name',
-                            hintText: myUserInfo.firstName,
-                            labelStyle:
-                                TextStyle(fontSize: 15, color: Colors.black),
+              child: ListView(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                          title: Row(children: <Widget>[
+                            Expanded(
+                                child: TextFormField(
+                              controller: editfirstname,
+                              validator: (val) 
+                              {
+                                if (val.isEmpty)
+                                {
+                                  val = myUserInfo.firstName;
+                                }
+                                else
+                                {
+                                  _firstName = val.trim();
+                                }
+                              },
+                              onChanged: (val) {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.firstName = myUserInfo.firstName;
+                                }
+                                else
+                                {
+                                  _firstName = val.trim();
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Edit First Name',
+                                hintText: myUserInfo.firstName,
+                                labelStyle: TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                              ),
+                            ))
+                          ]),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {}),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            controller: editlastname,
+                             onChanged: (val)
+                            {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.lastName = myUserInfo.lastName;
+                                }
+                                else
+                                {
+                                _lastName = val.trim();
+                                }
+                              },
+                            decoration: InputDecoration(
+                              labelText: 'Edit Last Name',
+                              hintText: myUserInfo.lastName,
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
                           ),
-                        ))
-                      ]),
-                      //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                      onTap: () {}),
-                ),
-                Card(
-                  child: ListTile(
-                      leading: Icon(Icons.person, color: Color(0xFFFC4A1F)),
-                      title: TextFormField(
-                        controller: editlastname,
-                        onChanged: (val) {
-                          if (val.isEmpty) {
-                            myUserInfo.lastName = myUserInfo.lastName;
-                          } else {
-                            _lastName = val.trim();
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Edit Last Name',
-                          hintText: myUserInfo.lastName,
-                          labelStyle:
-                              TextStyle(fontSize: 15, color: Colors.black),
-                        ),
-                      ),
-                      //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
-                      onTap: () {}),
-                ),
-                Card(
-                  child: ListTile(
-                      leading:
-                          Icon(Icons.lock_outline, color: Color(0xFFFC4A1F)),
-                      title: TextFormField(
-                        validator: (input) => input.length < 6
-                            ? 'Please enter a password with at least 6 characters'
-                            : null,
-                        controller: editpw,
-                        decoration: InputDecoration(
-                          labelText: 'Change Password',
-                          hintText: '*********',
-                          labelStyle:
-                              TextStyle(fontSize: 15, color: Colors.black),
-                        ),
-                      ),
-                      onTap: () {
-                        TextField();
-                      }),
-                ),
-                Card(
-                    child: ListTile(
-                        leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
-                        title: TextFormField(
-                          validator: (input) =>
-                              !EmailValidator.validate(input, true)
-                                  ? 'Please enter a valid email address'
-                                  : null,
-                          controller: editemail,
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (val) {
-                            if (val.isEmpty) {
-                              myUserInfo.email = myUserInfo.email;
-                            } else {
-                              _email = val.trim();
-                            }
-                          },
-                          decoration: InputDecoration(
-                            labelText: 'Update Email',
-                            hintText: myUserInfo.email,
-                            labelStyle:
-                                TextStyle(fontSize: 15, color: Colors.black),
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {}),
+                    ),
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.lock_outline,
+                              color: Color(0xFFFC4A1F)),
+                          title: TextFormField(
+                            obscureText: true,
+                             validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
+                            controller: editpw,
+                            decoration: InputDecoration(
+                              labelText: 'Change Password',
+                              hintText: "*******",
+                              labelStyle:
+                                  TextStyle(fontSize: 15, color: Colors.black),
+                            ),
                           ),
-                        ))),
-                Card(
-                  child: ListTile(
-                    leading:
-                        Icon(Icons.calendar_today, color: Color(0xFFFC4A1F)),
-                    title: RaisedButton(
-                        color: Colors.white,
-                        child: Text(
-                            _dateTime == null
-                                ? 'DD-MM-YYYY'
-                                : DateFormat('dd-MM-yyyy').format(_dateTime),
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 18)),
-                        onPressed: () {
-                          //print('here');
-                          showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1950),
-                              lastDate: DateTime.now(),
-                              builder: (BuildContext context, Widget child) {
-                                return Theme(
-                                  data: ThemeData(
-                                    primarySwatch: Colors.pink,
-                                    accentColor: Colors.deepOrange,
-                                    splashColor: Colors.deepOrange,
-                                  ),
-                                  child: child,
-                                );
-                              }).then((date) {
-                            setState(() {
-                              _dateTime = date;
-                            });
-                          });
-                        }),
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                      leading:
-                          Icon(Icons.lock_outline, color: Color(0xFFFC4A1F)),
-                      title: DropDownField(
-                        controller: genderSelected,
-                        hintText: myUserInfo.gender,
-                        enabled: true,
-                        items: genders,
-                        onValueChanged: (val) {
-                          if (val.isEmpty) {
-                            myUserInfo.gender = myUserInfo.gender;
-                          } else {
-                            _gender = val.trim();
-                          }
-                        },
-                      )),
-                ),
-                SafeArea(
-                  child: InkWell(
-                    onTap: () async {
-                      submit();
-                      setState(() {
-                        validate = true;
+                          //trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
+                          onTap: () {
+                            TextField();
+                          }),
+                    ),
+                    Card(
+                        child: ListTile(
+                            leading: Icon(Icons.mail, color: Color(0xFFFC4A1F)),
+                            title: TextFormField(
+                              validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
+                              controller: editemail,
+                              keyboardType: TextInputType.emailAddress,
 
-                        if (!EmailValidator.validate(_email, true) ||
-                            _password.length != 6) {
-                          check = false;
-                        }
-                      });
+                               onChanged: (val) 
+                               {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.email = myUserInfo.email;
+                                }
+                                else
+                                {
+                                _email = val.trim();
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Update Email',
+                                hintText: myUserInfo.email,
+                               
+                                labelStyle: TextStyle(
+                                    fontSize: 15, color: Colors.black),
+                              ),
+                            ))),
+
+                    Card(
+                      child: ListTile(
+                        leading: Icon(Icons.calendar_today,
+                            color: Color(0xFFFC4A1F)),
+                        title: RaisedButton(
+                            color: Colors.white,
+                            child: Text(
+                                _dateTime == null
+                                    ? 'DD-MM-YYYY'
+                                    : DateFormat('dd-MM-yyyy')
+                                        .format(_dateTime),
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 18)),
+                            onPressed: () {
+                              //print('here');
+                              showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime(1950),
+                                  lastDate: DateTime.now(),
+                                  builder:
+                                      (BuildContext context, Widget child) {
+                                    return Theme(
+                                      data: ThemeData(
+                                        primarySwatch: Colors.pink,
+                                        accentColor: Colors.deepOrange,
+                                        splashColor: Colors.deepOrange,
+                                      ),
+                                      child: child,
+                                    );
+                                  }).then((date) {
+                                setState(() {
+                                  _dateTime = date;
+                                });
+                              });
+                            }
+                            ),
+                      ),
+                    ),
+                        
+                    Card(
+                      child: ListTile(
+                          leading: Icon(Icons.lock_outline,
+                              color: Color(0xFFFC4A1F)),
+                          title: DropDownField(
+                              controller: genderSelected,
+                              hintText: myUserInfo.gender,
+                              enabled: true,
+                              items: genders,
+                              onValueChanged: (val) 
+                              {
+                                if (val.isEmpty)
+                                {
+                                  myUserInfo.gender = myUserInfo.gender;
+                                }
+                                else
+                                {
+                                _gender = val.trim();
+                                }
+                              },
+                              )),
+                    ),
+                    SafeArea(
+                      child: InkWell(
+                        onTap: () async {
+                          setState(() {
+                            validate = true;
+                            
+                            if (!EmailValidator.validate(myUserInfo.email, true))
+                            {
+                              check = false;
+                          }
+                          });
                       if (check) {
                         return await showDialog(
                           context: context,
@@ -1000,7 +1047,7 @@ class ViewVendor extends StatefulWidget {
   ViewVendor({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
-  String qr = "";
+  // String qr = "";
 
   @override
   State<StatefulWidget> createState() {
@@ -1077,7 +1124,7 @@ class _ViewVendor extends State<ViewVendor> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning = await BarcodeScanner.scan();
+            //scanning= await BarcodeScanner.scan(); //TODO:Uncommentt
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -1114,7 +1161,7 @@ class _ViewMyRating extends State<ViewMyRating> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedVendor>>.value(
-      value: FirestoreService().getMyRatedVendor(user_id),
+      value: FirestoreService().getMyRatedVendor(userID),
       child: Scaffold(
         key: scaffoldKey,
         appBar: PreferredSize(
@@ -1163,7 +1210,7 @@ class _ViewMyRating extends State<ViewMyRating> {
           onPressed: () async {
             //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning = await BarcodeScanner.scan();
+            //scanning= await BarcodeScanner.scan();//TODO:check result
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -1184,7 +1231,7 @@ class _ViewMyRating extends State<ViewMyRating> {
 }
 
 class EditRatings extends StatefulWidget {
-  String name, image, rating, vendorId, reviewId;
+  final String name, image, rating, vendorId, reviewId;
 
   EditRatings(
       {this.name, this.image, this.rating, this.vendorId, this.reviewId});
@@ -1197,7 +1244,7 @@ class _EditRatings extends State<EditRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-      value: FirestoreService().getMyRatedItem(user_id, '${widget.vendorId}'),
+      value: FirestoreService().getMyRatedItem(userID, '${widget.vendorId}'),
       child: Scaffold(
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(150.0),
@@ -1346,8 +1393,8 @@ class _EditRatings extends State<EditRatings> {
 }
 
 class EditRating1 extends StatefulWidget {
-  String name, logo, vendorId, review, reviewId;
-  List<Map> list;
+  final String name, logo, vendorId, review, reviewId;
+  final List<Map> list;
 
   EditRating1(
       {Key key,
@@ -1366,7 +1413,7 @@ class _EditRating1State extends State<EditRating1> {
   double finalRating;
 
   void submit(double finalRating) {
-    var error = FirestoreService().updateRatings(user_id, widget.list,
+    var error = FirestoreService().updateRatings(userID, widget.list,
         widget.vendorId, widget.review, widget.reviewId, finalRating);
     if (error != null) {
       print(error);
@@ -1532,10 +1579,9 @@ class _EditRating1State extends State<EditRating1> {
 }
 
 class DoRatings extends StatefulWidget {
-  String name, logo, vendorId;
-  List<Map> list;
+  final String name, logo, vendorId;
 
-  DoRatings({this.name, this.logo, this.vendorId, this.list});
+  DoRatings({this.name, this.logo, this.vendorId});
 
   @override
   _DoRatings createState() => new _DoRatings();
@@ -1627,8 +1673,8 @@ class _DoRatings extends State<DoRatings> {
 }
 
 class DoRatingFinal extends StatefulWidget {
-  String name, logo, vendorId, review;
-  List<Map> list;
+  final String name, logo, vendorId, review;
+  final List<Map> list;
 
   DoRatingFinal({this.name, this.logo, this.vendorId, this.list, this.review});
   @override
@@ -1639,7 +1685,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
   double finalRating;
 
   void submit(double finalRating) {
-    var error = FirestoreService().sendRatings(user_id, widget.list,
+    var error = FirestoreService().sendRatings(userID, widget.list,
         widget.name, widget.logo, widget.vendorId, widget.review, finalRating);
     if (error != null) {
       print(error);
@@ -1736,22 +1782,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                     ),
                   ),
                   SizedBox(height: 150.0, width: 40.0),
-                  // Container(
-                  //   height: 70,
-                  //   width: 250,
-                  //   child: RaisedButton(
-                  //     shape: new RoundedRectangleBorder(
-                  //         borderRadius: new BorderRadius.circular(50.0),
-                  //         side: BorderSide(color: Colors.red),
-                  //         ),
-
-                  //     onPressed: () {},
-                  //     color: Colors.red,
-                  //     textColor: Colors.white,
-                  //     child: Text("Submit".toUpperCase(),
-                  //         style: TextStyle(fontSize: 18)),
-                  //   ),
-                  // )
+                 
                   SafeArea(
                     child: InkWell(
                       onTap: () async {
@@ -1803,7 +1834,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
 }
 
 class TopRatedItems extends StatefulWidget {
-  String value, image, vendorId, vendorRating;
+  final String value, image, vendorId, vendorRating;
 
   TopRatedItems({this.value, this.image, this.vendorId, this.vendorRating});
 
@@ -1952,7 +1983,7 @@ class _TopRatedItems extends State<TopRatedItems> {
 }
 
 class ChangeRatings extends StatefulWidget {
-  String value, image, vendorId, reviewId;
+  final String value, image, vendorId, reviewId;
 
   ChangeRatings({Key key, this.value, this.image, this.vendorId, this.reviewId})
       : super(key: key);
@@ -1966,7 +1997,7 @@ class _ChangeRatings extends State<ChangeRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-        value: FirestoreService().getMyRatedItem(user_id, widget.vendorId),
+        value: FirestoreService().getMyRatedItem(userID, widget.vendorId),
         child: Scaffold(
             appBar: PreferredSize(
                 preferredSize: Size.fromHeight(150.0),
@@ -2061,7 +2092,7 @@ class _ChangeRatings extends State<ChangeRatings> {
 }
 
 class TopRatedItemsReviews extends StatefulWidget {
-  String value, image, vendorId, vendorRating;
+  final String value, image, vendorId, vendorRating;
 
   TopRatedItemsReviews(
       {this.value, this.image, this.vendorId, this.vendorRating});
@@ -2200,7 +2231,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
 }
 
 class ViewReviews extends StatefulWidget {
-  String value, image, reviewId, review, vendorId;
+  final String value, image, reviewId, review, vendorId;
 
   ViewReviews(
       {Key key,
@@ -2421,8 +2452,9 @@ class _ViewReviews extends State<ViewReviews> {
 }
 
 class EditReviews extends StatefulWidget {
-  String name, logo, reviewId, review, vendorId;
-  List<Map> list;
+  final String name, logo, reviewId, vendorId;
+  final List<Map> list;
+  String review;
 
   EditReviews(
       {Key key,
@@ -2439,8 +2471,8 @@ class EditReviews extends StatefulWidget {
 }
 
 class _EditReviews extends State<EditReviews> {
-  double myrating;
 
+  double myrating;
   FocusNode myFocusNode;
 
   @override
@@ -2615,8 +2647,8 @@ class _EditReviews extends State<EditReviews> {
 }
 
 class DoReviews extends StatefulWidget {
-  String name, logo, vendorId;
-  List<Map> list;
+  final String name, logo, vendorId;
+  final List<Map> list;
 
   DoReviews({this.name, this.logo, this.vendorId, this.list});
 

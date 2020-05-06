@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rateit/firestore.dart';
 import 'package:rateit/item.dart';
 import 'package:rating_bar/rating_bar.dart' ;
 import 'userRedirection.dart';
@@ -17,7 +15,7 @@ class DisplayItems extends StatefulWidget {
 
 class _DisplayItemsState extends State<DisplayItems> {
 
-  void ItemRating(double rating, String name, String logo, String itemId){
+  void itemRating(double rating, String name, String logo, String itemId){
     setState(() {
       var info = new Map();
       info['name'] = name;
@@ -30,8 +28,6 @@ class _DisplayItemsState extends State<DisplayItems> {
 
   @override
   Widget build(BuildContext context) {
-
-    double myRating = 0;
 
     final myItems = Provider.of<List<Item>>(context);
     // myItems.forEach((docs) => print(docs));
@@ -78,7 +74,7 @@ class _DisplayItemsState extends State<DisplayItems> {
                     child: Column(
                       children: <Widget>[
                         RatingBar(
-                          onRatingChanged: (rating) {ItemRating(rating, myItems[index].name, myItems[index].logo, myItems[index].itemId);},
+                          onRatingChanged: (rating) {itemRating(rating, myItems[index].name, myItems[index].logo, myItems[index].itemId);},
                           isHalfAllowed: true,
                           halfFilledIcon: Icons.star_half,
                           filledIcon: Icons.star,
@@ -94,7 +90,7 @@ class _DisplayItemsState extends State<DisplayItems> {
                 )),
                 Padding(
                   padding: EdgeInsets.only(top: 10,right: 0.0, left: 40.0),
-                  child: Text('${myRating}/5.0',
+                  child: Text('myRating/5.0',
                       style:
                           TextStyle(color: Colors.black, fontSize: 18)))
               

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'my-rating.dart';
+import 'item.dart';
 import 'userRedirection.dart';           
             
 class ReviewFromDB extends StatefulWidget {

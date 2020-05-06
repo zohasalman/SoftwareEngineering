@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'vendor.dart';
+import 'item.dart';
 import 'userRedirection.dart';
 import 'rateit.dart';
 

@@ -50,13 +50,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  barcode_scan:
+  barcode:
     dependency: "direct main"
     description:
-      name: barcode_scan
+      name: barcode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "1.9.1"
+  barcode_image:
+    dependency: "direct main"
+    description:
+      name: barcode_image
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
+  barcode_widget:
+    dependency: "direct main"
+    description:
+      name: barcode_widget
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -197,6 +211,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.1.0"
+  file_utils:
+    dependency: "direct main"
+    description:
+      name: file_utils
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   firebase:
     dependency: transitive
     description:
@@ -331,6 +352,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
+  globbing:
+    dependency: transitive
+    description:
+      name: globbing
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   google_maps_flutter:
     dependency: "direct main"
     description:
@@ -394,13 +422,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.4"
-  image_cropper:
-    dependency: "direct main"
-    description:
-      name: image_cropper
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.1"
   image_picker:
     dependency: "direct main"
     description:
@@ -443,6 +464,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1"
+  location:
+    dependency: "direct main"
+    description:
+      name: location
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.2"
+  location_platform_interface:
+    dependency: transitive
+    description:
+      name: location_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  location_web:
+    dependency: transitive
+    description:
+      name: location_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   logging:
     dependency: transitive
     description:
@@ -450,13 +492,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.4"
-  mailer:
-    dependency: "direct main"
-    description:
-      name: mailer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.4"
   matcher:
     dependency: transitive
     description:
@@ -478,13 +513,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
-  mime:
-    dependency: transitive
-    description:
-      name: mime
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.9.6+3"
   nested:
     dependency: transitive
     description:
@@ -548,6 +576,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  pdf:
+    dependency: "direct main"
+    description:
+      name: pdf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.7.1"
   pedantic:
     dependency: transitive
     description:
@@ -555,6 +590,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0+1"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.0+hotfix.5"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   petitparser:
     dependency: transitive
     description:
@@ -611,13 +660,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.5"
-  qr_utils:
-    dependency: "direct main"
+  qr:
+    dependency: transitive
     description:
-      name: qr_utils
+      name: qr
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.4"
+    version: "1.2.0"
   quiver:
     dependency: transitive
     description:
@@ -777,6 +826,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  utf:
+    dependency: transitive
+    description:
+      name: utf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.0+5"
   validate:
     dependency: transitive
     description:

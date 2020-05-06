@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rateit/userRedirection.dart';
-import 'my-rating.dart';
+import 'item.dart';
 import 'package:rating_bar/rating_bar.dart' ;
 
 class RatedItemList extends StatefulWidget {
@@ -13,7 +13,6 @@ class _RatedItemListState extends State<RatedItemList> {
   @override
   Widget build(BuildContext context) {
     final myRatings = Provider.of<List<RatedItem>>(context);
-    // myRatings.forEach((f) => print(f));
     if (myRatings == null){
       return LoadingScreen();
     }else{     

@@ -17,6 +17,8 @@ class EditUserData{
   void update(String uid, String firstName, String lastName, String email, String password, String gender, String profilePicture, DateTime dateOfBirth){
     print(uid);
     print(firstName);
+
+    //If the value is set up for the corresponding functions then set the values for all the corresponding fields 
     if (firstName.isNotEmpty){
       _updateFirstName(uid, firstName);
       prefs.setString('firstName', firstName);
@@ -44,6 +46,9 @@ class EditUserData{
       prefs.setString('profilePicture', profilePicture);
     }
   }
+
+
+  //Updating values for profile 
 
   void _updateFirstName(String uid, String name){
     _updateCollectionReference.document(uid).updateData({'firstName': name});

@@ -2,11 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rateit/user.dart';
 import 'Event.dart';
-import 'localData.dart';
-import 'vendor.dart';
 import 'user.dart';
 import 'item.dart';
-import 'my-rating.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -26,6 +23,7 @@ class FirestoreService{
   Future<String> registerUser(UserData user) async{
     try {
       await _usersCollectionReference.document(user.uid).setData(user.toJSON());
+      return null;
     } catch (e) {
       return e.message;
     }
@@ -335,6 +333,7 @@ class FirestoreService{
           // get item id 
           String ratedItemId = await getRatedItemsDocumentId(uid, vendorId, item['itemId']);
           await _ratedItemCollectionReference.document(ratedItemId).updateData({'myItemRating': item['givenRating']});
+          return null;
         } catch (e) {
           return e.toString();
         }

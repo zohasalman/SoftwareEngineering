@@ -1,9 +1,9 @@
+//Import all the required libraries and the files
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:io';
-//import 'dart:math' as math;
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,43 +11,33 @@ import 'package:rateit/login.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'package:provider/provider.dart';
-//import 'package:firebase_database/firebase_database.dart';
 import 'localData.dart';
 import 'user.dart';
 import 'Event.dart';
-//import 'userRedirection.dart';
 import 'dart:convert';
-//import 'VendorList.dart';
+import 'Clipshape.dart';
 import 'package:random_string/random_string.dart';
-import 'hostit_first.dart';
-import 'vendor.dart';
-import 'vendorlist-hostit.dart';
 import 'item.dart';
+import 'vendorlist-hostit.dart';
 import 'item-list.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:barcode/barcode.dart';
+import 'package:barcode_widget/barcode_widget.dart';
+import 'userRedirection.dart';
+import 'login.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'rateit.dart';
+
 
 UserData myUserInfo;
 void main2() => runApp(App());
 
-String number="8"; 
-List<int> no=[2,3,4,5,6,7,8,9]; 
+String number=""; 
 
 
-class ClipShape extends CustomClipper<Path>{
-  @override
-  Path getClip(Size size) {
-    var clipline= new Path();
-    clipline.lineTo(0, size.height-0);
-    clipline.lineTo(size.width, size.height-100);
-    clipline.lineTo(size.width, 0);
-    return clipline;
-  }
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}
+
 class App extends StatelessWidget{
   @override
   Widget build(BuildContext context){
@@ -61,9 +51,409 @@ class App extends StatelessWidget{
   }
 }
 
-class AddEvent extends StatefulWidget {
+//UserData myUserInfo;
+
+class HostitHomescreen extends StatefulWidget {
+  @override
+  HostitHomescreenState createState() => HostitHomescreenState();
+}
+//homescreen of the hostit part of the application
+class HostitHomescreenState extends State<HostitHomescreen> {
+  var scaffoldKey=GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async{
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // getting locally stored data
+    String uid = prefs.getString('uid');
+    String firstName = prefs.getString('firstName');
+    String lastName = prefs.getString('lastName');
+    String email = prefs.getString('email');
+    String profilePicture = prefs.getString('profilePicture');
+    String gender = prefs.getString('gender');
+    // Storing data in user class object
+    myUserInfo = UserData(
+        uid: uid,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        gender: gender,
+        profilePicture: profilePicture);
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<List<Event>>.value(
+      value: FirestoreService().getEventsInfo(Provider.of<User>(context, listen: false).uid.toString()),
+      child: Scaffold( 
+      endDrawer: SideBar1(),          //calling the sidebar drawer widget
+      key: scaffoldKey,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150.0),
+        child: ClipPath(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              AppBar(                 //displays the design bar of the screen
+                centerTitle: true,
+                bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                          padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                          child: Text('My Events',style: TextStyle(color: Colors.white, fontSize: 28 ))
+                      ),
+                    )
+                ),
+                actions: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(right: 20.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        scaffoldKey.currentState.openEndDrawer();       //calling the enddrawer function to open the sidebar on clicking
+                      },
+                      child: Icon(
+                        Icons.menu,       
+                      ),
+                    )
+                  ),
+                ],
+                flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]
+                      ),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
+                      ),
+                    )
+                ),
+              )
+            ],
+          ),
+          clipper: ClipShape(),
+        )
+      ),
+      body: Column( 
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Container(
+            child: Text(                //method to delete an event
+              "Long Press to delete event",
+              style: TextStyle(color: Colors.pink[600], fontSize: 17),
+            ),
+          ), 
+          EventsListHostit(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(     //adding the floating button to navigate to the add event page
+        onPressed: (){
+          //add code
+          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(myUserInfo: myUserInfo, coord: null,)),);
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.red[600],
+      ),
+    ),);
+  }
+}
+
+
+//description and declaration of the sidebar widget
+class SideBar1 extends StatefulWidget {
+  @override
+  SideBar1Properties createState() => new SideBar1Properties();
+}
+
+class SideBar1Properties extends State<SideBar1>{
+
+  void normalSignOut() async {                   //function for the signout button
+    User usr = Provider.of<User>(context, listen: false);
+    String user = usr.uid;
+    await FirestoreService(uid: user).normalSignOutPromise();
+    LoginScreen();
+  
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(                                //the properties of the sidebar drawer
+      child: new Column(
+        
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+            Padding( padding: EdgeInsets.all(30),),
+            CircleAvatar(                         //adding the profile image to the sidebar
+              radius:70, 
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
+            ),
+            Text(                                 //displaying the name on the sidebar
+              myUserInfo.firstName + ' ' + myUserInfo.lastName, 
+              style: TextStyle(fontSize: 30, color: Colors.black)
+            ),
+            Text(                                 //displaying the user image on the sidebar
+              myUserInfo.email, 
+              style: TextStyle(fontSize: 22, color: Colors.black)
+            ),
+          Padding( padding: EdgeInsets.all(30),),
+          Container(
+            child: GestureDetector(             //leading to the edit profile screen
+              onTap: () { //Change on Integration
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile()),);
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Edit Profile',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
+            child: GestureDetector(             //signout from the application
+              onTap:() async {await FirestoreService().normalSignOutPromise();},
+             // },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Sign Out',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+        ]
+      ),
+    );
+  }
+}
+//displaying the event list for the main screen of the host it application
+class EventsListHostit extends StatefulWidget {
+  @override
+  EventsListStateHostItState createState() => EventsListStateHostItState();
+}
+
+class EventsListStateHostItState extends State<EventsListHostit> {
+  String err;
+  
+  @override
+  Widget build(BuildContext context) {
+
+    final events = Provider.of<List<Event>>(context);//fetching the event infor for the applications
+    if (events == null){
+      return LoadingScreen();                       //loading screen while the data is being fetched
+    }else{
+      return Expanded(
+          child: 
+          ListView.builder(
+            shrinkWrap: true,
+            //physics: const NeverScrollableScrollPhysics(),
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: GestureDetector(               //lead to the event page 
+                  onTap: () async {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:events[index].eventID,eventName:events[index].name,inviteCode:events[index].invitecode, userInfo: myUserInfo,)),);
+                  },
+                  onLongPress: ()async {              //prompting a dialogue box to delete the event
+                    return await showDialog(
+                      context: context,
+                      builder: (BuildContext context){
+                        return AlertDialog(
+                          title: Text("Confirm"),
+                          content: Text("Are you sure you want to delete this vendor?"),
+                          actions: <Widget>[
+                            FlatButton(
+                              onPressed: () async {       //updating the direstore cloud in case of deletion
+                                await Firestore.instance.collection('Event').document(events[index].eventID).delete().then((_) async {
+                                  await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: events[index].eventID).getDocuments().then((ven) async{
+                                    ven.documents.forEach((vendoc) async {
+                                      await Firestore.instance.collection('Vendor').document(vendoc.documentID).delete().then((_)async{
+                                        await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendoc.documentID).getDocuments().then((val) async{
+                                          val.documents.forEach((doc) async {
+                                            await Firestore.instance.collection('ratedVendor').document(doc.documentID).delete().catchError((e){err=e.toString();});
+                                          });
+                                        }).catchError((e){err=e.toString();});
+                                        await Firestore.instance.collection('item').where('vendorId', isEqualTo: vendoc.documentID).getDocuments().then((val) async{
+                                          val.documents.forEach((doc) async {
+                                            await Firestore.instance.collection('item').document(doc.documentID).delete().catchError((e){err=e.toString();});
+                                          });
+                                        }).catchError((e){err=e.toString();});
+                                        await Firestore.instance.collection('ratedItems').where('vendorId', isEqualTo: vendoc.documentID).getDocuments().then((val) async{
+                                          val.documents.forEach((doc) async {
+                                            await Firestore.instance.collection('ratedItems').document(doc.documentID).delete().catchError((e){err=e.toString();});
+                                          });
+                                        }).catchError((e){err=e.toString();});
+                                      }).catchError((e){err=e.toString();});
+                                    });
+                                  }).catchError((e){err=e.toString();});
+
+                                });
+                                Navigator.of(context).pop(false);
+                              },
+                              child: Text("Delete"),
+                            ),
+                            FlatButton(           //cancelling the deletion dialogue box
+                              onPressed: ()=>Navigator.of(context).pop(false),
+                              child: Text("Cancel"),
+                            )
+                          ],
+                        ); 
+                      },
+                    ); 
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                          ),
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                              child: CircleAvatar(          //adding the event logo
+                                backgroundColor: Colors.white,
+                                radius: 18,
+                                child: ClipOval(
+                                    child: Image.network(
+                                      '${events[index].logo}',
+                                    ),
+                                ),
+                              ),
+                              width: 50,
+                              height: 50,
+                              padding: const EdgeInsets.all(0.2),
+                              decoration: BoxDecoration(
+                                color: Colors.black38,
+                                shape:BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                          Padding(                      //displaying the event title
+                            padding: EdgeInsets.only(left:10.0),
+                            child: Text(
+                              events[index].name,
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              child: Image(
+                                fit: BoxFit.fill,
+                                image: NetworkImage(
+                                  events[index].coverimage,       //displaying the event cover picture
+                                ),
+                                height: 200,
+                                width: 350,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SafeArea(
+                        child: err== null ? Container() : Container(
+                          
+                          padding:EdgeInsets.only( top: 5), 
+                          child: Column(
+                            children: <Widget>[
+                              
+                              Container(
+                                alignment: Alignment(-0.8,-0.9),
+                                  child: Text(err,
+                                  style: TextStyle(color: Colors.red)
+                                  ),
+                              ),
+                            ],
+                          )                        
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          ),
+        );
+    }
+  }
+}
+
+class AddEvent extends StatefulWidget {  //Add events screen which adds an event when clicked 
   final LatLng coord;
-  UserData myUserInfo;
+  final UserData myUserInfo;
   AddEvent({this.coord, this.myUserInfo});
   
   @override 
@@ -71,30 +461,28 @@ class AddEvent extends StatefulWidget {
 }
 
 class AddEventState extends State<AddEvent> {
-  //AddEventState({this.eid});
   LatLng coord;
   AddEventState({this.coord});
   int eventNumber;
-  String name;
-  String logo, photo;  
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  String name,logo, photo;  
+  String err;
+  bool validate=false, error1=false, error2=false;
 
-  void getCoordinates() async {
+  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
+  
+  void getCoordinates() async {                   //returns the coordinates that have been inputted by the user from the location screen
     final updatedcoord = await Navigator.push(
       context,
       CupertinoPageRoute(
-          fullscreenDialog: true, builder: (context) => Maps()),
+          fullscreenDialog: true, builder: (context) => Maps()
+      ),
     );
     coord=updatedcoord;
   }
-
-  bool validate=false; 
-  bool error1=false; 
-  bool error2=false; 
-  String err;
-
+ 
+  
   @override
-  void initState() {
+  void initState() {                          //Sets the user information
     super.initState();
     myUserInfo = widget.myUserInfo;
     print(myUserInfo.firstName);
@@ -104,14 +492,13 @@ class AddEventState extends State<AddEvent> {
   Widget build(BuildContext context){
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-        //key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),                //Opening a side bar from right
+        appBar: PreferredSize(                
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
               fit: StackFit.expand,
-              children: <Widget>[
+              children: <Widget>[                           //AppBar displays the design bar of our screen
                 AppBar(
                   centerTitle: true,
                   bottom: PreferredSize(
@@ -161,36 +548,36 @@ class AddEventState extends State<AddEvent> {
         autovalidate: validate,
         child: SingleChildScrollView(
           child: Column(children: <Widget>[
-            Container(
-                  width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                  padding:EdgeInsets.only( top: 10, left: 20, right: 20),
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        validator: (input)=> input.isEmpty? 'Please fill out this field': null,
-                        onChanged: (input)=> name=input,
-                        decoration: InputDecoration(
-                          labelText: 'Name of the event',
-                          labelStyle: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 19
-                          )
-                        ),
+            Container(                                                              //First field: Entering the name of the event at the top of the screen 
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding:EdgeInsets.only( top: 10, left: 20, right: 20),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    validator: (input)=> input.isEmpty? 'Please fill out this field': null,           //Validation checks to prevent null values 
+                    onChanged: (input)=> name=input,
+                    decoration: InputDecoration(
+                      labelText: 'Name of the event',
+                      labelStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 19
                       )
-                    ],
+                    ),
                   )
+                ],
+              )
             ),
-            Container(
+            Container(                                                          //Getting event location field
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.75,
                   padding:EdgeInsets.only( top: 5, left: 20),
                       child: TextFormField(
-                        validator: (_) => coord==null  ? 'Please Mark a Location': null,
+                        validator: (_) => coord==null  ? 'Please Mark a Location': null,            //If not entered anything then message to input the value
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',
+                          hintText: coord==null?'Location of Event':'(${coord.latitude},${coord.longitude})',   
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -198,7 +585,7 @@ class AddEventState extends State<AddEvent> {
                         ),
                       )
                 ),
-                Container(
+                Container(                                                          //Location icon to direct to the location page
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -214,15 +601,25 @@ class AddEventState extends State<AddEvent> {
                       icon: Icon(Icons.add_location,
                       color: Colors.white,),
                       onPressed: () {
-                        getCoordinates();
+                        getCoordinates();       //Function that enables the coordinates from the map drawn 
                       },
                     ),
                   ),
                 )
               ],),
             ),
-            
-            Container(
+            Container(                                    //User handling message to make it user friendly as only those users can rate the event if they near 200 m of the event location 
+              width: MediaQuery.of(context).copyWith().size.width * 0.90,
+              padding: EdgeInsets.only(top: 0, left: 20), 
+              child: RichText(
+                text: TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                  ]
+                )
+              ),
+            ),
+            Container(                                                    //Next field used to input the value of the number of vendors at that particular event 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding:EdgeInsets.only( top: 0, left: 20, right: 20),
               child: Column(
@@ -243,7 +640,7 @@ class AddEventState extends State<AddEvent> {
                 ],
               )
             ),
-            Container(
+            Container(                                                          //Next field to incorporate the ask the user to upload the image of the event 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
@@ -254,7 +651,7 @@ class AddEventState extends State<AddEvent> {
                         validator: (_) => logo==null || logo =='' ? 'Please enter a valid image': null,
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: logo==null? 'Upload Logo Photo': 'Image Uploaded',
+                          hintText: logo==null? 'Upload Logo Photo': 'Image Uploaded',        //Displaying user friendly messages so that the user knows whats happening each time in our app
                           labelStyle: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 19
@@ -264,7 +661,7 @@ class AddEventState extends State<AddEvent> {
                     
                   
                 ),
-                Container(
+                Container(                                                    //Next button for uploading the image once you click on it  
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -290,7 +687,7 @@ class AddEventState extends State<AddEvent> {
                         setState(() {
                           //error1=true; 
                         });
-                        showDialog(
+                        showDialog(                             //Alert box to show the user once the image has been uploaded
                           context: context,
                           builder: (_) => AlertDialog(
                             title: Text("Image Uploaded"),
@@ -304,7 +701,7 @@ class AddEventState extends State<AddEvent> {
               ],),
             ),
             
-            Container(
+            Container(                              //Message to tell the user about the submission requirements of images 
               child: error1? Container() : Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.90,
                   padding: EdgeInsets.only(top: 0, left: 20), 
@@ -318,7 +715,7 @@ class AddEventState extends State<AddEvent> {
                 ),
             ),
 
-            Container(
+            Container(                                        //Uploading the image of the vendor that would be displayed on the homepage 
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
                 Container(
@@ -336,7 +733,7 @@ class AddEventState extends State<AddEvent> {
                     ),
                   )
                 ),
-                Container(
+                Container(                                                    //The photo upload button to send image
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
                   child: Ink(
                     decoration:  ShapeDecoration(
@@ -358,7 +755,7 @@ class AddEventState extends State<AddEvent> {
                         await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
                         downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
                         photo=downloadUrl;
-                        showDialog(
+                        showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
                             title: Text("Image Uploaded"),
@@ -375,7 +772,7 @@ class AddEventState extends State<AddEvent> {
               ],),
             ),
 
-            Container(
+            Container(                              //Error message to inform the user about the requirements of the images
               child: error2? Container() : Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.90,
                   padding: EdgeInsets.only(top: 0, left: 20), 
@@ -388,7 +785,7 @@ class AddEventState extends State<AddEvent> {
                 ),
             ),
             
-              SafeArea(
+              SafeArea(                                   //Displaying if there is any error when fetching from firebase
               child: err== null ? Container() : Container(
                 
                 padding:EdgeInsets.only( top: 5), 
@@ -410,43 +807,42 @@ class AddEventState extends State<AddEvent> {
               padding: EdgeInsets.all(15),
             ),
             Center(child: Container(
-                  //width: MediaQuery.of(context).copyWith().size.width * 0.20,
-                  width:60,
-                  height:60,
-                  child: Ink(
-                    width:60,
-                    height:60,
-                    decoration:  ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: null,
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                      ),
-                      shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
-                    ),
-                    child: IconButton(
-                      alignment: Alignment.center,
-                      icon: Icon(Icons.arrow_forward,
-                      size: 45,
-                      color: Colors.white,),
-                      onPressed: () async {
-                        setState(() => validate=true);
-                        if(coord!=null){
-                          GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);//23.0,66.0);
-                          String eventid; 
-                          var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
-                          if ( !(name==null || logo==null || photo==null || eventNumber==null) ){
-                            await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
-                                await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
-                            }).catchError((e){err=e.toString();});
-                            Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
-                          }
-                      }
-                      },
-                    ),
+              width:60,
+              height:60,
+              child: Ink(
+                width:60,
+                height:60,
+                decoration:  ShapeDecoration(               
+                  shape: CircleBorder(),
+                  color: null,
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.topLeft,
+                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]    //Gradient colour combination and filling
                   ),
+                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+                ),
+                child: IconButton(
+                  alignment: Alignment.center,
+                  icon: Icon(Icons.arrow_forward,
+                  size: 45,
+                  color: Colors.white,),
+                  onPressed: () async {
+                    setState(() => validate=true);
+                    if(coord!=null){                      //Moving forward only when the map coordinates have been defined
+                      GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
+                      String eventid; 
+                      var varEvent = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:randomAlphaNumeric(10), invitecode:randomAlpha(6), location1:eventLocation, name:name, logo:logo, coverimage:photo);
+                      if ( !(name==null || logo==null || photo==null || eventNumber==null) ){   //Adding values only when all validatation conditions have been fulfilled 
+                        await Firestore.instance.collection("Event").add(varEvent.toJSON()).then((eid) async{
+                            await Firestore.instance.collection('Event').document(eid.documentID).setData({'eventID':eid.documentID},merge: true).then((_){eventid=eid.documentID;}).catchError((e){err=e.toString();});
+                        }).catchError((e){err=e.toString();});
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:eventNumber,eid:eventid,eventName:name)),);
+                      }
+                    }
+                  },
+                ),
+              ),
             ),),
           ],
           )  
@@ -455,9 +851,9 @@ class AddEventState extends State<AddEvent> {
     ); 
   }
 }
-
+//the event menu screen loaded when clicked on the event in the data
 class EventMenu extends StatefulWidget {
-  UserData userInfo;
+  final UserData userInfo;
   final String eid;
   final String eventName;
   final String inviteCode;
@@ -476,7 +872,7 @@ class EventMenuState extends State<EventMenu> {
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   var scaffoldKey=GlobalKey<ScaffoldState>();
   bool validate=false; 
-
+                                            //getting the data from the previous screen
   @override
   void initState() {
     super.initState();
@@ -494,8 +890,8 @@ class EventMenuState extends State<EventMenu> {
     return  Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),              //calling the sidebar drawer
+        appBar: PreferredSize(              //displaying the design bar of the screen
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -513,7 +909,7 @@ class EventMenuState extends State<EventMenu> {
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(          //adding the back button to the app bar to navigate to previous screen
                     icon: Icon(
                       Icons.arrow_back,
                        
@@ -524,7 +920,7 @@ class EventMenuState extends State<EventMenu> {
                   actions: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(right: 20.0),
-                      child: GestureDetector(
+                      child: GestureDetector(         //adding the sidebar opening buttton
                         onTap: () {
                           scaffoldKey.currentState.openEndDrawer();
                         },
@@ -558,7 +954,7 @@ class EventMenuState extends State<EventMenu> {
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(                 //forming the screen with vendors
         key: _formKey,
         autovalidate: validate,
         child: SingleChildScrollView(
@@ -591,54 +987,45 @@ class EventMenuState extends State<EventMenu> {
               
             ),
 
-            // Container(
-            //     child: InkWell(
-            //       onTap: (){
-            //         Navigator.push(context,MaterialPageRoute(builder: (context)=> Comprehensive(eid:eid,eventName:eventName)),);
-            //       },
-            //       child: Container(
-            //         height: 50,
-            //         width: 350,
-                    
-            //         decoration: BoxDecoration(
-            //           gradient: LinearGradient(
-            //             begin: Alignment.topRight,
-            //             end: Alignment.topLeft,
-            //             colors: [ 
-            //               Color(0xFFAC0D57),
-            //               Color(0xFFFC4A1F),
-            //             ]
-            //           ),
-            //           borderRadius: BorderRadius.circular(50),
-            //         ),
-            //         padding: EdgeInsets.only(top: 15, left: 40), 
-            //         child: Text("Generate Comprehensive Report",style: TextStyle(color: Colors.white, fontSize: 18 ))
-            //       ),
-
-            //     ),
-              
-            // ),
-
-            
+       
             SafeArea(
-                child: InkWell(
+                child: InkWell(       //saving the data(QR code)
                   onTap: () async{
-                    return await showDialog(
-                      context: context,
-                      builder: (BuildContext context){
-                        return AlertDialog(
-                          title: Text("Success!"),
-                          actions: <Widget>[
-                            Center(
-                              child: FlatButton(
-                                onPressed: ()=>Navigator.of(context).pop(false),
-                                child: Text("ok"),
-                              )
-                            )
-                          ],
-                        ); 
-                      },
-                    );
+                     String basePath='/storage/emulated/0/Download/RateIt!/';
+                    //Per
+                    await Permission.storage.request();
+                    if(await Permission.storage.isGranted){
+                      if( !(await Directory(basePath).exists()) ){ 
+                        await Directory(basePath).create(recursive: true);
+                      }
+                      if( !(await Directory(basePath+'${eventName}_$eid/').exists()) ){ 
+                        await Directory(basePath+'${eventName}_$eid/').create(recursive: true);
+                      }
+                      //promise for loop
+                      await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
+                        val.documents.forEach((doc) async {
+                          var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
+                          await File(basePath+"$eventName/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
+                        });
+                      }).catchError((e){err=e.toString();});
+                      showDialog(                 //User friendly error message when the screen has been displayed 
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                          content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
+                        ),
+                        barrierDismissible: true,
+                      );
+                    } else{
+                      showDialog(                 //User friendly error message when the screen has been displayed 
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text("Error: Please Enable Storage Permission",textAlign: TextAlign.center),
+                          content: Icon(Icons.highlight_off,color:Colors.red[300],size:80),
+                        ),
+                        barrierDismissible: true,
+                      );
+                    }
                   },
 
                   child: SafeArea(
@@ -660,7 +1047,7 @@ class EventMenuState extends State<EventMenu> {
                       ),
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    padding: EdgeInsets.only(top: 15, left: 90), 
+                    padding: EdgeInsets.only(top: 15, left: 90),    //the qr code downloading function 
                     child: Text("Download QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
                   ),),),
 
@@ -670,54 +1057,7 @@ class EventMenuState extends State<EventMenu> {
 
             SafeArea(
                 child: InkWell(
-                  onTap: ()async{
-                    return await showDialog(
-                      context: context,
-                      builder: (BuildContext context){
-                        return AlertDialog(
-                          title: Text("Success!"),
-                          actions: <Widget>[
-                            Center(
-                              child: FlatButton(
-                                onPressed: ()=>Navigator.of(context).pop(false),
-                                child: Text("ok"),
-                              )
-                            )
-                          ],
-                        ); 
-                      },
-                    );
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> ()),);  
-                  },
-                  child: SafeArea(
-                  child: Container(
-                  padding: EdgeInsets.only(top: 20), 
-                  child: Container(
-                    height: 50,
-                    width: 350,
-                    
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                      ),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: EdgeInsets.only(top: 15, left: 115), 
-                    child: Text("Email QR codes",style: TextStyle(color: Colors.white, fontSize: 18 ))
-                  ),),),
-
-                ),
-              
-            ),
-
-            SafeArea(
-                child: InkWell(
-                  onTap: (){
+                  onTap: (){            //leading to add vendor page
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendorQty(eid: eid, eventName: eventName,)),);
                   },
                   child: SafeArea(
@@ -749,8 +1089,8 @@ class EventMenuState extends State<EventMenu> {
 
             SafeArea(
                 child: InkWell(
-                  onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendorHostIt(eventName: eventName,eventID: eid,)),);  
+                  onTap: (){          //leading to the vendor page to view their items
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendor(eventName: eventName,eventID: eid,)),);  
                   },
                   child: SafeArea(
                   child: Container(
@@ -781,7 +1121,7 @@ class EventMenuState extends State<EventMenu> {
 
             SafeArea(
                 child: InkWell(
-                  onTap: () async {
+                  onTap: () async {     //getting information from the backend firestore cloud
                     
                     Event varEvent;// = new Event(uid:Provider.of<User>(context, listen: false).uid.toString(), eventID:null, invitecode:null, location1:null, name:null, logo:null, coverimage:null);
                     await Firestore.instance.collection('Event').document(eid).get().then((value){
@@ -789,7 +1129,7 @@ class EventMenuState extends State<EventMenu> {
                       varEvent = passEvent;
                       //varEvent.logo = value.data['userRole'];
                     }).catchError((e){err=e.toString();});
-                    if(varEvent!=null){
+                    if(varEvent!=null){         //leading to edit event page
                       Navigator.push(context,MaterialPageRoute(builder: (context)=> EditEvent(eid:eid,coord:LatLng(varEvent.location1.latitude, varEvent.location1.longitude) ,eventData:varEvent, )));
                     }
                   },
@@ -848,27 +1188,27 @@ class EventMenuState extends State<EventMenu> {
     );
   }
 }
-
+//the page for adding a specific number of events
 class AddVendorQty extends StatefulWidget {
   final String eid;
   final String eventName;
   AddVendorQty({this.eid,this.eventName});
 
   @override 
-  Screen41 createState()=> new Screen41(eid:eid,eventName:eventName); 
+  AddVendorQtyState createState()=> new AddVendorQtyState(eid:eid,eventName:eventName); 
 }
 
-class Screen41 extends State<AddVendorQty> {
+class AddVendorQtyState extends State<AddVendorQty> {
   final String eid;
   int numVen;
   String eventName;
   String valSave;
   String err; 
-  Screen41({this.eid,this.eventName});
+  AddVendorQtyState({this.eid,this.eventName});
 
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   List<DropdownMenuItem<String>> n=[];
-  void loadData(){
+  void loadData(){        //drop down menu for adding a specific number of vendors
     n=[];
     n.add(new DropdownMenuItem(
       child: new Text('1'),
@@ -928,8 +1268,8 @@ class Screen41 extends State<AddVendorQty> {
     loadData(); 
     return Scaffold(
         //key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),            //calling the sidebar drawer widget
+        appBar: PreferredSize(            //displaying the design bar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -948,7 +1288,7 @@ class Screen41 extends State<AddVendorQty> {
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(          //adding the button to navigate to the previous page
                     icon: Icon(
                       Icons.arrow_back,
                       //size:24,
@@ -985,7 +1325,7 @@ class Screen41 extends State<AddVendorQty> {
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
-        child: Column(children: <Widget>[
+        child: Column(children: <Widget>[           //taking data for adding a specific number of vendors for a event
           SafeArea(
             child: Center(
               child: SafeArea(
@@ -1049,7 +1389,7 @@ class Screen41 extends State<AddVendorQty> {
             ),
           ),
 
-          SafeArea(
+          SafeArea(               //validation that the required input has been added
               child: !(error1 && validate)? Container() : Container(
                 // print(error1),
                 // print(validate),
@@ -1070,7 +1410,7 @@ class Screen41 extends State<AddVendorQty> {
             ),
 
          
-          SafeArea(
+          SafeArea(               //dealing with the scenario where user wants to add a custom number of vendors from the dropdown menu
             child: valSave!="Custom"? Container() : Container(
               padding:EdgeInsets.only( top: 40, left: 20, right: 20),
               child: Column(
@@ -1129,7 +1469,7 @@ class Screen41 extends State<AddVendorQty> {
     ); 
   }
 }
-
+//add vendor screen where the details for the vendors are taken and added
 class AddVendor extends StatefulWidget {
   final int numVen;
   final String eid;
@@ -1148,13 +1488,12 @@ class AddVendorState extends State<AddVendor> {
   List<String> name = [];
   List<String> email = new List<String>(), stallid = new List<String>(),logo = new List<String>();
   List<int> item = new List<int>();
-  bool value=false; 
-  //var logo, mlogo;  
-  bool check=false; 
-  var nu; 
-  var n= int.parse(number); 
+  bool value=false;   
+  bool check=false;  
+  var n; 
   List<Widget> menu=[], menu2=[]; 
   int count=2; 
+  //taking the data for each vendor
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   void add2(i){
     menu2=List.from(menu2)..add(     
@@ -1167,7 +1506,7 @@ class AddVendorState extends State<AddVendor> {
             child: RichText(
               text: TextSpan(
                 children: <TextSpan>[
-                  TextSpan(
+                  TextSpan(                     //heading for the vendor number
                     text: "Vendor ${i+1}",
                     style: TextStyle(
                       color: Colors.black,
@@ -1200,7 +1539,7 @@ class AddVendorState extends State<AddVendor> {
                 validator: (input)=> input.isEmpty? 'Please enter a name': null,
                 onChanged: (input)=> name[i]= input,
                 decoration: InputDecoration(
-                  labelText: 'Stall Name',
+                  labelText: 'Stall Name',              //taking input for the name of the stall of the vendor
                   labelStyle: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 19
@@ -1232,7 +1571,7 @@ class AddVendorState extends State<AddVendor> {
                 validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
                 onChanged: (input)=> email[i]= input,
                 decoration: InputDecoration(
-                  labelText: 'Email ID',
+                  labelText: 'Email ID',                  //taking input of the vendor email address
                   labelStyle: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 19
@@ -1263,7 +1602,7 @@ class AddVendorState extends State<AddVendor> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a stall ID': null,
-                onChanged: (input)=> stallid[i]= input,
+                onChanged: (input)=> stallid[i]= input,                 //taking input for the stall id of the vendor
                 decoration: InputDecoration(
                   labelText: 'Stall ID',
                   labelStyle: TextStyle(
@@ -1296,7 +1635,7 @@ class AddVendorState extends State<AddVendor> {
                   child: TextFormField(
                     readOnly: true,
                     validator: (_) => logo[i]==null || logo[i] =='' ? 'Please upload a valid image': null,
-                    decoration: InputDecoration(
+                    decoration: InputDecoration(      //uploading a valid logo photo for the vendor
                       hintText: logo[i]==null ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
@@ -1320,7 +1659,7 @@ class AddVendorState extends State<AddVendor> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () async{
+                    onPressed: () async{    //uploading and extracting the URL of the picture from the firestore cloud
                       String downloadUrl;
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                       String filename='${DateTime.now()}${selected.absolute}.png';
@@ -1359,7 +1698,7 @@ class AddVendorState extends State<AddVendor> {
           padding: EdgeInsets.only(top: 0, left: 20), 
           child: RichText(
             text: TextSpan(children: <TextSpan>[
-              
+              //Displaying a message for user friendly code so user knows the size of image 
               TextSpan(text: "*Please make sure the file is a png or jpeg file and of size 100x100",style: TextStyle(color: Colors.red, fontSize: 15))
             ]
             )),
@@ -1386,7 +1725,7 @@ class AddVendorState extends State<AddVendor> {
               TextFormField(
                 keyboardType: TextInputType.number,
                 validator: (input)=> input.isEmpty? 'Please enter a number': null,
-                onChanged: (input)=> item[i]= int.parse(input),
+                onChanged: (input)=> item[i]= int.parse(input),     //taking input for the number of vendor menu items
                 decoration: InputDecoration(
                   labelText: 'Number of menu items', 
                   labelStyle: TextStyle(
@@ -1406,14 +1745,14 @@ class AddVendorState extends State<AddVendor> {
     });
 
   }
-
+  //testing that the data has been added to the relevant fields
   bool validate=false; 
   bool error1=false; 
 
   String err;
   @override 
   Widget build(BuildContext context){
-    
+    //building the widget for collecting the data regarding vendor details
     if (!check && numVen>0){
       Padding(padding: EdgeInsets.only(top: 15));
       for (var i=0 ; i<numVen ; i++){
@@ -1439,7 +1778,7 @@ class AddVendorState extends State<AddVendor> {
      
       resizeToAvoidBottomPadding: false,
               //key: scaffoldKey,
-        endDrawer:  SideBar(),
+        endDrawer:  SideBar(),    //Calling the sidebar drawer
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -1447,7 +1786,7 @@ class AddVendorState extends State<AddVendor> {
               fit: StackFit.expand,
               children: <Widget>[
 
-                AppBar(
+                AppBar(           //displaying the design bar of the application
                   centerTitle: true,
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(0),
@@ -1461,7 +1800,7 @@ class AddVendorState extends State<AddVendor> {
                   ),
                   leading: IconButton(
                     icon: Icon(
-                      Icons.arrow_back,
+                      Icons.arrow_back,       //adding the back button that will navigate to the precious screen
                        
                       ), 
                     onPressed: (){
@@ -1491,7 +1830,7 @@ class AddVendorState extends State<AddVendor> {
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(             //getting the details for the vendors using the functions defined above
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
@@ -1547,7 +1886,7 @@ class AddVendorState extends State<AddVendor> {
                 size: 45,
                 color: Colors.white,),
                 onPressed: () async {
-                  setState(() => validate=true);
+                  setState(() => validate=true);      //validation whether the data has been added to the required fields
                   bool check =true;
                   List<String> venId = List<String>();
                   for(var i=0; i<numVen; i++){
@@ -1557,12 +1896,13 @@ class AddVendorState extends State<AddVendor> {
                   }
                   if (check){
                     
-                    for (var i=0; i<numVen; i++){
+                    for (var i=0; i<numVen; i++){   //uploading the vendor data to the firestore
                         await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':logo[i] }).then((vid) async{
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
                         }).catchError((e){err=e.toString();});
                     }
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> Add(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
+                    //navigating to the add menu item screen
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu(eid:eid,vid: venId, numVen: item,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                   }
                 },
               ),
@@ -1582,25 +1922,25 @@ class AddVendorState extends State<AddVendor> {
   }
 }
 
-
-class Add extends StatefulWidget {
+//making the add menu screen where details regarding menu items for each vendor will be added
+class AddMenu extends StatefulWidget {
   final String eid;
   final List<String> vid;
   final List<int> numVen;
   final String eventName;
-  Add({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  Screen45 createState()=> new Screen45(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
+  AddMenuState createState()=> new AddMenuState(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
-class Screen45 extends State<Add> {
+class AddMenuState extends State<AddMenu> {
   String eid;
   String eventName;
   List<String> vid;
   bool validate=false; 
   List<int> numVen;
-  Screen45({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenuState({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
@@ -1621,8 +1961,8 @@ class Screen45 extends State<Add> {
           children: <Widget>[
             TextFormField(
               //keyboardType: TextInputType.number,
-              validator: (input)=> input.isEmpty? 'Please enter menu item': null,
-              onChanged: (input)=> itemname[i][j]=input,
+              validator: (input)=> input.isEmpty? 'Please enter menu item': null,     //fensuring name for the menu item is added 
+              onChanged: (input)=> itemname[i][j]=input,    //input for the menu item
               decoration: InputDecoration(
                 labelText: 'Menu Item ${j+1}',
                 labelStyle: TextStyle(
@@ -1646,7 +1986,7 @@ class Screen45 extends State<Add> {
       Container(
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
         child: Row(children: <Widget>[
-          Container(
+          Container(      //getting the image of the relevant menu item
             width: MediaQuery.of(context).copyWith().size.width * 0.75,
             padding:EdgeInsets.only( top: 5, left: 20),
             child: TextFormField(
@@ -1676,7 +2016,7 @@ class Screen45 extends State<Add> {
               child: IconButton(
                 icon: Icon(Icons.file_upload,
                 color: Colors.white,),
-                onPressed: () async{
+                onPressed: () async{      //uploading image and fetching the download URL link for storage in firebase
                   String downloadUrl;
                   File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                   String filename='${DateTime.now()}${selected.absolute}.png';
@@ -1749,8 +2089,8 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     return Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),            //calling the sidebar drawer
+        appBar: PreferredSize(            //displaying the designbar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -1769,7 +2109,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(          //adding the back button to navigate to previous page
                     icon: Icon(
                       Icons.arrow_back,
                        
@@ -1797,7 +2137,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         onTap: () {
                           scaffoldKey.currentState.openEndDrawer();
                           },
-                        child: Icon(
+                        child: Icon(                //button to open the sidebar drawer
                             Icons.menu,
                             
                         ),
@@ -1828,7 +2168,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(             //widget for getting menu items using the above functions
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
@@ -1878,7 +2218,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         }
                         if (checkNext){
                           
-                          for (var i=0; i<numVen.length; i++){
+                          for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
@@ -1886,6 +2226,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                                 }).catchError((e){err=e.toString();});
                             }
                           }
+                          //navigating to the QR image page
                           Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
                         }
                     },
@@ -1899,25 +2240,25 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     ); 
   }
 }
-
-class AddItem2 extends StatefulWidget {
+//updated add menu class for modified usage
+class AddMenu2 extends StatefulWidget {
   final String eid;
   final List<String> vid;
   final List<int> numVen;
   final String eventName;
-  AddItem2({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu2({this.eid,this.numVen,this.vid,this.eventName});
 
   @override 
-  AddItem2State createState()=> new AddItem2State(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
+  AddMenu2State createState()=> new AddMenu2State(vid:vid, numVen:numVen, eid:eid, eventName:eventName); 
 }
 
-class AddItem2State extends State<AddItem2> {
+class AddMenu2State extends State<AddMenu2> {
   String eid;
   String eventName;
   List<String> vid;
   List<int> numVen;
   bool validate=false; 
-  AddItem2State({this.eid,this.numVen,this.vid,this.eventName});
+  AddMenu2State({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
   //List<String> itemcoll = new List<String>();
   bool value=false;
@@ -1937,8 +2278,8 @@ class AddItem2State extends State<AddItem2> {
           children: <Widget>[
             TextFormField(
               //keyboardType: TextInputType.number,
-              validator: (input)=> input.isEmpty? 'Please enter menu item': null,
-              onChanged: (input)=> itemname[i][j]=input,
+              validator: (input)=> input.isEmpty? 'Please enter menu item': null,     //validating whether name has been entered or not
+              onChanged: (input)=> itemname[i][j]=input,          //entering the menu item
               decoration: InputDecoration(
                 labelText: 'Menu Item ${j+1}',
                 labelStyle: TextStyle(
@@ -1957,7 +2298,7 @@ class AddItem2State extends State<AddItem2> {
 
   }
 
-  void addvalue2(i,j){
+  void addvalue2(i,j){    //function for getting the menu item image
     menu2=List.from(menu2)..add(
       Container(
         width: MediaQuery.of(context).copyWith().size.width * 0.90,
@@ -1992,7 +2333,7 @@ class AddItem2State extends State<AddItem2> {
               child: IconButton(
                 icon: Icon(Icons.file_upload,
                 color: Colors.white,),
-                onPressed: () async {
+                onPressed: () async {       //uploading the image and fetching its download URL for later use
                   String downloadUrl;
                   File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                   String filename='${DateTime.now()}${selected.absolute}.png';
@@ -2064,8 +2405,8 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
     return Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),
-        appBar: PreferredSize(
+        endDrawer:  SideBar(),          //calling the sidebar function
+        appBar: PreferredSize(          //displaying the design bar of the application
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
             child: Stack(
@@ -2084,7 +2425,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         ),
                     )
                   ),
-                  leading: IconButton(
+                  leading: IconButton(        //back button to navigate to previous screen
                     icon: Icon(
                       Icons.arrow_back,
                        
@@ -2109,7 +2450,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                     Padding(
                       padding: EdgeInsets.only(right: 20.0),
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: () {         //opening the sidebar drawer
                           scaffoldKey.currentState.openEndDrawer();
                           },
                         child: Icon(
@@ -2143,7 +2484,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
             clipper: ClipShape(),
           )
         ),
-      body: Form(
+      body: Form(         //making the display for adding menu items using above defined functions
         key: _formKey,
         autovalidate: validate, 
         child: SingleChildScrollView(
@@ -2191,7 +2532,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         }
                         if (checkNext){
                           
-                          for (var i=0; i<numVen.length; i++){
+                          for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
                                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
@@ -2213,9 +2554,9 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
   }
 }
 
-
+//the screen for editting the vendor details
 class EditVen extends StatefulWidget {
-  UserData myUser;
+  final UserData myUser;
   final Vendor vendorData;
   final String eventName;
   EditVen({this.myUser, this.eventName,this.vendorData});
@@ -2236,22 +2577,22 @@ class EditVenState extends State<EditVen> {
   Vendor vendorData;
   String eventName;
   EditVenState({this.eventName,this.vendorData});
-  bool value=false;
   bool check=false; 
   bool validate=false; 
   String err;
 
 
 
-  var n=int.parse(number); 
   List<Widget> menu=[], menu2=[];   
   int count=1; 
  
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
+  //getting the required data into the screen
   @override
   void initState() {
     super.initState();
+    if(eventName==null)
+    print('adsdsaaaaaaa');
     myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
@@ -2270,7 +2611,7 @@ class EditVenState extends State<EditVen> {
       resizeToAvoidBottomPadding: false,
       //key: scaffoldKey,
       //endDrawer:  SideBar(),
-      appBar: PreferredSize(
+      appBar: PreferredSize(      //displaying the app bar of the application
         preferredSize: Size.fromHeight(150.0),
         child: ClipPath(
           child: Stack(
@@ -2326,7 +2667,7 @@ class EditVenState extends State<EditVen> {
         autovalidate: validate, 
         child: SingleChildScrollView(
         child: Column(children: <Widget>[
-          Container(
+          Container(      //displaying current details 
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             child: InkWell(
               child: new Container(
@@ -2339,7 +2680,7 @@ class EditVenState extends State<EditVen> {
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22
-                          ),
+                        ),
                       ),
                     ]
                   )
@@ -2354,8 +2695,8 @@ class EditVenState extends State<EditVen> {
               children: <Widget>[
                 TextFormField(
                   controller: dcontroller,
-                  validator: (input)=> input.isEmpty? 'Please enter vendor name': null,
-                  onChanged: (input)=> name=input,
+                  validator: (input)=> input.isEmpty? 'Please enter vendor name': null, //validating whether input has been given
+                  onChanged: (input)=> name=input,  //getting vendor name from the user
                   decoration: InputDecoration(
                     hintText: 'Stall Name',
                     suffixIcon: IconButton(
@@ -2376,7 +2717,7 @@ class EditVenState extends State<EditVen> {
             padding:EdgeInsets.only( top: 10, left: 20, right: 20),
             child: Column(
               children: <Widget>[
-                TextFormField(
+                TextFormField(//updating the email address of the vendor
                   controller: dcontroller2,
                   validator: (input)=> !EmailValidator.validate(input, true)? 'Please enter a valid email address' :null,
                   onChanged: (input)=> email=input,
@@ -2395,7 +2736,7 @@ class EditVenState extends State<EditVen> {
               ],
             )
           ),
-          Container(
+          Container(        //updating the stall id of the vendor
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             padding:EdgeInsets.only( top: 10, left: 20, right: 20),
             child: Column(
@@ -2420,7 +2761,7 @@ class EditVenState extends State<EditVen> {
             )
           ),
 
-          Container(
+          Container(    //updating the imafe of the vendor
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             child: Row(children: <Widget>[
               Container(
@@ -2452,7 +2793,7 @@ class EditVenState extends State<EditVen> {
                   child: IconButton(
                     icon: Icon(Icons.file_upload,
                     color: Colors.white,),
-                    onPressed: () async {
+                    onPressed: () async {   //uploading the new image and fetching its download link for storage
                       String downloadUrl;
                       File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
                       String filename='${DateTime.now()}${selected.absolute}.png';
@@ -2484,7 +2825,7 @@ class EditVenState extends State<EditVen> {
           Padding(
             padding: EdgeInsets.all(5),
           ),
-          Container(
+          Container(    //updating the items of the vendors
             width: MediaQuery.of(context).copyWith().size.width * 0.90,
             padding: EdgeInsets.only(top: 0, left: 20), 
             child: RichText(
@@ -2501,7 +2842,7 @@ class EditVenState extends State<EditVen> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
-                  validator: (input)=> input.isEmpty? 'Please enter a number': null,
+                  //validator: (input)=> input.isEmpty? 'Please enter a number': null,  //validating whether input has been taken or not
                   onChanged: (input) {
                     //print(input);
                     item=int.parse(input);
@@ -2532,10 +2873,10 @@ class EditVenState extends State<EditVen> {
                     icon: Icon(Icons.add,
                     color: Colors.white,),
                     onPressed: () {
-                      
+                      //leading to update menu item screen for adding more items
                       print(item);
                       if (item>0){//connect item here
-                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddItem2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=> AddMenu2(eid:vendorData.eventId,numVen:[item],vid: [vendorData.vendorId],eventName: eventName,)),);
                       }
                     },
                   ),
@@ -2588,9 +2929,9 @@ class EditVenState extends State<EditVen> {
                   icon: Icon(Icons.arrow_forward,
                   size: 45,
                   color: Colors.white,),
-                  onPressed: () async {
+                  onPressed: () async { //updating the vendor details in the firestore cloud
                     setState(() => validate=true);
-                    if ( !(name=="" || email==""|| stallid==0|| logo=="" || item==0|| name==null || email==null || logo==null ) ){
+                    if ( !(name=="" || email==""|| stallid==null|| logo=="" || name==null || email==null || logo==null ) ){
                       await Firestore.instance.collection('Vendor').document(vendorData.vendorId).setData({'name':name, 'logo':logo,'email':email,'stallNo':stallid},merge: true).then((_) async {
                         await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendorData.vendorId).getDocuments().then((val) async{
                             val.documents.forEach((doc) async {
@@ -2598,7 +2939,9 @@ class EditVenState extends State<EditVen> {
                             });
                         }).catchError((e){err=e.toString();});
                       }).catchError((e){err=e.toString();});
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewMenu(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                    } else {
+                      print('error'+logo);
                     }
                   }
                 ),
@@ -2666,14 +3009,11 @@ class EditEventState extends State<EditEvent> {
     savedLogo=eventData.logo;
     savedCover=eventData.coverimage;
     dcontroller.text=eventData.name;
-    //dcontroller2.text='${eventData.location1.latitude},${eventData.location1.longitude}';
     dcontroller3.text=eventData.logo;
     dcontroller4.text=eventData.coverimage;
   }
   @override 
   Widget build(BuildContext context){
-
-
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -2803,13 +3143,13 @@ class EditEventState extends State<EditEvent> {
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               padding: EdgeInsets.only(top: 0, left: 20), 
               child: RichText(
-                text: TextSpan(children: <TextSpan>[
-                  
-                  TextSpan(text: "*Please make sure the file is a png or jpeg file and of ratio 4:3 ",style: TextStyle(color: Colors.red, fontSize: 15))
-                ]
-                )),
+                text: TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(text: "*Only users within 200 metres from location coordinates will be able to rate",style: TextStyle(color: Colors.red, fontSize: 15))
+                  ]
+                )
+              ),
             ),
-
             Container(
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
               child: Row(children: <Widget>[
@@ -3008,172 +3348,19 @@ class EditEventState extends State<EditEvent> {
   }
 }
 
-
-class Comprehensive extends StatefulWidget {
-  final String eid;
-  final String eventName;
-  Comprehensive({this.eid,this.eventName});
-  @override 
-  ComprehensiveReport createState()=> new ComprehensiveReport(eid:eid,eventName: eventName); 
-}
-
-class ComprehensiveReport extends State<Comprehensive> {
-  String eventName;
-  String eid;
-  ComprehensiveReport({this.eid,this.eventName});
-  final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
-
-  @override 
-  Widget build(BuildContext context){
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-        //key: scaffoldKey,
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(150.0),
-          child: ClipPath(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                AppBar(
-                  centerTitle: true,
-                  bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
-                        ),
-                    )
-                  ),
-                  flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
-                )
-              ],
-            ),
-            clipper: ClipShape(),
-          )
-        ),
-      body: Form(
-        key: _formKey,
-        child: Column(children: <Widget>[
-          Container (
-            child: Container(
-              height: 200,
-              width: 200,
-              child:Icon(Icons.check_circle_outline,color: Colors.green[300],size: 200,), 
-            ),
-          ),
-
-          //Container(
-            //width: MediaQuery.of(context).copyWith().size.width * 0.96,
-            //child:
-            Row( 
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Spacer(),
-                  Container(
-                    height: 50,
-                    width: 50,
-                    child:Icon(Icons.mail_outline,color: Colors.black,size: 50,),  
-                  ),
-                  Padding(padding: EdgeInsets.all(10)),
-                  Container(
-                    child: RichText(
-                      text: TextSpan(children: <TextSpan>[
-                        TextSpan(text: "Email Sent",style: TextStyle(color: Colors.black, fontSize: 30)),
-                      ]),
-                    ),
-                  ),
-                  Spacer(),
-                ]
-              ),
-            //),
-          //),
-          Center(
-              child: Container(
-                width: MediaQuery.of(context).copyWith().size.width * 0.96,
-                //padding: EdgeInsets.only(top: 0, left: 20), 
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(children: <TextSpan>[
-                    TextSpan(text: "A comprehensive report has been successfully emailed to you.\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-                    TextSpan(text: " Questions?\n",style: TextStyle(color: Colors.black, fontSize: 17)),
-                    TextSpan(text: " Contact us on ",style: TextStyle(color: Colors.black, fontSize: 17)),
-                    TextSpan(text: "help.rateit@gmail.com ",style: TextStyle(color: Colors.pink[800], fontSize: 17))
-                  ]
-                  )),
-
-              ),
-          ),
-          Padding(padding: EdgeInsets.all(10),),
-          Container(
-            child: InkWell(
-              onTap: ()async{
-                String inviteCode,err;
-                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
-                  inviteCode=val.data['invitecode'];
-                }).catchError((e){err=e.toString();});
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
-              },
-              child: Center(
-                child:Container(
-                height: 50,
-                width: 250,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.topLeft,
-                    colors: [ 
-                      Color(0xFFAC0D57),
-                      Color(0xFFFC4A1F),
-                    ]
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ), 
-                child: Center(
-                  child:Text("Done",style: TextStyle(color: Colors.white, fontSize: 22 ))
-                ),
-              ),),
-            ),
-          ),
-        ],),  
-      ),
-    ); 
-  }
-}
-
-
-
 class QRselection extends StatefulWidget {
   final String eid;
   final String eventName;
   QRselection({this.eid,this.eventName});
 
   @override
-  ScreenQRselect createState() => new ScreenQRselect(eid:eid,eventName:eventName);
+  QRselectionState createState() => new QRselectionState(eid:eid,eventName:eventName);
 }
 
-class ScreenQRselect extends State<QRselection> {
+class QRselectionState extends State<QRselection> {
   String eid,eventName;
   String err; 
-  ScreenQRselect({this.eid,this.eventName});
+  QRselectionState({this.eid,this.eventName});
   
   @override
   Widget build(BuildContext context) {
@@ -3247,11 +3434,46 @@ class ScreenQRselect extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{
-                                String inviteCode,err;
+                                String inviteCode;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
+                                }).catchError((e){err=e.toString();});                                
+                              String basePath='/storage/emulated/0/Download/RateIt!/';
+                              //Per
+                              await Permission.storage.request();
+                              if(await Permission.storage.isGranted){
+                                if( !(await Directory(basePath).exists()) ){ 
+                                  await Directory(basePath).create(recursive: true);
+                                }
+                                if( !(await Directory(basePath+'${eventName}_$eid/').exists()) ){ 
+                                  await Directory(basePath+'${eventName}_$eid/').create(recursive: true);
+                                }
+                                //promise for loop
+                                await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
+                                  val.documents.forEach((doc) async {
+                                    var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
+                                    await File(basePath+"$eventName/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
+                                  });
                                 }).catchError((e){err=e.toString();});
+                                showDialog(                 //User friendly error message when the screen has been displayed 
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Success",textAlign: TextAlign.center,style: TextStyle(fontSize:28),),
+                                    content: Icon(Icons.check_circle_outline,color:Colors.green[300],size:80),
+                                  ),
+                                  barrierDismissible: true,
+                                );
                                 Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
+                              } else{
+                                showDialog(                 //User friendly error message when the screen has been displayed 
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Error: Please Enable Storage Permission",textAlign: TextAlign.center),
+                                    content: Icon(Icons.highlight_off,color:Colors.red[300],size:80),
+                                  ),
+                                  barrierDismissible: true,
+                                );
+                              }
                               },
                               child: Container(
                                 width: 250.0,
@@ -3282,47 +3504,47 @@ class ScreenQRselect extends State<QRselection> {
                             )
                           ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(25.0),
-                        child: 
-                          Container(
-                            child: GestureDetector(
-                              onTap: ()async{
-                                String inviteCode,err;
-                                await Firestore.instance.collection('Event').document(eid).get().then((val) async{
-                                  inviteCode=val.data['invitecode'];
-                                }).catchError((e){err=e.toString();});
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
-                              },
-                              child: Container(
-                                width: 250.0,
-                                height: 120.0,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft,
-                                    colors: [ 
-                                      Color(0xFFAC0D57),
-                                      Color(0xFFFC4A1F),
-                                    ]
-                                  ),
-                                  boxShadow: const[BoxShadow(blurRadius: 10),],
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                padding: EdgeInsets.all(12.0),
-                                child:Center(
-                                  child: 
-                                    Text('Email QR Codes',
-                                      style: TextStyle(
-                                        color: Colors.white, 
-                                        fontSize: 22
-                                      ) 
-                                    ),
-                                ),
-                              ),
-                            )
-                          ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.all(25.0),
+                      //   child: 
+                      //     Container(
+                      //       child: GestureDetector(
+                      //         onTap: ()async{
+                      //           String inviteCode;
+                      //           await Firestore.instance.collection('Event').document(eid).get().then((val) async{
+                      //             inviteCode=val.data['invitecode'];
+                      //           }).catchError((e){err=e.toString();});
+                      //           Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
+                      //         },
+                      //         child: Container(
+                      //           width: 250.0,
+                      //           height: 120.0,
+                      //           decoration: BoxDecoration(
+                      //             gradient: LinearGradient(
+                      //               begin: Alignment.topRight,
+                      //               end: Alignment.topLeft,
+                      //               colors: [ 
+                      //                 Color(0xFFAC0D57),
+                      //                 Color(0xFFFC4A1F),
+                      //               ]
+                      //             ),
+                      //             boxShadow: const[BoxShadow(blurRadius: 10),],
+                      //             borderRadius: BorderRadius.circular(30.0),
+                      //           ),
+                      //           padding: EdgeInsets.all(12.0),
+                      //           child:Center(
+                      //             child: 
+                      //               Text('Email QR Codes',
+                      //                 style: TextStyle(
+                      //                   color: Colors.white, 
+                      //                   fontSize: 22
+                      //                 ) 
+                      //               ),
+                      //           ),
+                      //         ),
+                      //       )
+                      //     ),
+                      // ),
 
                       SafeArea(
                       child: err== null ? Container() : Container(
@@ -3343,6 +3565,22 @@ class ScreenQRselect extends State<QRselection> {
                     ),
                     ],
                   ),
+              ),
+              SafeArea(
+                child: err== null ? Container() : Container(
+                  padding:EdgeInsets.only( top: 5), 
+                  child: Column(
+                    children: <Widget>[
+                      
+                      Container(
+                        alignment: Alignment(-0.8,-0.9),
+                          child: Text(err,
+                          style: TextStyle(color: Colors.red)
+                          ),
+                      ),
+                    ],
+                  )                        
+                ),
               ),
             ],
           ),
@@ -3409,32 +3647,7 @@ class MapsFunc extends State<Maps> {
                       //Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(coord: coord)),);
                     }
                   ),
-                  // actions: <Widget>[
-                  //   IconButton(
-                  //     onPressed: () {                     
-                  //       showSearch(
-                  //           context: context,
-                  //           delegate: MapSearchBar(),
-                  //       );
-                  //     },
-                  //     icon: Icon(
-                  //       Icons.search,
-                      
-                  //     )
-                  //     ),
-                  //   Padding(
-                  //     padding: EdgeInsets.only(right: 20.0),
-                  //     child: GestureDetector(
-                  //       onTap: () {
-                  //         scaffoldKey.currentState.openEndDrawer();
-                  //         },
-                  //       child: Icon(
-                  //           Icons.menu,
-                          
-                  //       ),
-                  //     )
-                  //   ),
-                  //],
+              
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -3723,19 +3936,19 @@ class SideBarProperties extends State<SideBar>{
 }
 
 
-class ViewVendorHostIt extends StatefulWidget {
-  ViewVendorHostIt({this.eventName, this.eventID});
+class ViewVendor extends StatefulWidget {
+  ViewVendor({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
 
   @override
   State<StatefulWidget> createState() {
-    return _ViewVendorHostIt(eventName: eventName,eventID: eventID);
+    return ViewVendorState(eventName: eventName,eventID: eventID);
   }
 }
 
-class _ViewVendorHostIt extends State<ViewVendorHostIt> {
-  _ViewVendorHostIt({this.eventName, this.eventID});
+class ViewVendorState extends State<ViewVendor> {
+  ViewVendorState({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
   String result;
@@ -3750,7 +3963,6 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
 
   @override
   Widget build(BuildContext context) {
-    // final vendorFromDB = Provider.of<List<Vendor>>(context);
 
     return StreamProvider<List<Vendor>>.value(
       value: FirestoreService().getVendorInfo(eventID),
@@ -3814,20 +4026,20 @@ class _ViewVendorHostIt extends State<ViewVendorHostIt> {
 }
 
 
-class ViewItemHostIt extends StatefulWidget {
-  ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+class ViewMenu extends StatefulWidget {
+  ViewMenu({this.vendorID,this.eventName, this.eventID});
   final String eventName;
   final String eventID;
   final String vendorID;
 
   @override
   State<StatefulWidget> createState() {
-    return _ViewItemHostIt(eventName: eventName,eventID: eventID,vendorID: vendorID,);
+    return ViewMenuState(eventName: eventName,eventID: eventID,vendorID: vendorID,);
   }
 }
 
-class _ViewItemHostIt extends State<ViewItemHostIt> {
-  _ViewItemHostIt({this.vendorID,this.eventName, this.eventID});
+class ViewMenuState extends State<ViewMenu> {
+  ViewMenuState({this.vendorID,this.eventName, this.eventID});
   String eventName;
   String eventID;
   String vendorID;
@@ -3843,8 +4055,6 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
 
   @override
   Widget build(BuildContext context) {
-    // final vendorFromDB = Provider.of<List<Vendor>>(context);
-
     return StreamProvider<List<Item>>.value(
       value: FirestoreService().getItemInfo(vendorID),
       child: Scaffold(
@@ -3907,12 +4117,7 @@ class _ViewItemHostIt extends State<ViewItemHostIt> {
                 style: TextStyle(color: Colors.pink[600], fontSize: 17),
               ),
             ), 
-            //Expanded(
             Container(child:ListItemHostIt(eventName: eventName,eventID: eventID,)),
-            // Padding(
-            //   padding: EdgeInsets.all(15),
-            // ),
-//),
           ]
         ),
       ),
@@ -3928,7 +4133,7 @@ class EditItem extends StatefulWidget {
 }
 
 class EditItemState extends State<EditItem> {
-  String name,logo;
+  String name,logo,err;
   final dcontroller=new TextEditingController();
   final dcontroller3=new TextEditingController();
   Item itemData;
@@ -4031,7 +4236,7 @@ class EditItemState extends State<EditItem> {
             child: InkWell(
               child: new Container(
               width: MediaQuery.of(context).copyWith().size.width * 0.90,
-                //padding: EdgeInsets.only(top: 130, left: 20), 
+                
                 child: RichText(
                   text: TextSpan(
                     children: <TextSpan>[
@@ -4064,7 +4269,7 @@ class EditItemState extends State<EditItem> {
                       onPressed: ()=>{
                         setState((){
                           WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
-                          //dcontroller.clear();
+                          
                         }),
                       },
                     ),
@@ -4143,7 +4348,7 @@ class EditItemState extends State<EditItem> {
           ),
           Center(
             child: Container(
-              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
+           
               width:60,
               height:60,
               child: Ink(
@@ -4166,8 +4371,7 @@ class EditItemState extends State<EditItem> {
                   color: Colors.white,),
                   onPressed: () async {
                     setState(() => validate=true);
-                    String err;
-                    //if(coord!=null){
+                   
                     if(!(logo==null || name==null))
                     await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
                       await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: itemData.itemId).getDocuments().then((val) async{
@@ -4176,12 +4380,26 @@ class EditItemState extends State<EditItem> {
                           });
                       }).catchError((e){err=e.toString();});
                     }).catchError((e){err=e.toString();});
-                    //}
                     Navigator.pop(context);
-                    //Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewItemHostIt(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
                   }
                 ),
               ),
+            ),
+          ),
+          SafeArea(
+            child: err== null ? Container() : Container(
+              padding:EdgeInsets.only( top: 5), 
+              child: Column(
+                children: <Widget>[
+                  
+                  Container(
+                    alignment: Alignment(-0.8,-0.9),
+                      child: Text(err,
+                      style: TextStyle(color: Colors.red)
+                      ),
+                  ),
+                ],
+              )                        
             ),
           ),
         ],
