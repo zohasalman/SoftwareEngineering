@@ -25,7 +25,9 @@ class _ListItemState extends State<ListItem> {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: items.length,
         itemBuilder: (context, index){
-          return Row(
+          return 
+          SafeArea(
+          child: Row(
               children: <Widget>[
                 Container(
                   child: Column(
@@ -87,7 +89,7 @@ class _ListItemState extends State<ListItem> {
                 ),
                
               ],
-            );
+            ));
       });
     }
   }

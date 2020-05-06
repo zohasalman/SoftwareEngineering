@@ -38,7 +38,8 @@ class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: myItems.length,
         itemBuilder: (context, index){
-          return Row(
+          return SafeArea(
+            child: Row(
               children: <Widget>[
                 Container(
                   child: Column(
@@ -90,7 +91,7 @@ class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
                   ),
                 )),
               ],
-            );
+            ));
         }
       );
     }

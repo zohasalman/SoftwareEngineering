@@ -1,4 +1,3 @@
-//import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -8,11 +7,7 @@ import 'package:rateit/login.dart';
 import 'package:rateit/ratedItem.dart';
 import 'firestore.dart';
 import 'dart:math' as math;
-//import 'VendorList.dart';
-//import 'package:flutter_rating_bar/flutter_rating_bar.dart' as prefix;
-//import 'localData.dart';
 import 'user.dart';
-//import 'dart:convert';
 import 'vendor-list.dart';
 import 'package:rating_bar/rating_bar.dart';
 import 'item-list.dart';
@@ -32,7 +27,7 @@ UserData myUserInfo;
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
         home: LoginScreen(),
-        routes: <String, WidgetBuilder>{
+        routes: <String, WidgetBuilder>{ //routes for switching around the rateit UI.
           "/rateitfirst": (BuildContext context) => new _RateItFirstScreen(),
           "/rateitsecond": (BuildContext context) => new ViewVendor(),
           '/EditProfileScreen': (BuildContext context) => new EditProfile(),
@@ -47,9 +42,8 @@ class SideBar2 extends StatefulWidget {
   SideBarProperties2 createState() => new SideBarProperties2();
 }
 
-class SideBarProperties2 extends State<SideBar2> {
-
-  void normalSignOut() async {
+class SideBarProperties2 extends State<SideBar2> { //SideBar class containing user info and buttons to editprofile
+  void normalSignOut() async {                     //viewuserratings and signout.
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
     userID = usr.uid;
@@ -69,9 +63,9 @@ class SideBarProperties2 extends State<SideBar2> {
             ),
             CircleAvatar(
               radius: 70,
-              backgroundImage: new NetworkImage('${myUserInfo.profilePicture}'),
+              backgroundImage: new NetworkImage('${myUserInfo.profilePicture}'), //User Picture from databse
             ),
-            Text(myUserInfo.firstName + ' ' + myUserInfo.lastName,
+            Text(myUserInfo.firstName + ' ' + myUserInfo.lastName, //User Name coming from database
                 style: TextStyle(fontSize: 30, color: Colors.black)),
             Text(myUserInfo.email,
                 style: TextStyle(fontSize: 22, color: Colors.black)),
@@ -81,14 +75,14 @@ class SideBarProperties2 extends State<SideBar2> {
             Container(
                 child: GestureDetector(
               onTap: () {
-                //Change on Integration
-                //Navigator.of(context).pushNamed("/EditProfileScreen");
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditProfile(userInfoRecieved: myUserInfo)),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EditProfile(userInfoRecieved: myUserInfo)),// Switching to Edit Profie screen
                 );
               },
-              child: Container(
+              child: Container(                                   //button for Edit Profile Screen
                 width: 230.0,
                 height: 50.0,
                 decoration: BoxDecoration(
@@ -114,11 +108,9 @@ class SideBarProperties2 extends State<SideBar2> {
             Padding(
               padding: EdgeInsets.all(20),
             ),
-            Container(
+            Container(                                  //button for View My Rating Screen
                 child: GestureDetector(
               onTap: () {
-                //Change on Integration
-                //Navigator.of(context).pushNamed("/Viewratings");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ViewMyRating()),
@@ -150,7 +142,7 @@ class SideBarProperties2 extends State<SideBar2> {
             Padding(
               padding: EdgeInsets.all(20),
             ),
-            Container(
+            Container(                                        //button for Sign out 
                 child: GestureDetector(
               onTap: () async {
                 await FirestoreService().normalSignOutPromise();
@@ -159,7 +151,6 @@ class SideBarProperties2 extends State<SideBar2> {
                   MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
-              // },
               child: Container(
                 width: 230.0,
                 height: 50.0,
@@ -198,13 +189,13 @@ class InviteScreen extends StatefulWidget {
   }
 }
 
-class _InviteScreen extends State<InviteScreen> {
+class _InviteScreen extends State<InviteScreen> {         //Class for invite screen where user enters Invite Code
   String inviteCode = '';
   String errorMessage = '';
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirestoreService();
 
-  void submitInviteCode() async {
+    void submitInviteCode() async {                     //On Submit, the location of user is verified in this function
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       String eventName = '';
@@ -252,9 +243,9 @@ class _InviteScreen extends State<InviteScreen> {
                 MaterialPageRoute(
                     builder: (context) => _RateItFirstScreen(
                         eventName: eventName, eventID: eventID)));
-          } else {
-            errorMessage = 'You are out of the required event area.'; 
-            print(errorMessage);
+          // } else {
+          //   errorMessage = 'You are out of the required event area.'; 
+          //   print(errorMessage);
           }
         } else {
           errorMessage = 'No such event invite code exists.';
@@ -264,124 +255,105 @@ class _InviteScreen extends State<InviteScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            Container(
-              child: Transform.scale(
-                scale: 1.5,
-                child: Transform.rotate(
-                  angle: -math.pi / 18,
-                  child: Transform.translate(
-                    offset: Offset(-15, -60),
-                    child: Container(
-                      height: 175,
-                      width: 500,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft,
-                            colors: [
-                              Color(0xFFAC0D57),
-                              Color(0xFFFC4A1F),
-                            ]),
-                        image: DecorationImage(
-                            image: AssetImage("asset/image/Chat.png")),
+        
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(150.0),
+            child: ClipPath(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  AppBar(
+                    centerTitle: true,
+                    bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(0),
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Padding(
+                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                              child: Text('Invite code',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 28))),
+                        )),
+                    flexibleSpace: Container(
+                        decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          "asset/image/Chat.png",
+                        ),
+                        fit: BoxFit.fitWidth,
                       ),
-                      child: Transform.translate(
-                        offset: Offset(10, 70),
-                        child: Transform.rotate(
-                            angle: math.pi / 18,
-                            child: Stack(
-                              children: <Widget>[
-                                Positioned(
-                                  child: Container(
-                                      child: Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 50,
-                                              top: 78,
-                                              left: 80,
-                                              right: 80),
-                                          child: Text("Invite Code",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 22)))),
-                                ),
-                              ],
-                            )),
-                      ),
-                    ),
-                  ),
-                ),
+                    )),
+                  )
+                ],
               ),
-            ),
-            Container(
-              child: Transform.translate(
-                  offset: Offset(0.0, 70.0),
-                  child: Align(
-                      alignment: Alignment.center,
-                      child: new Theme(
-                          data: new ThemeData(
-                            primaryColor: Colors.pink,
-                          ),
-                          child: TextFormField(
-                              cursorColor: Colors.pink,
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter invite code';
-                                }
-                                if (value.length > 6 || value.length < 6) {
-                                  return 'Invalid invite code';
-                                }
-                              },
-                              onSaved: (value) => inviteCode = value.trim(),
-                              decoration: InputDecoration(
-                                  labelText: 'Enter invite code',
-                                  border: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.pink),
-                                      borderRadius:
-                                          BorderRadius.circular(80.0))))))),
-            ),
-            Container(
-              child: Transform.translate(
-                offset: Offset(0.0, 100.0),
-                child: RaisedButton(
-                  onPressed: () {
-                    submitInviteCode();
-                  },
+              clipper: Clipshape(),
+            )),
+        endDrawer: SideBar2(),
+        body: SafeArea(    
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(top: 30.0)),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Container(
+                        child: TextFormField(                       //validating invite code here
+                      cursorColor: Colors.pink,
+                      validator: (value) {            
+                        if (value.isEmpty) {
+                          return 'Please enter invite code';
+                        }
+                        if (value.length > 6 || value.length < 6) {
+                          return 'Invalid invite code';
+                        }
+                      },
+                      onSaved: (value) => inviteCode = value.trim(),
+                      decoration: InputDecoration(
+                          labelText: 'Enter invite code',
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.pink),
+                            borderRadius: BorderRadius.circular(80.0),
+                          )),
+                    ))),
+                Padding(padding: EdgeInsets.only(top: 40.0)),
+                SafeArea(
+                    child: RaisedButton(
+                  onPressed: () {submitInviteCode();},
+                  textColor: Colors.white,
+                  padding: const EdgeInsets.all(0.0),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(80.0)),
-                  padding: EdgeInsets.all(0.0),
-                  child: Ink(
-                    decoration: BoxDecoration(
+                  child: Container(
+                    width: 200,
+                    height: 50.0,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFFAC0D57), Color(0xFFFC4A1F)],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                          colors: <Color>[Color(0xFFAC0D57), Color(0xFFFC4A1F)],
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
                         ),
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Container(
-                      constraints:
-                          BoxConstraints(maxWidth: 250.0, minHeight: 50.0),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Submit",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 20.0, color: Colors.white),
-                      ),
-                    ),
+                        borderRadius: BorderRadius.all(Radius.circular(80.0))),
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                    child: const Text('Submit', style: TextStyle(fontSize: 16)),
                   ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+                ))
+              ],
+            ),
+          ),
+        ));
   }
 }
 
@@ -396,7 +368,7 @@ class _RateItFirstScreen extends StatefulWidget {
   }
 }
 
-class RateItFirstScreen extends State<_RateItFirstScreen> {
+class RateItFirstScreen extends State<_RateItFirstScreen> {                   //Welcome Screen for the Food Event
   void getUserInfo() async {
     // new method
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -563,7 +535,8 @@ class ViewVendor extends StatefulWidget {
   }
 }
 
-class _ViewVendor extends State<ViewVendor> {
+class _ViewVendor extends State<ViewVendor> {     //Class for View Vendor Screen displaying all the vendors in the events
+                                                  //with their ratings
   String result;
   UserData userInfo;
   String qr = "";
@@ -582,7 +555,7 @@ class _ViewVendor extends State<ViewVendor> {
     // final vendorFromDB = Provider.of<List<Vendor>>(context);
 
     return StreamProvider<List<Vendor>>.value(
-      value: FirestoreService().getVendorInfo('${widget.eventID}'),
+      value: FirestoreService().getVendorInfo('${widget.eventID}'),  //Event ID coming from database
       child: Scaffold(
         key: scaffoldKey,
         appBar: PreferredSize(
@@ -599,7 +572,7 @@ class _ViewVendor extends State<ViewVendor> {
                           alignment: Alignment.topLeft,
                           child: Padding(
                               padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.eventName}',
+                              child: Text('${widget.eventName}',        //Event Name coming from database
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
                         )),
@@ -624,15 +597,14 @@ class _ViewVendor extends State<ViewVendor> {
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: SideBar2(),
-        body: VendorsList(),
+        endDrawer: SideBar2(),        //SideBar called in this screen
+        body: VendorsList(),          //Class to display to all the vendors in the file 'vendor-list.dart'
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.pink[800],
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
-            // Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning= await BarcodeScanner.scan(); 
+            scanning = await BarcodeScanner.scan();   //barcode scanner implemented to scan barcode of each vendor
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -644,7 +616,8 @@ class _ViewVendor extends State<ViewVendor> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        DoRatings(name: name, logo: logo, vendorId: scanning)));
+                        DoRatings(name: name, logo: logo, vendorId: scanning))); //re-routing to barcode specific vendor screen
+
           },
         ),
       ),
@@ -659,7 +632,7 @@ class ViewMyRating extends StatefulWidget {
   }
 }
 
-class _ViewMyRating extends State<ViewMyRating> {
+class _ViewMyRating extends State<ViewMyRating> {       //Class for screen where user can see the vendors he/she has rated
   String result;
 
   String qr = "";
@@ -716,9 +689,8 @@ class _ViewMyRating extends State<ViewMyRating> {
           backgroundColor: Colors.pink[800],
           child: Image.asset("asset/image/Camera 1.png"),
           onPressed: () async {
-            //Navigator.of(context).pushNamed('/doratings');
             String scanning = "";
-            scanning= await BarcodeScanner.scan();
+            scanning = await BarcodeScanner.scan();
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -738,7 +710,7 @@ class _ViewMyRating extends State<ViewMyRating> {
   }
 }
 
-class EditRatings extends StatefulWidget {
+class EditRatings extends StatefulWidget {  //Class for Screen where user can see the ratings of selected vendor
   final String name, image, rating, vendorId, reviewId;
 
   EditRatings(
@@ -752,7 +724,7 @@ class _EditRatings extends State<EditRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-      value: FirestoreService().getMyRatedItem(userID, '${widget.vendorId}'),
+      value: FirestoreService().getMyRatedItem(userID, '${widget.vendorId}'),  //vendor ID coming from firebase
       child: Scaffold(
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(150.0),
@@ -769,7 +741,7 @@ class _EditRatings extends State<EditRatings> {
                             child: Padding(
                                 padding:
                                     EdgeInsets.only(bottom: 60.0, left: 10),
-                                child: Text('${widget.name}',
+                                child: Text('${widget.name}',  //vendor name switching between screens
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 28))),
                           )),
@@ -794,101 +766,105 @@ class _EditRatings extends State<EditRatings> {
                 ),
                 clipper: Clipshape(),
               )),
-          body: Padding(
-              padding: EdgeInsets.all(5.0),
-              child: Container(
-                child: ListView(
-                  children: <Widget>[
-                    Container(
-                      height: 200.0,
-                      width: 200.0,
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                        child: Image.network('${widget.image}'),
-                      ),
-                    ),
-                    RatingBar.readOnly(
-                      initialRating: double.parse('${widget.rating}'),
-                      filledIcon: Icons.star,
-                      emptyIcon: Icons.star_border,
-                      halfFilledIcon: Icons.star_half,
-                      isHalfAllowed: true,
-                      filledColor: Colors.amber,
-                      emptyColor: Colors.amber,
-                      halfFilledColor: Colors.amber,
-                      size: 40,
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Row(
+          body: SafeArea(
+              child: Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Container(
+                    child: ListView(
                       children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 5.0),
-                          child: Container(
-                              child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 200.0,
-                              height: 50.0,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft,
-                                    colors: [
-                                      Color(0xFFAC0D57),
-                                      Color(0xFFFC4A1F),
-                                    ]),
-                                boxShadow: const [
-                                  BoxShadow(blurRadius: 10),
-                                ],
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                              padding: EdgeInsets.all(12.0),
-                              child: Center(
-                                child: Text('My Ratings',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18)),
-                              ),
-                            ),
-                          )),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                          child: GestureDetector(
-                            onTap: () async {
-                              // get review
-                              String review = await FirestoreService()
-                                  .getReview(widget.reviewId);
-                              var route = new MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    new ViewReviews(
-                                  value: '${widget.name}',
-                                  image: '${widget.image}',
-                                  reviewId: '${widget.reviewId}',
-                                  review: review,
-                                ),
-                              );
-                              Navigator.of(context).push(route);
-                            },
-                            child: Text('Reviews',
-                                style:
-                                    TextStyle(color: Colors.red, fontSize: 22)),
+                        Container(
+                          height: 200.0,
+                          width: 200.0,
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                            child: Image.network('${widget.image}'),
                           ),
                         ),
+                        RatingBar.readOnly(  //Rating bars to display rating as stars
+                          initialRating: double.parse('${widget.rating}'),
+                          filledIcon: Icons.star,
+                          emptyIcon: Icons.star_border,
+                          halfFilledIcon: Icons.star_half,
+                          isHalfAllowed: true,
+                          filledColor: Colors.amber,
+                          emptyColor: Colors.amber,
+                          halfFilledColor: Colors.amber,
+                          size: 40,
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        SafeArea(
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(left: 5.0),
+                                child: Container(
+                                    child: GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    width: 200.0,
+                                    height: 50.0,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.topRight,
+                                          end: Alignment.topLeft,
+                                          colors: [
+                                            Color(0xFFAC0D57),
+                                            Color(0xFFFC4A1F),
+                                          ]),
+                                      boxShadow: const [
+                                        BoxShadow(blurRadius: 10),
+                                      ],
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    padding: EdgeInsets.all(12.0),
+                                    child: Center(
+                                      child: Text('My Ratings',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18)),
+                                    ),
+                                  ),
+                                )),
+                              ),
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(right: 10.0, left: 60.0),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    String review = await FirestoreService()
+                                        .getReview(widget.reviewId); //review id of the user review from databases
+                                    var route = new MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          new ViewReviews(
+                                        value: '${widget.name}',
+                                        image: '${widget.image}',
+                                        reviewId: '${widget.reviewId}',
+                                        review: review,
+                                      ),
+                                    );
+                                    Navigator.of(context).push(route);
+                                  },
+                                  child: Text('Reviews',
+                                      style: TextStyle(
+                                          color: Colors.red, fontSize: 22)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        RatedItemList(),
                       ],
                     ),
-                    RatedItemList(),
-                  ],
-                ),
-              )),
+                  ))),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.edit),
             backgroundColor: Color(0xFFFC4A1F),
             onPressed: () {
               var route = new MaterialPageRoute(
-                builder: (BuildContext context) => new ChangeRatings(
-                    value: '${widget.name}',
+                builder: (BuildContext context) => new ChangeRatings(   //re-routing to the screen where user can edit ratings
+                    value: '${widget.name}', //all details being sent to re-routed screen
                     image: '${widget.image}',
                     vendorId: '${widget.vendorId}',
                     reviewId: '${widget.reviewId}'),
@@ -917,7 +893,7 @@ class EditRating1 extends StatefulWidget {
   _EditRating1State createState() => _EditRating1State();
 }
 
-class _EditRating1State extends State<EditRating1> {
+class _EditRating1State extends State<EditRating1> { //Screen where user will rate the vendor
   double finalRating;
 
   void submit(double finalRating) {
@@ -926,10 +902,11 @@ class _EditRating1State extends State<EditRating1> {
     if (error != null) {
       print(error);
     }
-    Navigator.push(
+    Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-            builder: (context) => ViewVendor(eventName: eName, eventID: eId)));
+            builder: (context) => ViewVendor(eventName: eName, eventID: eId)),
+        (Route<dynamic> route) => false);
   }
 
   @override
@@ -1002,7 +979,7 @@ class _EditRating1State extends State<EditRating1> {
                           EdgeInsets.only(top: 40.0, right: 0.0, left: 15.0),
                       child: Column(
                         children: <Widget>[
-                          RatingBar(
+                          RatingBar(   //Editable Rating bars to display rating as stars
                             onRatingChanged: (rating) =>
                                 setState(() => finalRating = rating),
                             filledIcon: Icons.star,
@@ -1018,28 +995,13 @@ class _EditRating1State extends State<EditRating1> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 150.0, width: 40.0),
-                  // Container(
-                  //   height: 70,
-                  //   width: 250,
-                  //   child: RaisedButton(
-                  //     shape: new RoundedRectangleBorder(
-                  //         borderRadius: new BorderRadius.circular(50.0),
-                  //         side: BorderSide(color: Colors.red),
-                  //         ),
-
-                  //     onPressed: () {},
-                  //     color: Colors.red,
-                  //     textColor: Colors.white,
-                  //     child: Text("Submit".toUpperCase(),
-                  //         style: TextStyle(fontSize: 18)),
-                  //   ),
-                  // )
+                  SizedBox(height: 150.0, width: 40.0), //Sized boxes used at several places for gapping
+                  
                   SafeArea(
                     child: InkWell(
                       onTap: () async {
                         submit(finalRating);
-                        return await showDialog(
+                        return await showDialog(    //Alert Box for acknowledgement
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
@@ -1095,7 +1057,7 @@ class DoRatings extends StatefulWidget {
   _DoRatings createState() => new _DoRatings();
 }
 
-class _DoRatings extends State<DoRatings> {
+class _DoRatings extends State<DoRatings> {  //Class for screen where the user will re-routed to after scanning barcode.
   List<Map> myRatingInfo = new List();
 
   @override
@@ -1155,7 +1117,7 @@ class _DoRatings extends State<DoRatings> {
                       child: Image.network('${widget.logo}')),
                 ),
                 new Divider(),
-                DisplayItems(list: myRatingInfo),
+                DisplayItems(list: myRatingInfo),  //Functions to display vendor items
                 Container(
                     height: 100.0,
                     width: 100.0,
@@ -1180,7 +1142,7 @@ class _DoRatings extends State<DoRatings> {
   }
 }
 
-class DoRatingFinal extends StatefulWidget {
+class DoRatingFinal extends StatefulWidget {  //Class for screen to edit vendor
   final String name, logo, vendorId, review;
   final List<Map> list;
 
@@ -1193,12 +1155,16 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
   double finalRating;
 
   void submit(double finalRating) {
-    var error = FirestoreService().sendRatings(userID, widget.list,
-        widget.name, widget.logo, widget.vendorId, widget.review, finalRating);
+    var error = FirestoreService().sendRatings(userID, widget.list, widget.name,
+        widget.logo, widget.vendorId, widget.review, finalRating);
     if (error != null) {
       print(error);
     }
-    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewVendor(eventName: eName, eventID: eId)));
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ViewVendor(eventName: eName, eventID: eId)),
+        (Route<dynamic> route) => false);
   }
 
   @override
@@ -1271,7 +1237,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                           EdgeInsets.only(top: 40.0, right: 0.0, left: 15.0),
                       child: Column(
                         children: <Widget>[
-                          RatingBar(
+                          RatingBar( //Editable Rating bars to display rating as stars
                             onRatingChanged: (rating) => finalRating = rating,
                             filledIcon: Icons.star,
                             emptyIcon: Icons.star_border,
@@ -1287,12 +1253,11 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                     ),
                   ),
                   SizedBox(height: 150.0, width: 40.0),
-                 
                   SafeArea(
                     child: InkWell(
                       onTap: () async {
                         submit(finalRating);
-                        return await showDialog(
+                        return await showDialog( //ALertBox for acknowledgement
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
@@ -1348,7 +1313,7 @@ class TopRatedItems extends StatefulWidget {
   _TopRatedItems createState() => new _TopRatedItems();
 }
 
-class _TopRatedItems extends State<TopRatedItems> {
+class _TopRatedItems extends State<TopRatedItems> { //Class for screen displaying top rated items of each vendor 
   double myrating;
   @override
   Widget build(BuildContext context) {
@@ -1369,7 +1334,7 @@ class _TopRatedItems extends State<TopRatedItems> {
                           alignment: Alignment.topLeft,
                           child: Padding(
                               padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.value}',
+                              child: Text('${widget.value}',  // name of vendor coming from previous screen
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
                         )),
@@ -1411,9 +1376,9 @@ class _TopRatedItems extends State<TopRatedItems> {
               Padding(
                 padding: EdgeInsets.only(right: 0.0, left: 50.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    RatingBar.readOnly(
-                      //Balaj chnage this line
+                    RatingBar.readOnly( //Read Only Rating bars to display rating as stars
                       initialRating: double.parse('${widget.vendorRating}'),
                       isHalfAllowed: true,
                       halfFilledIcon: Icons.star_half,
@@ -1451,7 +1416,7 @@ class _TopRatedItems extends State<TopRatedItems> {
                       ),
                       padding: EdgeInsets.all(12.0),
                       child: Center(
-                        child: Text('Top Rated Items',
+                        child: Text('Top Rated Items',    //tabs to switch between items and reviews
                             style:
                                 TextStyle(color: Colors.white, fontSize: 18)),
                       ),
@@ -1478,8 +1443,8 @@ class _TopRatedItems extends State<TopRatedItems> {
                   )
                 ],
               ),
-              ListItem(),
-              // new Divider(),
+              ListItem(),  //Function to display top rated items
+             
             ],
           )),
         ),
@@ -1498,7 +1463,7 @@ class ChangeRatings extends StatefulWidget {
   _ChangeRatings createState() => new _ChangeRatings();
 }
 
-class _ChangeRatings extends State<ChangeRatings> {
+class _ChangeRatings extends State<ChangeRatings> { //Class to display items and their editable rating bars. User can edit their ratings
   List<Map> myEditedRating = new List();
   @override
   Widget build(BuildContext context) {
@@ -1564,7 +1529,7 @@ class _ChangeRatings extends State<ChangeRatings> {
                               child: Text('${widget.value}',
                                   style: TextStyle(
                                       fontSize: 25, color: Colors.black))))),
-                  EditMyRatingsItems(
+                  EditMyRatingsItems(  //function to edit ratings of items
                     list: myEditedRating,
                   ),
                   new Divider(),
@@ -1607,7 +1572,7 @@ class TopRatedItemsReviews extends StatefulWidget {
   _TopRatedItemsReviews createState() => new _TopRatedItemsReviews();
 }
 
-class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
+class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for displaying top rated reviews of each vendor
   double myrating;
   @override
   Widget build(BuildContext context) {
@@ -1692,12 +1657,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                   ),
                   SizedBox(
                     width: 10.0,
-                  ),
-                  // Padding(
-                  //   padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                  //   child: Text('Reviews',
-                  //       style: TextStyle(color: Colors.red, fontSize: 22)),
-                  // )
+                  ),               
                   Container(
                       child: GestureDetector(
                     onTap: () {},
@@ -1727,7 +1687,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
                   ))
                 ],
               ),
-              ReviewFromDB(),
+              ReviewFromDB(), //User can edit reviews here
             ],
           )),
         ),
@@ -1752,7 +1712,7 @@ class ViewReviews extends StatefulWidget {
   _ViewReviews createState() => new _ViewReviews();
 }
 
-class _ViewReviews extends State<ViewReviews> {
+class _ViewReviews extends State<ViewReviews> {  //Class for screen where user can see their reviews
   double myrating;
 
   @override
@@ -1810,7 +1770,7 @@ class _ViewReviews extends State<ViewReviews> {
                 child: Image.network('${widget.image}'),
               ),
             ),
-            RatingBar.readOnly(
+            RatingBar.readOnly( //Non-Editable Rating bars to display rating as stars
               initialRating: 3.5,
               filledIcon: Icons.star,
               emptyIcon: Icons.star_border,
@@ -1943,9 +1903,9 @@ class _ViewReviews extends State<ViewReviews> {
         backgroundColor: Color(0xFFFC4A1F),
         onPressed: () {
           var route = new MaterialPageRoute(
-            builder: (BuildContext context) => new ChangeRatings(
-              value: widget.value,
-              image: widget.image,
+            builder: (BuildContext context) => new EditReviews(
+              name: widget.value,
+              logo: widget.image,
               vendorId: widget.vendorId,
               reviewId: '${widget.reviewId}',
             ),
@@ -1976,8 +1936,7 @@ class EditReviews extends StatefulWidget {
   _EditReviews createState() => new _EditReviews();
 }
 
-class _EditReviews extends State<EditReviews> {
-
+class _EditReviews extends State<EditReviews> {     // User can make edits to their reviews here
   double myrating;
   FocusNode myFocusNode;
 
@@ -1989,8 +1948,8 @@ class _EditReviews extends State<EditReviews> {
   }
 
   @override
-  void dispose() {
-    // Clean up the focus node when the Form is disposed.
+  void dispose() {   // Clean up the focus node when the Form is disposed.
+   
     myFocusNode.dispose();
 
     super.dispose();
@@ -2092,8 +2051,8 @@ class _EditReviews extends State<EditReviews> {
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
                             ),
-                            child: TextFormField(
-                                onChanged: (rev) => widget.review = rev,
+                            child: TextFormField(  //editable textfield of review
+                                onChanged: (rev) => widget.review = rev, 
                                 focusNode: myFocusNode,
                                 decoration: InputDecoration(
                                     labelText: widget.review,
@@ -2152,8 +2111,8 @@ class _EditReviews extends State<EditReviews> {
   }
 }
 
-class DoReviews extends StatefulWidget {
-  final String name, logo, vendorId;
+class DoReviews extends StatefulWidget {  //Class for screen where user can do reviews for vendors after scanning barcod 
+  final String name, logo, vendorId; 
   final List<Map> list;
 
   DoReviews({this.name, this.logo, this.vendorId, this.list});
@@ -2275,7 +2234,7 @@ class _DoReviews extends State<DoReviews> {
                             child: TextFormField(
                                 onChanged: (rev) => review = rev,
                                 focusNode: myFocusNode,
-                                decoration: InputDecoration(
+                                decoration: InputDecoration(  // User can write a new review
                                     labelText: 'Write a new review...',
                                     contentPadding: new EdgeInsets.symmetric(
                                         vertical: 25.0, horizontal: 10.0)),
