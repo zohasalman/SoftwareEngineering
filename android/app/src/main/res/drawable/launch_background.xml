@@ -3,7 +3,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/custo_color " />
 
-    <!-- You can insert your own image assets here -->
+    <!-- Function to make Welcome Screen -->
     <item>
         <bitmap
             

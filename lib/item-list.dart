@@ -94,7 +94,7 @@ class _ListItemState extends State<ListItem> {
 }
 
 
-class ListItemHostIt extends StatefulWidget {
+class ListItemHostIt extends StatefulWidget {                                                                 //Items List builder for Host It
   ListItemHostIt({this.eventName, this.eventID});
   final String eventName;
   final String eventID;
@@ -121,15 +121,14 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
         Container(child:ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          //physics: const NeverScrollableScrollPhysics(),
           itemCount: items.length,
           itemBuilder: (context, index){
             return Card(
               child:ListTile(
-                onTap: () {
+                onTap: () {                                                                                               //single tapping list tile will open the option to edit data
                   Navigator.push(context,MaterialPageRoute(builder: (context)=> EditMenu(itemData: items[index],)),);
                 },
-                onLongPress: () async {
+                onLongPress: () async {                                                                                   //long pressing list tile will open the option to delete data
                   return await showDialog(
                     context: context,
                     builder: (BuildContext context){
@@ -138,9 +137,8 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
                         content: Text("Are you sure you want to delete ${items[index].name}?"),
                         actions: <Widget>[
                           FlatButton(
-                            onPressed: () async {
+                            onPressed: () async {                                                                                   //pressing delete will the corresponding data in firebase database
                               print(items[index].name);
-                              //await Firestore.instance.collection('item').document(items[index].itemId).delete();
                               await Firestore.instance.collection('item').document(items[index].itemId).delete().then((_)async{
                                 await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: items[index].itemId).getDocuments().then((val) async{
                                   val.documents.forEach((doc) async {
@@ -170,9 +168,8 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
           },),
         ),
         Padding(padding: EdgeInsets.all(30),),
-        Center(
+        Center(                                               //Submit button to save changes in vendor details and go back to event menu
           child: Container(
-              //width: MediaQuery.of(context).copyWith().size.width * 0.20,
               width:60,
               height:60,
               child: Ink(

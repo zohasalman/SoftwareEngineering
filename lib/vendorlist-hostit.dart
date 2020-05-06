@@ -5,7 +5,7 @@ import 'userRedirection.dart';
 import 'hostit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class VendorsListHostit extends StatefulWidget {
+class VendorsListHostit extends StatefulWidget {                                                        //Vendors List builder for Host It
   final String eventName;
   VendorsListHostit({this.eventName});
   @override
@@ -32,10 +32,10 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
             itemBuilder: (context, index) {
               return Card(
                 child:ListTile(
-                  onTap: () {
+                  onTap: () {                                                                                                                               //single tapping list tile will open the option to edit data
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVendor(vendorData: vendors[index], eventName: eventName,)),);
                   },
-                  onLongPress: () async {
+                  onLongPress: () async {                                                                                                                   //long pressing list tile will open the option to delete data
                     return await showDialog(
                       context: context,
                       builder: (BuildContext context){
@@ -45,7 +45,7 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
                           content: Text("Are you sure you want to delete this vendor?"),
                           actions: <Widget>[
                             FlatButton(
-                              onPressed: () async {
+                              onPressed: () async {                                                                                                                 //pressing delete will the corresponding data in firebase database
                                 await Firestore.instance.collection('Vendor').document(vendors[index].vendorId).delete().then((_) async {
                                     await Firestore.instance.collection('ratedVendor').where('vendorId', isEqualTo: vendors[index].vendorId).getDocuments().then((val) async{
                                       val.documents.forEach((doc) async {

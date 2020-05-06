@@ -50,7 +50,6 @@ class App extends StatelessWidget{
   }
 }
 
-//UserData myUserInfo;
 
 class HostitHomescreen extends StatefulWidget {
   @override
@@ -255,8 +254,9 @@ class SideBar1Properties extends State<SideBar1>{
           Padding( padding: EdgeInsets.all(20),),
           Container(
             child: GestureDetector(             //signout from the application
-              onTap:() async {await FirestoreService().normalSignOutPromise();},
-             // },
+              onTap:() async {
+                await FirestoreService().normalSignOutPromise();
+              },
               child: Container(
                 width: 230.0,
                 height: 50.0,
@@ -684,14 +684,11 @@ class AddEventState extends State<AddEvent> {
                       onPressed: () async {
                         String downloadUrl;
                         
-                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                         String filename='${DateTime.now()}${selected.absolute}.png';
                         await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).putFile(selected).onComplete;
                         downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).getDownloadURL();
                         logo=downloadUrl;
-                        setState(() {
-                          //error1=true; 
-                        });
                         showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
@@ -756,7 +753,7 @@ class AddEventState extends State<AddEvent> {
                       color: Colors.white,),
                       onPressed: () async {
                         String downloadUrl;
-                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                         String filename='${DateTime.now()}${selected.absolute}.png';
                         await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
                         downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
@@ -769,9 +766,6 @@ class AddEventState extends State<AddEvent> {
                           ),
                           barrierDismissible: true,
                         );
-                        setState(() {
-                          //error2=true; 
-                        });
                       },
                     ),
                   ),
@@ -883,13 +877,6 @@ class EventMenuState extends State<EventMenu> {
   @override
   void initState() {
     super.initState();
-    // myUserInfo = UserData(
-    //     uid: widget.userInfo.uid,
-    //     firstName: widget.userInfo.firstName,
-    //     lastName: widget.userInfo.lastName,
-    //     email: widget.userInfo.email,
-    //     gender: widget.userInfo.gender,
-    //     profilePicture: widget.userInfo.profilePicture);
   }
 
   @override 
@@ -912,7 +899,16 @@ class EventMenuState extends State<EventMenu> {
                       alignment: Alignment.topLeft,
                       child: Padding(
                         padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                        child: Text(eventName,style: TextStyle(color: Colors.white, fontSize: 28 ))
+                          child: Container(
+                            width: MediaQuery.of(context).copyWith().size.width * 0.45,
+                            child: Text(eventName,
+                              style: TextStyle(
+                                color: Colors.white, fontSize: 28
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
+                            ),
+                          ),
                         ),
                     )
                   ),
@@ -1296,7 +1292,6 @@ class AddVendorQtyState extends State<AddVendorQty> {
                   leading: IconButton(          //adding the button to navigate to the previous page
                     icon: Icon(
                       Icons.arrow_back,
-                      //size:24,
                     ), 
                     onPressed: (){
                       Navigator.pop(context);
@@ -1397,8 +1392,6 @@ class AddVendorQtyState extends State<AddVendorQty> {
 
           SafeArea(               //validation that the required input has been added
               child: !(error1 && validate)? Container() : Container(
-                // print(error1),
-                // print(validate),
                 
                 padding:EdgeInsets.only( top: 5), 
                 child: Column(
@@ -1439,7 +1432,6 @@ class AddVendorQtyState extends State<AddVendorQty> {
           ),
           Padding(padding: EdgeInsets.all(30)),
           SafeArea(
-            //child: SafeArea(
               child: Container(
                 width:60,
                 height:60,
@@ -1475,32 +1467,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
                   ),
                 ),
               ),
-            //),
-          ),
-          // SafeArea (
-          //   child: Container(
-          //   padding:EdgeInsets.only( top: 50),
-          //   child: Center(
-          //   //offset: Offset(0,-50),
-          //     child: SafeArea(
-          //       child: Container(
-          //       height: 100,
-          //       width: 200,
-          //       child: new IconButton(icon: new Image.asset("asset/image/icon..png"),onPressed:()=>{
-          //         setState(() => validate = true),
-          //         if (valSave!=null && valSave!="Custom") {
-          //           numVen=int.parse(valSave),
-          //           Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:numVen, eid:eid, eventName:eventName)),)
-          //         }
-          //         else if (valSave=="Custom" && customValSave!=null) {
-          //           customVal=int.parse(customValSave),
-          //           Navigator.push(context,MaterialPageRoute(builder: (context)=> AddVendor(numVen:customVal, eid:eid, eventName:eventName)),)
-          //         }
-          //       } ),
-          //     ),
-          //     ),
-          //   ),
-          // ), ),      
+          ),  
         ],),  
       ),),
     ); 
@@ -1527,9 +1494,7 @@ class AddVendorState extends State<AddVendor> {
   List<int> item = new List<int>();
   bool value=false;   
   bool check=false;
-  List<Widget> menu=[], menu2=[]; 
-  //int count=2; 
-  //taking the data for each vendor
+  List<Widget> menu=[], menu2=[];
   final GlobalKey <FormState> _formKey= GlobalKey<FormState>(); 
   void add2(i){
     menu2=List.from(menu2)..add(     
@@ -1697,7 +1662,7 @@ class AddVendorState extends State<AddVendor> {
                     color: Colors.white,),
                     onPressed: () async{    //uploading and extracting the URL of the picture from the firestore cloud
                       String downloadUrl;
-                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                       String filename='${DateTime.now()}${selected.absolute}.png';
                       await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).getDownloadURL();
@@ -1892,7 +1857,6 @@ class AddVendorState extends State<AddVendor> {
 
 
           Center(child: Container(
-            //width: MediaQuery.of(context).copyWith().size.width * 0.20,
             width:60,
             height:60,
             child: Ink(
@@ -2045,7 +2009,7 @@ class AddMenuState extends State<AddMenu> {
                 color: Colors.white,),
                 onPressed: () async{      //uploading image and fetching the download URL link for storage in firebase
                   String downloadUrl;
-                  File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                  File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                   String filename='${DateTime.now()}${selected.absolute}.png';
                   await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
                   downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
@@ -2107,8 +2071,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
           itemname[i].add('');
           mlogo[i].add('');
           addvalue(i,j); 
-          addvalue2(i,j); 
-          //addvalue3(); 
+          addvalue2(i,j);
         }
       }
       check=true; 
@@ -2236,10 +2199,9 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           if (checkNext){
                             for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
                               for (var j=0; j<numVen[i]; j++){
-                                //print(itemname[i][j]);
-                                  await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-                                      await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
-                                  }).catchError((e){err=e.toString();});
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                    await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
+                                }).catchError((e){err=e.toString();});
                               }
                             }
                             //navigating to the QR image page
@@ -2251,39 +2213,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   ),
                 ),
               ),
-              // Container (
-              //   child: Ink(
-              //     height: 100,
-              //     width: 200,
-              //     child: IconButton(
-              //       icon: new Image.asset("asset/image/icon..png"),
-              //       onPressed:() async {
-              //         setState(() => validate=true);
-              //         bool checkNext = true;
-              //           //add eid from previous screen here to pass to QR to Event menu 
-              //           for (var i=0; i<numVen.length; i++){
-              //             for (var j=0; j<numVen[i]; j++){
-              //               if(itemname[i][j]=='' ){
-              //                 checkNext=false;
-              //               }
-              //             }
-              //           }
-              //           if (checkNext){
-              //             for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
-              //               for (var j=0; j<numVen[i]; j++){
-              //                 //print(itemname[i][j]);
-              //                   await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-              //                       await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
-              //                   }).catchError((e){err=e.toString();});
-              //               }
-              //             }
-              //             //navigating to the QR image page
-              //             Navigator.push(context,MaterialPageRoute(builder: (context)=> QRselection(eid:eid,eventName:eventName)),);   //Modify here to upload Event Data and then move on
-              //           }
-              //       },
-              //     ),
-              //   ),
-              // ),
             ],
           )
         )  
@@ -2311,7 +2240,6 @@ class AddMenu2State extends State<AddMenu2> {
   bool validate=false; 
   AddMenu2State({this.eid,this.numVen,this.vid,this.eventName});
   List<List<String>> itemname = new List<List<String>>(),mlogo = new List<List<String>>();
-  //List<String> itemcoll = new List<String>();
   bool value=false;
   bool check=false;
 
@@ -2327,7 +2255,6 @@ class AddMenu2State extends State<AddMenu2> {
         child: Column(
           children: <Widget>[
             TextFormField(
-              //keyboardType: TextInputType.number,
               validator: (input)=> input.isEmpty? 'Please enter menu item': null,     //validating whether name has been entered or not
               onChanged: (input)=> itemname[i][j]=input,          //entering the menu item
               decoration: InputDecoration(
@@ -2385,7 +2312,7 @@ class AddMenu2State extends State<AddMenu2> {
                 color: Colors.white,),
                 onPressed: () async {       //uploading the image and fetching its download URL for later use
                   String downloadUrl;
-                  File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                  File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                   String filename='${DateTime.now()}${selected.absolute}.png';
                   await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
                   downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
@@ -2446,8 +2373,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
           itemname[i].add('');
           mlogo[i].add('');
           addvalue(i,j); 
-          addvalue2(i,j); 
-          //addvalue3(); 
+          addvalue2(i,j);
         }
       }
       check=true; 
@@ -2574,7 +2500,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           if (checkNext){
                             for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
                               for (var j=0; j<numVen[i]; j++){
-                                //print(itemname[i][j]);
                                   await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                       await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                   }).catchError((e){err=e.toString();});
@@ -2588,38 +2513,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   ),
                 ),
               ),
-              // Container (
-              //   child: Ink(
-              //     height: 100,
-              //     width: 200,
-              //     child: IconButton(
-              //       icon: new Image.asset("asset/image/icon..png"),
-              //       onPressed:() async {
-              //         setState(() => validate=true);
-              //         bool checkNext = true;
-              //         //add eid from previous screen here to pass to QR to Event menu 
-              //         for (var i=0; i<numVen.length; i++){
-              //           for (var j=0; j<numVen[i]; j++){
-              //             if(itemname[i][j]=='' ){
-              //               checkNext=false;
-              //             }
-              //           }
-              //         }
-              //         if (checkNext){
-              //           for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
-              //             for (var j=0; j<numVen[i]; j++){
-              //               //print(itemname[i][j]);
-              //                 await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
-              //                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
-              //                 }).catchError((e){err=e.toString();});
-              //             }
-              //           }
-              //           Navigator.pop(context);
-              //         }
-              //       },
-              //     ),
-              //   ),
-              // ),
             ],
           )
         )  
@@ -2865,7 +2758,7 @@ class EditVendorState extends State<EditVendor> {
                     color: Colors.white,),
                     onPressed: () async {   //uploading the new image and fetching its download link for storage
                       String downloadUrl;
-                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                       String filename='${DateTime.now()}${selected.absolute}.png';
                       await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).getDownloadURL();
@@ -2913,11 +2806,8 @@ class EditVendorState extends State<EditVendor> {
                 padding:EdgeInsets.only( top: 5, left: 20),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
-                  //validator: (input)=> input.isEmpty? 'Please enter a number': null,  //validating whether input has been taken or not
                   onChanged: (input) {
-                    //print(input);
                     item=int.parse(input);
-                    //print(item);
                   },
                   decoration: InputDecoration(
                     labelText: 'Number of items',
@@ -3250,13 +3140,10 @@ class EditEventState extends State<EditEvent> {
                       onPressed: () async{          //updating the changed information to db
                         String downloadUrl;
                         String filename='${DateTime.now()}${eventData.name}.png';
-                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                         await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).putFile(selected).onComplete;
                         downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Logo'+filename).getDownloadURL();
                         savedLogo=downloadUrl;
-                        // setState(() {
-                        //   error1=true; 
-                        // });
                         showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
@@ -3316,14 +3203,10 @@ class EditEventState extends State<EditEvent> {
                       onPressed: () async {     //uploading the changed info to database
                         String downloadUrl;
                         String filename='${DateTime.now()}${eventData.name}.png';
-                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                        File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                         await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).putFile(selected).onComplete;
                         downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('EventData/Cover'+filename).getDownloadURL();
                         savedCover=downloadUrl;
-                        // savedCover=downloadUrl;
-                        // setState(() {
-                        //   error2=true; 
-                        // });
                         showDialog(                 //User friendly error message when the screen has been displayed 
                           context: context,
                           builder: (_) => AlertDialog(
@@ -3373,7 +3256,6 @@ class EditEventState extends State<EditEvent> {
             ),
             Center(
               child: Container(
-                //width: MediaQuery.of(context).copyWith().size.width * 0.20,
                 width:60,
                 height:60,
                 child: Ink(
@@ -3496,7 +3378,6 @@ class QRselectionState extends State<QRselection> {
                                   inviteCode=val.data['invitecode'];
                                 }).catchError((e){err=e.toString();});                                
                               String basePath='/storage/emulated/0/Download/RateIt!/';
-                              //Per
                               await Permission.storage.request();
                               if(await Permission.storage.isGranted){
                                 if( !(await Directory(basePath).exists()) ){ 
@@ -3561,47 +3442,6 @@ class QRselectionState extends State<QRselection> {
                             )
                           ),
                       ),
-                      // Padding(
-                      //   padding: EdgeInsets.all(25.0),
-                      //   child: 
-                      //     Container(
-                      //       child: GestureDetector(
-                      //         onTap: ()async{
-                      //           String inviteCode;
-                      //           await Firestore.instance.collection('Event').document(eid).get().then((val) async{
-                      //             inviteCode=val.data['invitecode'];
-                      //           }).catchError((e){err=e.toString();});
-                      //           Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
-                      //         },
-                      //         child: Container(
-                      //           width: 250.0,
-                      //           height: 120.0,
-                      //           decoration: BoxDecoration(
-                      //             gradient: LinearGradient(
-                      //               begin: Alignment.topRight,
-                      //               end: Alignment.topLeft,
-                      //               colors: [ 
-                      //                 Color(0xFFAC0D57),
-                      //                 Color(0xFFFC4A1F),
-                      //               ]
-                      //             ),
-                      //             boxShadow: const[BoxShadow(blurRadius: 10),],
-                      //             borderRadius: BorderRadius.circular(30.0),
-                      //           ),
-                      //           padding: EdgeInsets.all(12.0),
-                      //           child:Center(
-                      //             child: 
-                      //               Text('Email QR Codes',
-                      //                 style: TextStyle(
-                      //                   color: Colors.white, 
-                      //                   fontSize: 22
-                      //                 ) 
-                      //               ),
-                      //           ),
-                      //         ),
-                      //       )
-                      //     ),
-                      // ),
 
                       SafeArea(
                       child: err== null ? Container() : Container(
@@ -3726,8 +3566,8 @@ class MapsFunc extends State<Maps> {
 
         body:     
         GoogleMap(          //using the google map api
-          onTap: (LatLng coordinates){
-                final Marker marker1 = Marker(
+          onTap: (LatLng coordinates){          //This gesture function will place a marker whereever the user taps on the map
+                final Marker marker1 = Marker(      
                   markerId: MarkerId('1'),
                   draggable: true,
                   position: coordinates,
@@ -3736,12 +3576,12 @@ class MapsFunc extends State<Maps> {
                   markerSet.clear();
                   markerSet.add(marker1);
                   marker=marker1;
-                  coord=coordinates;
+                  coord=coordinates;        //coordinates (latitude and longitude) are saved in coord which is LatLng variable
                 });
           },
           markers: markerSet,
           onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
+          initialCameraPosition: CameraPosition(    //Initial Position of Google Maps
             target: LatLng(30, 68),
             zoom: 5,
           ),
@@ -3764,7 +3604,6 @@ class SideBar extends StatefulWidget {
 
 class SideBarProperties extends State<SideBar>{
   UserData variable;
-  //final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
  
   @override
@@ -3774,7 +3613,6 @@ class SideBarProperties extends State<SideBar>{
       Map<String, dynamic> userMap = json.decode(value);
       UserData finalObject = UserData.fromData(userMap);
       variable=finalObject;
-      //variable=user;
     });
   }
 
@@ -3799,7 +3637,7 @@ class SideBarProperties extends State<SideBar>{
               backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
             ),
             Text((() {
-                if(variable==null){return myUserInfo.firstName + ' ' + myUserInfo.lastName;}  // your code here
+                if(variable==null){return myUserInfo.firstName + ' ' + myUserInfo.lastName;}
                 else{return "nadnvaf";}
               }()),
               style: TextStyle(fontSize: 30, color: Colors.black)
@@ -3983,9 +3821,14 @@ class ViewVendorState extends State<ViewVendor> {
                         alignment: Alignment.topLeft,
                         child: Padding(
                           padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                          child: Text('${widget.eventName}',
-                            style: TextStyle(
-                              color: Colors.white, fontSize: 28
+                          child: Container(
+                            width: MediaQuery.of(context).copyWith().size.width * 0.45,
+                            child: Text('${widget.eventName}',
+                              style: TextStyle(
+                                color: Colors.white, fontSize: 28
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              softWrap: false,
                             ),
                           ),
                         ),
@@ -4014,9 +3857,8 @@ class ViewVendorState extends State<ViewVendor> {
               clipper: Clipshape(),
             )),
         endDrawer: SideBar2(),
-        body://Column( children: <Widget>[
+        body:
           VendorsListHostit(eventName: eventName,),   //using a widget previously made to display the design and functionality of the screen
-        //]),
       ),
     );
   }
@@ -4305,10 +4147,10 @@ class EditMenuState extends State<EditMenu> {
                     color: Colors.white,),
                     onPressed: () async {   //uploading the new picture to db and fetching download link for later use
                       String downloadUrl;
-                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);
+                      File selected = await ImagePicker.pickImage(source:ImageSource.gallery);                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.                                                                  //application waits while user chooses an image to upload. image is later uploaded to firestore storage and firestore image link is fetched and saved in logo variable.
                       String filename='${DateTime.now()}${selected.absolute}.png';
-                      await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
-                      downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
+                      await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;   
+                      downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL(); 
                       logo=downloadUrl;
                       showDialog(                 //User friendly error message when the screen has been displayed 
                         context: context,
@@ -4363,16 +4205,16 @@ class EditMenuState extends State<EditMenu> {
                   color: Colors.white,),
                   onPressed: () async {//updating the edited information to the database
                     setState(() => validate=true);
-                   
-                    if(!(logo==null || name==null))
-                    await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
-                      await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: itemData.itemId).getDocuments().then((val) async{
-                          val.documents.forEach((doc) async {
-                             await Firestore.instance.collection('ratedItems').document(doc.documentID).setData({'name':name, 'logo':logo,},merge: true).catchError((e){err=e.toString();});
-                          });
+                    if(!(logo==null || name==null)){
+                      await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
+                        await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: itemData.itemId).getDocuments().then((val) async{
+                            val.documents.forEach((doc) async {
+                              await Firestore.instance.collection('ratedItems').document(doc.documentID).setData({'name':name, 'logo':logo,},merge: true).catchError((e){err=e.toString();});
+                            });
+                        }).catchError((e){err=e.toString();});
                       }).catchError((e){err=e.toString();});
-                    }).catchError((e){err=e.toString();});
-                    Navigator.pop(context);
+                      Navigator.pop(context);
+                    }
                   }
                 ),
               ),
