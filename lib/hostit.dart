@@ -2221,7 +2221,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                 }).catchError((e){err=e.toString();});
                             }
@@ -2535,7 +2535,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
                             for (var j=0; j<numVen[i]; j++){
                               //print(itemname[i][j]);
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':null,'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                 }).catchError((e){err=e.toString();});
                             }
@@ -2592,7 +2592,6 @@ class EditVenState extends State<EditVen> {
   void initState() {
     super.initState();
     if(eventName==null)
-    print('adsdsaaaaaaa');
     myUserInfo = widget.myUser;
     name= vendorData.name;
     logo= vendorData.logo;
