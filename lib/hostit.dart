@@ -1034,6 +1034,7 @@ class EventMenuState extends State<EventMenu> {
                       await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
                         val.documents.forEach((doc) async {
                           var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
+                          print('${doc.data['vendorId']}');
                           await File(basePath+"${eventName}_$eid/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
                         });
                       }).catchError((e){err=e.toString();});
@@ -3398,9 +3399,10 @@ class QRselectionState extends State<QRselection> {
                           Container(
                             child: GestureDetector(
                               onTap: ()async{     //getting the data from the database
-                                String inviteCode;
+                                String inviteCode,eventNme;
                                 await Firestore.instance.collection('Event').document(eid).get().then((val) async{
                                   inviteCode=val.data['invitecode'];
+                                  eventNme=val.data['name'];
                                 }).catchError((e){err=e.toString();});                                
                               String basePath='/storage/emulated/0/Download/RateIt!/';
                               await Permission.storage.request();
@@ -3408,14 +3410,14 @@ class QRselectionState extends State<QRselection> {
                                 if( !(await Directory(basePath).exists()) ){ 
                                   await Directory(basePath).create(recursive: true);
                                 }
-                                if( !(await Directory(basePath+'${eventName}_$eid/').exists()) ){ 
-                                  await Directory(basePath+'${eventName}_$eid/').create(recursive: true);
+                                if( !(await Directory(basePath+'${eventNme}_$eid/').exists()) ){ 
+                                  await Directory(basePath+'${eventNme}_$eid/').create(recursive: true);
                                 }
                                 //promise for loop
                                 await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
                                   val.documents.forEach((doc) async {
                                     var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
-                                    await File(basePath+"$eventName/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
+                                    await File(basePath+"$eventNme/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
                                   });
                                 }).catchError((e){err=e.toString();});
                                 await showDialog(                 //User friendly error message when the screen has been displayed 
@@ -3426,7 +3428,7 @@ class QRselectionState extends State<QRselection> {
                                   ),
                                   barrierDismissible: true,
                                 );
-                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventName,inviteCode:inviteCode)),);
+                                Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:eventNme,inviteCode:inviteCode)),);
                               } else{
                                 showDialog(                 //User friendly error message when the screen has been displayed 
                                   context: context,
