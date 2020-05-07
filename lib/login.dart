@@ -5,8 +5,6 @@ import 'userRedirection.dart';
 import 'package:intl/intl.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 
 void main1() => runApp(App());
@@ -51,7 +49,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   
   void submit() async {                                                         //Submit function for the end submission button
-    await Directory( (await getTemporaryDirectory()).path ).delete(recursive: true);
+    //await Directory( (await getTemporaryDirectory()).path ).delete(recursive: true);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() => _errorMessage = '');                                     //Clearing error message each time submit is clicked to refresh the page 
     _formKey.currentState.save();
@@ -60,8 +58,10 @@ class LoginScreenState extends State<LoginScreen> {
       prefs.setString('email', _email);
       prefs.setString('password', _password);
     }
-    dynamic result = await _auth.signInEmailAndPassword(_email, _password); 
-    if (result == null){                                                                    
+
+    dynamic result = await _auth.signInEmailAndPassword(_email, _password);
+
+    if (result == null){                                                          
       setState(() => _errorMessage = 'Invalid email or password combination.');                          //If the email and password do not match in firebase then display error on submit 
     }else{
       Redirection();
@@ -151,7 +151,7 @@ class LoginScreenState extends State<LoginScreen> {
                     controller: emailCont,
                     initialValue: hasInfo? _email: null,
                     validator: (input)=> input.isEmpty? null : null,
-                    onSaved: (input)=> _email = input.trim(),
+                    onChanged: (input)=> _email = input.trim(),
                     decoration: InputDecoration(
                       labelText: 'Email',
                       labelStyle: TextStyle(  
@@ -177,7 +177,7 @@ class LoginScreenState extends State<LoginScreen> {
                     controller: pwCont,
                     initialValue: hasInfo? _password: null,
                     validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
-                    onSaved: (input)=> _password = input.trim(),
+                    onChanged: (input)=> _password = input.trim(),
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle: TextStyle(

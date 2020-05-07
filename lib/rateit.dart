@@ -64,11 +64,12 @@ class SideBarProperties1 extends State<SideBar1> { //SideBar class containing us
             Container(                                        //button for Sign out 
                 child: GestureDetector(
               onTap: () async {
+                Navigator.popUntil(context, ModalRoute.withName('/'));
                 await FirestoreService().normalSignOutPromise();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                // );
               },
               child: Container(
                 width: 230.0,
@@ -206,11 +207,12 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
             Container(                                        //button for Sign out 
                 child: GestureDetector(
               onTap: () async {
+                Navigator.popUntil(context, ModalRoute.withName('/'));
                 await FirestoreService().normalSignOutPromise();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                //);
               },
               child: Container(
                 width: 230.0,

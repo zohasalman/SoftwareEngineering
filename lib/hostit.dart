@@ -1,5 +1,6 @@
 //Import all the required libraries and the files
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,7 +8,6 @@ import 'dart:io';
 import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:rateit/login.dart';
 import 'package:rateit/rateit.dart';
 import 'firestore.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,6 @@ import 'package:email_validator/email_validator.dart';
 import 'package:barcode/barcode.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'userRedirection.dart';
-import 'login.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'rateit.dart';
@@ -93,7 +92,7 @@ class HostitHomescreenState extends State<HostitHomescreen> {
     return StreamProvider<List<Event>>.value(
       value: FirestoreService().getEventsInfo(Provider.of<User>(context, listen: false).uid.toString()),
       child: Scaffold( 
-        endDrawer: SideBar1(),          //calling the sidebar drawer widget
+        endDrawer: SideBar(),          //calling the sidebar drawer widget
         key: scaffoldKey,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(150.0),
@@ -199,19 +198,26 @@ class HostitHomescreenState extends State<HostitHomescreen> {
 
 
 //description and declaration of the sidebar widget
-class SideBar1 extends StatefulWidget {
+class SideBar extends StatefulWidget {
   @override
-  SideBar1Properties createState() => new SideBar1Properties();
+  SideBarProperties createState() => new SideBarProperties();
 }
 
-class SideBar1Properties extends State<SideBar1>{
+class SideBarProperties extends State<SideBar>{
 
-  void normalSignOut() async {                   //function for the signout button
-    User usr = Provider.of<User>(context, listen: false);
-    String user = usr.uid;
-    await FirestoreService(uid: user).normalSignOutPromise();
-    LoginScreen();
+  UserData variable;
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+ 
+  @override
+  void initState() {
+    super.initState();
+    readContent().then((String value) {
+      Map<String, dynamic> userMap = json.decode(value);
+      UserData finalObject = UserData.fromData(userMap);
+      variable=finalObject;
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(                                //the properties of the sidebar drawer
@@ -3615,167 +3621,6 @@ class MapsFunc extends State<Maps> {
   }
 }
 
-// defining the properties of the sidebar of the application
-class SideBar extends StatefulWidget {
-  @override
-  SideBarProperties createState() => new SideBarProperties();
-}
-
-class SideBarProperties extends State<SideBar>{
-  UserData variable;
-  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
- 
-  @override
-  void initState() {
-    super.initState();
-    readContent().then((String value) {
-      Map<String, dynamic> userMap = json.decode(value);
-      UserData finalObject = UserData.fromData(userMap);
-      variable=finalObject;
-    });
-  }
-
-  void normalSignOut() async {      //adding the signout button to the sidebar
-    User usr = Provider.of<User>(context, listen: false);
-    String user = usr.uid;
-    await FirestoreService(uid: user).normalSignOutPromise();
-    LoginScreen();
-  
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: new Column(
-        
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-            Padding( padding: EdgeInsets.all(30),),
-            CircleAvatar(           //displaying the image of the user
-              radius:70, 
-              backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
-            ),
-            Text((() {
-                if(variable==null){return myUserInfo.firstName + ' ' + myUserInfo.lastName;}
-                else{return "nadnvaf";}
-              }()),
-              style: TextStyle(fontSize: 30, color: Colors.black)
-            ),
-            Text(
-              myUserInfo.email, //displaying the email addres of the user
-              style: TextStyle(fontSize: 22, color: Colors.black)
-            ),
-          Padding( padding: EdgeInsets.all(30),),
-          Container(
-            child: GestureDetector(
-              onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile(userInfoRecieved: myUserInfo)),);
-              },
-              child: Container(
-                width: 230.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.topLeft,
-                    colors: [ 
-                      Color(0xFFAC0D57),
-                      Color(0xFFFC4A1F),
-                    ]
-                  ),
-                  boxShadow: const[BoxShadow(blurRadius: 10),],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child:Center(
-                  child: 
-                    Text('Edit Profile',          //adding the edit profile button
-                      style: TextStyle(
-                        color: Colors.white, 
-                        fontSize: 22
-                      ) 
-                    ),
-                ),
-              ),
-            )
-          ),
-          Padding( padding: EdgeInsets.all(20),),
-          Container(
-            child: GestureDetector(
-              onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
-              },
-              child: Container(
-                width: 230.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.topLeft,
-                    colors: [ 
-                      Color(0xFFAC0D57),
-                      Color(0xFFFC4A1F),
-                    ]
-                  ),
-                  boxShadow: const[BoxShadow(blurRadius: 10),],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child:Center(
-                  child: 
-                    Text('View my Events',        //adding the view my events button
-                      style: TextStyle(
-                        color: Colors.white, 
-                        fontSize: 22
-                      ) 
-                    ),
-                ),
-              ),
-            )
-          ),
-          Padding( padding: EdgeInsets.all(20),),
-          Container(
-            child: GestureDetector(
-              onTap:() async {      //executing the signout procedures
-                try {
-                  await FirestoreService().normalSignOutPromise();
-                } catch (e) {
-                  print(e); 
-                }
-              },
-              child: Container(
-                width: 230.0,
-                height: 50.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.topLeft,
-                    colors: [ 
-                      Color(0xFFAC0D57),
-                      Color(0xFFFC4A1F),
-                    ]
-                  ),
-                  boxShadow: const[BoxShadow(blurRadius: 10),],
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                padding: EdgeInsets.all(12.0),
-                child:Center(
-                  child: 
-                    Text('Sign Out',
-                      style: TextStyle(
-                        color: Colors.white, 
-                        fontSize: 22
-                      ) 
-                    ),
-                ),
-              ),
-            )
-          ),
-        ]
-      ),
-    );
-  }
-}
 
 //creating the view vendor screen of the application
 class ViewVendor extends StatefulWidget {
@@ -4274,12 +4119,19 @@ class SideBarGeneral extends StatefulWidget {
 
 class SideBarPropertiesGeneral extends State<SideBarGeneral>{
 
-  void normalSignOut() async {                   //function for the signout button
-    User usr = Provider.of<User>(context, listen: false);
-    String user = usr.uid;
-    await FirestoreService(uid: user).normalSignOutPromise();
-    LoginScreen();
+  UserData variable;
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+ 
+  @override
+  void initState() {
+    super.initState();
+    readContent().then((String value) {
+      Map<String, dynamic> userMap = json.decode(value);
+      UserData finalObject = UserData.fromData(userMap);
+      variable=finalObject;
+    });
   }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(                                //the properties of the sidebar drawer
@@ -4337,13 +4189,44 @@ class SideBarPropertiesGeneral extends State<SideBarGeneral>{
           ),
           Padding( padding: EdgeInsets.all(20),),
           Container(
+            child: GestureDetector(
+              onTap: () { //Change on Integration
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('View my Events',        //adding the view my events button
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
             child: GestureDetector(             //signout from the application
               onTap:() async {
-                try {
-                  await FirestoreService().normalSignOutPromise();
-                } catch (e) {
-                  print(e);
-                }
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
+                  await FirebaseAuth.instance.signOut();
               },
               child: Container(
                 width: 230.0,

@@ -102,9 +102,6 @@ class FirestoreService{
     catch(e){
       return null;
     }
-    //return LoginScreen();
-    // BuildContext context;
-    // Navigator.push(context,MaterialPageRoute(builder: (context)=>  LoginScreen() ),);
   }
 
   // rate it backend 
