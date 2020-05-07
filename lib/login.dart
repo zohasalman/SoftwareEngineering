@@ -651,18 +651,16 @@ class Sign2ScreenState extends State<Sign2Screen> {
     _formKey.currentState.save();
     dynamic result = await _auth.registerWithEmailAndPassword(widget.firstName, widget.lastName, widget.gender, widget.date, email, password); //The user is registered and if the password and email are not authorised then the error message needs to be displayed 
     if (result == null){
+      print(_errorMessage); 
       setState(() => _errorMessage = 'This email has already been registered');
     }else{
       print(result);
+      Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
     }
-    print(email); 
-    print(password); 
-    print(confirmpassword); 
-    if (EmailValidator.validate(email, true) && (password.length<6) && (confirmpassword==password))                 //Once all the fields have been validated and the email is verified by the flutter plugin-Email validationthe user is redirected to the next screen wich is that of success 
-    {
-        Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
-    }
-    
+    // print(email); 
+    // print(password); 
+    // print(confirmpassword); 
+   
   }
 
   @override 

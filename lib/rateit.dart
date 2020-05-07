@@ -173,6 +173,7 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
             Container(                                  //button for View My Rating Screen
                 child: GestureDetector(
               onTap: () {
+                //Navigator.popUntil(context, ModalRoute.withName('/Viewratings'));
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ViewMyRating()),
@@ -1154,10 +1155,18 @@ class _DoRatings extends State<DoRatings> {  //Class for screen where the user w
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Padding(
-                              padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.name}',
+                            padding: EdgeInsets.only(bottom: 60.0, left: 10),
+                            child: Container( 
+                              width: MediaQuery.of(context).copyWith().size.width * 0.45,
+                              child:Text('${widget.name}',
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: 28))),
+                                    color: Colors.white, fontSize: 28
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: false,
+                              ),
+                            ),
+                          ),
                         )),
                     flexibleSpace: Container(
                         decoration: BoxDecoration(
