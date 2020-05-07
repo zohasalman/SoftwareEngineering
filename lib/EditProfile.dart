@@ -200,7 +200,7 @@ class _EditProfile extends State<EditProfile> {
                   ),
                   clipper: Clipshape(),
                 )),
-            endDrawer: SideBar2(),
+            //endDrawer:  SideBar2(),
             body: Form(
               autovalidate: validate,
               child: ListView(
