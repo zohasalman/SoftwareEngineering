@@ -1034,7 +1034,7 @@ class EventMenuState extends State<EventMenu> {
                       await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
                         val.documents.forEach((doc) async {
                           var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
-                          await File(basePath+"$eventName/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
+                          await File(basePath+"${eventName}_$eid/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
                         });
                       }).catchError((e){err=e.toString();});
                       showDialog(                 //User friendly error message when the screen has been displayed 
@@ -1662,7 +1662,7 @@ class AddVendorState extends State<AddVendor> {
                     readOnly: true,
                     validator: (_) => logo[i]==null || logo[i] =='' ? 'Please upload a valid image': null,
                     decoration: InputDecoration(      //uploading a valid logo photo for the vendor
-                      hintText: logo[i]==null ? 'Upload Logo Photo':'Image Uploaded',
+                      hintText: logo[i]==null || logo[i]=='' ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19
@@ -2009,7 +2009,7 @@ class AddMenuState extends State<AddMenu> {
               validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: mlogo[i][j]==null ? 'Upload Logo Photo':'Image Uploaded',
+                hintText: mlogo[i][j]=='' ? 'Upload Logo Photo':'Image Uploaded',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -2312,7 +2312,7 @@ class AddMenu2State extends State<AddMenu2> {
               validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: mlogo[i][j]==null ? 'Upload Logo Photo':'Image Uploaded',
+                hintText: mlogo[i][j]=='' ? 'Upload Logo Photo':'Image Uploaded',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
