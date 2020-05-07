@@ -654,15 +654,12 @@ class Sign2ScreenState extends State<Sign2Screen> {
       setState(() => _errorMessage = 'This email has already been registered');
     }else{
       print(result);
+      Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
     }
-    print(email); 
-    print(password); 
-    print(confirmpassword); 
-    if (EmailValidator.validate(email, true) && (password.length<6) && (confirmpassword==password))                 //Once all the fields have been validated and the email is verified by the flutter plugin-Email validationthe user is redirected to the next screen wich is that of success 
-    {
-        Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
-    }
-    
+    // print(email); 
+    // print(password); 
+    // print(confirmpassword); 
+   
   }
 
   @override 
