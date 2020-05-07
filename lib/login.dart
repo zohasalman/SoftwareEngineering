@@ -13,6 +13,15 @@ class App extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return MaterialApp(
+      initialRoute: '/',
+      routes: <String, WidgetBuilder> {
+        '/LoginScreen' : (BuildContext context) => new LoginScreen(),
+        '/SignScreen' : (BuildContext context) => new SignScreen(),
+        '/Sign2Screen' : (BuildContext context) => new Sign2Screen(),
+        '/Sign3Screen' : (BuildContext context) => new Sign3Screen(),
+        '/ForgotScreen' : (BuildContext context) => new ForgotScreen(),
+        '/Forgot2Screen' : (BuildContext context) => new Forgot2Screen(),
+      },
     theme: new ThemeData(
       primaryColor: Color(0xFFAC0D57),
       splashColor: Color(0xFFFC4A1F),
@@ -209,7 +218,8 @@ class LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 7),                                                                //Forgot password icon: If the user forgets their password they are redirected to the forgot password screens once they click on the option
                   InkWell(
                     onTap: (){
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ForgotScreen()),); 
+                      // Navigator.of(context).pushNamed('/ForgotScreen'); 
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotScreen()));
                     },
                     child: new Container(
                   
@@ -282,7 +292,8 @@ class LoginScreenState extends State<LoginScreen> {
                   child: InkWell(
                     onTap: (){
                       _formKey.currentState.reset(); 
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
+                      // Navigator.of(context).pushNamed('/SignScreeen'); 
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SignScreen()));
                     //widget.toggleView();
                   },
                   child: new SafeArea(
@@ -383,6 +394,7 @@ class SignScreenState extends State<SignScreen> {
     _formKey.currentState.save();
     if (!error1 && !error2 && (firstName!='') && (lastName!='')) {                            //First it is ensured that all fields are checked before the user is redirected 
       Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign2Screen(firstName: firstName, lastName: lastName, gender: gender,date: _dateTime)));
+      // Navigator.pushNamed(context, '/Sign2Screen', arguments: {firstName: firstName, lastName: lastName, gender: gender, date: _dateTime});
     }
     
   }
@@ -535,7 +547,6 @@ class SignScreenState extends State<SignScreen> {
                   padding:EdgeInsets.only( top: 5), 
                   child: Column(
                     children: <Widget>[
-                      
                       Container(
                         alignment: Alignment(-0.8,-0.9),
                           child: Text("Please select a gender above",
@@ -546,7 +557,6 @@ class SignScreenState extends State<SignScreen> {
                   )                        
                 ),
               ),
-          
             Container(                                            //To help the user choose the date of birth option from the calendar 
               child: Row(
                 children: <Widget>[
@@ -655,6 +665,7 @@ class Sign2ScreenState extends State<Sign2Screen> {
       setState(() => _errorMessage = 'This email has already been registered');
     }else{
       print(result);
+      // Navigator.of(context).pushNamed('/Sign3Screeen'); 
       Navigator.push(context,MaterialPageRoute(builder: (context)=> Sign3Screen()),); 
     }
     // print(email); 
@@ -835,10 +846,8 @@ class Sign2ScreenState extends State<Sign2Screen> {
                     padding: EdgeInsets.only(top: 15, left: 85), 
                     child: Text("Sign Up",style: TextStyle(color: Colors.white, fontSize: 22 )),
                   ),
-
                 ),
               ),
-            
             ),
 
             
@@ -848,6 +857,7 @@ class Sign2ScreenState extends State<Sign2Screen> {
               padding: EdgeInsets.only(top: 20), 
               child: InkWell(
                 onTap: (){
+                // Navigator.of(context).pushNamed('/LoginScreen'); 
                 Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),); 
               },
               child: new Container(
@@ -1010,7 +1020,9 @@ class Sign3ScreenState extends State<Sign3Screen> {
               
               child: InkWell(
                 onTap: (){
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);                    
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> new LoginScreen()),);        
+                    
+                  // Navigator.popUntil(context, ModalRoute.withName('/LoginScreen'));          
                 },
                 child: Container(
 
@@ -1065,6 +1077,7 @@ class ForgotScreenState extends State<ForgotScreen> {                           
       print(error);
     }else{
       Navigator.push(context,MaterialPageRoute(builder: (context)=> Forgot2Screen()),);         //Directed to the success screen 
+      // Navigator.of(context).pushNamed('/Forgot2Screen'); 
     }
   }
 
@@ -1212,6 +1225,7 @@ class ForgotScreenState extends State<ForgotScreen> {                           
               child: InkWell(
                 onTap: (){
                 Navigator.push(context,MaterialPageRoute(builder: (context)=> SignScreen()),); 
+                // Navigator.of(context).pushNamed('/SignScreen');
               },
               child: new Container(
                 //padding: EdgeInsets.only(top: 130, left: 20), 
@@ -1358,7 +1372,8 @@ class Forgot2ScreenState extends State<Forgot2Screen> {
               
               child: InkWell(
                   onTap: (){
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);  
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=> LoginScreen()),);
+                    // Navigator.of(context).pushNamed('/LoginScreen');
                   },
                   child: Container(
                     height: 50,

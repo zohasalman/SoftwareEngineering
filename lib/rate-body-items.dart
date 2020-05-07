@@ -16,13 +16,19 @@ class DisplayItems extends StatefulWidget {
 class _DisplayItemsState extends State<DisplayItems> {
 
   void itemRating(double rating, String name, String logo, String itemId){
-    setState(() {
-      var info = new Map();
-      info['name'] = name;
-      info['givenRating'] = rating;
-      info['logo'] = logo;
-      info['itemId'] = itemId;
-      widget.list.add(info);
+    widget.list.forEach((f){
+      if (itemId == f['itemId']){
+        f['givenRating'] = rating;
+      }else{
+        setState(() {
+          var info = new Map();
+          info['name'] = name;
+          info['givenRating'] = rating;
+          info['logo'] = logo;
+          info['itemId'] = itemId;
+          widget.list.add(info);
+        });
+      }
     });
   }
 
