@@ -51,7 +51,7 @@ class _EditProfile extends State<EditProfile> {
     setState(() {
       _image = image;
     });
-    Navigator.of(context).pop();
+    //Navigator.of(context).pop();
   }
 
   Future _openCamera(BuildContext context) async {
@@ -61,7 +61,7 @@ class _EditProfile extends State<EditProfile> {
     setState(() {
       _image = image;
     });
-    Navigator.of(context).pop();
+    //Navigator.of(context).pop();
   }
 
   Future uploadFile() async {
