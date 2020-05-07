@@ -76,12 +76,6 @@ class HostitHomescreenState extends State<HostitHomescreen> {
     String profilePicture = prefs.getString('profilePicture') ?? '';
     String gender = prefs.getString('gender') ?? '';
     // Storing data in user class object
-    print(uid);
-    print(firstName);
-    print(lastName);
-    print(email);
-    print(profilePicture);
-    print(gender);
 
     myUserInfo = UserData(
         uid: uid ?? '',
@@ -99,85 +93,107 @@ class HostitHomescreenState extends State<HostitHomescreen> {
     return StreamProvider<List<Event>>.value(
       value: FirestoreService().getEventsInfo(Provider.of<User>(context, listen: false).uid.toString()),
       child: Scaffold( 
-      endDrawer: SideBar1(),          //calling the sidebar drawer widget
-      key: scaffoldKey,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(150.0),
-        child: ClipPath(
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              AppBar(                 //displays the design bar of the screen
-                centerTitle: true,
-                bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                          padding: EdgeInsets.only(bottom: 40.0, left: 10),
-                          child: Text('My Events',style: TextStyle(color: Colors.white, fontSize: 28 ))
-                      ),
-                    )
-                ),
-                actions: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(right: 20.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        scaffoldKey.currentState.openEndDrawer();       //calling the enddrawer function to open the sidebar on clicking
-                      },
-                      child: Icon(
-                        Icons.menu,       
-                      ),
-                    )
-                  ),
-                ],
-                flexibleSpace: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]
-                      ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
+        endDrawer: SideBar1(),          //calling the sidebar drawer widget
+        key: scaffoldKey,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(150.0),
+          child: ClipPath(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                AppBar(                 //displays the design bar of the screen
+                  centerTitle: true,
+                  bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(0),
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                            padding: EdgeInsets.only(bottom: 40.0, left: 10),
+                            child: Text('My Events',style: TextStyle(color: Colors.white, fontSize: 28 ))
                         ),
-                        fit: BoxFit.fitWidth,
-                      ),
-                    )
-                ),
-              )
-            ],
-          ),
-          clipper: ClipShape(),
-        )
-      ),
-      body: Column( 
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Container(
-            child: Text(                //method to delete an event
-              "Long Press to delete event",
-              style: TextStyle(color: Colors.pink[600], fontSize: 17),
+                      )
+                  ),
+                  actions: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(right: 20.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          scaffoldKey.currentState.openEndDrawer();       //calling the enddrawer function to open the sidebar on clicking
+                        },
+                        child: Icon(
+                          Icons.menu,       
+                        ),
+                      )
+                    ),
+                  ],
+                  flexibleSpace: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]
+                        ),
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "asset/image/Chat.png",
+                          ),
+                          fit: BoxFit.fitWidth,
+                        ),
+                      )
+                  ),
+                )
+              ],
             ),
-          ), 
-          EventsListHostit(),
-        ],
+            clipper: ClipShape(),
+          )
+        ),
+        body: Column( 
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Container(
+              child: Text(                //method to delete an event
+                "Long Press to delete event",
+                style: TextStyle(color: Colors.pink[600], fontSize: 17),
+              ),
+            ), 
+            EventsListHostit(),
+          ],
+        ),
+        floatingActionButton: SizedBox(width: 65,height: 65,
+          child: FloatingActionButton(
+            onPressed: () async {
+              Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(myUserInfo: myUserInfo, coord: null,)),);
+            },
+            child: Center(
+              child: Container(
+                alignment: Alignment.center,
+                width:65,
+                height:65,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: null,
+                    gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.topLeft,
+                        colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
+                    ),
+                  ),
+                  child:
+                    Icon(
+                      Icons.add,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+              ),
+            ),
+          ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(     //adding the floating button to navigate to the add event page
-        onPressed: (){
-          //add code
-          Navigator.push(context,MaterialPageRoute(builder: (context)=> AddEvent(myUserInfo: myUserInfo, coord: null,)),);
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.red[600],
-      ),
-    ),);
+    );
   }
 }
 
@@ -195,7 +211,6 @@ class SideBar1Properties extends State<SideBar1>{
     String user = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
     LoginScreen();
-  
   }
   @override
   Widget build(BuildContext context) {
@@ -256,7 +271,11 @@ class SideBar1Properties extends State<SideBar1>{
           Container(
             child: GestureDetector(             //signout from the application
               onTap:() async {
-                await FirestoreService().normalSignOutPromise();
+                try {
+                  await FirestoreService().normalSignOutPromise();
+                } catch (e) {
+                  print(e);
+                }
               },
               child: Container(
                 width: 230.0,
@@ -492,7 +511,6 @@ class AddEventState extends State<AddEvent> {
   void initState() {                          //Sets the user information
     super.initState();
     myUserInfo = widget.myUserInfo;
-    print(myUserInfo.firstName);
   }
 
   @override 
@@ -593,7 +611,7 @@ class AddEventState extends State<AddEvent> {
                 ),
                 Container(                                                          //Location icon to direct to the location page
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                  child: Ink(
+                  child: Center(child: Ink(
                     decoration:  ShapeDecoration(
                       shape: CircleBorder(),
                       gradient: LinearGradient(
@@ -610,7 +628,7 @@ class AddEventState extends State<AddEvent> {
                         getCoordinates();       //Function that enables the coordinates from the map drawn 
                       },
                     ),
-                  ),
+                  ),),
                 )
               ],),
             ),
@@ -669,7 +687,7 @@ class AddEventState extends State<AddEvent> {
                 ),
                 Container(                                                    //Next button for uploading the image once you click on it  
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                  child: Ink(
+                  child: Center( child: Ink(
                     decoration:  ShapeDecoration(
                       shape: CircleBorder(),
                       gradient: LinearGradient(
@@ -700,7 +718,7 @@ class AddEventState extends State<AddEvent> {
                         );
                       },
                     ),
-                  ),
+                  ),),
                 )
               ],),
             ),
@@ -739,7 +757,7 @@ class AddEventState extends State<AddEvent> {
                 ),
                 Container(                                                    //The photo upload button to send image
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                  child: Ink(
+                  child: Center( child: Ink(
                     decoration:  ShapeDecoration(
                       shape: CircleBorder(),
                       gradient: LinearGradient(
@@ -769,7 +787,7 @@ class AddEventState extends State<AddEvent> {
                         );
                       },
                     ),
-                  ),
+                  ),),
                 )
               ],),
             ),
@@ -811,7 +829,7 @@ class AddEventState extends State<AddEvent> {
             Center(child: Container(
               width:60,
               height:60,
-              child: Ink(
+              child: Center( child: Ink(
                 width:60,
                 height:60,
                 decoration:  ShapeDecoration(               
@@ -844,7 +862,7 @@ class AddEventState extends State<AddEvent> {
                     }
                   },
                 ),
-              ),
+              ),),
             ),),
           ],
           )  
@@ -885,7 +903,7 @@ class EventMenuState extends State<EventMenu> {
     return  Scaffold(
       resizeToAvoidBottomPadding: false,
         key: scaffoldKey,
-        endDrawer:  SideBar(),              //calling the sidebar drawer
+        endDrawer:  SideBarGeneral(),              //calling the sidebar drawer
         appBar: PreferredSize(              //displaying the design bar of the screen
           preferredSize: Size.fromHeight(150.0),
           child: ClipPath(
@@ -1436,7 +1454,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
               child: Container(
                 width:60,
                 height:60,
-                child: Ink(
+                child: Center( child: Ink(
                   width:60,
                   height:60,
                   decoration:  ShapeDecoration(
@@ -1466,7 +1484,7 @@ class AddVendorQtyState extends State<AddVendorQty> {
                       }
                     }
                   ),
-                ),
+                ),),
               ),
           ),  
         ],),  
@@ -1648,7 +1666,7 @@ class AddVendorState extends State<AddVendor> {
               ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
+                child: Center( child: Ink(
                   decoration:  ShapeDecoration(
                     shape: CircleBorder(),
                     gradient: LinearGradient(
@@ -1678,7 +1696,7 @@ class AddVendorState extends State<AddVendor> {
                       );
                     },
                   ),
-                ),
+                ),),
               )
             ],),
           ),
@@ -1860,7 +1878,7 @@ class AddVendorState extends State<AddVendor> {
           Center(child: Container(
             width:60,
             height:60,
-            child: Ink(
+            child: Center( child: Ink(
               width:60,
               height:60,
               decoration:  ShapeDecoration(
@@ -1899,7 +1917,7 @@ class AddVendorState extends State<AddVendor> {
                   }
                 },
               ),
-            ),
+            ),),
           ),),
       
          Padding(
@@ -1995,7 +2013,7 @@ class AddMenuState extends State<AddMenu> {
           ),
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.10,
-            child: Ink(
+            child: Center( child: Ink(
               decoration:  ShapeDecoration(
                 shape: CircleBorder(),
                 gradient: LinearGradient(
@@ -2025,7 +2043,7 @@ class AddMenuState extends State<AddMenu> {
                   );                 
                 },
               ),
-            ),
+            ),),
           )
         ],),
       ),
@@ -2168,7 +2186,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   child: Container(
                     width:60,
                     height:60,
-                    child: Ink(
+                    child: Center( child: Ink(
                       width:60,
                       height:60,
                       decoration:  ShapeDecoration(
@@ -2210,7 +2228,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                       ),
-                    ),
+                    ),),
                   ),
                 ),
               ),
@@ -2298,7 +2316,7 @@ class AddMenu2State extends State<AddMenu2> {
           ),
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.10,
-            child: Ink(
+            child: Center( child: Ink(
               decoration:  ShapeDecoration(
                 shape: CircleBorder(),
                 gradient: LinearGradient(
@@ -2328,7 +2346,7 @@ class AddMenu2State extends State<AddMenu2> {
                   );
                 },
               ),
-            ),
+            ),),
           )
         ],),
       ),
@@ -2469,7 +2487,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                   child: Container(
                     width:60,
                     height:60,
-                    child: Ink(
+                    child: Center( child: Ink(
                       width:60,
                       height:60,
                       decoration:  ShapeDecoration(
@@ -2510,7 +2528,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           }
                         }
                       ),
-                    ),
+                    ),),
                   ),
                 ),
               ),
@@ -2744,7 +2762,7 @@ class EditVendorState extends State<EditVendor> {
               ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
+                child: Center( child: Ink(
                   decoration:  ShapeDecoration(
                     shape: CircleBorder(),
                     gradient: LinearGradient(
@@ -2774,7 +2792,7 @@ class EditVendorState extends State<EditVendor> {
                       );
                     },
                   ),
-                ),
+                ),),
               )
             ],),
           ),
@@ -2821,7 +2839,7 @@ class EditVendorState extends State<EditVendor> {
               ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
+                child: Center( child: Ink(
                   decoration:  ShapeDecoration(
                     shape: CircleBorder(),
                     gradient: LinearGradient(
@@ -2841,7 +2859,7 @@ class EditVendorState extends State<EditVendor> {
                       }
                     },
                   ),
-                ),
+                ),),
               )
             ],),
           ),
@@ -2871,7 +2889,7 @@ class EditVendorState extends State<EditVendor> {
             child: Container(
               width:60,
               height:60,
-              child: Ink(
+              child: Center( child: Ink(
                 width:60,
                 height:60,
                 decoration:  ShapeDecoration(
@@ -2905,7 +2923,7 @@ class EditVendorState extends State<EditVendor> {
                     }
                   }
                 ),
-              ),
+              ),),
             ),
           ),
         ],
@@ -3074,7 +3092,7 @@ class EditEventState extends State<EditEvent> {
                 ),
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                  child: Ink(
+                  child: Center( child: Ink(
                     decoration:  ShapeDecoration(
                       shape: CircleBorder(),
                       gradient: LinearGradient(
@@ -3091,7 +3109,7 @@ class EditEventState extends State<EditEvent> {
                         getCoordinates();
                       },
                     ),
-                  ),
+                  ),),
                 )
               ],),
             ),
@@ -3125,7 +3143,7 @@ class EditEventState extends State<EditEvent> {
                 ),
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                  child: Ink(
+                  child: Center( child: Ink(
                     decoration:  ShapeDecoration(
                       shape: CircleBorder(),
                       gradient: LinearGradient(
@@ -3155,7 +3173,7 @@ class EditEventState extends State<EditEvent> {
                         );
                       },
                     ),
-                  ),
+                  ),),
                 )
               ],),
             ),
@@ -3188,7 +3206,7 @@ class EditEventState extends State<EditEvent> {
                 ),
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                  child: Ink(
+                  child: Center( child: Ink(
                     decoration:  ShapeDecoration(
                       shape: CircleBorder(),
                       gradient: LinearGradient(
@@ -3218,7 +3236,7 @@ class EditEventState extends State<EditEvent> {
                         );
                       },
                     ),
-                  ),
+                  ),),
                 )
               ],),
             ),
@@ -3259,7 +3277,7 @@ class EditEventState extends State<EditEvent> {
               child: Container(
                 width:60,
                 height:60,
-                child: Ink(
+                child: Center( child: Ink(
                   width:60,
                   height:60,
                   decoration:  ShapeDecoration(
@@ -3288,7 +3306,7 @@ class EditEventState extends State<EditEvent> {
                       }
                     }
                   ),
-                ),
+                ),),
               ),
             ),
           ],
@@ -3718,8 +3736,13 @@ class SideBarProperties extends State<SideBar>{
           Padding( padding: EdgeInsets.all(20),),
           Container(
             child: GestureDetector(
-              onTap:() async {await FirestoreService().normalSignOutPromise();},    //executing the signout procedures
-             // },
+              onTap:() async {      //executing the signout procedures
+                try {
+                  await FirestoreService().normalSignOutPromise();
+                } catch (e) {
+                  print(e); 
+                }
+              },
               child: Container(
                 width: 230.0,
                 height: 50.0,
@@ -3857,7 +3880,7 @@ class ViewVendorState extends State<ViewVendor> {
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: SideBar2(),
+        endDrawer: SideBarGeneral(),
         body:
           VendorsListHostit(eventName: eventName,),   //using a widget previously made to display the design and functionality of the screen
       ),
@@ -3958,7 +3981,7 @@ class ViewMenuState extends State<ViewMenu> {
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: SideBar2(),      //calling the sidebar widget to display the sidebar drawer
+        endDrawer: SideBarGeneral(),      //calling the sidebar widget to display the sidebar drawer
         body:Column( 
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -4133,7 +4156,7 @@ class EditMenuState extends State<EditMenu> {
               ),
               Container(
                 width: MediaQuery.of(context).copyWith().size.width * 0.10,
-                child: Ink(
+                child: Center( child: Ink(
                   decoration:  ShapeDecoration(
                     shape: CircleBorder(),
                     gradient: LinearGradient(
@@ -4163,7 +4186,7 @@ class EditMenuState extends State<EditMenu> {
                       );  
                     },
                   ),
-                ),
+                ),),
               )
             ],),
           ),
@@ -4183,10 +4206,9 @@ class EditMenuState extends State<EditMenu> {
           ),
           Center(
             child: Container(
-           
               width:60,
               height:60,
-              child: Ink(
+              child: Center( child: Ink(
                 width:60,
                 height:60,
                 decoration: ShapeDecoration(
@@ -4218,7 +4240,7 @@ class EditMenuState extends State<EditMenu> {
                     }
                   }
                 ),
-              ),
+              ),),
             ),
           ),
           SafeArea(
@@ -4241,5 +4263,118 @@ class EditMenuState extends State<EditMenu> {
         )  
       ),)
     ); 
+  }
+}
+
+//description and declaration of the sidebar widget
+class SideBarGeneral extends StatefulWidget {
+  @override
+  SideBarPropertiesGeneral createState() => new SideBarPropertiesGeneral();
+}
+
+class SideBarPropertiesGeneral extends State<SideBarGeneral>{
+
+  void normalSignOut() async {                   //function for the signout button
+    User usr = Provider.of<User>(context, listen: false);
+    String user = usr.uid;
+    await FirestoreService(uid: user).normalSignOutPromise();
+    LoginScreen();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(                                //the properties of the sidebar drawer
+      child: new Column(
+        
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+            Padding( padding: EdgeInsets.all(30),),
+            CircleAvatar(                         //adding the profile image to the sidebar
+              radius:70, 
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}'),
+            ),
+            Text(                                 //displaying the name on the sidebar
+              myUserInfo.firstName + ' ' + myUserInfo.lastName, 
+              style: TextStyle(fontSize: 30, color: Colors.black)
+            ),
+            Text(                                 //displaying the user image on the sidebar
+              myUserInfo.email, 
+              style: TextStyle(fontSize: 22, color: Colors.black)
+            ),
+          Padding( padding: EdgeInsets.all(30),),
+          Container(
+            child: GestureDetector(             //leading to the edit profile screen
+              onTap: () { //Change on Integration
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> EditProfile(userInfoRecieved: myUserInfo)),);
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Edit Profile',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+          Padding( padding: EdgeInsets.all(20),),
+          Container(
+            child: GestureDetector(             //signout from the application
+              onTap:() async {
+                try {
+                  await FirestoreService().normalSignOutPromise();
+                } catch (e) {
+                  print(e);
+                }
+              },
+              child: Container(
+                width: 230.0,
+                height: 50.0,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [ 
+                      Color(0xFFAC0D57),
+                      Color(0xFFFC4A1F),
+                    ]
+                  ),
+                  boxShadow: const[BoxShadow(blurRadius: 10),],
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: EdgeInsets.all(12.0),
+                child:Center(
+                  child: 
+                    Text('Sign Out',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 22
+                      ) 
+                    ),
+                ),
+              ),
+            )
+          ),
+        ]
+      ),
+    );
   }
 }

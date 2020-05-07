@@ -253,10 +253,11 @@ class InviteScreen extends StatefulWidget {
 class _InviteScreen extends State<InviteScreen> {         //Class for invite screen where user enters Invite Code
   String inviteCode = '';
   String errorMessage = '';
+  bool ifError = false;
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirestoreService();
 
-    void submitInviteCode() async {                     //On Submit, the location of user is verified in this function
+  Future<void> submitInviteCode() async {                     //On Submit, the location of user is verified in this function
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       String eventName = '';
@@ -295,19 +296,21 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
             eventName = docs.documents[0].data['name'];
             eventID = docs.documents[0].data['eventID'];
             userID = '${widget.uid}';
-            print(eventName);
-            print(eventID);
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => _RateItFirstScreen(
                         eventName: eventName, eventID: eventID)));
           } else {
-            errorMessage = 'You are out of the event area.'; 
+            errorMessage = 'You are out of the event area.';
+            ifError =true;
+            _formKey.currentState.validate();
           }
         }
         else if (docs.documents.isNotEmpty) {
           errorMessage = 'Location not enabled.';
+          ifError =true;
+          _formKey.currentState.validate();
         } 
         else {
           errorMessage = 'No such event invite code exists.';
@@ -398,12 +401,15 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
                     child: Container(
                         child: TextFormField(                       //validating invite code here
                       cursorColor: Colors.pink,
-                      validator: (value) {            
+                      validator: (value) {      
                         if (value.isEmpty) {
                           return 'Please enter invite code';
                         }
                         if (value.length > 6 || value.length < 6) {
                           return 'Invalid invite code';
+                        }
+                        if(ifError){
+                          return errorMessage;
                         }
                         return null;
                       },
@@ -418,7 +424,7 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
                 Padding(padding: EdgeInsets.only(top: 40.0)),
                 SafeArea(
                     child: RaisedButton(
-                  onPressed: () {submitInviteCode();},
+                  onPressed: () async {await submitInviteCode();},
                   textColor: Colors.white,
                   padding: const EdgeInsets.all(0.0),
                   shape: RoundedRectangleBorder(
@@ -1988,6 +1994,7 @@ class _ViewReviews extends State<ViewReviews> {  //Class for screen where user c
 class EditReviews extends StatefulWidget {
   final String name, logo, reviewId, vendorId;
   final List<Map> list;
+  
   String review;
 
   EditReviews(
@@ -2001,13 +2008,14 @@ class EditReviews extends StatefulWidget {
       : super(key: key);
 
   @override
-  _EditReviews createState() => new _EditReviews();
+  _EditReviews createState() => new _EditReviews(review: review);
 }
 
 class _EditReviews extends State<EditReviews> {     // User can make edits to their reviews here
   double myrating;
   FocusNode myFocusNode;
-
+  String review;
+  _EditReviews({this.review});
   @override
   void initState() {
     super.initState();

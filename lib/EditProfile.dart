@@ -15,7 +15,7 @@ class EditProfile extends StatefulWidget {
   EditProfile({Key key, this.title, this.userInfoRecieved}) : super(key: key);
 
   final String title;
-  UserData userInfoRecieved;
+  final UserData userInfoRecieved;
 
   @override
   _EditProfile createState() => _EditProfile();
@@ -45,30 +45,6 @@ class _EditProfile extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
   final EditUserData _updateData = EditUserData();
 
-  Future<void> _showChoiceDialogue(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-              title: Text('Select'),
-              content: SingleChildScrollView(
-                  child: ListBody(
-                children: <Widget>[
-                  GestureDetector(
-                      child: Text('Gallery'),
-                      onTap: () {
-                        _openGallery(context);
-                      }),
-                  Padding(padding: EdgeInsets.all(8.0)),
-                  GestureDetector(
-                      child: Text('Camera'),
-                      onTap: () {
-                        _openCamera(context);
-                      })
-                ],
-              )));
-        });
-  }
 
   Future _openGallery(BuildContext context) async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -176,7 +152,7 @@ class _EditProfile extends State<EditProfile> {
                               padding: const EdgeInsets.only(top: 110.0),
                               child: GestureDetector(
                                   onTap: () {
-                                    print("Upload Photo");
+                                    _openGallery(context);
                                   },
                                   child: CircleAvatar(
                                     backgroundColor: Colors.white,
@@ -189,7 +165,7 @@ class _EditProfile extends State<EditProfile> {
                                   offset: Offset(50.0, -60.0),
                                   child: MaterialButton(
                                     onPressed: () {
-                                      _showChoiceDialogue(context);
+                                      _openCamera(context);
                                     },
                                     color: Color(0xFFFC4A1F),
                                     textColor: Colors.white,
@@ -242,10 +218,12 @@ class _EditProfile extends State<EditProfile> {
                                 if (val.isEmpty)
                                 {
                                   val = widget.userInfoRecieved.firstName;
+                                  return val;
                                 }
                                 else
                                 {
                                   _firstName = val.trim();
+                                  return _firstName;
                                 }
                               },
                               onChanged: (val) {
@@ -356,7 +334,6 @@ class _EditProfile extends State<EditProfile> {
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 18)),
                             onPressed: () {
-                              //print('here');
                               showDatePicker(
                                   context: context,
                                   initialDate: DateTime.now(),
@@ -380,7 +357,6 @@ class _EditProfile extends State<EditProfile> {
                             }
                             // trailing: Icon(Icons.edit, color: Color(0xFFFC4A1F)),
                             // onTap: () {
-
                             // }
                             ),
                       ),
@@ -425,7 +401,8 @@ class _EditProfile extends State<EditProfile> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text(
-                                    "Details have been saved successfully!"),
+                                    "Details have been saved successfully!"
+                                ),
                                 actions: <Widget>[
                                   Center(
                                       child: FlatButton(
@@ -451,10 +428,6 @@ class _EditProfile extends State<EditProfile> {
                                             }
 
                                         });
-
-                                        // print(_firstName);
-                                        // print(_lastName);
-                                        // print(_email);
                                         await submit();
                                         Navigator.of(context).pop(false);
                                         },                           

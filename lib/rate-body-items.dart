@@ -6,7 +6,7 @@ import 'userRedirection.dart';
 
 class DisplayItems extends StatefulWidget {
 
-  List<Map> list;
+  final List<Map> list;
   DisplayItems({this.list});
 
   @override

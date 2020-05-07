@@ -6,7 +6,7 @@ import 'package:rating_bar/rating_bar.dart' ;
  
 class EditMyRatingsItems extends StatefulWidget {
 
-  List<Map> list;
+  final List<Map> list;
   EditMyRatingsItems({this.list});
 
   @override

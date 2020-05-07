@@ -5,6 +5,8 @@ import 'userRedirection.dart';
 import 'package:intl/intl.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 
 void main1() => runApp(App());
@@ -42,13 +44,14 @@ class LoginScreenState extends State<LoginScreen> {
   bool rememberme=false;
   bool hasInfo = false;
 
-  final email_cont = TextEditingController();
-  final pw_cont = TextEditingController();
+  final emailCont = TextEditingController();
+  final pwCont = TextEditingController();
 
   final _formKey= GlobalKey<FormState>();                       //Validation error checks 
 
   
   void submit() async {                                                         //Submit function for the end submission button
+    await Directory( (await getTemporaryDirectory()).path ).delete(recursive: true);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() => _errorMessage = '');                                     //Clearing error message each time submit is clicked to refresh the page 
     _formKey.currentState.save();
@@ -145,7 +148,7 @@ class LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                     padding:EdgeInsets.only( top: 30, left: 20, right: 20), 
                     child:TextFormField(
-                    controller: email_cont,
+                    controller: emailCont,
                     initialValue: hasInfo? _email: null,
                     validator: (input)=> input.isEmpty? null : null,
                     onSaved: (input)=> _email = input.trim(),
@@ -171,7 +174,7 @@ class LoginScreenState extends State<LoginScreen> {
                     child: Padding(
                     padding:EdgeInsets.only( top: 0, left: 20, right: 20), 
                     child:TextFormField(
-                    controller: pw_cont,
+                    controller: pwCont,
                     initialValue: hasInfo? _password: null,
                     validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
                     onSaved: (input)=> _password = input.trim(),
@@ -272,8 +275,6 @@ class LoginScreenState extends State<LoginScreen> {
                     ),
                   
                   ),
-
-                
 
                 Container(                                                                  //If the user does not have an account then an option for signing up is also given: Once the user clicks on it redirected to sign up page
                   alignment: Alignment(0,0),

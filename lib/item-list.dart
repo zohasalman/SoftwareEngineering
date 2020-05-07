@@ -172,31 +172,32 @@ class _ListItemStateHostIt extends State<ListItemHostIt> {
         Padding(padding: EdgeInsets.all(30),),
         Center(                                               //Submit button to save changes in vendor details and go back to event menu
           child: Container(
+            width:60,
+            height:60,
+            child: Center( child: Ink(
               width:60,
               height:60,
-              child: Ink(
-                width:60,
-                height:60,
-                decoration:  ShapeDecoration(
-                  shape: CircleBorder(),
-                  color: null,
-                  gradient: LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.topLeft,
-                      colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
-                  ),
-                  shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
+              decoration:  ShapeDecoration(
+                shape: CircleBorder(),
+                color: null,
+                gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.topLeft,
+                    colors: [Color(0xFFAC0D57),Color(0xFFFC4A1F),]
                 ),
-                child: IconButton(
-                  alignment: Alignment.center,
-                  icon: Icon(Icons.arrow_forward,
-                  size: 45,
-                  color: Colors.white,),
-                  onPressed: () async {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendor(eventID:eventID,eventName:eventName)),);
-                  },
-                ),
+                shadows: [BoxShadow( blurRadius: 5, color: Colors.grey, spreadRadius: 4.0, offset: Offset.fromDirection(1,1))],
               ),
+              child: IconButton(
+                alignment: Alignment.center,
+                icon: Icon(Icons.arrow_forward,
+                  size: 45,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewVendor(eventID:eventID,eventName:eventName)),);
+                },
+              ),
+            ),),
           ),
         ),
         SafeArea(
