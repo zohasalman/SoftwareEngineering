@@ -1915,7 +1915,7 @@ class AddVendorState extends State<AddVendor> {
                   if (check){
                     
                     for (var i=0; i<numVen; i++){   //uploading the vendor data to the firestore
-                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':logo[i] }).then((vid) async{
+                        await Firestore.instance.collection("Vendor").add({'aggregateRating' : 0.0, 'numRatings':0.0,'email' : email[i], 'eventId' : eid, 'name' : name[i], 'stallNo' : int.parse(stallid[i]), 'logo':logo[i] }).then((vid) async{
                             await Firestore.instance.collection('Vendor').document(vid.documentID).setData({'qrCode' : vid.documentID, 'vendorId':vid.documentID,}, merge: true).then((_){venId.add(vid.documentID);}).catchError((e){err=e.toString();});
                         }).catchError((e){err=e.toString();});
                     }
@@ -2225,7 +2225,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           if (checkNext){
                             for (var i=0; i<numVen.length; i++){    //updating the data for each vendor
                               for (var j=0; j<numVen[i]; j++){
-                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                await Firestore.instance.collection("item").add({'aggregateRating':0.0,'numRatings':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                     await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                 }).catchError((e){err=e.toString();});
                               }
@@ -2526,7 +2526,7 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                           if (checkNext){
                             for (var i=0; i<numVen.length; i++){      //uploading the data regarding the menu items to the firestore cloud
                               for (var j=0; j<numVen[i]; j++){
-                                  await Firestore.instance.collection("item").add({'aggregateRating':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
+                                  await Firestore.instance.collection("item").add({'aggregateRating':0.0,'numRatings':0.0,'logo':mlogo[i][j],'name':itemname[i][j],'vendorId':vid[i]}).then((vid) async{
                                       await Firestore.instance.collection("item").document(vid.documentID).setData({'itemId' : vid.documentID, }, merge: true).then((_){}).catchError((e){err=e.toString();});//venId.add(vid.documentID);});
                                   }).catchError((e){err=e.toString();});
                               }
@@ -3973,7 +3973,6 @@ class EditMenuState extends State<EditMenu> {
                       onPressed: ()=>{
                         setState((){
                           WidgetsBinding.instance.addPostFrameCallback( (_) => dcontroller.clear());
-                          
                         }),
                       },
                     ),
@@ -4076,7 +4075,8 @@ class EditMenuState extends State<EditMenu> {
                   onPressed: () async {//updating the edited information to the database
                     setState(() => validate=true);
                     if(!(logo==null || name==null)){
-                      await Firestore.instance.collection('item').document(itemData.vendorId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
+                      print(logo+','+name+' ${itemData.vendorId}');
+                      await Firestore.instance.collection('item').document(itemData.itemId).setData({'name':name, 'logo':logo},merge: true).then((_)async{
                         await Firestore.instance.collection('ratedItems').where('itemId', isEqualTo: itemData.itemId).getDocuments().then((val) async{
                             val.documents.forEach((doc) async {
                               await Firestore.instance.collection('ratedItems').document(doc.documentID).setData({'name':name, 'logo':logo,},merge: true).catchError((e){err=e.toString();});
