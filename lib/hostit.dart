@@ -4193,7 +4193,8 @@ class SideBarPropertiesGeneral extends State<SideBarGeneral>{
           Container(
             child: GestureDetector(
               onTap: () { //Change on Integration
-                Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
+                Navigator.popUntil(context, ModalRoute.withName('/'));
+                //Navigator.push(context,MaterialPageRoute(builder: (context)=> HostitHomescreen()),);
               },
               child: Container(
                 width: 230.0,
