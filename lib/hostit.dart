@@ -153,12 +153,6 @@ class HostitHomescreenState extends State<HostitHomescreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Container(
-              child: Text(                //method to delete an event
-                "Long Press to delete event",
-                style: TextStyle(color: Colors.pink[600], fontSize: 17),
-              ),
-            ), 
             EventsListHostit(),
           ],
         ),
@@ -1649,7 +1643,7 @@ class AddVendorState extends State<AddVendor> {
     });
 
   }
- 
+  TextEditingController listAccount = TextEditingController();
   void add6(i){
     menu2=List.from(menu2)..add(
             Container(
@@ -1660,10 +1654,13 @@ class AddVendorState extends State<AddVendor> {
                   padding:EdgeInsets.only( top: 5, left: 20),
                 
                   child: TextFormField(
+                    controller: listAccount,
+                    //enabled: false,
+                    //readOnly: true,
+                    validator: (_) => logo[i]==null || logo[i] =='1' ? 'Please upload a valid image': null,
                     readOnly: true,
-                    validator: (_) => logo[i]==null || logo[i] =='' ? 'Please upload a valid image': null,
                     decoration: InputDecoration(      //uploading a valid logo photo for the vendor
-                      hintText: logo[i]==null || logo[i]=='' ? 'Upload Logo Photo':'Image Uploaded',
+                      hintText: logo[i]==null || logo[i]=='' /*|| logo[i].length==0*/ ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19
@@ -1692,7 +1689,12 @@ class AddVendorState extends State<AddVendor> {
                       String filename='${DateTime.now()}${selected.absolute}.png';
                       await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).putFile(selected).onComplete;
                       downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('VendorData/Logo'+filename).getDownloadURL();
+                      //downloadUrl='url';
+                      setState(() {
+                        logo[i]=downloadUrl;
+                      });
                       logo[i]=downloadUrl;
+                      print(logo[i]);
                       showDialog(                 //User friendly error message when the screen has been displayed 
                         context: context,
                         builder: (_) => AlertDialog(
@@ -2010,7 +2012,7 @@ class AddMenuState extends State<AddMenu> {
               validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: mlogo[i][j]=='' ? 'Upload Logo Photo':'Image Uploaded',
+                hintText: mlogo[i][j]==null || mlogo[i][j]=='' ? 'Upload Logo Photo':'Image Uploaded',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -2313,7 +2315,7 @@ class AddMenu2State extends State<AddMenu2> {
               validator: (_) => mlogo[i][j]==null || mlogo[i][j] =='' ? 'Please upload a valid image': null,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: mlogo[i][j]=='' ? 'Upload Logo Photo':'Image Uploaded',
+                hintText: mlogo[i][j]==null || mlogo[i][j]=='' ? 'Upload Logo Photo':'Image Uploaded',
                 labelStyle: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 19
@@ -2343,6 +2345,7 @@ class AddMenu2State extends State<AddMenu2> {
                   await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).putFile(selected).onComplete;
                   downloadUrl = await FirebaseStorage(storageBucket:'gs://seproject-rateit.appspot.com/').ref().child('ItemData/Logo'+filename).getDownloadURL();
                   mlogo[i][j]=downloadUrl;
+                  print(mlogo[i][j]);
                   showDialog(                 //User friendly error message when the screen has been displayed 
                     context: context,
                     builder: (_) => AlertDialog(
@@ -2760,7 +2763,7 @@ class EditVendorState extends State<EditVendor> {
                   readOnly: true,
                   validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
                   decoration: InputDecoration(
-                    hintText: logo==null ? 'Upload Logo Photo':'Image Uploaded',
+                    hintText: logo==null || logo =='' ? 'Upload Logo Photo':'Image Uploaded',
                     labelStyle: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 19
@@ -2924,7 +2927,7 @@ class EditVendorState extends State<EditVendor> {
                             });
                         }).catchError((e){err=e.toString();});
                       }).catchError((e){err=e.toString();});
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewMenu(eventID:vendorData.eventId, eventName:vendorData.name, vendorID:vendorData.vendorId,)),);
+                      Navigator.push(context,MaterialPageRoute(builder: (context)=> ViewMenu(eventID:vendorData.eventId, eventName:eventName, vendorID:vendorData.vendorId,)),);
                     } else {
                       print('error'+logo);
                     }
@@ -3308,7 +3311,8 @@ class EditEventState extends State<EditEvent> {
                         if ( !(savedName==null || savedLogo==null || savedCover==null) ){     //getting data from the database
                           GeoPoint eventLocation = GeoPoint(coord.latitude, coord.longitude);
                           await Firestore.instance.collection('Event').document(eid).setData({'name':savedName,'location1':eventLocation,'logo':savedLogo,'coverimage':savedCover},merge: true).catchError((e){err=e.toString();});
-                          Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName,inviteCode: eventData.invitecode,)),);
+                          Navigator.pop(context);
+                          //Navigator.push(context,MaterialPageRoute(builder: (context)=> EventMenu(eid:eid,eventName:savedName,inviteCode: eventData.invitecode,)),);
                         }
                       }
                     }
@@ -3833,12 +3837,6 @@ class ViewMenuState extends State<ViewMenu> {
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Container(
-              child: Text(
-                "Long Press to delete item",
-                style: TextStyle(color: Colors.pink[600], fontSize: 17),
-              ),
-            ), 
             Container(child:ListItemHostIt(eventName: eventName,eventID: eventID,)),
           ]
         ),
@@ -3992,7 +3990,7 @@ class EditMenuState extends State<EditMenu> {
                     validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
                     readOnly: true,
                     decoration: InputDecoration(
-                      hintText: logo==null ? 'Upload Logo Photo':'Image Uploaded',
+                      hintText: logo==null || logo =='' ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19

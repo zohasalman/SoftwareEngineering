@@ -32,7 +32,7 @@ class _VendorsListStateHostIt extends State<VendorsListHostit> {
             itemBuilder: (context, index) {
               return Card(
                 child:ListTile(
-                  onTap: () {                                                                                                                               //single tapping list tile will open the option to edit data
+                  onTap: () {                                                                                                                             //single tapping list tile will open the option to edit data
                     Navigator.push(context,MaterialPageRoute(builder: (context)=> EditVendor(vendorData: vendors[index], eventName: eventName,)),);
                   },
                   onLongPress: () async {                                                                                                                   //long pressing list tile will open the option to delete data
