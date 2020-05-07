@@ -31,16 +31,6 @@ class FirestoreService{
     }
   }
 
-  Future<String> getUserData(String uid) async {
-    try{
-      String userRole = '';
-      await _usersCollectionReference.document(uid).get().then((value) => userRole = value.data['userRole']);
-      return userRole;
-    }catch(e){
-      return e.toString();
-    }
-  }
-
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
       uid : snapshot.data['uid'],  
@@ -105,6 +95,8 @@ class FirestoreService{
   }
 
   // rate it backend 
+
+  // get a list of vendors 
   List<Vendor> _vendorListFromSnapshot(QuerySnapshot snapshot){
     return  snapshot.documents.map((doc){
       return Vendor(
@@ -120,11 +112,12 @@ class FirestoreService{
     }).toList();
   }
 
+  // verify that invite code exists, if yes then send data 
   Future<QuerySnapshot> verifyInviteCode(String inviteCode) async {
     return await Firestore.instance.collection('Event').where('invitecode', isEqualTo: inviteCode).getDocuments();
   }
 
-
+  // get vendors of that event 
   Stream<List<Vendor>> getVendorInfo(String eventID) {
     return _vendorCollectionReference.where('eventId', isEqualTo: eventID).orderBy('aggregateRating', descending: true).snapshots()
     .map(_vendorListFromSnapshot);

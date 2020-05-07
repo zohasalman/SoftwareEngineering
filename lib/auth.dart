@@ -48,7 +48,7 @@ class AuthService {
         dateOfBirth: date ?? '',
         email: email ?? '',
         userRole: 'user',
-        profilePicture: '',
+        profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Ficons8-user-96.png?alt=media&token=9067d0e5-95d9-407e-9932-038f6eab21bf',
         ));
       FirebaseUser user = result.user;
       try{
@@ -105,7 +105,7 @@ class AuthService {
         dateOfBirth: DateTime.now(),
         email: 'myemail@example.com',
         userRole: 'user',
-        profilePicture: '',
+        profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Ficons8-user-96.png?alt=media&token=9067d0e5-95d9-407e-9932-038f6eab21bf',
         ));
       print("signed in " + user.displayName);
 
@@ -135,32 +135,13 @@ class AuthService {
           dateOfBirth: DateTime.now(),
           email: 'myemail@example.com',
           userRole: 'user',
-          profilePicture: '',
+          profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Ficons8-user-96.png?alt=media&token=9067d0e5-95d9-407e-9932-038f6eab21bf',
           ));
         print('signed in ' + user.displayName);
         return user;
       }
     }catch (e) {
       print(e.message);
-    }
-  }
-
-  // sign out
-  Future signOut() async{
-    try{
-      return await _auth.signOut();
-    }catch(e){
-      print(e.toString());
-      return null;
-    }
-  }
-
-  Future signOutGoogle() async{
-    try{
-      return await googleSignIn.signOut();
-    }catch(e){
-      print(e.toString());
-      return null;
     }
   }
 }
