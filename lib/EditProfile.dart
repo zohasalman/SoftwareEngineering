@@ -200,7 +200,7 @@ class _EditProfile extends State<EditProfile> {
                   ),
                   clipper: Clipshape(),
                 )),
-            endDrawer: SideBar2(),
+            
             body: Form(
               autovalidate: validate,
               child: ListView(
@@ -280,9 +280,10 @@ class _EditProfile extends State<EditProfile> {
                           title: TextFormField(
                              validator: (input)=> input.length<6? 'Please enter a password with at least 6 characters': null,
                             controller: editpw,
+                            obscureText: true,
                             decoration: InputDecoration(
                               labelText: 'Change Password',
-                              hintText: '*********',
+                              hintText: _password,
                               labelStyle:
                                   TextStyle(fontSize: 15, color: Colors.black),
                             ),

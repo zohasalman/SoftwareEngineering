@@ -54,12 +54,13 @@ class SideBarProperties1 extends State<SideBar1> { //SideBar class containing us
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: new Column(
+      child: SafeArea (
+        child:Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.only(top:420),
             ),
             Container(                                        //button for Sign out 
                 child: GestureDetector(
@@ -94,7 +95,7 @@ class SideBarProperties1 extends State<SideBar1> { //SideBar class containing us
                 ),
               ),
             )),
-          ]),
+          ])),
     );
   }
 }        
@@ -130,6 +131,7 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
             Text(myUserInfo.firstName + ' ' + myUserInfo.lastName, //User Name coming from database
                 style: TextStyle(fontSize: 30, color: Colors.black)),
             Text(myUserInfo.email,
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 22, color: Colors.black)),
             Padding(
               padding: EdgeInsets.all(30),
@@ -295,7 +297,8 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
           double distance = 2*6371.0710*math.asin( math.sqrt( (math.sin(diffLatitudeHalf)*math.sin(diffLatitudeHalf)) + ( (math.sin(diffLongitudeHalf)*math.sin(diffLongitudeHalf))*math.cos(currentLatitude)*math.cos(currentLongitude) ) ) ) * 1000; //Haversine Formula to calculate difference between coordinates
           //print('$distance,${eventLatitude*(180/math.pi)},${currentLatitude*(180/math.pi)}');
 
-          if (distance<=20000){          
+          // if (distance<=20000){  
+            if (true) {        
             eventName = docs.documents[0].data['name'];
             eventID = docs.documents[0].data['eventID'];
             userID = '${widget.uid}';
@@ -866,7 +869,7 @@ class _EditRatings extends State<EditRatings> {
                           filledColor: Colors.amber,
                           emptyColor: Colors.amber,
                           halfFilledColor: Colors.amber,
-                          size: 40,
+                          size: 36,
                         ),
                         SizedBox(
                           height: 10.0,
@@ -918,6 +921,7 @@ class _EditRatings extends State<EditRatings> {
                                         value: '${widget.name}',
                                         image: '${widget.image}',
                                         reviewId: '${widget.reviewId}',
+                                        vendorId: '${widget.vendorId}',
                                         review: review,
                                       ),
                                     );
@@ -1028,7 +1032,8 @@ class _EditRating1State extends State<EditRating1> { //Screen where user will ra
             ),
             clipper: Clipshape(),
           )),
-      body: Padding(
+      body: SingleChildScrollView(
+      child: Padding(
           padding: EdgeInsets.all(5.0),
           child: Container(
               alignment: Alignment(0.0, 0.0),
@@ -1120,7 +1125,7 @@ class _EditRating1State extends State<EditRating1> { //Screen where user will ra
                     ),
                   ),
                 ],
-              ))),
+              )))),
     );
   }
 }
@@ -1202,16 +1207,13 @@ class _DoRatings extends State<DoRatings> {  //Class for screen where the user w
                       child: Image.network('${widget.logo}')),
                 ),
                 new Divider(),
-                DisplayItems(list: myRatingInfo),  //Functions to display vendor items
+                DisplayItems(list: myRatingInfo),
+                  //Functions to display vendor items
+                
                 Container(
-                    height: 100.0,
-                    width: 100.0,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 0.0),
-                      child: GestureDetector(
-                          child: Image.asset('asset/image/Group 55.png'),
-                          onTap: () {
-                            Navigator.push(
+                                  child: MaterialButton(
+                                    onPressed: () {
+                                    Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => DoReviews(
@@ -1220,8 +1222,17 @@ class _DoRatings extends State<DoRatings> {  //Class for screen where the user w
                                           vendorId: '${widget.vendorId}',
                                           list: myRatingInfo,
                                         )));
-                          }),
-                    ))
+                                    },
+                                    color: Color(0xFFFC4A1F),
+                                    textColor: Colors.white,
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      size: 24,
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    shape: CircleBorder(),
+                                  )),
+                  Padding(padding: EdgeInsets.only(bottom: 10),)
               ])))),
     );
   }
@@ -1294,7 +1305,8 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
             ),
             clipper: Clipshape(),
           )),
-      body: Padding(
+      body: SingleChildScrollView(
+      child:Padding(
           padding: EdgeInsets.all(5.0),
           child: Container(
               alignment: Alignment(0.0, 0.0),
@@ -1384,7 +1396,7 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
                     ),
                   ),
                 ],
-              ))),
+              )))),
     );
   }
 }
@@ -1447,6 +1459,7 @@ class _TopRatedItems extends State<TopRatedItems> { //Class for screen displayin
         body: Padding(
           padding: EdgeInsets.all(5.0),
           child: Container(
+              alignment: Alignment.center,
               child: ListView(
             children: <Widget>[
               Container(
@@ -1459,11 +1472,13 @@ class _TopRatedItems extends State<TopRatedItems> { //Class for screen displayin
               ),
 
               Padding(
-                padding: EdgeInsets.only(right: 0.0, left: 50.0),
+                padding: EdgeInsets.only(right: 0.0, left: 0.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    RatingBar.readOnly( //Read Only Rating bars to display rating as stars
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      child:RatingBar.readOnly( //Read Only Rating bars to display rating as stars
                       initialRating: double.parse('${widget.vendorRating}'),
                       isHalfAllowed: true,
                       halfFilledIcon: Icons.star_half,
@@ -1472,7 +1487,8 @@ class _TopRatedItems extends State<TopRatedItems> { //Class for screen displayin
                       filledColor: Colors.amber,
                       emptyColor: Colors.amber,
                       halfFilledColor: Colors.amber,
-                      size: 30,
+                      size: 36,
+                    ),
                     ),
                   ],
                 ),
@@ -1618,15 +1634,10 @@ class _ChangeRatings extends State<ChangeRatings> { //Class to display items and
                     list: myEditedRating,
                   ),
                   new Divider(),
-                  Container(
-                      height: 100.0,
-                      width: 100.0,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 10.0),
-                        child: GestureDetector(
-                            child: Image.asset('asset/image/Group 55.png'),
-                            onTap: () async {
-                              String review = await FirestoreService()
+                   Container(
+                                  child: MaterialButton(
+                                    onPressed: () async {
+                                     String review = await FirestoreService()
                                   .getReview(widget.reviewId);
                               var route = new MaterialPageRoute(
                                 builder: (BuildContext context) =>
@@ -1639,8 +1650,18 @@ class _ChangeRatings extends State<ChangeRatings> { //Class to display items and
                                         list: myEditedRating),
                               );
                               Navigator.of(context).push(route);
-                            }),
-                      ))
+                                    },
+                                    color: Color(0xFFFC4A1F),
+                                    textColor: Colors.white,
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      size: 24,
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    shape: CircleBorder(),
+                                  )),
+                  Padding(padding: EdgeInsets.only(bottom: 10),)
+                  
                 ]),
               ),
             )));
@@ -1706,6 +1727,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for di
         body: Padding(
           padding: EdgeInsets.all(5.0),
           child: Container(
+              
               child: ListView(
             children: <Widget>[
               Container(
@@ -1864,7 +1886,7 @@ class _ViewReviews extends State<ViewReviews> {  //Class for screen where user c
               filledColor: Colors.amber,
               emptyColor: Colors.amber,
               halfFilledColor: Colors.amber,
-              size: 40,
+              size: 36,
             ),
             new Divider(),
             Row(
@@ -2154,8 +2176,7 @@ class _EditReviews extends State<EditReviews> {     // User can make edits to th
                       ],
                     ))),
             Container(
-                child: Transform.translate(
-                    offset: Offset(150.0, -30.0),
+                    alignment: Alignment(0.0, 0.0),
                     child: MaterialButton(
                       onPressed: () => myFocusNode.requestFocus(),
                       color: Color(0xFFFC4A1F),
@@ -2166,19 +2187,14 @@ class _EditReviews extends State<EditReviews> {     // User can make edits to th
                       ),
                       padding: EdgeInsets.all(16),
                       shape: CircleBorder(),
-                    ))),
+                    )),
             SizedBox(
               height: 30.0,
             ),
             Container(
-                height: 100.0,
-                width: 100.0,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 20.0, bottom: 0.0),
-                  child: GestureDetector(
-                      child: Image.asset('asset/image/Group 55.png'),
-                      onTap: () {
-                        var route = new MaterialPageRoute(
+                                  child: MaterialButton(
+                                    onPressed: () {
+                                    var route = new MaterialPageRoute(
                           builder: (BuildContext context) => new EditRating1(
                             name: widget.name,
                             logo: widget.logo,
@@ -2189,8 +2205,18 @@ class _EditReviews extends State<EditReviews> {     // User can make edits to th
                           ),
                         );
                         Navigator.of(context).push(route);
-                      }),
-                ))
+                                    },
+                                    color: Color(0xFFFC4A1F),
+                                    textColor: Colors.white,
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      size: 24,
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    shape: CircleBorder(),
+                                  )),
+                  Padding(padding: EdgeInsets.only(bottom: 10),)
+            
           ],
         )),
       ),
@@ -2351,14 +2377,9 @@ class _DoReviews extends State<DoReviews> {
               height: 30.0,
             ),
             Container(
-                height: 100.0,
-                width: 100.0,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 20.0, bottom: 0.0),
-                  child: GestureDetector(
-                      child: Image.asset('asset/image/Group 55.png'),
-                      onTap: () {
-                        var route = new MaterialPageRoute(
+                                  child: MaterialButton(
+                                    onPressed: () {
+                         var route = new MaterialPageRoute(
                             builder: (BuildContext context) =>
                                 new DoRatingFinal(
                                   name: '${widget.name}',
@@ -2368,8 +2389,17 @@ class _DoReviews extends State<DoReviews> {
                                   review: review,
                                 ));
                         Navigator.of(context).push(route);
-                      }),
-                )),
+                                    },
+                                    color: Color(0xFFFC4A1F),
+                                    textColor: Colors.white,
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      size: 24,
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    shape: CircleBorder(),
+                                  )),
+                  Padding(padding: EdgeInsets.only(bottom: 10),)
           ],
         )),
       ),
