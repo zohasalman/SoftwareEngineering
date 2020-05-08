@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rateit/login.dart';
 import 'package:rateit/ratedItem.dart';
 import 'firestore.dart';
@@ -46,11 +47,12 @@ class SideBarProperties1 extends State<SideBar1> {
   //SideBar class containing user info and buttons to editprofile
   void normalSignOut() async {
     //viewuserratings and signout.
+    await FirebaseAuth.instance.signOut();
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
     userID = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
-    LoginScreen();
+    //LoginScreen();
   }
 
   @override
@@ -116,7 +118,7 @@ class SideBarProperties2 extends State<SideBar2> {
     String user = usr.uid;
     userID = usr.uid;
     await FirestoreService(uid: user).normalSignOutPromise();
-    LoginScreen();
+    //LoginScreen();
   }
 
   @override
@@ -224,12 +226,13 @@ class SideBarProperties2 extends State<SideBar2> {
                 child: GestureDetector(
               onTap: () async {
                 //Navigator.popUntil(context, ModalRoute.withName('/'));
+                await FirestoreService().normalSignOutPromise();
                  Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
                       builder: (context) => LoginScreen()),
                   (Route<dynamic> route) => false);
-                await FirestoreService().normalSignOutPromise();
+                
                
               },
               child: Container(
@@ -322,8 +325,8 @@ class _InviteScreen extends State<InviteScreen> {
               1000; //Haversine Formula to calculate difference between coordinates
           //print('$distance,${eventLatitude*(180/math.pi)},${currentLatitude*(180/math.pi)}');
 
-          if (distance <= 20000) {
-            // if (true) {
+          // if (distance <= 20000) {
+            if (true) {
             eventName = docs.documents[0].data['name'];
             eventID = docs.documents[0].data['eventID'];
             userID = '${widget.uid}';
