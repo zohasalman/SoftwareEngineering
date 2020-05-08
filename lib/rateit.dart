@@ -26,7 +26,8 @@ UserData myUserInfo;
 void main3() => runApp(MaterialApp(
         debugShowCheckedModeBanner: false,
         home: LoginScreen(),
-        routes: <String, WidgetBuilder>{ //routes for switching around the rateit UI.
+        routes: <String, WidgetBuilder>{
+          //routes for switching around the rateit UI.
           "/rateitfirst": (BuildContext context) => new _RateItFirstScreen(),
           "/rateitsecond": (BuildContext context) => new ViewVendor(),
           '/EditProfileScreen': (BuildContext context) => new EditProfile(),
@@ -36,14 +37,15 @@ void main3() => runApp(MaterialApp(
           '/changeratings': (BuildContext context) => new ChangeRatings(),
         }));
 
-
 class SideBar1 extends StatefulWidget {
   @override
   SideBarProperties1 createState() => new SideBarProperties1();
 }
 
-class SideBarProperties1 extends State<SideBar1> { //SideBar class containing user info and buttons to editprofile
-  void normalSignOut() async {                     //viewuserratings and signout.
+class SideBarProperties1 extends State<SideBar1> {
+  //SideBar class containing user info and buttons to editprofile
+  void normalSignOut() async {
+    //viewuserratings and signout.
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
     userID = usr.uid;
@@ -54,15 +56,16 @@ class SideBarProperties1 extends State<SideBar1> { //SideBar class containing us
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: SafeArea (
-        child:Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
+      child: SafeArea(
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(top:420),
+              padding: EdgeInsets.only(top: 420),
             ),
-            Container(                                        //button for Sign out 
+            Container(
+                //button for Sign out
                 child: GestureDetector(
               onTap: () async {
                 Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -98,15 +101,17 @@ class SideBarProperties1 extends State<SideBar1> { //SideBar class containing us
           ])),
     );
   }
-}        
+}
 
 class SideBar2 extends StatefulWidget {
   @override
   SideBarProperties2 createState() => new SideBarProperties2();
 }
 
-class SideBarProperties2 extends State<SideBar2> { //SideBar class containing user info and buttons to editprofile
-  void normalSignOut() async {                     //viewuserratings and signout.
+class SideBarProperties2 extends State<SideBar2> {
+  //SideBar class containing user info and buttons to editprofile
+  void normalSignOut() async {
+    //viewuserratings and signout.
     User usr = Provider.of<User>(context, listen: false);
     String user = usr.uid;
     userID = usr.uid;
@@ -126,9 +131,13 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
             ),
             CircleAvatar(
               radius: 70,
-              backgroundImage: NetworkImage('${myUserInfo.profilePicture}' ?? ''), //User Picture from databse
+              backgroundImage: NetworkImage('${myUserInfo.profilePicture}' ??
+                  ''), //User Picture from databse
             ),
-            Text(myUserInfo.firstName + ' ' + myUserInfo.lastName, //User Name coming from database
+            Text(
+                myUserInfo.firstName +
+                    ' ' +
+                    myUserInfo.lastName, //User Name coming from database
                 style: TextStyle(fontSize: 30, color: Colors.black)),
             Text(myUserInfo.email,
                 textAlign: TextAlign.center,
@@ -142,11 +151,13 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          new EditProfile(userInfoRecieved: myUserInfo)),// Switching to Edit Profie screen
+                      builder: (context) => new EditProfile(
+                          userInfoRecieved:
+                              myUserInfo)), // Switching to Edit Profie screen
                 );
               },
-              child: Container(                                   //button for Edit Profile Screen
+              child: Container(
+                //button for Edit Profile Screen
                 width: 230.0,
                 height: 50.0,
                 decoration: BoxDecoration(
@@ -172,7 +183,8 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
             Padding(
               padding: EdgeInsets.all(20),
             ),
-            Container(                                  //button for View My Rating Screen
+            Container(
+                //button for View My Rating Screen
                 child: GestureDetector(
               onTap: () {
                 //Navigator.popUntil(context, ModalRoute.withName('/Viewratings'));
@@ -207,7 +219,8 @@ class SideBarProperties2 extends State<SideBar2> { //SideBar class containing us
             Padding(
               padding: EdgeInsets.all(20),
             ),
-            Container(                                        //button for Sign out 
+            Container(
+                //button for Sign out
                 child: GestureDetector(
               onTap: () async {
                 Navigator.popUntil(context, ModalRoute.withName('/'));
@@ -255,50 +268,60 @@ class InviteScreen extends StatefulWidget {
   }
 }
 
-class _InviteScreen extends State<InviteScreen> {         //Class for invite screen where user enters Invite Code
+class _InviteScreen extends State<InviteScreen> {
+  //Class for invite screen where user enters Invite Code
   String inviteCode = '';
   String errorMessage = '';
   bool ifError = false;
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirestoreService();
 
-  Future<void> submitInviteCode() async {                     //On Submit, the location of user is verified in this function
+  Future<void> submitInviteCode() async {
+    //On Submit, the location of user is verified in this function
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       String eventName = '';
       String eventID = '';
-      bool serviceCheck = await Location().serviceEnabled(), locationEnabled=true;
+      bool serviceCheck = await Location().serviceEnabled(),
+          locationEnabled = true;
       double currentLatitude;
       double currentLongitude;
       double eventLatitude;
       double eventLongitude;
-      if(!serviceCheck) {
-        if( !(await Location().requestService()) ){
-          locationEnabled=false;
+      if (!serviceCheck) {
+        if (!(await Location().requestService())) {
+          locationEnabled = false;
         }
       }
-      if( PermissionStatus.denied == await Location().hasPermission()) {
-        if( PermissionStatus.granted != await Location().requestPermission() ) {
-          locationEnabled=false;
+      if (PermissionStatus.denied == await Location().hasPermission()) {
+        if (PermissionStatus.granted != await Location().requestPermission()) {
+          locationEnabled = false;
         }
       }
-      if(locationEnabled) {
+      if (locationEnabled) {
         LocationData locationData = await Location().getLocation();
-        currentLatitude = locationData.latitude/(180/math.pi);
-        currentLongitude = locationData.longitude/(180/math.pi);
+        currentLatitude = locationData.latitude / (180 / math.pi);
+        currentLongitude = locationData.longitude / (180 / math.pi);
       }
       _firestore.verifyInviteCode(inviteCode).then((QuerySnapshot docs) {
         if (docs.documents.isNotEmpty && locationEnabled) {
           GeoPoint eventLocation = docs.documents[0].data['location1'];
-          eventLatitude = eventLocation.latitude/(180/math.pi);
-          eventLongitude = eventLocation.longitude/(180/math.pi);
-          double diffLatitudeHalf=(eventLatitude-currentLatitude)/2;
-          double diffLongitudeHalf=(eventLongitude-currentLongitude)/2;
-          double distance = 2*6371.0710*math.asin( math.sqrt( (math.sin(diffLatitudeHalf)*math.sin(diffLatitudeHalf)) + ( (math.sin(diffLongitudeHalf)*math.sin(diffLongitudeHalf))*math.cos(currentLatitude)*math.cos(currentLongitude) ) ) ) * 1000; //Haversine Formula to calculate difference between coordinates
+          eventLatitude = eventLocation.latitude / (180 / math.pi);
+          eventLongitude = eventLocation.longitude / (180 / math.pi);
+          double diffLatitudeHalf = (eventLatitude - currentLatitude) / 2;
+          double diffLongitudeHalf = (eventLongitude - currentLongitude) / 2;
+          double distance = 2 *
+              6371.0710 *
+              math.asin(math.sqrt((math.sin(diffLatitudeHalf) *
+                      math.sin(diffLatitudeHalf)) +
+                  ((math.sin(diffLongitudeHalf) * math.sin(diffLongitudeHalf)) *
+                      math.cos(currentLatitude) *
+                      math.cos(currentLongitude)))) *
+              1000; //Haversine Formula to calculate difference between coordinates
           //print('$distance,${eventLatitude*(180/math.pi)},${currentLatitude*(180/math.pi)}');
 
-          if (distance<=20000){  
-            //if (true) {        
+          if (distance <= 20000) {
+            //if (true) {
             eventName = docs.documents[0].data['name'];
             eventID = docs.documents[0].data['eventID'];
             userID = '${widget.uid}';
@@ -309,16 +332,14 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
                         eventName: eventName, eventID: eventID)));
           } else {
             errorMessage = 'You are out of the event area.';
-            ifError =true;
+            ifError = true;
             _formKey.currentState.validate();
           }
-        }
-        else if (locationEnabled) {
+        } else if (locationEnabled) {
           errorMessage = 'Location not enabled.';
-          ifError =true;
+          ifError = true;
           _formKey.currentState.validate();
-        } 
-        else {
+        } else {
           errorMessage = 'No such event invite code exists.';
         }
       });
@@ -337,24 +358,24 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
     String gender = prefs.getString('gender') ?? '';
     // Storing data in user class object
     myUserInfo = UserData(
-        uid: uid ?? '',
-        firstName: firstName ?? '',
-        lastName: lastName ?? '',
-        email: email ?? '',
-        gender: gender ?? '',
-        profilePicture: profilePicture) ?? '';
+            uid: uid ?? '',
+            firstName: firstName ?? '',
+            lastName: lastName ?? '',
+            email: email ?? '',
+            gender: gender ?? '',
+            profilePicture: profilePicture) ??
+        '';
   }
-
 
   @override
   void initState() {
     super.initState();
     getUserInfo();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        
         appBar: PreferredSize(
             preferredSize: Size.fromHeight(150.0),
             child: ClipPath(
@@ -395,7 +416,7 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
               clipper: Clipshape(),
             )),
         endDrawer: SideBar1(),
-        body: SafeArea(    
+        body: SafeArea(
           child: Form(
             key: _formKey,
             child: Column(
@@ -405,16 +426,17 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
                 Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Container(
-                        child: TextFormField(                       //validating invite code here
+                        child: TextFormField(
+                      //validating invite code here
                       cursorColor: Colors.pink,
-                      validator: (value) {      
+                      validator: (value) {
                         if (value.isEmpty) {
                           return 'Please enter invite code';
                         }
                         if (value.length > 6 || value.length < 6) {
                           return 'Invalid invite code';
                         }
-                        if(ifError){
+                        if (ifError) {
                           return errorMessage;
                         }
                         return null;
@@ -430,7 +452,9 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
                 Padding(padding: EdgeInsets.only(top: 40.0)),
                 SafeArea(
                     child: RaisedButton(
-                  onPressed: () async {await submitInviteCode();},
+                  onPressed: () async {
+                    await submitInviteCode();
+                  },
                   textColor: Colors.white,
                   padding: const EdgeInsets.all(0.0),
                   shape: RoundedRectangleBorder(
@@ -468,8 +492,9 @@ class _RateItFirstScreen extends StatefulWidget {
   }
 }
 
-class RateItFirstScreen extends State<_RateItFirstScreen> {                   //Welcome Screen for the Food Event
-  
+class RateItFirstScreen extends State<_RateItFirstScreen> {
+  //Welcome Screen for the Food Event
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -615,8 +640,9 @@ class ViewVendor extends StatefulWidget {
   }
 }
 
-class _ViewVendor extends State<ViewVendor> {     //Class for View Vendor Screen displaying all the vendors in the events
-                                                  //with their ratings
+class _ViewVendor extends State<ViewVendor> {
+  //Class for View Vendor Screen displaying all the vendors in the events
+  //with their ratings
   String result;
   UserData userInfo;
   String qr = "";
@@ -635,7 +661,8 @@ class _ViewVendor extends State<ViewVendor> {     //Class for View Vendor Screen
     // final vendorFromDB = Provider.of<List<Vendor>>(context);
 
     return StreamProvider<List<Vendor>>.value(
-      value: FirestoreService().getVendorInfo('${widget.eventID}'),  //Event ID coming from database
+      value: FirestoreService()
+          .getVendorInfo('${widget.eventID}'), //Event ID coming from database
       child: Scaffold(
         key: scaffoldKey,
         appBar: PreferredSize(
@@ -652,7 +679,8 @@ class _ViewVendor extends State<ViewVendor> {     //Class for View Vendor Screen
                           alignment: Alignment.topLeft,
                           child: Padding(
                               padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.eventName}',        //Event Name coming from database
+                              child: Text(
+                                  '${widget.eventName}', //Event Name coming from database
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
                         )),
@@ -677,14 +705,16 @@ class _ViewVendor extends State<ViewVendor> {     //Class for View Vendor Screen
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: SideBar2(),        //SideBar called in this screen
-        body: VendorsList(),          //Class to display to all the vendors in the file 'vendor-list.dart'
+        endDrawer: SideBar2(), //SideBar called in this screen
+        body:
+            VendorsList(), //Class to display to all the vendors in the file 'vendor-list.dart'
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.pink[800],
           child: Image.asset("asset/image/Camera_1.png"),
           onPressed: () async {
             String scanning = "";
-            scanning = await BarcodeScanner.scan();   //barcode scanner implemented to scan barcode of each vendor
+            scanning = await BarcodeScanner
+                .scan(); //barcode scanner implemented to scan barcode of each vendor
             String name, logo;
             await FirestoreService().getVendor(scanning).then((docs) {
               if (docs.documents.isNotEmpty) {
@@ -695,9 +725,11 @@ class _ViewVendor extends State<ViewVendor> {     //Class for View Vendor Screen
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        DoRatings(name: name, logo: logo, vendorId: scanning))); //re-routing to barcode specific vendor screen
-
+                    builder: (context) => DoRatings(
+                        name: name,
+                        logo: logo,
+                        vendorId:
+                            scanning))); //re-routing to barcode specific vendor screen
           },
         ),
       ),
@@ -712,7 +744,8 @@ class ViewMyRating extends StatefulWidget {
   }
 }
 
-class _ViewMyRating extends State<ViewMyRating> {       //Class for screen where user can see the vendors he/she has rated
+class _ViewMyRating extends State<ViewMyRating> {
+  //Class for screen where user can see the vendors he/she has rated
   String result;
 
   String qr = "";
@@ -790,7 +823,8 @@ class _ViewMyRating extends State<ViewMyRating> {       //Class for screen where
   }
 }
 
-class EditRatings extends StatefulWidget {  //Class for Screen where user can see the ratings of selected vendor
+class EditRatings extends StatefulWidget {
+  //Class for Screen where user can see the ratings of selected vendor
   final String name, image, rating, vendorId, reviewId;
 
   EditRatings(
@@ -804,7 +838,8 @@ class _EditRatings extends State<EditRatings> {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<RatedItem>>.value(
-      value: FirestoreService().getMyRatedItem(userID, '${widget.vendorId}'),  //vendor ID coming from firebase
+      value: FirestoreService().getMyRatedItem(
+          userID, '${widget.vendorId}'), //vendor ID coming from firebase
       child: Scaffold(
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(150.0),
@@ -821,7 +856,8 @@ class _EditRatings extends State<EditRatings> {
                             child: Padding(
                                 padding:
                                     EdgeInsets.only(bottom: 60.0, left: 10),
-                                child: Text('${widget.name}',  //vendor name switching between screens
+                                child: Text(
+                                    '${widget.name}', //vendor name switching between screens
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 28))),
                           )),
@@ -860,7 +896,8 @@ class _EditRatings extends State<EditRatings> {
                             child: Image.network('${widget.image}'),
                           ),
                         ),
-                        RatingBar.readOnly(  //Rating bars to display rating as stars
+                        RatingBar.readOnly(
+                          //Rating bars to display rating as stars
                           initialRating: double.parse('${widget.rating}'),
                           filledIcon: Icons.star,
                           emptyIcon: Icons.star_border,
@@ -914,7 +951,8 @@ class _EditRatings extends State<EditRatings> {
                                 child: GestureDetector(
                                   onTap: () async {
                                     String review = await FirestoreService()
-                                        .getReview(widget.reviewId); //review id of the user review from databases
+                                        .getReview(widget
+                                            .reviewId); //review id of the user review from databases
                                     var route = new MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           new ViewReviews(
@@ -944,8 +982,10 @@ class _EditRatings extends State<EditRatings> {
             backgroundColor: Color(0xFFFC4A1F),
             onPressed: () {
               var route = new MaterialPageRoute(
-                builder: (BuildContext context) => new ChangeRatings(   //re-routing to the screen where user can edit ratings
-                    value: '${widget.name}', //all details being sent to re-routed screen
+                builder: (BuildContext context) => new ChangeRatings(
+                    //re-routing to the screen where user can edit ratings
+                    value:
+                        '${widget.name}', //all details being sent to re-routed screen
                     image: '${widget.image}',
                     vendorId: '${widget.vendorId}',
                     reviewId: '${widget.reviewId}'),
@@ -974,7 +1014,8 @@ class EditRating1 extends StatefulWidget {
   _EditRating1State createState() => _EditRating1State();
 }
 
-class _EditRating1State extends State<EditRating1> { //Screen where user will rate the vendor
+class _EditRating1State extends State<EditRating1> {
+  //Screen where user will rate the vendor
   double finalRating;
 
   void submit(double finalRating) {
@@ -1033,99 +1074,106 @@ class _EditRating1State extends State<EditRating1> { //Screen where user will ra
             clipper: Clipshape(),
           )),
       body: SingleChildScrollView(
-      child: Padding(
-          padding: EdgeInsets.all(5.0),
-          child: Container(
-              alignment: Alignment(0.0, 0.0),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      child: Text('${widget.name}',
-                          style: TextStyle(fontSize: 20, color: Colors.black))),
-                  Container(
-                    alignment: Alignment(0.00, 0.0),
-                    height: 200.0,
-                    width: 200.0,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                      child: Image.network('${widget.logo}'),
-                    ),
-                  ),
-                  new Divider(),
-                  Container(
-                      child: Text('How would you like to rate this stall?',
-                          style: TextStyle(fontSize: 20, color: Colors.black))),
-                  Container(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(top: 40.0, right: 0.0, left: 15.0),
-                      child: Column(
-                        children: <Widget>[
-                          RatingBar(   //Editable Rating bars to display rating as stars
-                            onRatingChanged: (rating) =>
-                                setState(() => finalRating = rating),
-                            filledIcon: Icons.star,
-                            emptyIcon: Icons.star_border,
-                            halfFilledIcon: Icons.star_half,
-                            isHalfAllowed: true,
-                            filledColor: Colors.amber,
-                            emptyColor: Colors.amber,
-                            halfFilledColor: Colors.amber,
-                            size: 48,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 150.0, width: 40.0), //Sized boxes used at several places for gapping
-                  
-                  SafeArea(
-                    child: InkWell(
-                      onTap: () async {
-                        submit(finalRating);
-                        return await showDialog(    //Alert Box for acknowledgement
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Success!"),
-                              actions: <Widget>[
-                                Center(
-                                    child: FlatButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                  child: Text("ok"),
-                                ))
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: SafeArea(
-                        child: Container(
-                          padding: EdgeInsets.only(top: 40),
-                          child: Container(
-                              height: 50,
-                              width: 350,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft,
-                                    colors: [
-                                      Color(0xFFAC0D57),
-                                      Color(0xFFFC4A1F),
-                                    ]),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              padding: EdgeInsets.only(top: 15, left: 140),
-                              child: Text("Submit",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18))),
+          child: Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Container(
+                  alignment: Alignment(0.0, 0.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                          child: Text('${widget.name}',
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.black))),
+                      Container(
+                        alignment: Alignment(0.00, 0.0),
+                        height: 200.0,
+                        width: 200.0,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                          child: Image.network('${widget.logo}'),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              )))),
+                      new Divider(),
+                      Container(
+                          child: Text('How would you like to rate this stall?',
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.black))),
+                      Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: 40.0, right: 0.0, left: 15.0),
+                          child: Column(
+                            children: <Widget>[
+                              RatingBar(
+                                //Editable Rating bars to display rating as stars
+                                onRatingChanged: (rating) =>
+                                    setState(() => finalRating = rating),
+                                filledIcon: Icons.star,
+                                emptyIcon: Icons.star_border,
+                                halfFilledIcon: Icons.star_half,
+                                isHalfAllowed: true,
+                                filledColor: Colors.amber,
+                                emptyColor: Colors.amber,
+                                halfFilledColor: Colors.amber,
+                                size: 48,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                          height: 150.0,
+                          width:
+                              40.0), //Sized boxes used at several places for gapping
+
+                      SafeArea(
+                        child: InkWell(
+                          onTap: () async {
+                            submit(finalRating);
+                            return await showDialog(
+                              //Alert Box for acknowledgement
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Success!"),
+                                  actions: <Widget>[
+                                    Center(
+                                        child: FlatButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: Text("ok"),
+                                    ))
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: SafeArea(
+                            child: Container(
+                              padding: EdgeInsets.only(top: 40),
+                              child: Container(
+                                  height: 50,
+                                  width: 350,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.topLeft,
+                                        colors: [
+                                          Color(0xFFAC0D57),
+                                          Color(0xFFFC4A1F),
+                                        ]),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  padding: EdgeInsets.only(top: 15, left: 140),
+                                  child: Text("Submit",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 18))),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )))),
     );
   }
 }
@@ -1139,7 +1187,8 @@ class DoRatings extends StatefulWidget {
   _DoRatings createState() => new _DoRatings();
 }
 
-class _DoRatings extends State<DoRatings> {  //Class for screen where the user will re-routed to after scanning barcode.
+class _DoRatings extends State<DoRatings> {
+  //Class for screen where the user will re-routed to after scanning barcode.
   List<Map> myRatingInfo = new List();
 
   @override
@@ -1161,14 +1210,16 @@ class _DoRatings extends State<DoRatings> {  //Class for screen where the user w
                           alignment: Alignment.topLeft,
                           child: Padding(
                             padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                            child: Container( 
-                              width: MediaQuery.of(context).copyWith().size.width * 0.45,
-                              child:Text('${widget.name}',
-                                  style: TextStyle(
-                                    color: Colors.white, fontSize: 28
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  softWrap: false,
+                            child: Container(
+                              width:
+                                  MediaQuery.of(context).copyWith().size.width *
+                                      0.45,
+                              child: Text(
+                                '${widget.name}',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 28),
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: false,
                               ),
                             ),
                           ),
@@ -1208,37 +1259,40 @@ class _DoRatings extends State<DoRatings> {  //Class for screen where the user w
                 ),
                 new Divider(),
                 DisplayItems(list: myRatingInfo),
-                  //Functions to display vendor items
-                
+                //Functions to display vendor items
+
                 Container(
-                                  child: MaterialButton(
-                                    onPressed: () {
-                                    Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => DoReviews(
-                                          name: '${widget.name}',
-                                          logo: '${widget.logo}',
-                                          vendorId: '${widget.vendorId}',
-                                          list: myRatingInfo,
-                                        )));
-                                    },
-                                    color: Color(0xFFFC4A1F),
-                                    textColor: Colors.white,
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      size: 24,
-                                    ),
-                                    padding: EdgeInsets.all(16),
-                                    shape: CircleBorder(),
-                                  )),
-                  Padding(padding: EdgeInsets.only(bottom: 10),)
+                    child: MaterialButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DoReviews(
+                                  name: '${widget.name}',
+                                  logo: '${widget.logo}',
+                                  vendorId: '${widget.vendorId}',
+                                  list: myRatingInfo,
+                                )));
+                  },
+                  color: Color(0xFFFC4A1F),
+                  textColor: Colors.white,
+                  child: Icon(
+                    Icons.arrow_forward,
+                    size: 24,
+                  ),
+                  padding: EdgeInsets.all(16),
+                  shape: CircleBorder(),
+                )),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                )
               ])))),
     );
   }
 }
 
-class DoRatingFinal extends StatefulWidget {  //Class for screen to edit vendor
+class DoRatingFinal extends StatefulWidget {
+  //Class for screen to edit vendor
   final String name, logo, vendorId, review;
   final List<Map> list;
 
@@ -1306,97 +1360,102 @@ class _DoRatingFinalState extends State<DoRatingFinal> {
             clipper: Clipshape(),
           )),
       body: SingleChildScrollView(
-      child:Padding(
-          padding: EdgeInsets.all(5.0),
-          child: Container(
-              alignment: Alignment(0.0, 0.0),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                      child: Text('${widget.name}',
-                          style: TextStyle(fontSize: 20, color: Colors.black))),
-                  Container(
-                    alignment: Alignment(0.00, 0.0),
-                    height: 200.0,
-                    width: 200.0,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                      child: Image.network('${widget.logo}'),
-                    ),
-                  ),
-                  new Divider(),
-                  Container(
-                      child: Text('How would you like to rate this stall?',
-                          style: TextStyle(fontSize: 20, color: Colors.black))),
-                  Container(
-                    child: Padding(
-                      padding:
-                          EdgeInsets.only(top: 40.0, right: 0.0, left: 15.0),
-                      child: Column(
-                        children: <Widget>[
-                          RatingBar( //Editable Rating bars to display rating as stars
-                            onRatingChanged: (rating) => finalRating = rating,
-                            filledIcon: Icons.star,
-                            emptyIcon: Icons.star_border,
-                            halfFilledIcon: Icons.star_half,
-                            isHalfAllowed: true,
-                            filledColor: Colors.amber,
-                            emptyColor: Colors.amber,
-                            halfFilledColor: Colors.amber,
-                            size: 42,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 150.0, width: 40.0),
-                  SafeArea(
-                    child: InkWell(
-                      onTap: () async {
-                        submit(finalRating);
-                        return await showDialog( //ALertBox for acknowledgement
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text("Success!"),
-                              actions: <Widget>[
-                                Center(
-                                    child: FlatButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
-                                  child: Text("ok"),
-                                ))
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: SafeArea(
-                        child: Container(
-                          padding: EdgeInsets.only(top: 40),
-                          child: Container(
-                              height: 50,
-                              width: 350,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.topLeft,
-                                    colors: [
-                                      Color(0xFFAC0D57),
-                                      Color(0xFFFC4A1F),
-                                    ]),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              padding: EdgeInsets.only(top: 15, left: 140),
-                              child: Text("Submit",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18))),
+          child: Padding(
+              padding: EdgeInsets.all(5.0),
+              child: Container(
+                  alignment: Alignment(0.0, 0.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                          child: Text('${widget.name}',
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.black))),
+                      Container(
+                        alignment: Alignment(0.00, 0.0),
+                        height: 200.0,
+                        width: 200.0,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                          child: Image.network('${widget.logo}'),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              )))),
+                      new Divider(),
+                      Container(
+                          child: Text('How would you like to rate this stall?',
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.black))),
+                      Container(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: 40.0, right: 0.0, left: 15.0),
+                          child: Column(
+                            children: <Widget>[
+                              RatingBar(
+                                //Editable Rating bars to display rating as stars
+                                onRatingChanged: (rating) =>
+                                    finalRating = rating,
+                                filledIcon: Icons.star,
+                                emptyIcon: Icons.star_border,
+                                halfFilledIcon: Icons.star_half,
+                                isHalfAllowed: true,
+                                filledColor: Colors.amber,
+                                emptyColor: Colors.amber,
+                                halfFilledColor: Colors.amber,
+                                size: 42,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 150.0, width: 40.0),
+                      SafeArea(
+                        child: InkWell(
+                          onTap: () async {
+                            submit(finalRating);
+                            return await showDialog(
+                              //ALertBox for acknowledgement
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Success!"),
+                                  actions: <Widget>[
+                                    Center(
+                                        child: FlatButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: Text("ok"),
+                                    ))
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                          child: SafeArea(
+                            child: Container(
+                              padding: EdgeInsets.only(top: 40),
+                              child: Container(
+                                  height: 50,
+                                  width: 350,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                        begin: Alignment.topRight,
+                                        end: Alignment.topLeft,
+                                        colors: [
+                                          Color(0xFFAC0D57),
+                                          Color(0xFFFC4A1F),
+                                        ]),
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  padding: EdgeInsets.only(top: 15, left: 140),
+                                  child: Text("Submit",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 18))),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )))),
     );
   }
 }
@@ -1410,7 +1469,8 @@ class TopRatedItems extends StatefulWidget {
   _TopRatedItems createState() => new _TopRatedItems();
 }
 
-class _TopRatedItems extends State<TopRatedItems> { //Class for screen displaying top rated items of each vendor 
+class _TopRatedItems extends State<TopRatedItems> {
+  //Class for screen displaying top rated items of each vendor
   double myrating;
   @override
   Widget build(BuildContext context) {
@@ -1431,7 +1491,8 @@ class _TopRatedItems extends State<TopRatedItems> { //Class for screen displayin
                           alignment: Alignment.topLeft,
                           child: Padding(
                               padding: EdgeInsets.only(bottom: 60.0, left: 10),
-                              child: Text('${widget.value}',  // name of vendor coming from previous screen
+                              child: Text(
+                                  '${widget.value}', // name of vendor coming from previous screen
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 28))),
                         )),
@@ -1461,93 +1522,96 @@ class _TopRatedItems extends State<TopRatedItems> { //Class for screen displayin
           child: Container(
               alignment: Alignment.center,
               child: ListView(
-            children: <Widget>[
-              Container(
-                height: 200.0,
-                width: 200.0,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                  child: Image.network('${widget.image}'),
-                ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.only(right: 0.0, left: 0.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child:RatingBar.readOnly( //Read Only Rating bars to display rating as stars
-                      initialRating: double.parse('${widget.vendorRating}'),
-                      isHalfAllowed: true,
-                      halfFilledIcon: Icons.star_half,
-                      filledIcon: Icons.star,
-                      emptyIcon: Icons.star_border,
-                      filledColor: Colors.amber,
-                      emptyColor: Colors.amber,
-                      halfFilledColor: Colors.amber,
-                      size: 36,
-                    ),
-                    ),
-                  ],
-                ),
-              ),
-              new Divider(),
-              Row(
                 children: <Widget>[
                   Container(
-                      child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 200.0,
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft,
-                            colors: [
-                              Color(0xFFAC0D57),
-                              Color(0xFFFC4A1F),
-                            ]),
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 10),
-                        ],
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      padding: EdgeInsets.all(12.0),
-                      child: Center(
-                        child: Text('Top Rated Items',    //tabs to switch between items and reviews
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
-                      ),
+                    height: 200.0,
+                    width: 200.0,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                      child: Image.network('${widget.image}'),
                     ),
-                  )),
+                  ),
+
                   Padding(
-                    padding: EdgeInsets.only(right: 10.0, left: 60.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        var route = new MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              TopRatedItemsReviews(
-                            value: '${widget.value}',
-                            image: '${widget.image}',
-                            vendorId: '${widget.vendorId}',
-                            vendorRating: '${widget.vendorRating}',
+                    padding: EdgeInsets.only(right: 0.0, left: 0.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: RatingBar.readOnly(
+                            //Read Only Rating bars to display rating as stars
+                            initialRating:
+                                double.parse('${widget.vendorRating}'),
+                            isHalfAllowed: true,
+                            halfFilledIcon: Icons.star_half,
+                            filledIcon: Icons.star,
+                            emptyIcon: Icons.star_border,
+                            filledColor: Colors.amber,
+                            emptyColor: Colors.amber,
+                            halfFilledColor: Colors.amber,
+                            size: 36,
                           ),
-                        );
-                        Navigator.of(context).push(route);
-                      },
-                      child: Text('Reviews',
-                          style: TextStyle(color: Colors.red, fontSize: 22)),
+                        ),
+                      ],
                     ),
-                  )
+                  ),
+                  new Divider(),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                          child: GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          width: 200.0,
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.topLeft,
+                                colors: [
+                                  Color(0xFFAC0D57),
+                                  Color(0xFFFC4A1F),
+                                ]),
+                            boxShadow: const [
+                              BoxShadow(blurRadius: 10),
+                            ],
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.all(12.0),
+                          child: Center(
+                            child: Text(
+                                'Top Rated Items', //tabs to switch between items and reviews
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18)),
+                          ),
+                        ),
+                      )),
+                      Padding(
+                        padding: EdgeInsets.only(right: 10.0, left: 60.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            var route = new MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  TopRatedItemsReviews(
+                                value: '${widget.value}',
+                                image: '${widget.image}',
+                                vendorId: '${widget.vendorId}',
+                                vendorRating: '${widget.vendorRating}',
+                              ),
+                            );
+                            Navigator.of(context).push(route);
+                          },
+                          child: Text('Reviews',
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 22)),
+                        ),
+                      )
+                    ],
+                  ),
+                  ListItem(), //Function to display top rated items
                 ],
-              ),
-              ListItem(),  //Function to display top rated items
-             
-            ],
-          )),
+              )),
         ),
       ),
     );
@@ -1564,7 +1628,8 @@ class ChangeRatings extends StatefulWidget {
   _ChangeRatings createState() => new _ChangeRatings();
 }
 
-class _ChangeRatings extends State<ChangeRatings> { //Class to display items and their editable rating bars. User can edit their ratings
+class _ChangeRatings extends State<ChangeRatings> {
+  //Class to display items and their editable rating bars. User can edit their ratings
   List<Map> myEditedRating = new List();
   @override
   Widget build(BuildContext context) {
@@ -1630,38 +1695,39 @@ class _ChangeRatings extends State<ChangeRatings> { //Class to display items and
                               child: Text('${widget.value}',
                                   style: TextStyle(
                                       fontSize: 25, color: Colors.black))))),
-                  EditMyRatingsItems(  //function to edit ratings of items
+                  EditMyRatingsItems(
+                    //function to edit ratings of items
                     list: myEditedRating,
                   ),
                   new Divider(),
-                   Container(
-                                  child: MaterialButton(
-                                    onPressed: () async {
-                                     String review = await FirestoreService()
-                                  .getReview(widget.reviewId);
-                              var route = new MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    new EditReviews(
-                                        name: widget.value,
-                                        logo: widget.image,
-                                        vendorId: widget.vendorId,
-                                        review: review,
-                                        reviewId: widget.reviewId,
-                                        list: myEditedRating),
-                              );
-                              Navigator.of(context).push(route);
-                                    },
-                                    color: Color(0xFFFC4A1F),
-                                    textColor: Colors.white,
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      size: 24,
-                                    ),
-                                    padding: EdgeInsets.all(16),
-                                    shape: CircleBorder(),
-                                  )),
-                  Padding(padding: EdgeInsets.only(bottom: 10),)
-                  
+                  Container(
+                      child: MaterialButton(
+                    onPressed: () async {
+                      String review =
+                          await FirestoreService().getReview(widget.reviewId);
+                      var route = new MaterialPageRoute(
+                        builder: (BuildContext context) => new EditReviews(
+                            name: widget.value,
+                            logo: widget.image,
+                            vendorId: widget.vendorId,
+                            review: review,
+                            reviewId: widget.reviewId,
+                            list: myEditedRating),
+                      );
+                      Navigator.of(context).push(route);
+                    },
+                    color: Color(0xFFFC4A1F),
+                    textColor: Colors.white,
+                    child: Icon(
+                      Icons.arrow_forward,
+                      size: 24,
+                    ),
+                    padding: EdgeInsets.all(16),
+                    shape: CircleBorder(),
+                  )),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                  )
                 ]),
               ),
             )));
@@ -1678,7 +1744,8 @@ class TopRatedItemsReviews extends StatefulWidget {
   _TopRatedItemsReviews createState() => new _TopRatedItemsReviews();
 }
 
-class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for displaying top rated reviews of each vendor
+class _TopRatedItemsReviews extends State<TopRatedItemsReviews> {
+  //Class for displaying top rated reviews of each vendor
   double myrating;
   @override
   Widget build(BuildContext context) {
@@ -1725,82 +1792,82 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for di
               clipper: Clipshape(),
             )),
         body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(5.0),
-          child: Container(
-              
-              child: ListView(
-            children: <Widget>[
-              Container(
-                height: 200.0,
-                width: 200.0,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                  child: Image.network('${widget.image}'),
-                ),
-              ),
-              RatingBar.readOnly(
-                initialRating: (double.parse('${widget.vendorRating}')),
-                filledIcon: Icons.star,
-                emptyIcon: Icons.star_border,
-                halfFilledIcon: Icons.star_half,
-                isHalfAllowed: true,
-                filledColor: Colors.amber,
-                emptyColor: Colors.amber,
-                halfFilledColor: Colors.amber,
-                size: 36,
-              ),
-              new Divider(),
-              SafeArea (
-              child: Row(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text('Top Rated Items',
-                          style: TextStyle(color: Colors.red, fontSize: 22)),
-                    ),
+          child: Padding(
+            padding: EdgeInsets.all(5.0),
+            child: Container(
+                child: ListView(
+              children: <Widget>[
+                Container(
+                  height: 200.0,
+                  width: 200.0,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                    child: Image.network('${widget.image}'),
                   ),
-                  SizedBox(
-                    width: 10.0,
-                  ),               
-                  Container(
-                      child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 170.0,
-                      height: 50.0,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topRight,
-                            end: Alignment.topLeft,
-                            colors: [
-                              Color(0xFFAC0D57),
-                              Color(0xFFFC4A1F),
-                            ]),
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 10),
-                        ],
-                        borderRadius: BorderRadius.circular(30.0),
+                ),
+                RatingBar.readOnly(
+                  initialRating: (double.parse('${widget.vendorRating}')),
+                  filledIcon: Icons.star,
+                  emptyIcon: Icons.star_border,
+                  halfFilledIcon: Icons.star_half,
+                  isHalfAllowed: true,
+                  filledColor: Colors.amber,
+                  emptyColor: Colors.amber,
+                  halfFilledColor: Colors.amber,
+                  size: 36,
+                ),
+                new Divider(),
+                SafeArea(
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(right: 10.0, left: 20.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Top Rated Items',
+                              style:
+                                  TextStyle(color: Colors.red, fontSize: 22)),
+                        ),
                       ),
-                      padding: EdgeInsets.all(10.0),
-                      child: Center(
-                        child: Text('Reviews',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20)),
+                      SizedBox(
+                        width: 10.0,
                       ),
-                    ),
-                  ))
-                ],
-              ),
-              ),
-              ReviewFromDB(), //User can edit reviews here
-            ],
-          )),
-        ),
+                      Container(
+                          child: GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          width: 170.0,
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.topLeft,
+                                colors: [
+                                  Color(0xFFAC0D57),
+                                  Color(0xFFFC4A1F),
+                                ]),
+                            boxShadow: const [
+                              BoxShadow(blurRadius: 10),
+                            ],
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.all(10.0),
+                          child: Center(
+                            child: Text('Reviews',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20)),
+                          ),
+                        ),
+                      ))
+                    ],
+                  ),
+                ),
+                ReviewFromDB(), //User can edit reviews here
+              ],
+            )),
+          ),
         ),
       ),
     );
@@ -1823,7 +1890,8 @@ class ViewReviews extends StatefulWidget {
   _ViewReviews createState() => new _ViewReviews();
 }
 
-class _ViewReviews extends State<ViewReviews> {  //Class for screen where user can see their reviews
+class _ViewReviews extends State<ViewReviews> {
+  //Class for screen where user can see their reviews
   double myrating;
 
   @override
@@ -1868,146 +1936,151 @@ class _ViewReviews extends State<ViewReviews> {  //Class for screen where user c
             ),
             clipper: Clipshape(),
           )),
-      body: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Container(
-            child: ListView(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.network('${widget.image}'),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Container(
+              child: ListView(
+            children: <Widget>[
+              Container(
+                height: 200.0,
+                width: 200.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                  child: Image.network('${widget.image}'),
+                ),
               ),
-            ),
-            RatingBar.readOnly( //Non-Editable Rating bars to display rating as stars
-              initialRating: 3.5,
-              filledIcon: Icons.star,
-              emptyIcon: Icons.star_border,
-              halfFilledIcon: Icons.star_half,
-              isHalfAllowed: true,
-              filledColor: Colors.amber,
-              emptyColor: Colors.amber,
-              halfFilledColor: Colors.amber,
-              size: 36,
-            ),
-            new Divider(),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(right: 10.0, left: 20.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('My Ratings',
-                        style: TextStyle(color: Colors.red, fontSize: 22)),
-                  ),
-                ),
-                SizedBox(
-                  width: 20.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 30.0),
-                  child: Container(
+              RatingBar.readOnly(
+                //Non-Editable Rating bars to display rating as stars
+                initialRating: 3.5,
+                filledIcon: Icons.star,
+                emptyIcon: Icons.star_border,
+                halfFilledIcon: Icons.star_half,
+                isHalfAllowed: true,
+                filledColor: Colors.amber,
+                emptyColor: Colors.amber,
+                halfFilledColor: Colors.amber,
+                size: 36,
+              ),
+              new Divider(),
+              SafeArea(
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.0, left: 20.0),
                       child: GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      width: 170.0,
-                      height: 50.0,
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('My Ratings',
+                            style: TextStyle(color: Colors.red, fontSize: 22)),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30.0),
+                      child: Container(
+                          child: GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          width: 170.0,
+                          height: 50.0,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.topLeft,
+                                colors: [
+                                  Color(0xFFAC0D57),
+                                  Color(0xFFFC4A1F),
+                                ]),
+                            boxShadow: const [
+                              BoxShadow(blurRadius: 10),
+                            ],
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          padding: EdgeInsets.all(12.0),
+                          child: Center(
+                            child: Text('My Reviews',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18)),
+                          ),
+                        ),
+                      )),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
+                  child: Container(
+                      width: 200.0,
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
                         gradient: LinearGradient(
                             begin: Alignment.topRight,
                             end: Alignment.topLeft,
                             colors: [
+                              //Colors.white,
                               Color(0xFFAC0D57),
                               Color(0xFFFC4A1F),
                             ]),
-                        boxShadow: const [
-                          BoxShadow(blurRadius: 10),
-                        ],
-                        borderRadius: BorderRadius.circular(30.0),
+                        color: Colors.redAccent,
                       ),
-                      padding: EdgeInsets.all(12.0),
-                      child: Center(
-                        child: Text('My Reviews',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
-                      ),
-                    ),
-                  )),
-                )
-              ],
-            ),
-            Padding(
-                padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
-                child: Container(
-                    width: 200.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [
-                            //Colors.white,
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]),
-                      color: Colors.redAccent,
-                    ),
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(top: 30.0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 30.0,
-                              child: Image.asset('asset/image/circular.png'),
-                            )),
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                top: 20.0,
-                                left: 20.0,
-                                right: 20.0,
-                                bottom: 10.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 20.0,
-                                    left: 20.0,
-                                    right: 20.0,
-                                    bottom: 10.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                  ),
-                                  child: ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                      minWidth: 200.0,
-                                      maxWidth: 270.0,
-                                      minHeight: 30.0,
-                                      maxHeight: 100.0,
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(top: 30.0),
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              )),
+                          Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 20.0,
+                                  left: 20.0,
+                                  right: 20.0,
+                                  bottom: 10.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 20.0,
+                                      left: 20.0,
+                                      right: 20.0,
+                                      bottom: 10.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
                                     ),
-                                    child: AutoSizeText(
-                                      widget.review,
-                                      style: TextStyle(fontSize: 18.0),
-                                      textAlign: TextAlign.center,
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minWidth: 200.0,
+                                        maxWidth: 270.0,
+                                        minHeight: 30.0,
+                                        maxHeight: 100.0,
+                                      ),
+                                      child: AutoSizeText(
+                                        widget.review,
+                                        style: TextStyle(fontSize: 18.0),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            )),
-                      ],
-                    ))),
-          ],
-        )),
+                              )),
+                        ],
+                      ))),
+            ],
+          )),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.edit),
@@ -2031,7 +2104,7 @@ class _ViewReviews extends State<ViewReviews> {  //Class for screen where user c
 class EditReviews extends StatefulWidget {
   final String name, logo, reviewId, vendorId;
   final List<Map> list;
-  
+
   String review;
 
   EditReviews(
@@ -2048,7 +2121,8 @@ class EditReviews extends StatefulWidget {
   _EditReviews createState() => new _EditReviews(review: review);
 }
 
-class _EditReviews extends State<EditReviews> {     // User can make edits to their reviews here
+class _EditReviews extends State<EditReviews> {
+  // User can make edits to their reviews here
   double myrating;
   FocusNode myFocusNode;
   String review;
@@ -2061,8 +2135,9 @@ class _EditReviews extends State<EditReviews> {     // User can make edits to th
   }
 
   @override
-  void dispose() {   // Clean up the focus node when the Form is disposed.
-   
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+
     myFocusNode.dispose();
 
     super.dispose();
@@ -2110,127 +2185,135 @@ class _EditReviews extends State<EditReviews> {     // User can make edits to th
             ),
             clipper: Clipshape(),
           )),
-      body: Padding(
-        padding: EdgeInsets.all(5.0),
-        child: Container(
-            child: ListView(
-          children: <Widget>[
-            Container(
-              height: 200.0,
-              width: 200.0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
-                child: Image.network('${widget.logo}'),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Container(
+              child: ListView(
+            children: <Widget>[
+              Container(
+                height: 200.0,
+                width: 200.0,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 0.0),
+                  child: Image.network('${widget.logo}'),
+                ),
               ),
-            ),
-            Container(
-                child: Center(
-                    child: Padding(
-                        padding: EdgeInsets.only(top: 0.0, bottom: 10.0),
-                        child: Text('${widget.name}',
-                            style: TextStyle(
-                                fontSize: 25, color: Colors.black))))),
-            Padding(
-                padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
-                child: Container(
-                    width: 200.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.topLeft,
-                          colors: [
-                            //Colors.white,
-                            Color(0xFFAC0D57),
-                            Color(0xFFFC4A1F),
-                          ]),
-                      color: Colors.redAccent,
-                    ),
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(top: 30.0),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 30.0,
-                              child: Image.asset('asset/image/circular.png'),
-                            )),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20.0, left: 20.0, right: 20.0, bottom: 10.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                            ),
-                            child: TextFormField(  //editable textfield of review
-                                onChanged: (rev) => widget.review = rev, 
-                                focusNode: myFocusNode,
-                                decoration: InputDecoration(
-                                    labelText: widget.review,
-                                    contentPadding: new EdgeInsets.symmetric(
-                                        vertical: 25.0, horizontal: 10.0)),
-                                style: TextStyle(
-                                    fontSize: 14.0,
-                                    height: 2.0,
-                                    color: Colors.black)),
-                          ),
-                        )
-                      ],
-                    ))),
-            Container(
-                    child: Transform.translate(
-                    offset: Offset(150.0, -30.0),
-                    child: MaterialButton(
-                      onPressed: () => myFocusNode.requestFocus(),
-                      color: Color(0xFFFC4A1F),
-                      textColor: Colors.white,
-                      child: Icon(
-                        Icons.edit,
-                        size: 24,
+              Container(
+                  child: Center(
+                      child: Padding(
+                          padding: EdgeInsets.only(top: 0.0, bottom: 10.0),
+                          child: Text('${widget.name}',
+                              style: TextStyle(
+                                  fontSize: 25, color: Colors.black))))),
+              Padding(
+                  padding: EdgeInsets.only(top: 15.0, right: 45.0, left: 45.0),
+                  child: Container(
+                      width: 200.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.topLeft,
+                            colors: [
+                              //Colors.white,
+                              Color(0xFFAC0D57),
+                              Color(0xFFFC4A1F),
+                            ]),
+                        color: Colors.redAccent,
                       ),
-                      padding: EdgeInsets.all(16),
-                      shape: CircleBorder(),
-                    ))),
-            SizedBox(
-              height: 30.0,
-            ),
-            Container(
-                                  child: MaterialButton(
-                                    onPressed: () {
-                                    var route = new MaterialPageRoute(
-                          builder: (BuildContext context) => new EditRating1(
-                            name: widget.name,
-                            logo: widget.logo,
-                            vendorId: widget.vendorId,
-                            review: widget.review,
-                            reviewId: widget.reviewId,
-                            list: widget.list,
-                          ),
-                        );
-                        Navigator.of(context).push(route);
-                                    },
-                                    color: Color(0xFFFC4A1F),
-                                    textColor: Colors.white,
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      size: 24,
-                                    ),
-                                    padding: EdgeInsets.all(16),
-                                    shape: CircleBorder(),
-                                  )),
-                  Padding(padding: EdgeInsets.only(bottom: 10),)
-            
-          ],
-        )),
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(top: 30.0),
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 30.0,
+                                child: Image.asset('asset/image/circular.png'),
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20.0,
+                                left: 20.0,
+                                right: 20.0,
+                                bottom: 10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                              ),
+                              child: TextFormField(
+                                  //editable textfield of review
+                                  onChanged: (rev) => widget.review = rev,
+                                  focusNode: myFocusNode,
+                                  decoration: InputDecoration(
+                                      labelText: widget.review,
+                                      contentPadding: new EdgeInsets.symmetric(
+                                          vertical: 25.0, horizontal: 10.0)),
+                                  style: TextStyle(
+                                      fontSize: 14.0,
+                                      height: 2.0,
+                                      color: Colors.black)),
+                            ),
+                          )
+                        ],
+                      ))),
+              Container(
+                  child: Transform.translate(
+                      offset: Offset(150.0, -30.0),
+                      child: MaterialButton(
+                        onPressed: () => myFocusNode.requestFocus(),
+                        color: Color(0xFFFC4A1F),
+                        textColor: Colors.white,
+                        child: Icon(
+                          Icons.edit,
+                          size: 24,
+                        ),
+                        padding: EdgeInsets.all(16),
+                        shape: CircleBorder(),
+                      ))),
+              SizedBox(
+                height: 30.0,
+              ),
+              Container(
+                  child: MaterialButton(
+                onPressed: () {
+                  var route = new MaterialPageRoute(
+                    builder: (BuildContext context) => new EditRating1(
+                      name: widget.name,
+                      logo: widget.logo,
+                      vendorId: widget.vendorId,
+                      review: widget.review,
+                      reviewId: widget.reviewId,
+                      list: widget.list,
+                    ),
+                  );
+                  Navigator.of(context).push(route);
+                },
+                color: Color(0xFFFC4A1F),
+                textColor: Colors.white,
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 24,
+                ),
+                padding: EdgeInsets.all(16),
+                shape: CircleBorder(),
+              )),
+              Padding(
+                padding: EdgeInsets.only(bottom: 10),
+              )
+            ],
+          )),
+        ),
       ),
     );
   }
 }
 
-class DoReviews extends StatefulWidget {  //Class for screen where user can do reviews for vendors after scanning barcod 
-  final String name, logo, vendorId; 
+class DoReviews extends StatefulWidget {
+  //Class for screen where user can do reviews for vendors after scanning barcod
+  final String name, logo, vendorId;
   final List<Map> list;
 
   DoReviews({this.name, this.logo, this.vendorId, this.list});
@@ -2352,7 +2435,8 @@ class _DoReviews extends State<DoReviews> {
                             child: TextFormField(
                                 onChanged: (rev) => review = rev,
                                 focusNode: myFocusNode,
-                                decoration: InputDecoration(  // User can write a new review
+                                decoration: InputDecoration(
+                                    // User can write a new review
                                     labelText: 'Write a new review...',
                                     contentPadding: new EdgeInsets.symmetric(
                                         vertical: 25.0, horizontal: 10.0)),
@@ -2382,29 +2466,30 @@ class _DoReviews extends State<DoReviews> {
               height: 30.0,
             ),
             Container(
-                                  child: MaterialButton(
-                                    onPressed: () {
-                         var route = new MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                new DoRatingFinal(
-                                  name: '${widget.name}',
-                                  logo: '${widget.logo}',
-                                  vendorId: '${widget.vendorId}',
-                                  list: widget.list,
-                                  review: review,
-                                ));
-                        Navigator.of(context).push(route);
-                                    },
-                                    color: Color(0xFFFC4A1F),
-                                    textColor: Colors.white,
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      size: 24,
-                                    ),
-                                    padding: EdgeInsets.all(16),
-                                    shape: CircleBorder(),
-                                  )),
-                  Padding(padding: EdgeInsets.only(bottom: 10),)
+                child: MaterialButton(
+              onPressed: () {
+                var route = new MaterialPageRoute(
+                    builder: (BuildContext context) => new DoRatingFinal(
+                          name: '${widget.name}',
+                          logo: '${widget.logo}',
+                          vendorId: '${widget.vendorId}',
+                          list: widget.list,
+                          review: review,
+                        ));
+                Navigator.of(context).push(route);
+              },
+              color: Color(0xFFFC4A1F),
+              textColor: Colors.white,
+              child: Icon(
+                Icons.arrow_forward,
+                size: 24,
+              ),
+              padding: EdgeInsets.all(16),
+              shape: CircleBorder(),
+            )),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+            )
           ],
         )),
       ),
