@@ -1724,7 +1724,8 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for di
               ),
               clipper: Clipshape(),
             )),
-        body: Padding(
+        body: SafeArea(
+        child: Padding(
           padding: EdgeInsets.all(5.0),
           child: Container(
               
@@ -1750,7 +1751,8 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for di
                 size: 36,
               ),
               new Divider(),
-              Row(
+              SafeArea (
+              child: Row(
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(right: 10.0, left: 20.0),
@@ -1784,7 +1786,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for di
                         ],
                         borderRadius: BorderRadius.circular(30.0),
                       ),
-                      padding: EdgeInsets.all(12.0),
+                      padding: EdgeInsets.all(10.0),
                       child: Center(
                         child: Text('Reviews',
                             style:
@@ -1794,9 +1796,11 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for di
                   ))
                 ],
               ),
+              ),
               ReviewFromDB(), //User can edit reviews here
             ],
           )),
+        ),
         ),
       ),
     );
