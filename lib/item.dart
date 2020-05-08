@@ -41,7 +41,7 @@ class RatedVendor{
       'vendorId' : vendorId,
       'vendorName' : vendorName,
       'vendorLogo' : vendorLogo,
-      'myVendorRating' : rating,
+      'myVendorRating' : rating.toDouble(),
       'vendorReviewId' : reviewId,
       'ratedVendorId' : '',
     };
@@ -67,7 +67,7 @@ class RatedItem{
        'itemId' : itemId,
       'itemName' : itemName,
       'itemLogo' : itemLogo,
-      'myItemRating' : rating,
+      'myItemRating' : rating.toDouble(),
       'ratedItemId' : '',
     };
   }

@@ -100,7 +100,7 @@ class FirestoreService{
   List<Vendor> _vendorListFromSnapshot(QuerySnapshot snapshot){
     return  snapshot.documents.map((doc){
       return Vendor(
-        aggregateRating: doc.data['aggregateRating'] ?? 0,
+        aggregateRating: doc.data['aggregateRating'].toDouble() ?? 0.0,
         email: doc.data['email'] ?? '',
         eventId: doc.data['eventId'] ?? '',
         name: doc.data['name'] ?? '',
@@ -132,7 +132,7 @@ class FirestoreService{
         name: doc.data['name'] ?? '',
         vendorId: doc.data['vendorId'] ?? '',
         logo: doc.data['logo'] ?? '',
-        aggregateRating: doc.data['aggregateRating'] ?? 0,
+        aggregateRating: doc.data['aggregateRating'].toDouble() ?? 0.0,
       );
     }).toList();
   }
@@ -162,7 +162,7 @@ class FirestoreService{
         vendorId: doc.data['vendorId'] ?? '',
         vendorName: doc.data['vendorName'] ?? '',
         vendorLogo: doc.data['vendorLogo'] ?? '',
-        rating: doc.data['myVendorRating'] ?? 0,
+        rating: doc.data['myVendorRating'].toDouble() ?? 0.0,
         reviewId: doc.data['vendorReviewId'] ?? '',
       );
     }).toList();
@@ -181,7 +181,7 @@ class FirestoreService{
         vendorId: doc.data['vendorId'] ?? '',
         itemName: doc.data['itemName'] ?? '',
         itemLogo: doc.data['itemLogo'] ?? '',
-        rating: doc.data['myItemRating'] ?? 0,
+        rating: doc.data['myItemRating'].toDouble() ?? 0.0,
         itemId: doc.data['itemId'] ?? '',
       );
     }).toList();

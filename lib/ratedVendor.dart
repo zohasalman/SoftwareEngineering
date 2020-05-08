@@ -45,7 +45,7 @@ class _RatedVendorListState extends State<RatedVendorList> {
                 backgroundImage:
                     NetworkImage('${myRatings[index].vendorLogo}'),
               ),
-              trailing: Text('${myRatings[index].rating}'),
+              trailing: Text('${myRatings[index].rating.toString()}'),
             ),
           );
         });
