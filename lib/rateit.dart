@@ -2176,7 +2176,8 @@ class _EditReviews extends State<EditReviews> {     // User can make edits to th
                       ],
                     ))),
             Container(
-                    alignment: Alignment(0.0, 0.0),
+                    child: Transform.translate(
+                    offset: Offset(150.0, -30.0),
                     child: MaterialButton(
                       onPressed: () => myFocusNode.requestFocus(),
                       color: Color(0xFFFC4A1F),
@@ -2187,7 +2188,7 @@ class _EditReviews extends State<EditReviews> {     // User can make edits to th
                       ),
                       padding: EdgeInsets.all(16),
                       shape: CircleBorder(),
-                    )),
+                    ))),
             SizedBox(
               height: 30.0,
             ),
