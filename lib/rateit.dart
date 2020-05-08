@@ -176,7 +176,7 @@ class SideBarProperties2 extends State<SideBar2> {
                 padding: EdgeInsets.all(12.0),
                 child: Center(
                   child: Text('Edit Profile',
-                      style: TextStyle(color: Colors.white, fontSize: 22)),
+                      style: TextStyle(color: Colors.white, fontSize: 20)),
                 ),
               ),
             )),
@@ -212,7 +212,7 @@ class SideBarProperties2 extends State<SideBar2> {
                 padding: EdgeInsets.all(12.0),
                 child: Center(
                   child: Text('View my Ratings',
-                      style: TextStyle(color: Colors.white, fontSize: 22)),
+                      style: TextStyle(color: Colors.white, fontSize: 20)),
                 ),
               ),
             )),
@@ -249,7 +249,7 @@ class SideBarProperties2 extends State<SideBar2> {
                 padding: EdgeInsets.all(12.0),
                 child: Center(
                   child: Text('Sign Out',
-                      style: TextStyle(color: Colors.white, fontSize: 22)),
+                      style: TextStyle(color: Colors.white, fontSize: 20)),
                 ),
               ),
             )),
