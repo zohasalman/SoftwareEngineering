@@ -223,12 +223,14 @@ class SideBarProperties2 extends State<SideBar2> {
                 //button for Sign out
                 child: GestureDetector(
               onTap: () async {
-                Navigator.popUntil(context, ModalRoute.withName('/'));
+                //Navigator.popUntil(context, ModalRoute.withName('/'));
+                 Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LoginScreen()),
+                  (Route<dynamic> route) => false);
                 await FirestoreService().normalSignOutPromise();
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => LoginScreen()),
-                //);
+               
               },
               child: Container(
                 width: 230.0,
@@ -321,7 +323,7 @@ class _InviteScreen extends State<InviteScreen> {
           //print('$distance,${eventLatitude*(180/math.pi)},${currentLatitude*(180/math.pi)}');
 
           if (distance <= 20000) {
-            //if (true) {
+            // if (true) {
             eventName = docs.documents[0].data['name'];
             eventID = docs.documents[0].data['eventID'];
             userID = '${widget.uid}';
