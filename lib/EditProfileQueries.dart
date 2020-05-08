@@ -11,29 +11,29 @@ class EditUserData{
   void update(String uid, String firstName, String lastName, String email, String password, String gender, String profilePicture, DateTime dateOfBirth) async {
     
   
-    prefs = await SharedPreferences.getInstance();
+    // prefs = await SharedPreferences.getInstance();
     //If the value is set up for the corresponding functions then set the values for all the corresponding fields 
     if (firstName != null){
       _updateFirstName(uid, firstName);
-      prefs.setString('firstName', firstName);
+      // prefs.setString('firstName', firstName);
     }
     if (lastName != null){
       _updateLastName(uid, lastName);
-      prefs.setString('lastName', lastName);
+      // prefs.setString('lastName', lastName);
     }
     if (email != null){
       _updateEmail(uid, email);
-      prefs.setString('email', email);
+      // prefs.setString('email', email);
     }
     if (password != null){
       _updatePassword(password);
-      if (prefs.getBool('rememberMe') == true){
-        prefs.setString('password', password);
-      }
+      // if (prefs.getBool('rememberMe') == true){
+      //   prefs.setString('password', password);
+      // }
     }
     if (gender != null){
       _updateGender(uid, gender);
-      prefs.setString('gender', gender);
+      // prefs.setString('gender', gender);
     }
     if (profilePicture != null){
       _updateProfilePicture(uid, profilePicture);

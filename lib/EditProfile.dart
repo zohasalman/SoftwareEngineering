@@ -10,6 +10,8 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Pathway;
 import 'rateit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class EditProfile extends StatefulWidget {
   EditProfile({Key key, this.title, this.userInfoRecieved}) : super(key: key);
@@ -80,14 +82,14 @@ class _EditProfile extends State<EditProfile> {
   }
 
   Future<void> submit() async {
+    print('hiii');
     if (_image != null){
       await uploadFile();
       _profilePicture = _uploadedFileURL;
       widget.userInfoRecieved.profilePicture = _profilePicture;
     }
     _updateData.update(widget.userInfoRecieved.uid, _firstName, _lastName, _email, _password,
-        _gender, _profilePicture, _dateOfBirth);
-    
+        _gender, _profilePicture, _dateOfBirth);    
   }
 
   List<DropdownMenuItem<String>> n = [];
@@ -408,21 +410,34 @@ class _EditProfile extends State<EditProfile> {
                                   Center(
                                       child: FlatButton(
                                     onPressed: () async {
+                                      SharedPreferences prefs = await SharedPreferences.getInstance();
                                           setState ( () {
+
                                             if(genderSelected.text.isNotEmpty){
                                               _gender = genderSelected.text;
+                                              prefs.setString('gender', _gender);
+                                              widget.userInfoRecieved.gender = _gender;
                                             }
                                             if(editfirstname.text.isNotEmpty){
                                               _firstName = editfirstname.text;
+                                              prefs.setString('firstName', _firstName);
+                                              widget.userInfoRecieved.firstName = _firstName;
                                             }
                                             if(editlastname.text.isNotEmpty){ 
                                               _lastName = editlastname.text;
+                                              prefs.setString('lastName', _lastName);
+                                              widget.userInfoRecieved.lastName = _lastName;
                                             }
                                             if(editemail.text.isNotEmpty){
                                               _email = editemail.text;
+                                              prefs.setString('email', _email);
+                                              widget.userInfoRecieved.email = _email;
                                             }
                                             if(editpw.text.isNotEmpty){
                                               _password = editpw.text;
+                                              if (prefs.getBool('rememberMe') == true){
+                                                prefs.setString('password', _password);
+                                              }
                                             }
                                             if(dateTime != null){
                                               _dateOfBirth = dateTime;
