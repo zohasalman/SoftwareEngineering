@@ -2307,7 +2307,7 @@ class AddMenu2State extends State<AddMenu2> {
               ),
             )
           ),
-          
+
           Container(
             width: MediaQuery.of(context).copyWith().size.width * 0.10,
             child: Center( child: Ink(
