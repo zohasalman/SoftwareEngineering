@@ -2763,7 +2763,7 @@ class EditVendorState extends State<EditVendor> {
                   readOnly: true,
                   validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
                   decoration: InputDecoration(
-                    hintText: logo==null ? 'Upload Logo Photo':'Image Uploaded',
+                    hintText: logo==null || logo =='' ? 'Upload Logo Photo':'Image Uploaded',
                     labelStyle: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 19
@@ -3990,7 +3990,7 @@ class EditMenuState extends State<EditMenu> {
                     validator: (_) => logo==null || logo =='' ? 'Please upload a valid image': null,
                     readOnly: true,
                     decoration: InputDecoration(
-                      hintText: logo==null ? 'Upload Logo Photo':'Image Uploaded',
+                      hintText: logo==null || logo =='' ? 'Upload Logo Photo':'Image Uploaded',
                       labelStyle: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 19

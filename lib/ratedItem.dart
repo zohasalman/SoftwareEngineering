@@ -30,17 +30,31 @@ class _RatedItemListState extends State<RatedItemList> {
                       Padding(
                         padding: EdgeInsets.only(top: 20,right: 0.0, left: 20.0),
                         child: CircleAvatar(
-                          radius: 60, 
+                          radius: 50, 
                           backgroundImage: NetworkImage('${myRatings[index].itemLogo}'), 
                           backgroundColor: Colors.transparent, 
                         )
                         
                       ),
                       Padding(
-                          padding: EdgeInsets.only(top: 10,right: 0.0, left: 20.0),
-                          child: Text('${myRatings[index].itemName}',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 18)))
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 10.0),
+                    child: Container(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+
+                          minWidth: 100.0,
+                          maxWidth: 100.0,
+                          minHeight: 30.0,
+                          maxHeight: 100.0,
+                        ),
+                        child: Text( '${myRatings[index].itemName}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 17.0),
+                        ),
+                      ),
+                    ),
+                  ),
                       
                     ],
                   ),

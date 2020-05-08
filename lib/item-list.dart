@@ -35,17 +35,31 @@ class _ListItemState extends State<ListItem> {
                       Padding(
                         padding: EdgeInsets.only(top: 20,right: 0.0, left: 20.0),
                         child: CircleAvatar(
-                          radius: 60, 
+                          radius: 50.0, 
                           backgroundImage: NetworkImage('${items[index].logo}'), 
                           backgroundColor: Colors.transparent, 
                         )
                         
                       ),
-                      Padding(
-                          padding: EdgeInsets.only(top: 10,right: 0.0, left: 20.0),
-                          child: Text('${items[index].name}',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 18)))
+                       Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 10.0),
+                    child: Container(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+
+                          minWidth: 100.0,
+                          maxWidth: 100.0,
+                          minHeight: 30.0,
+                          maxHeight: 100.0,
+                        ),
+                        child: Text( '${items[index].name}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 17.0),
+                        ),
+                      ),
+                    ),
+                  ),
                       
                     ],
                   ),
