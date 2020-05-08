@@ -16,18 +16,22 @@ class EditMyRatingsItems extends StatefulWidget {
 class _EditMyRatingsItemsState extends State<EditMyRatingsItems> {
 
   void itemRating(double rating, String itemId){
+    bool update = false;
     widget.list.forEach((f){
       if (itemId == f['itemId']){
         f['givenRating'] = rating;
-      }else{
+        update = true;
+      }
+    });
+    if(update == false){
         setState(() {
           var info = new Map();
           info['givenRating'] = rating;
           info['itemId'] = itemId;
           widget.list.add(info);
-        });
-      }
-    });
+        }
+      );
+    }
   }
 
   @override

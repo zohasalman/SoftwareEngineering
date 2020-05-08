@@ -48,7 +48,7 @@ class AuthService {
         dateOfBirth: date ?? '',
         email: email ?? '',
         userRole: 'user',
-        profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Ficons8-user-96.png?alt=media&token=9067d0e5-95d9-407e-9932-038f6eab21bf',
+        profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Fuser.png?alt=media&token=7a421d2a-af9b-479a-82f7-92ef593da922',
         ));
       FirebaseUser user = result.user;
       try{
@@ -105,7 +105,7 @@ class AuthService {
         dateOfBirth: DateTime.now(),
         email: 'myemail@example.com',
         userRole: 'user',
-        profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Ficons8-user-96.png?alt=media&token=9067d0e5-95d9-407e-9932-038f6eab21bf',
+        profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Fuser.png?alt=media&token=7a421d2a-af9b-479a-82f7-92ef593da922',
         ));
       print("signed in " + user.displayName);
 
@@ -135,7 +135,7 @@ class AuthService {
           dateOfBirth: DateTime.now(),
           email: 'myemail@example.com',
           userRole: 'user',
-          profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Ficons8-user-96.png?alt=media&token=9067d0e5-95d9-407e-9932-038f6eab21bf',
+          profilePicture: 'https://firebasestorage.googleapis.com/v0/b/seproject-rateit.appspot.com/o/UserData%2Fuser.png?alt=media&token=7a421d2a-af9b-479a-82f7-92ef593da922',
           ));
         print('signed in ' + user.displayName);
         return user;
