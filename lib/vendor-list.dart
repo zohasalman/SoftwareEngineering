@@ -40,7 +40,7 @@ class _VendorsListState extends State<VendorsList> {
                       leading: CircleAvatar(
                         backgroundImage: NetworkImage('${vendors[index].logo}'),
                       ),
-                      trailing: Text('${vendors[index].aggregateRating}'),
+                      trailing: Text('${vendors[index].aggregateRating.toStringAsFixed(1)}'),
                     )
             );
         });

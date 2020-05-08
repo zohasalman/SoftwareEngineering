@@ -1717,7 +1717,7 @@ class _TopRatedItemsReviews extends State<TopRatedItemsReviews> { //Class for di
                 ),
               ),
               RatingBar.readOnly(
-                initialRating: double.parse('${widget.vendorRating}'),
+                initialRating: (double.parse('${widget.vendorRating}')),
                 filledIcon: Icons.star,
                 emptyIcon: Icons.star_border,
                 halfFilledIcon: Icons.star_half,
