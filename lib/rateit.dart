@@ -297,8 +297,8 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
           double distance = 2*6371.0710*math.asin( math.sqrt( (math.sin(diffLatitudeHalf)*math.sin(diffLatitudeHalf)) + ( (math.sin(diffLongitudeHalf)*math.sin(diffLongitudeHalf))*math.cos(currentLatitude)*math.cos(currentLongitude) ) ) ) * 1000; //Haversine Formula to calculate difference between coordinates
           //print('$distance,${eventLatitude*(180/math.pi)},${currentLatitude*(180/math.pi)}');
 
-          // if (distance<=20000){  
-            if (true) {        
+          if (distance<=20000){  
+            //if (true) {        
             eventName = docs.documents[0].data['name'];
             eventID = docs.documents[0].data['eventID'];
             userID = '${widget.uid}';
@@ -313,7 +313,7 @@ class _InviteScreen extends State<InviteScreen> {         //Class for invite scr
             _formKey.currentState.validate();
           }
         }
-        else if (docs.documents.isNotEmpty) {
+        else if (locationEnabled) {
           errorMessage = 'Location not enabled.';
           ifError =true;
           _formKey.currentState.validate();

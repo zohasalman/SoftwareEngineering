@@ -937,7 +937,8 @@ class EventMenuState extends State<EventMenu> {
                        
                       ), 
                     onPressed: (){
-                      Navigator.pop(context);
+                      Navigator.popUntil(context, ModalRoute.withName('/'));
+                      //Navigator.pop(context);
                     }
                   ),
                   actions: <Widget>[
@@ -1308,14 +1309,6 @@ class AddVendorQtyState extends State<AddVendorQty> {
                         child: Text('Add Vendors',style: TextStyle(color: Colors.white, fontSize: 28 ))
                         ),
                     )
-                  ),
-                  leading: IconButton(          //adding the button to navigate to the previous page
-                    icon: Icon(
-                      Icons.arrow_back,
-                    ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                    }
                   ),
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
@@ -2126,15 +2119,6 @@ var scaffoldKey=GlobalKey<ScaffoldState>();
                         child: Text('Add Menu',style: TextStyle(color: Colors.white, fontSize: 28 ))
                         ),
                     )
-                  ),
-                  leading: IconButton(          //adding the back button to navigate to previous page
-                    icon: Icon(
-                      Icons.arrow_back,
-                       
-                    ), 
-                    onPressed: (){
-                      Navigator.pop(context);
-                    }
                   ),
                   flexibleSpace: Container(
                   decoration: BoxDecoration(
@@ -3367,23 +3351,23 @@ class QRselectionState extends State<QRselection> {
                     )
                   ),
                   flexibleSpace: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topRight,
-                        end: Alignment.topLeft,
-                        colors: [ 
-                          Color(0xFFAC0D57),
-                          Color(0xFFFC4A1F),
-                        ]
-                    ),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          "asset/image/Chat.png",
-                        ),
-                        fit: BoxFit.fitWidth,
-                    ),
-                  )
-                ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.topLeft,
+                          colors: [ 
+                            Color(0xFFAC0D57),
+                            Color(0xFFFC4A1F),
+                          ]
+                      ),
+                        image: DecorationImage(
+                          image: AssetImage(
+                            "asset/image/Chat.png",
+                          ),
+                          fit: BoxFit.fitWidth,
+                      ),
+                    )
+                  ),
                 )
               ],
             ),
@@ -3422,7 +3406,7 @@ class QRselectionState extends State<QRselection> {
                                 await Firestore.instance.collection('Vendor').where('eventId', isEqualTo: eid).getDocuments().then((val) async{
                                   val.documents.forEach((doc) async {
                                     var qr = Barcode.qrCode().toSvg('${doc.data['vendorId']}');
-                                    await File(basePath+"$eventNme/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
+                                    await File(basePath+"${eventNme}_$eid/${doc.data['name']}_${doc.data['vendorId']}.svg").writeAsString(qr);
                                   });
                                 }).catchError((e){err=e.toString();});
                                 await showDialog(                 //User friendly error message when the screen has been displayed 
@@ -3773,6 +3757,8 @@ class ViewMenuState extends State<ViewMenu> {
     return StreamProvider<List<Item>>.value(
       value: FirestoreService().getItemInfo(vendorID),
       child: Scaffold(
+        key: scaffoldKey,
+        endDrawer: SideBarGeneral(),      //calling the sidebar widget to display the sidebar drawer
         appBar: PreferredSize(      //displaying the design bar of the application
             preferredSize: Size.fromHeight(150.0),
             child: ClipPath(
@@ -3833,7 +3819,6 @@ class ViewMenuState extends State<ViewMenu> {
               ),
               clipper: Clipshape(),
             )),
-        endDrawer: SideBarGeneral(),      //calling the sidebar widget to display the sidebar drawer
         body:Column( 
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
