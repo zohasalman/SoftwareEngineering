@@ -34,7 +34,8 @@ class UserData{
       'gender' : gender,
       'dateOfBirth' : dateOfBirth,
       'email' : email, 
-      'userRole' : userRole
+      'userRole' : userRole,
+      'profilePicture' : profilePicture,
     };
   }
 

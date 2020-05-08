@@ -16,20 +16,23 @@ class DisplayItems extends StatefulWidget {
 class _DisplayItemsState extends State<DisplayItems> {
 
   void itemRating(double rating, String name, String logo, String itemId){
+    bool update = false;
     widget.list.forEach((f){
       if (itemId == f['itemId']){
         f['givenRating'] = rating;
-      }else{
-        setState(() {
-          var info = new Map();
-          info['name'] = name;
-          info['givenRating'] = rating;
-          info['logo'] = logo;
-          info['itemId'] = itemId;
-          widget.list.add(info);
-        });
+        update = true;
       }
     });
+    if(update == false){
+      setState(() {
+        var info = new Map();
+        info['name'] = name;
+        info['givenRating'] = rating;
+        info['logo'] = logo;
+        info['itemId'] = itemId;
+        widget.list.add(info);
+      });
+    }
   }
 
   @override
@@ -46,25 +49,41 @@ class _DisplayItemsState extends State<DisplayItems> {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: myItems.length,
         itemBuilder: (context, index){
-          return Row(
+          return SafeArea(
+            child: Row(
               children: <Widget>[
                 Container(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.only(top: 20,right: 0.0, left: 20.0),
                         child: CircleAvatar(
-                          radius: 60, 
+                          radius: 50, 
                           backgroundImage: NetworkImage('${myItems[index].logo}'), 
                           backgroundColor: Colors.transparent, 
                         )
                         
                       ),
                       Padding(
-                          padding: EdgeInsets.only(top: 10,right: 0.0, left: 20.0),
-                          child: Text('${myItems[index].name}',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 18)))
+                    padding: const EdgeInsets.only(
+                        top: 20.0, left: 20.0, right: 10.0),
+                    child: Container(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+
+                          minWidth: 100.0,
+                          maxWidth: 100.0,
+                          minHeight: 30.0,
+                          maxHeight: 100.0,
+                        ),
+                        child: Text( '${myItems[index].name}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 17.0),
+                        ),
+                      ),
+                    ),
+                  ),
                       
                     ],
                   ),
@@ -104,8 +123,12 @@ class _DisplayItemsState extends State<DisplayItems> {
                   ),
                 ),
                
+               
               ],
-            );
+              
+            ),
+          );
+            
 
         });
     }
