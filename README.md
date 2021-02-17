@@ -1,6 +1,6 @@
-# rateit
+# RateIt
 
-A new Flutter project.
+A new Flutter project for the course Software Engineering 
 
 ## Getting Started
 
